@@ -22,7 +22,7 @@
 <text class="h" x="24" y="34">The parts, and what crosses between them</text>
 <rect class="zone" x="20" y="52" width="560" height="520" rx="14"/>
 <text class="z" x="34" y="72">ONE DEVICE: IPHONE, IPAD OR MAC</text>
-<rect class="box test" x="40" y="86" width="160" height="74" rx="10"/>
+<rect class="box live" x="40" y="86" width="160" height="74" rx="10"/>
 <text class="t" x="52" y="108">Recorder</text>
 <text class="s" x="52" y="126">Microphone to a WAV file,</text>
 <text class="s" x="52" y="142">written as you speak</text>
@@ -34,7 +34,7 @@
 <text class="t" x="412" y="108">Language model</text>
 <text class="s" x="412" y="126">Apple, on the device:</text>
 <text class="s" x="412" y="142">text to a debrief</text>
-<rect class="box test" x="40" y="190" width="250" height="90" rx="10"/>
+<rect class="box live" x="40" y="190" width="250" height="90" rx="10"/>
 <text class="t" x="52" y="212">Library</text>
 <text class="s" x="52" y="230">One folder per note: the audio,</text>
 <text class="s" x="52" y="246">the transcript, the debrief.</text>

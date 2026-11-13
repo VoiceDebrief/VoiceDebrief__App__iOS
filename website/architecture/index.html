@@ -89,7 +89,7 @@
 <li><strong>Stop.</strong> The file is closed and the note opens on screen at once, empty, and fills in as the next steps finish.</li>
 <li><strong>Transcript.</strong> <code>SpeechFileTranscriber</code> gives the whole file to <code>SpeechAnalyzer</code>. The model for the chosen language is downloaded the first time. The result is a list of lines with times, written into the note.</li>
 <li><strong>Debrief.</strong> If the transcript has fewer than 25 words there is nothing to summarise and the app says so. Otherwise <code>DebriefPrompt</code> builds one prompt and <code>OnDeviceModel.respond(to:)</code> asks it once. If the note is longer than the model's context (4,096 tokens on the devices tried), <code>Chunker</code> splits it, each part is summarised, and the parts are merged with one more call. The answer is checked for its three headings; an answer in the wrong shape is kept and flagged, not hidden.</li>
-<li><strong>Compress.</strong> <code>AudioCompressor</code> writes an AAC <code>.m4a</code> beside the WAV, reads it back, and replaces the WAV only if the copy has the same length. A 16-second note is about 190 KB.</li>
+<li><strong>Compress.</strong> This happens after the note is finished, never while recording. <code>AudioCompressor</code> writes an AAC <code>.m4a</code> beside the WAV, reads it back, and replaces the WAV only if the copy has the same length. A 16-second note is about 190 KB.</li>
 <li><strong>Save to a vault</strong>, by choice. Section 3 below.</li>
 <li><strong>Send to a lane</strong>, by choice, asked every time. Section 4 below.</li>
 </ol>
@@ -103,7 +103,7 @@
 <tr><td>Apple Intelligence is off, the model refuses, or the note is too short</td><td>The note, its audio and its transcript, with a plain statement of why there is no debrief</td></tr>
 <tr><td>The vault or the lane cannot be reached</td><td>Everything, on the device. Saving and sending can be tried again</td></tr>
 </tbody></table></div>
-<p>Steps 1 to 3 and 6 are in build 0.1.7 with unit tests, including a cut-off WAV being repaired. They have not yet been confirmed on a device, and the crash itself has not been tried. Steps 4, 5, 7 and 8 have each been seen working on the owner's devices.</p>
+<p>All eight steps have been seen working on the owner's devices, on the ordinary path. The failures in the table are covered by unit tests, including a cut-off WAV being repaired, but none has yet been provoked on a device: not the crash, not the interruption, not a recording with the screen locked.</p>
 <h2 id="3-a-vault-from-the-inside">3. A vault, from the inside</h2>
 <p>A vault is a version-controlled store, like a git repository, in which everything is encrypted before it leaves the device. The format is sgit's and is not ours to change; the app's engine is a Swift implementation of it, checked against sgit's own Python by CI.</p>
 <h3 id="one-string">One string</h3>

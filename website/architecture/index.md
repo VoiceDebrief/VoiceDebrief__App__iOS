@@ -62,7 +62,7 @@ The order of these steps is the design. A recording is the one thing that cannot
 3. **Stop.** The file is closed and the note opens on screen at once, empty, and fills in as the next steps finish.
 4. **Transcript.** `SpeechFileTranscriber` gives the whole file to `SpeechAnalyzer`. The model for the chosen language is downloaded the first time. The result is a list of lines with times, written into the note.
 5. **Debrief.** If the transcript has fewer than 25 words there is nothing to summarise and the app says so. Otherwise `DebriefPrompt` builds one prompt and `OnDeviceModel.respond(to:)` asks it once. If the note is longer than the model's context (4,096 tokens on the devices tried), `Chunker` splits it, each part is summarised, and the parts are merged with one more call. The answer is checked for its three headings; an answer in the wrong shape is kept and flagged, not hidden.
-6. **Compress.** `AudioCompressor` writes an AAC `.m4a` beside the WAV, reads it back, and replaces the WAV only if the copy has the same length. A 16-second note is about 190 KB.
+6. **Compress.** This happens after the note is finished, never while recording. `AudioCompressor` writes an AAC `.m4a` beside the WAV, reads it back, and replaces the WAV only if the copy has the same length. A 16-second note is about 190 KB.
 7. **Save to a vault**, by choice. Section 3 below.
 8. **Send to a lane**, by choice, asked every time. Section 4 below.
 
@@ -76,7 +76,7 @@ The order of these steps is the design. A recording is the one thing that cannot
 | Apple Intelligence is off, the model refuses, or the note is too short | The note, its audio and its transcript, with a plain statement of why there is no debrief |
 | The vault or the lane cannot be reached | Everything, on the device. Saving and sending can be tried again |
 
-Steps 1 to 3 and 6 are in build 0.1.7 with unit tests, including a cut-off WAV being repaired. They have not yet been confirmed on a device, and the crash itself has not been tried. Steps 4, 5, 7 and 8 have each been seen working on the owner's devices.
+All eight steps have been seen working on the owner's devices, on the ordinary path. The failures in the table are covered by unit tests, including a cut-off WAV being repaired, but none has yet been provoked on a device: not the crash, not the interruption, not a recording with the screen locked.
 
 ## 3. A vault, from the inside
 
