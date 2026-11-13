@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>How VoiceDebrief for iOS works: the architecture in four drawings</title>
+<meta name="description" content="The parts of the app, the life of a recording, a vault from the inside, lanes, the four keys and two devices, with what is seen working, what is unconfirmed and what is decided but not built.">
+<link rel="canonical" href="https://ios.app.voicedebrief.ai/architecture/index.html">
+<meta property="og:url" content="https://ios.app.voicedebrief.ai/architecture/index.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="VoiceDebrief for iOS">
+<meta property="og:title" content="How VoiceDebrief for iOS works: the architecture in four drawings">
+<meta property="og:description" content="The parts of the app, the life of a recording, a vault from the inside, lanes, the four keys and two devices, with what is seen working, what is unconfirmed and what is decided but not built.">
+<link rel="alternate" type="text/markdown" href="index.md" title="This page as markdown">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/vd-tokens.css">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+
+<nav class="site"><div class="row">
+  <a class="brand" href="../index.html">Voice<em>Debrief</em> <span>iOS</span></a>
+  <span class="beta" title="In development: there is nothing to install yet">IN DEVELOPMENT</span>
+  <a class="parent" href="https://voicedebrief.ai" title="A VoiceDebrief product">&#8599; part of <b>voicedebrief.ai</b></a>
+  <a class="ver" href="../versions/index.html" title="Release history">v0.1.7</a>
+  <a class="nl" href="../built/index.html">Built</a>
+  <a class="nl here" href="../architecture/index.html">How it works</a>
+  <a class="nl" href="../design/index.html">Design</a>
+  <a class="nl" href="../plan/index.html">Plan</a>
+  <a class="nl" href="../articles/index.html">Articles</a>
+  <a class="nl" href="../develop/index.html">Build</a>
+  <a class="gh" href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">&#9733; GitHub</a>
+</div></nav>
+
+<main class="doc">
+<div class="crumb"><a href="../index.html">VoiceDebrief iOS</a> / architecture</div>
+<h1 id="how-it-works">How it works</h1>
+<p>The architecture of VoiceDebrief for iPhone and iPad in four drawings: the parts, the life of a recording, the keys, and two devices. Each drawing uses the same three marks, and the text under it says where the code is. A drawing opens at full size when it is pressed.</p>
+<ul>
+<li>A <strong>green</strong> outline: seen working on the owner's iPhone or Mac.</li>
+<li>An <strong>amber</strong> outline: in the current build, not yet confirmed on a device.</li>
+<li>A <strong>dashed</strong> outline: decided, not built.</li>
+</ul>
+<p>This page explains; it does not certify. The record of what exists is <a href="../built/index.html">What is built</a>, and where the two disagree that page is right.</p>
+<h2 id="the-short-version">The short version</h2>
+<ol>
+<li>The app records to a file inside a note that already exists, so a recording cannot be lost by anything that happens later.</li>
+<li>Apple's speech model turns the file into timed text, and Apple's language model turns the text into a debrief. Both run on the device. No audio and no words go to a server for this.</li>
+<li>The note is kept as plain files in the app's own storage. That is the library.</li>
+<li>If you choose, the note is also written to a vault: every file encrypted on the device, one signed commit, pushed to a server that holds bytes it cannot read.</li>
+<li>If you choose, and each time you are asked, the note is sealed to somebody's public key and dropped into a lane, which is a write-only inbox.</li>
+<li>Keys decide everything. A vault key opens a vault. A device key says which device wrote a commit. A person's key pair says who they are, and vouches for their devices.</li>
+</ol>
+<h2 id="1-the-parts">1. The parts</h2>
+<p><a href="../assets/diagrams/parts.svg"><img class="shot" src="../assets/diagrams/parts.svg" alt="The parts of the app on one device, and the four things outside it: a lane, a vault server, iCloud Keychain and pki.sgit.ai. Only encrypted data and public keys cross." loading="lazy"></a></p>
+<h3 id="on-the-device">On the device</h3>
+<div class="tablewrap"><table>
+<thead><tr><th>Part</th><th>What it does</th><th>Code</th></tr></thead>
+<tbody>
+<tr><td>Recorder</td><td>The microphone to a 16 kHz, mono, 16-bit WAV file, written as you speak, with a level meter</td><td><code>Engine/VoiceRecorder.swift</code></td></tr>
+<tr><td>Live text</td><td>A second listener on the microphone that shows words as they are heard. A preview only: the transcript that is kept is made from the file</td><td><code>Engine/LiveTranscriber.swift</code></td></tr>
+<tr><td>Speech model</td><td>Apple's <code>SpeechAnalyzer</code> with a <code>SpeechTranscriber</code>: the recorded file in, one line per phrase out, each with its time</td><td><code>Engine/SpeechFileTranscriber.swift</code></td></tr>
+<tr><td>Language model</td><td>Apple's Foundation Models framework: the transcript in, a debrief in three sections out</td><td><code>Engine/OnDeviceModel.swift</code>, <code>Model/DebriefPrompt.swift</code>, <code>Model/Chunker.swift</code></td></tr>
+<tr><td>Library</td><td>One folder per note under Application Support: the audio and a JSON file with the transcript, the debrief and every step's timing</td><td><code>Engine/NoteStore.swift</code>, <code>Model/Note.swift</code></td></tr>
+<tr><td>The conductor</td><td>The one object that owns the states: idle, recording, working, failed. It starts the recorder, runs the two models in order and writes each result into the note</td><td><code>Engine/DebriefSession.swift</code></td></tr>
+<tr><td>Vault engine</td><td>Reads and writes sgit vaults: key derivation, encryption, trees, commits, signatures, and the calls to the server</td><td><code>Packages/SGitVault/</code></td></tr>
+<tr><td>Vault book</td><td>The vaults this device knows: create one, add one by its key, list files and history, save a note into one</td><td><code>Engine/VaultBook.swift</code></td></tr>
+<tr><td>Keychain</td><td>Where vault keys, the server token and the commit-signing key are kept, readable only by this app</td><td><code>Engine/SecretStore.swift</code></td></tr>
+<tr><td>Lane sender</td><td>Seals a note to a public key and posts it to a lane</td><td><code>Engine/DeveloperLane.swift</code>, <code>Engine/LaneCrypto.swift</code></td></tr>
+</tbody></table></div>
+<p>The two models are Apple's, they are part of the operating system, and the app has no other. There is no API key in the app because there is nothing to call.</p>
+<h3 id="outside-the-device">Outside the device</h3>
+<div class="tablewrap"><table>
+<thead><tr><th>Part</th><th>What it holds</th><th>What it can see</th></tr></thead>
+<tbody>
+<tr><td>A vault server (SG/Send)</td><td>Encrypted objects under names derived from a key it does not have, and one pointer per branch</td><td>Sizes, timing, and the address the request came from. Never file names, never contents</td></tr>
+<tr><td>A lane</td><td>A list of sealed messages on a vault server</td><td>The same. The sender cannot read the lane back; only the holder of the private key can</td></tr>
+<tr><td>iCloud Keychain (Apple)</td><td>Keys, encrypted between your own devices</td><td>Bytes Apple cannot read. Decided, not built</td></tr>
+<tr><td>pki.sgit.ai</td><td>A public register of people and their public keys</td><td>Only public keys. Optional, and not built</td></tr>
+</tbody></table></div>
+<h3 id="doors">Doors</h3>
+<p>The dashed box at the bottom of the drawing is a rule the code does not yet follow everywhere: every request that the app or a model makes should pass through one of a small number of doors (network, files, vault, keys, model), each with a policy and a record that can be shown on screen. Today only the vault engine keeps such a record, under &quot;Every step&quot; on a vault's screen. The reasoning is in <a href="../articles/a-harness-inside-the-app/index.html">A harness inside the app</a>.</p>
+<h2 id="2-the-life-of-a-recording">2. The life of a recording</h2>
+<p><a href="../assets/diagrams/recording.svg"><img class="shot" src="../assets/diagrams/recording.svg" alt="Eight steps from pressing record to a note on the device, optionally saved to a vault and sent to a lane, with what happens when each stage fails." loading="lazy"></a></p>
+<p>The order of these steps is the design. A recording is the one thing that cannot be made again, so it is put somewhere safe before anything clever is attempted.</p>
+<ol>
+<li><strong>Press record.</strong> <code>DebriefSession.startRecording</code> asks <code>NoteStore.begin</code> for a new note. The note's folder and its JSON file are on disk, marked as processing, before the microphone opens.</li>
+<li><strong>Speak.</strong> <code>VoiceRecorder.start(writingTo:)</code> writes WAV straight into the note's folder. WAV is used because its samples are usable even when the file was never closed; a compressed file cut off mid-way often is not. The live words and the level bars are drawn from a separate tap and can fail without touching the recording.</li>
+<li><strong>Stop.</strong> The file is closed and the note opens on screen at once, empty, and fills in as the next steps finish.</li>
+<li><strong>Transcript.</strong> <code>SpeechFileTranscriber</code> gives the whole file to <code>SpeechAnalyzer</code>. The model for the chosen language is downloaded the first time. The result is a list of lines with times, written into the note.</li>
+<li><strong>Debrief.</strong> If the transcript has fewer than 25 words there is nothing to summarise and the app says so. Otherwise <code>DebriefPrompt</code> builds one prompt and <code>OnDeviceModel.respond(to:)</code> asks it once. If the note is longer than the model's context (4,096 tokens on the devices tried), <code>Chunker</code> splits it, each part is summarised, and the parts are merged with one more call. The answer is checked for its three headings; an answer in the wrong shape is kept and flagged, not hidden.</li>
+<li><strong>Compress.</strong> <code>AudioCompressor</code> writes an AAC <code>.m4a</code> beside the WAV, reads it back, and replaces the WAV only if the copy has the same length. A 16-second note is about 190 KB.</li>
+<li><strong>Save to a vault</strong>, by choice. Section 3 below.</li>
+<li><strong>Send to a lane</strong>, by choice, asked every time. Section 4 below.</li>
+</ol>
+<h3 id="when-something-fails">When something fails</h3>
+<div class="tablewrap"><table>
+<thead><tr><th>What happens</th><th>What you keep</th></tr></thead>
+<tbody>
+<tr><td>The app is killed or the phone dies while recording</td><td>The note and the audio up to that moment. <code>WAVRepair</code> rewrites the file's header from its real length when the library next opens</td></tr>
+<tr><td>A call, or another app, takes the microphone</td><td>The recording ends there and is processed as usual</td></tr>
+<tr><td>No speech model for the language, or it fails</td><td>The note and its audio. It can be run again later</td></tr>
+<tr><td>Apple Intelligence is off, the model refuses, or the note is too short</td><td>The note, its audio and its transcript, with a plain statement of why there is no debrief</td></tr>
+<tr><td>The vault or the lane cannot be reached</td><td>Everything, on the device. Saving and sending can be tried again</td></tr>
+</tbody></table></div>
+<p>Steps 1 to 3 and 6 are in build 0.1.7 with unit tests, including a cut-off WAV being repaired. They have not yet been confirmed on a device, and the crash itself has not been tried. Steps 4, 5, 7 and 8 have each been seen working on the owner's devices.</p>
+<h2 id="3-a-vault-from-the-inside">3. A vault, from the inside</h2>
+<p>A vault is a version-controlled store, like a git repository, in which everything is encrypted before it leaves the device. The format is sgit's and is not ours to change; the app's engine is a Swift implementation of it, checked against sgit's own Python by CI.</p>
+<h3 id="one-string">One string</h3>
+<p>A vault key is one string of two parts, <code>&lt;passphrase&gt;:&lt;vault id&gt;</code>. Everything else is worked out from it on the device:</p>
+<div class="tablewrap"><table>
+<thead><tr><th>From the vault key</th><th>How</th><th>Used for</th></tr></thead>
+<tbody>
+<tr><td>Read key</td><td>PBKDF2-HMAC-SHA256, 600,000 rounds, salted with the vault id</td><td>AES-256-GCM encryption of every object</td></tr>
+<tr><td>Write key</td><td>The same, with a different salt</td><td>Proving to the server that this writer may change the vault. The server keeps only its hash</td></tr>
+<tr><td>File names on the server</td><td>HMAC of the read key</td><td>So the server cannot tell which object is the branch, the index or a file</td></tr>
+</tbody></table></div>
+<p>So the server can check that a writer is allowed, and store what it is given, without being able to read a single name or byte.</p>
+<h3 id="what-saving-a-note-writes">What saving a note writes</h3>
+<p><code>VaultBook.save</code> turns one note into a folder, <code>debriefs/YYYY/MM/DD/&lt;note id&gt;/</code>, holding <code>debrief.md</code>, <code>transcript.md</code>, <code>run.json</code> and the audio (up to 3.8 MB today). Then the engine:</p>
+<ol>
+<li>encrypts each file as an object named by the hash of its contents;</li>
+<li>builds the trees that name those objects, each tree encrypted too;</li>
+<li>writes a commit that points at the top tree and at the commit before it;</li>
+<li>signs the commit with the device's key (ECDSA P-256);</li>
+<li>sends everything in one batch, with the instruction &quot;move the branch to this commit, if it is still where I last saw it&quot;.</li>
+</ol>
+<p>That last condition is compare-and-swap, and it is what makes two writers safe: the second one is refused, not merged over. The first save from the app, on 13 November 2026, was 4 files, 12 objects and 192.5 KB, and was pulled back with its signature verified.</p>
+<p>Reading is the same in reverse, and the engine verifies the signature of every commit it reads. The vault's screen shows the head, the files, the history and the traffic that produced them.</p>
+<h3 id="what-is-not-there-yet">What is not there yet</h3>
+<p>A vault today cannot be created without a server token, because creation and the first push are one step. The decision is that they should be two: a vault is created on the device with no network, and a server is a remote added later, as in git. That work, with merge and several named vaults, is in progress and is described in <a href="../articles/the-vault-is-a-version-controlled-store/index.html">The vault is a version-controlled store</a>.</p>
+<h2 id="4-a-lane">4. A lane</h2>
+<p>A lane is for giving something to somebody without being able to read what else they have been given. It is an append-only inbox on a vault server, described by one link, <code>sgi1.&lt;vault&gt;.&lt;token&gt;.&lt;public key&gt;</code>:</p>
+<ul>
+<li>the <strong>vault</strong> says where the inbox is;</li>
+<li>the <strong>token</strong> allows writing to it and nothing else: no listing, no reading;</li>
+<li>the <strong>public key</strong> is the recipient's (RSA-OAEP 4096).</li>
+</ul>
+<p>To send a note the app makes a fresh AES key, encrypts the message with it, encrypts that key to the recipient's public key, and posts the result. The audio goes in parts of 2 MB, followed by the run as JSON, each part with a hash so the receiver can check it arrived whole. Only the holder of the private key can open any of it; the app that sent it cannot.</p>
+<p>The test build has one lane built in, the developer's, so that a note can be sent for diagnosis. Nothing is ever sent without the button and the confirmation that follows it. Several named lanes are designed and not built.</p>
+<h2 id="5-the-keys">5. The keys</h2>
+<p><a href="../assets/diagrams/keys.svg"><img class="shot" src="../assets/diagrams/keys.svg" alt="Two columns. Left: a chain of signatures from the pki.sgit.ai root, to a person's key pair, to a device's key, to a commit. Right: the vault key, kept in the Keychain, from which the read and write keys are derived." loading="lazy"></a></p>
+<p>There are two different questions, and they have different keys.</p>
+<p><strong>Who can read this?</strong> Whoever holds the vault key. It is a secret that is shared: with your other devices, and with anybody you give the vault to. Today it is kept in this device's Keychain and nowhere else, so a lost phone is a lost vault unless the key was written down. The owner has decided that vault keys will be kept in iCloud Keychain, switched on by default with a switch to keep them on one device only. Apple then carries the key between your devices encrypted so that Apple cannot read it, and a new or replaced device gets its vaults back by signing in.</p>
+<p><strong>Who wrote this?</strong> That is answered by signatures, in a chain:</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Key</th><th>Lives</th><th>Lost when</th><th>Vouched for by</th></tr></thead>
+<tbody>
+<tr><td>The device's key</td><td>On the device, and never leaves it. In the Keychain today; in the Secure Enclave where the hardware allows, once built</td><td>The device or the app goes. That is intended</td><td>Your key pair, in a signed statement kept in the vault</td></tr>
+<tr><td>Your key pair</td><td>Must travel to all your devices: iCloud Keychain to begin with, later a master vault opened with a passkey. Never the Secure Enclave, which cannot let a key out</td><td>Never, if the sync works</td><td>Optionally, the register at pki.sgit.ai</td></tr>
+<tr><td>The register's root</td><td>A fingerprint written into the app's code</td><td></td><td></td></tr>
+</tbody></table></div>
+<p>A device's key is cheap and replaceable on purpose. Every commit carries the public half of the key that signed it, so a reader can always say which device wrote it; the statement signed by your own key is what turns &quot;some device&quot; into &quot;one of mine&quot;, and removing that statement is how a lost device is disowned.</p>
+<p>The connection to pki.sgit.ai is optional and the app must work without it. With it, a person already on the register approves a request from the app, and the register hands back a delegation: a signed statement that this app's key may act for that person, for a stated purpose and a stated number of days. Without it, the chain simply starts at your own key pair.</p>
+<p>Of this section, only the device's key signing commits and the vault key in the Keychain exist. The rest is decided and is being built in a separate line of work; the reasoning is in <a href="../articles/where-each-key-lives/index.html">Where each key lives</a>.</p>
+<h2 id="6-two-devices">6. Two devices</h2>
+<p><a href="../assets/diagrams/devices.svg"><img class="shot" src="../assets/diagrams/devices.svg" alt="An iPhone and an iPad. iCloud Keychain carries the vault key between them; the vault server carries the encrypted notes. Below, the four steps when both write at once." loading="lazy"></a></p>
+<p>Two of your devices never talk to each other. Two separate things pass between them, by two separate routes, and neither route can read what it carries:</p>
+<ul>
+<li><strong>the key</strong>, through iCloud Keychain;</li>
+<li><strong>the data</strong>, through the vault server.</li>
+</ul>
+<p>An iPad that has received the key pulls the vault, checks the signature on every commit, and shows the same notes. When both devices write at about the same moment, the server's compare-and-swap decides: the first push moves the branch, the second is refused, and the second device then pulls, merges and pushes again. This is how sgit already works with many writers. In the app today the first three steps exist and the fourth does not: a refused push is reported, and the merge is still to be written in Swift.</p>
+<p>Nothing in this section has been seen working between two devices yet, which is why the iPad is dashed.</p>
+<h2 id="who-can-see-what">Who can see what</h2>
+<div class="tablewrap"><table>
+<thead><tr><th></th><th>Audio</th><th>Transcript and debrief</th><th>Vault keys</th><th>Your private keys</th></tr></thead>
+<tbody>
+<tr><td>The device</td><td>Yes</td><td>Yes</td><td>Yes, in the Keychain</td><td>Yes</td></tr>
+<tr><td>Apple's models on the device</td><td>Yes, in memory</td><td>Yes, in memory</td><td>No</td><td>No</td></tr>
+<tr><td>The vault server</td><td>Encrypted only</td><td>Encrypted only</td><td>No. A hash of the write key</td><td>No</td></tr>
+<tr><td>A lane's server</td><td>Encrypted only</td><td>Encrypted only</td><td>No</td><td>No</td></tr>
+<tr><td>The recipient of a lane</td><td>Yes, what you sent</td><td>Yes, what you sent</td><td>No</td><td>No</td></tr>
+<tr><td>iCloud Keychain (when built)</td><td>No</td><td>No</td><td>Encrypted between your devices</td><td>Encrypted between your devices</td></tr>
+<tr><td>pki.sgit.ai (when built)</td><td>No</td><td>No</td><td>No</td><td>No. Public keys only</td></tr>
+<tr><td>Us</td><td>No</td><td>No</td><td>No</td><td>No</td></tr>
+</tbody></table></div>
+<p>The last row is the point of the design. There is no server of ours in the drawing.</p>
+<h2 id="how-it-is-built-and-checked">How it is built and checked</h2>
+<ul>
+<li><strong>Swift cannot be compiled where the code is written</strong>, so CI is the compiler: every push is built on a Mac, the vault engine's tests and the app's tests run on an iPhone and an iPad simulator, and a green push to <code>dev</code> is uploaded to TestFlight. See <a href="../develop/index.html">Build</a>.</li>
+<li><strong>The vault engine is tested against sgit itself.</strong> Swift writes a vault, and sgit's Python clones it and verifies its signatures; the key derivations are checked against published vectors.</li>
+<li><strong>No invented answers.</strong> Tests of the pipeline replay real recorded results; none pretends to be a model or a server.</li>
+<li><strong>The app may not claim what it does not do.</strong> A test fails if the About screen calls something built before the reality file does.</li>
+</ul>
+<h2 id="what-to-read-next">What to read next</h2>
+<ul>
+<li><a href="../built/index.html">What is built</a>: the facts, with how each is tested.</li>
+<li><a href="../design/index.html">Design</a>: the screens and the three builds.</li>
+<li><a href="../articles/index.html">Articles</a>: the positions behind the dashed boxes.</li>
+<li><a href="../plan/index.html">Plan</a>: the original plan, including the passkey account that the master vault in section 5 refers to.</li>
+</ul>
+</main>
+
+<footer class="site"><div class="cols">
+  <div>
+    <div class="brandline">Voice<em>Debrief</em> <span>iOS</span></div>
+    <p>The VoiceDebrief transcript and debrief as a native iPhone and iPad app, on Apple's own models, with the results in a vault you own. In development: there is nothing to install yet. Content CC BY 4.0; code Apache 2.0.</p>
+    <p class="partnote">This site is static and has no analytics.</p>
+    <p class="verline">site v0.1.7 · <a href="index.md">this page as markdown</a> · <a href="../llms.txt">llms.txt</a></p>
+  </div>
+  <div>
+    <h4>The app</h4>
+    <a href="../built/index.html">What is built</a>
+    <a href="../plan/index.html">The plan</a>
+    <a href="../develop/index.html">Build and test</a>
+    <a href="../versions/index.html">Release history</a>
+    <a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">GitHub</a>
+  </div>
+  <div>
+    <h4>VoiceDebrief</h4>
+    <a href="https://voicedebrief.ai">voicedebrief.ai</a>
+    <a href="https://meetscribe.chrome-extension.voicedebrief.ai">MeetScribe for Google Meet</a>
+  </div>
+  <div>
+    <h4>Built on</h4>
+    <a href="https://sgit.ai">sgit.ai</a>
+    <a href="https://pki.sgit.ai">pki.sgit.ai</a>
+    <a href="https://sgit.ai/security/index.html">The vault security model</a>
+  </div>
+</div></footer>
+</body>
+</html>

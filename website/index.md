@@ -2,7 +2,7 @@
 
 A voice note in, a transcript and a short debrief out, on the device. The app is being built to do VoiceDebrief's one job with **Apple's own models and nothing else**: no OpenRouter, no API key, no inference server. What it produces is kept in an **encrypted vault the user owns**, opened with a **passkey**, and signed with the user's own key.
 
-> **In development. There is no public build.** A test build records or opens a voice note, transcribes it and writes a debrief on the device, so that Apple's models can be judged on real notes. It saves nothing and has no account. Nobody has judged the results yet. [What is built](built/index.md) is the honest list.
+> **In development. There is no public build.** A test build records or opens a voice note, transcribes it and writes a debrief on the device, so that Apple's models can be judged on real notes. It keeps notes on the device and can save one to a vault. It has no account. Nobody has judged the results yet. [What is built](built/index.md) is the honest list.
 
 ## What it will do
 
@@ -32,10 +32,11 @@ A voice note in, a transcript and a short debrief out, on the device. The app is
 
 **Your vault is the one thing that leaves the device, and it leaves encrypted.** Files are encrypted on the device before upload, with keys derived from a vault key the server never sees. The server can see the vault's identifier, the size of each encrypted object and when it was written. It cannot see file names, contents or keys. [sgit's security model](https://sgit.ai/security/index.html) states this precisely.
 
-The transcript and debrief are in a test build and have not yet been judged on a real device. Creating a vault and saving into it are in the test build and have not run on a device. This page will say so when either changes.
+The transcript and debrief are in a test build and have not yet been judged on a real device. Creating a vault and saving a debrief into it have each been done once from the test build, on a Mac. This page will say so when either changes.
 
 ## The record
 
+- [How it works](architecture/index.md): the architecture in four drawings, with what is working, what is unconfirmed and what is only decided.
 - [What is built](built/index.md): the reality file. If it is not listed there, it does not exist.
 - [The plan](plan/index.md): the pipeline, the account, the vault, the identity, milestones and risks.
 - [Build and test](develop/index.md): how the repository works and how CI stands in for a Mac.

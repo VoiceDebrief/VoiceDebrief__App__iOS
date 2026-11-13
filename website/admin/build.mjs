@@ -20,6 +20,8 @@ const PAGES = [
     description: 'A native iPhone and iPad app that turns a voice note into a transcript and a debrief with Apple\'s on-device models, kept in an encrypted vault the user owns. In development: what is built and what is not.' },
   { path: 'built',    nav: 'Built',    title: 'What is built in VoiceDebrief for iOS',
     description: 'The reality file: what exists in the repository today, how it is tested, and what is not built yet. If it is not listed here, it does not exist.' },
+  { path: 'architecture', nav: 'How it works', title: 'How VoiceDebrief for iOS works: the architecture in four drawings',
+    description: 'The parts of the app, the life of a recording, a vault from the inside, lanes, the four keys and two devices, with what is seen working, what is unconfirmed and what is decided but not built.' },
   { path: 'design',   nav: 'Design',   title: 'The VoiceDebrief iOS design: a recorder that does not lose things',
     description: 'What the app should look like and how it should behave: the three jobs, the decisions, the screens and three builds, agreed between a product agent and a design agent.' },
   { path: 'plan',     nav: 'Plan',     title: 'The VoiceDebrief iOS plan',
