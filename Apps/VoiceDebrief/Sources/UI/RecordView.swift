@@ -16,6 +16,8 @@ struct RecordView: View {
         return false
     }
 
+    private static let bottomId = "record-bottom"
+
     private var isWorking: Bool {
         if case .working = session.phase { return true }
         return false
@@ -23,14 +25,22 @@ struct RecordView: View {
 
     var body: some View {
         NavigationStack(path: $path) {
-            ScrollView {
-                VStack(spacing: 24) {
-                    content
+            ScrollViewReader { proxy in
+                ScrollView {
+                    VStack(spacing: 24) {
+                        content
+                        // The live words grow downwards: this is what the screen follows while recording.
+                        Color.clear.frame(height: 1).id(Self.bottomId)
+                    }
+                    .frame(maxWidth: 560)
+                    .padding(.horizontal, 20)
+                    .padding(.top, 24)
+                    .frame(maxWidth: .infinity)
                 }
-                .frame(maxWidth: 560)
-                .padding(.horizontal, 20)
-                .padding(.top, 24)
-                .frame(maxWidth: .infinity)
+                .onChange(of: session.liveSettled.count + session.liveVolatile.count) { _, _ in
+                    guard isRecording else { return }
+                    withAnimation(.easeOut(duration: 0.2)) { proxy.scrollTo(Self.bottomId, anchor: .bottom) }
+                }
             }
             .safeAreaInset(edge: .bottom) { controls }
             .navigationTitle("VoiceDebrief")
