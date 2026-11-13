@@ -58,7 +58,6 @@ struct NoteDetailView: View {
 
                 if note.run.transcript != nil, !note.processing || session.workingText(for: noteId) == nil {
                     SaveToVaultSection(note: note, audioURL: session.store.audioURL(for: noteId), book: book)
-                    SendSection(noteId: noteId, session: session)
                 }
 
                 Section {
@@ -74,6 +73,7 @@ struct NoteDetailView: View {
                     Text("Running it again uses the language chosen now (\(localeId.isEmpty ? "none" : LocaleNames.name(localeId))) and replaces this note's transcript and debrief.")
                 }
             }
+            .safeAreaInset(edge: .bottom) { SendBar(noteId: noteId, session: session) }
             .navigationTitle("Note")
             .navigationBarTitleDisplayMode(.inline)
             .confirmationDialog("Delete this note from this device?", isPresented: $confirmingDelete, titleVisibility: .visible) {

@@ -7,7 +7,7 @@ import SGitVault
 /// nothing of yours had to change. It writes only to a vault kept on this device, straight into its folder,
 /// as `save(run:audioURL:to:)` does, but it cannot reach your bookkeeping: after a write here `localHead` is
 /// stale, so the status line does not say "ahead" until the next push or save (the push itself reads the
-/// folder and sends the commit). When `VaultBook` gains a way to commit arbitrary files (issue 025), the body
+/// folder and sends the commit). When `VaultBook` gains a way to commit arbitrary files (issue 028), the body
 /// of `write` becomes one call to it.
 @MainActor
 enum IdentityVaultAccess {

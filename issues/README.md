@@ -25,4 +25,7 @@ One file per piece of work: `open/NNN-slug.md`, moved to `done/` when it is done
 | 022 | Finishing saves to the vault; discarding is awkward | 011, 014 |
 | 023 | Files over 4 MB in a vault | |
 | 024 | A clean text and clarifying questions | |
-| 025 | The device key signs every commit; the vault says whose device | the session that owns `VaultBook` |
+| 025 | The version in sight, release notes, a briefing on opening | |
+| 026 | Act on a note at once: send without waiting | |
+| 027 | Show where work happens; remarks; talking to the app | 013, 020 |
+| 028 | The device key signs every commit; the vault says whose device | the session that owns `VaultBook` |

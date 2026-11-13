@@ -1,4 +1,4 @@
-# 025: The device key signs every commit, and the vault says whose device it is
+# 028: The device key signs every commit, and the vault says whose device it is
 
 **Status:** open. For the `work/local-vaults` session, which owns `VaultBook` and `VaultsView`. From the
 `work/identity` session (issue 018), which was asked not to edit those files.

@@ -25,6 +25,6 @@ Left, and whose it is:
   `ai.voicedebrief.app`. Then: the entitlement `applinks:ios.app.voicedebrief.ai` (and `webcredentials:` for the
   in-app sheet) in `VoiceDebrief.entitlements`, and `PKIDelegation.returnsToTheApp` set to true. Until then the
   answer is pasted in.
-- **The session that owns `VaultBook`:** issue 025, so that debriefs are signed by the device key.
+- **The session that owns `VaultBook`:** issue 028, so that debriefs are signed by the device key.
 - Not started: walking the register's links from the pinned root for an issuer that is not the root; a
   "strong" delegation (listed in the issuer's record today); withdrawing a vouching statement.
