@@ -1,6 +1,11 @@
 # 024: A clean text instead of a summary, with questions where the note is unclear
 
-**Status:** open. The owner's idea, 13 November 2026. Laboratory work first.
+**Status:** open. The owner's idea, 13 November 2026. A first version is in v0.1.8, untried on a device.
+
+Checked against Apple's documentation and developer forum, 13 November 2026: item 1 below is not possible
+today. `AnalysisContext.contextualStrings` exists, but only `DictationTranscriber` uses it; `SpeechTranscriber`,
+which the app uses, ignores it. So the words go to the language model instead (items 2 and 3, built). Not built:
+playing a question's audio, the glossary in a vault, doing this while recording.
 
 The transcript hears "vault" as "vote" and "volt"; the summary then repeats the mistake and loses detail.
 Proposed instead of, or beside, the debrief:
