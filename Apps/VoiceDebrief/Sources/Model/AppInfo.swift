@@ -10,6 +10,9 @@ enum AppInfo {
         return "\(version) (\(build))"
     }
 
+    /// The release history on the project's site.
+    static let releaseNotes = URL(string: "https://ios.app.voicedebrief.ai/versions/index.html")!
+
     /// The site whose passkey opens the account: the register of people at pki.sgit.ai.
     static let passkeySite = VaultDoor.pkiSite
 
