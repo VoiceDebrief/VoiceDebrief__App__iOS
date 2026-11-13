@@ -1,11 +1,13 @@
 # 001: Signing and TestFlight
 
-**Status:** open, blocked on the owner. **Milestone:** 1.
+**Status:** open. **Milestone:** 1.
 
-CI builds everything unsigned. To upload to TestFlight it needs, from the owner:
+Done: the App Store Connect record and internal group exist; the secrets `ASC_KEY_ID`, `ASC_ISSUER_ID` and
+`ASC_KEY_P8_BASE64` are set; `scripts/release/testflight.sh` and the TestFlight step of `ios.yml` are written.
 
-- the App Store Connect record and the bundle id `ai.voicedebrief.app` (the API cannot create them);
-- repository secrets `ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_KEY_P8_BASE64`, `APPLE_TEAM_ID`, in a `testflight` environment.
+Still to do:
 
-Then: carry over the release scripts from `PrompTugal__App__iOS` (`scripts/release/`: version, signing setup,
-archive unsigned then codesign, export, upload) and add a publish step to `ios.yml` for green pushes to `dev`.
+- the owner sets the repository variable `APPLE_TEAM_ID` (until then the step skips itself);
+- a run that uploads, and a build that arrives in TestFlight: until then the step is unverified;
+- later, when the app gains capabilities (Associated Domains, App Groups) and extensions: enable them on
+  the app id and sign each extension with its own entitlements.

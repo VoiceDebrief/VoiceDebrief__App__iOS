@@ -8,8 +8,10 @@ name: ios
 #   3. test           the app's unit tests on one iPhone simulator, then one iPad simulator
 #   4. release build  Release for a generic iOS device, unsigned: what an archive would compile
 #
-# No signing and no TestFlight upload yet (issues/open/001): this workflow proves the code builds
-# and the tests pass. Failures are copied into the job summary by run-and-summarize.sh.
+#   5. TestFlight     on a green push to dev: archive, sign and upload (scripts/release/testflight.sh).
+#                     Skipped, with a line in the summary, while a signing secret is missing.
+#
+# Failures are copied into the job summary by run-and-summarize.sh.
 on:
   push:
     branches: [dev]
@@ -17,6 +19,7 @@ on:
       - 'Apps/**'
       - 'Packages/**'
       - 'version'
+      - 'scripts/release/**'
       - '.github/workflows/ios.yml'
       - '.github/scripts/**'
   pull_request:
@@ -107,6 +110,27 @@ jobs:
               CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO && status=0 || status=$?
           xcrun simctl shutdown "$u" 2>/dev/null || true
           exit $status
+
+      # TestFlight: only for a green push to dev (or a manual run), and only when the signing
+      # secrets exist. Everything above passed, or this step does not run.
+      - name: TestFlight (archive, sign, upload)
+        if: github.ref == 'refs/heads/dev' && github.event_name != 'pull_request'
+        timeout-minutes: 30
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_P8_BASE64: ${{ secrets.ASC_KEY_P8_BASE64 }}
+          APPLE_TEAM_ID: ${{ vars.APPLE_TEAM_ID || secrets.APPLE_TEAM_ID }}
+          EXPECTED_BUNDLE: ai.voicedebrief.app
+          ENTITLEMENTS: Apps/VoiceDebrief/VoiceDebrief.entitlements
+        run: |
+          missing=()
+          for s in ASC_KEY_ID ASC_ISSUER_ID ASC_KEY_P8_BASE64 APPLE_TEAM_ID; do [ -n "${!s:-}" ] || missing+=("$s"); done
+          if [ ${#missing[@]} -gt 0 ]; then
+            echo "### TestFlight skipped: not set: ${missing[*]}" | tee -a "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          scripts/release/testflight.sh
 
       - name: Keep the logs
         if: always()

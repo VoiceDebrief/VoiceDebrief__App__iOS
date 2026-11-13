@@ -33,7 +33,7 @@ cd Packages/SGitVault && swift test          # the vault engine, on the Mac itse
 | `ios-vault.yml` | A change to the vault write path, every Monday, or by hand | Swift writes vaults on a Mac; `sgit-ai` on Linux clones them, verifies every signature and compares every file |
 | `site.yml` | Every push and pull request | The gate, then (on `dev`) the release tag and the site |
 
-Everything is built unsigned. Signing and TestFlight are not set up yet; that needs the App Store Connect record and signing secrets.
+Builds and tests are unsigned. The last step of `ios.yml` uploads to TestFlight on a green push to `dev`: `scripts/release/testflight.sh` archives unsigned, signs the app with its entitlements, and exports with automatic signing through the App Store Connect API key. It needs the secrets `ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_KEY_P8_BASE64` and the variable `APPLE_TEAM_ID`, and skips itself while any is missing.
 
 **Reading a failure without a Mac.** Each build and test step runs through `.github/scripts/run-and-summarize.sh`, which copies compiler errors and failed tests into the job summary and repeats them as the last lines of the step, so they can be read through the Actions API. Full logs are kept as the `ios-logs` artifact.
 
