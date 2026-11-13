@@ -197,27 +197,9 @@ extension SGitVault {
         // 3. The staged objects the server does not hold yet.
         var sent = 0
         var bytes = 0
-        var small: [VaultBatchOperation] = []
-        var smallBytes = 0
-        var smallIds: [String] = []
-        func flushSmall() async throws {
-            guard !small.isEmpty else { return }
-            let t = ContinuousClock.now
-            let result = try await writer.batch(vaultId: vaultId, writeKey: writeKeyHex,
-                                                accessToken: accessToken, operations: small)
-            await emit(.request, "batch: \(small.count) objects", bytes: smallBytes, ms: t.elapsedMs, status: 200,
-                       detail: "POST write, staged objects")
-            guard result == .ok else { throw VaultError.pushConflict(branch: branch) }
-            for id in smallIds {
-                uploaded?(id)
-                progress?(id, 0)
-            }
-            sent += small.count
-            bytes += smallBytes
-            small = []
-            smallBytes = 0
-            smallIds = []
-        }
+        // Small objects are gathered into batches; a large one travels on its own, in parts.
+        var batches: [[VaultStagedFile]] = []
+        var batchBytes = 0
         var seen = alreadyUploaded
         for file in staged where !seen.contains(file.blobId) {
             try Task.checkCancellation()
@@ -235,15 +217,35 @@ extension SGitVault {
                 uploaded?(file.blobId)
                 sent += 1
                 bytes += file.ciphertextBytes
+            } else if let last = batches.last, last.count < 50, batchBytes + file.ciphertextBytes <= 3_000_000 {
+                batches[batches.count - 1].append(file)
+                batchBytes += file.ciphertextBytes
             } else {
-                let data = try Data(contentsOf: file.ciphertext)
-                if !small.isEmpty, small.count >= 50 || smallBytes + data.count > 3_000_000 { try await flushSmall() }
-                small.append(VaultBatchOperation(op: .write, fileId: fileId, data: data))
-                smallBytes += data.count
-                smallIds.append(file.blobId)
+                batches.append([file])
+                batchBytes = file.ciphertextBytes
             }
         }
-        try await flushSmall()
+        for batch in batches {
+            try Task.checkCancellation()
+            var operations: [VaultBatchOperation] = []
+            for file in batch {
+                operations.append(VaultBatchOperation(op: .write, fileId: "bare/data/\(file.blobId)",
+                                                      data: try Data(contentsOf: file.ciphertext)))
+            }
+            let size = operations.reduce(0) { $0 + $1.data.count }
+            let t = ContinuousClock.now
+            let result = try await writer.batch(vaultId: vaultId, writeKey: writeKeyHex,
+                                                accessToken: accessToken, operations: operations)
+            await emit(.request, "batch: \(operations.count) objects", bytes: size, ms: t.elapsedMs, status: 200,
+                       detail: "POST write, staged objects")
+            guard result == .ok else { throw VaultError.pushConflict(branch: branch) }
+            for file in batch {
+                uploaded?(file.blobId)
+                progress?(file.blobId, file.ciphertextBytes)
+            }
+            sent += batch.count
+            bytes += size
+        }
 
         // 4. Trees and the commit (trees already walked are on the server), and the signer's public key.
         var operations: [VaultBatchOperation] = []
