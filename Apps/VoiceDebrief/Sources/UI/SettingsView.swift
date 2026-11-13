@@ -84,6 +84,7 @@ struct SettingsView: View {
                     NavigationLink("What this build does") { StatusView() }
                 }
             }
+            .readableWidth()
             .navigationTitle("Settings")
         }
     }

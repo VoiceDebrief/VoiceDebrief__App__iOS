@@ -24,6 +24,7 @@ struct LibraryView: View {
                     }
                 }
             }
+            .readableWidth()
             .overlay {
                 if session.store.notes.isEmpty {
                     ContentUnavailableView("No notes yet", systemImage: "tray",

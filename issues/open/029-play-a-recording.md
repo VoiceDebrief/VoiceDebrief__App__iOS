@@ -1,5 +1,7 @@
 # 029: Play a recording, and show how long an interrupted one is
 
+**Built (untried on a device): a player on every note with audio, length and size shown, a transcript line plays from its moment.**
+
 **Status:** open. From review round 1 (13 November 2026, `website/reviews/round-1/index.md`). **Owner:** the main session (`NoteDetailView`, `NoteParts`).
 
 Finding 1. Screens `note.interrupted`, `note.finished`. Found by the user who lost a recording elsewhere and by

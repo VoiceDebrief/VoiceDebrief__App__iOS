@@ -177,7 +177,7 @@ struct RecordView: View {
                 VStack(spacing: 0) {
                     ForEach(notes) { note in
                         NavigationLink(value: note.id) {
-                            NoteRow(note: note, working: session.workingText(for: note.id))
+                            NoteRow(note: note, working: session.workingText(for: note.id), showsDay: true)
                                 .padding(.vertical, 10)
                                 .padding(.horizontal, 16)
                                 .contentShape(Rectangle())
@@ -276,7 +276,7 @@ struct LanguageMenu: View {
                 }
             }
         } label: {
-            Label(localeId.isEmpty ? "Language" : localeId, systemImage: "globe")
+            Label(localeId.isEmpty ? "Language" : LocaleNames.language(localeId), systemImage: "globe")
                 .labelStyle(.titleAndIcon)
                 .font(.footnote.weight(.medium))
         }
@@ -295,6 +295,8 @@ struct LanguageMenu: View {
 struct NoteRow: View {
     let note: Note
     var working: String?
+    /// True where notes from different days sit together (Recent), so the day is said.
+    var showsDay = false
 
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
@@ -324,7 +326,14 @@ struct NoteRow: View {
     }
 
     private var subtitle: String {
-        var parts = [note.createdAt.formatted(date: .omitted, time: .shortened)]
+        let time = note.createdAt.formatted(date: .omitted, time: .shortened)
+        var day = ""
+        if showsDay, !Calendar.current.isDateInToday(note.createdAt) {
+            day = Calendar.current.isDateInYesterday(note.createdAt)
+                ? "Yesterday "
+                : note.createdAt.formatted(.dateTime.day().month(.abbreviated)) + " "
+        }
+        var parts = [day + time]
         if let seconds = note.run.audioSeconds { parts.append(Timecode.duration(seconds: seconds)) }
         if let working { parts.append(working) } else if note.stateLine != "On this device" { parts.append(note.stateLine) }
         return parts.joined(separator: " · ")

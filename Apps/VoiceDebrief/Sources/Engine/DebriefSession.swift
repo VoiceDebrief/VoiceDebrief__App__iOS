@@ -62,6 +62,9 @@ final class DebriefSession {
     var run: DebriefRun? { currentNoteId.flatMap { store.note($0)?.run } }
 
     /// What is being done to a note right now, in words, if it is the one being processed.
+    /// The note whose recording is being made right now, if any.
+    var recordingNote: String? { recordingNoteId }
+
     func workingText(for noteId: String) -> String? {
         guard noteId == currentNoteId, case .working(let text) = phase else { return nil }
         return text
@@ -239,7 +242,7 @@ final class DebriefSession {
                 Task { @MainActor [weak self] in self?.setWorking(status) }
             }
             current.transcript = transcript
-            let note = transcript.isEmpty ? "No speech was found." : "\(transcript.lines.count) lines"
+            let note = transcript.isEmpty ? "No speech was found." : (transcript.lines.count == 1 ? "1 line" : "\(transcript.lines.count) lines")
             finish(&current, outcome: transcript.isEmpty ? .degraded : .done, since: started, note: note)
         } catch {
             finish(&current, outcome: .failed, since: started, note: error.localizedDescription)

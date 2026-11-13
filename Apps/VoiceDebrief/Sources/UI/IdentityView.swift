@@ -30,6 +30,7 @@ struct IdentityView: View {
                 Section { Text(notice) }
             }
         }
+        .readableWidth()
         .navigationTitle("Identity")
         .task {
             book.refresh()
@@ -228,6 +229,7 @@ struct IdentityKeyCodeView: View {
                 Text("The JSON file that `sgit pki import` reads.")
             }
         }
+        .readableWidth()
         .navigationTitle("My public key")
     }
 }

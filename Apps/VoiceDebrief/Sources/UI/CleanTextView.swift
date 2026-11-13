@@ -199,6 +199,7 @@ struct GlossaryView: View {
                 }
             }
         }
+        .readableWidth()
         .navigationTitle("Your words")
         .navigationBarTitleDisplayMode(.inline)
     }

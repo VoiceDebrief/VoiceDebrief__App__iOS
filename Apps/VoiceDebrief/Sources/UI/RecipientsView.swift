@@ -63,6 +63,7 @@ struct RecipientsView: View {
                 Text("Ask them for their QR code or link. It holds where their inbox is, a token that can only write to it, and their public key. It cannot be used to read anything.")
             }
         }
+        .readableWidth()
         .navigationTitle("Recipients")
         .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $scanning) {
@@ -154,6 +155,7 @@ struct RecipientDetailView: View {
                 }
             }
         }
+        .readableWidth()
         .navigationTitle(recipient.name)
         .navigationBarTitleDisplayMode(.inline)
     }
@@ -217,19 +219,26 @@ struct SendBar: View {
             status
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
-                    ForEach(recipients.all) { recipient in
+                    // A person's own recipients first; the one built into this test build last, and quieter.
+                    ForEach(recipients.added) { recipient in
                         Button {
-                            if recipients.isBuiltIn(recipient) {
-                                confirmingBuiltIn = true
-                            } else {
-                                session.send(noteId: noteId, to: recipient)
-                            }
+                            session.send(noteId: noteId, to: recipient)
                         } label: {
                             Label("Send to \(recipient.name)", systemImage: "paperplane.fill")
                         }
                         .buttonStyle(.borderedProminent)
                         .buttonBorderShape(.capsule)
                         .disabled(sending || recipient.lane == nil || session.queuedSends[noteId] != nil)
+                    }
+                    if recipients.builtIn != nil {
+                        Button {
+                            confirmingBuiltIn = true
+                        } label: {
+                            Label("Send to the developer of this test build", systemImage: "paperplane")
+                        }
+                        .buttonStyle(.bordered)
+                        .buttonBorderShape(.capsule)
+                        .disabled(sending || session.queuedSends[noteId] != nil)
                     }
                     NavigationLink {
                         RecipientsView()
@@ -241,6 +250,10 @@ struct SendBar: View {
                 }
                 .padding(.horizontal, 16)
             }
+            Text("Sends the audio, transcript and debrief, encrypted on this device to the recipient's key. Sending to the developer asks first.")
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+                .padding(.horizontal, 16)
         }
         .padding(.vertical, 10)
         .frame(maxWidth: .infinity, alignment: .leading)

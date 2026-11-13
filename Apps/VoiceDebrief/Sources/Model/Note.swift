@@ -21,8 +21,9 @@ struct Note: Codable, Identifiable, Equatable, Sendable {
     var title: String {
         if let debrief = run.debrief, let sentence = Note.oneSentence(in: debrief) { return sentence }
         if let first = run.transcript?.lines.first?.text {
-            let words = first.split(separator: " ").prefix(12).joined(separator: " ")
-            if !words.isEmpty { return words }
+            let all = first.split(separator: " ")
+            let words = all.prefix(12).joined(separator: " ")
+            if !words.isEmpty { return all.count > 12 ? words + "…" : words }
         }
         return "Recording"
     }

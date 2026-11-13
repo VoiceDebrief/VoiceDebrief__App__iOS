@@ -41,6 +41,7 @@ struct StatusView: View {
                     Link("Source code", destination: AppInfo.source)
                 }
             }
+            .readableWidth()
             .navigationTitle("About")
         }
     }

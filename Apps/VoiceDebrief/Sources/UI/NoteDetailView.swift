@@ -8,6 +8,7 @@ struct NoteDetailView: View {
     let book: VaultBook
     @AppStorage("vd.localeId") private var localeId = ""
     @State private var confirmingDelete = false
+    @State private var player = NotePlayer()
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
@@ -15,11 +16,21 @@ struct NoteDetailView: View {
             List {
                 Section {
                     VStack(alignment: .leading, spacing: 4) {
-                        Text(note.createdAt.formatted(date: .abbreviated, time: .shortened))
-                            .font(.title3.weight(.semibold))
-                        Text(meta(note))
-                            .font(.footnote)
-                            .foregroundStyle(.secondary)
+                        // The gist first: the debrief's one sentence is the heading, the date beneath it.
+                        if let gist = oneSentence(note) {
+                            Text(gist)
+                                .font(.title3.weight(.semibold))
+                                .textSelection(.enabled)
+                            Text(note.createdAt.formatted(date: .abbreviated, time: .shortened) + " · " + meta(note))
+                                .font(.footnote)
+                                .foregroundStyle(.secondary)
+                        } else {
+                            Text(note.createdAt.formatted(date: .abbreviated, time: .shortened))
+                                .font(.title3.weight(.semibold))
+                            Text(meta(note))
+                                .font(.footnote)
+                                .foregroundStyle(.secondary)
+                        }
                     }
                     if let working = session.workingText(for: noteId) {
                         HStack(spacing: 12) {
@@ -50,11 +61,16 @@ struct NoteDetailView: View {
                     }
                 }
 
+                if let url = session.store.audioURL(for: noteId), session.workingText(for: noteId) == nil, !isRecording(noteId) {
+                    PlayerSection(url: url, player: player)
+                }
+
+                RunSections(run: note.run, oneSentenceShown: oneSentence(note) != nil,
+                            onLine: session.store.audioURL(for: noteId) == nil ? nil : { player.play(fromMs: $0) })
+
                 if let transcript = note.run.transcript, !transcript.isEmpty, session.workingText(for: noteId) == nil {
                     CleanTextSection(note: note, store: session.store)
                 }
-
-                RunSections(run: note.run)
 
                 if note.run.transcript != nil, !note.processing || session.workingText(for: noteId) == nil {
                     SaveToVaultSection(note: note, audioURL: session.store.audioURL(for: noteId), book: book)
@@ -73,7 +89,10 @@ struct NoteDetailView: View {
                     Text("Running it again uses the language chosen now (\(localeId.isEmpty ? "none" : LocaleNames.name(localeId))) and replaces this note's transcript and debrief.")
                 }
             }
-            .safeAreaInset(edge: .bottom) { SendBar(noteId: noteId, session: session) }
+            .readableWidth()
+            .safeAreaInset(edge: .bottom) {
+                if offersSend(note) { SendBar(noteId: noteId, session: session) }
+            }
             .navigationTitle("Note")
             .task(id: noteId) {
                 // Opening a finished note to read it is charged, once in a session. A note that opens
@@ -83,6 +102,7 @@ struct NoteDetailView: View {
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
+            .onDisappear { player.stop() }
             .confirmationDialog("Delete this note from this device?", isPresented: $confirmingDelete, titleVisibility: .visible) {
                 Button("Delete the note and its recording", role: .destructive) {
                     session.store.delete(noteId)
@@ -96,6 +116,19 @@ struct NoteDetailView: View {
         } else {
             ContentUnavailableView("This note is no longer on this device", systemImage: "tray")
         }
+    }
+
+    private func isRecording(_ id: String) -> Bool { session.recordingNote == id }
+
+    private func oneSentence(_ note: Note) -> String? {
+        note.run.debrief.flatMap { Note.oneSentence(in: $0) }
+    }
+
+    /// The send bar is for a note being made (sent the moment it is ready) or a finished one with
+    /// words in it; not for one that was interrupted or has no transcript (review round 1, issue 031).
+    private func offersSend(_ note: Note) -> Bool {
+        if session.workingText(for: noteId) != nil { return true }
+        return !note.processing && note.run.transcript?.isEmpty == false
     }
 
     private func meta(_ note: Note) -> String {

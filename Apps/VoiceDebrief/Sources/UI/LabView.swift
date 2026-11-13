@@ -27,6 +27,7 @@ struct LabView: View {
                 LabeledContent("Context", value: OnDeviceModel.contextSize.map { "\($0) tokens" } ?? "Not known")
             }
         }
+        .readableWidth()
         .navigationTitle("Lab")
     }
 }
@@ -140,6 +141,7 @@ struct LabOnePromptView: View {
                 }
             }
         }
+        .readableWidth()
         .navigationTitle("One prompt")
         .navigationBarTitleDisplayMode(.inline)
     }
@@ -201,6 +203,7 @@ struct LabRunView: View {
                 Text("The JSON holds everything on this screen, including any words of your notes that a tool returned.")
             }
         }
+        .readableWidth()
         .navigationTitle("Run")
         .navigationBarTitleDisplayMode(.inline)
     }

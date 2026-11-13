@@ -59,6 +59,7 @@ struct CreditView: View {
                 Text("The ledger is kept on this device only, and nothing checks it. Deleting the app starts again at \(Credit.money(Credit.startingCredit)).")
             }
         }
+        .readableWidth()
         .navigationTitle("Credit")
         .navigationBarTitleDisplayMode(.inline)
         .task {
@@ -286,6 +287,7 @@ struct TakingsView: View {
                 Text("Takings only, and only this device's. What each feature costs to provide, and the same figures across everybody who uses the app, are not built. Top-ups in this build are simulated, so none of this is money.")
             }
         }
+        .readableWidth()
         .navigationTitle("Takings by feature")
         .navigationBarTitleDisplayMode(.inline)
     }

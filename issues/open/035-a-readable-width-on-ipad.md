@@ -1,5 +1,7 @@
 # 035: A readable width on iPad
 
+**Built for this session's screens and the finished sessions' (library, note, settings, diagnostics, about, recipients, words, lab, credit, identity): a readableWidth() modifier, 720 points, centred. Not yet: VaultsView (the vaults session), file paths breaking at a slash.**
+
 **Status:** open. From review round 1 (13 November 2026, `website/reviews/round-1/index.md`). **Owner:** the main session for the shell and the note, library and settings screens; the vaults session for `VaultsView`.
 
 Finding 7, with 14. Every list on iPad: `library`, the note screens, `vaults`, `vault.detail`, `settings`,

@@ -1,5 +1,7 @@
 # 034: The gist first on a note
 
+**Built (untried on a device): the one sentence is the heading with the date beneath; it is not repeated at the end; the clean text section is below the transcript.**
+
 **Status:** open. From review round 1 (13 November 2026, `website/reviews/round-1/index.md`). **Owner:** the main session (`NoteDetailView`, `CleanTextView`, `NoteParts`).
 
 Finding 6. Screen `note.finished`. Found by the driver and by the agent.

@@ -73,7 +73,7 @@ enum SampleData {
         let spoken = lines([(0, "Invented sample: remind me to water the tomatoes on plot nine before Saturday.")], last: 6)
         run.transcript = Transcript(localeId: localeId, lines: spoken)
         run.steps = [
-            StepRecord(name: "Transcript", outcome: .done, seconds: 0.6, note: "1 lines"),
+            StepRecord(name: "Transcript", outcome: .done, seconds: 0.6, note: "1 line"),
             StepRecord(name: "Debrief", outcome: .degraded, seconds: 0,
                        note: "Too short to summarise (\(DebriefPrompt.wordCount(spoken)) words): the transcript is the whole note."),
         ]

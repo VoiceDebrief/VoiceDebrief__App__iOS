@@ -1,5 +1,7 @@
 # 031: Say what Send does, on the note
 
+**Built (untried on a device): one line in the bar saying what goes and that the developer asks first; the built-in recipient named the developer of this test build, quieter and last; your own recipients first; the bar only on a note being made or a finished one with words.**
+
 **Status:** open. From review round 1 (13 November 2026, `website/reviews/round-1/index.md`). **Owner:** the main session (`SendBar` in `RecipientsView.swift`).
 
 Finding 3. Every note screen. Found by the privacy user (it decided them against the app), the driver and the

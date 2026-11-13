@@ -65,6 +65,7 @@ struct DiagnosticsView: View {
                     Text("After each run a button can send that note, encrypted, to the developer's lane. Nothing is sent without pressing it. This build has a lane built in; a link pasted here is used instead.")
                 }
             }
+            .readableWidth()
             .navigationTitle("Diagnostics")
             .task(id: session.run) { report = await Diagnostics.gather(lastRun: session.run) }
         }
