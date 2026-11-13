@@ -36,11 +36,11 @@
 <h1 id="build-test-and-release">Build, test and release</h1>
 <p>How this repository works. The short version: <strong>CI is the compiler.</strong> Most of the work here is done by agents in Linux containers that cannot build Swift, so every change is compiled and tested on a Mac by GitHub Actions, and a failure is read from the job summary.</p>
 <h2 id="layout">Layout</h2>
-<pre><code>Apps/VoiceDebrief/            the app: a hand-written Xcode project, sources, resources, tests
+<pre><code>Apps/VoiceDebrief/            the app: a hand-written Xcode project, sources, resources, tests, UI tests
 Packages/SGitVault/           the vault engine (copied; see its SOURCE.md)
 Config/                       Local.xcconfig.example, for building on your own device
-.github/workflows/            ios.yml, ios-vault.yml, site.yml
-.github/scripts/              select Xcode, pick a simulator, copy errors into the job summary
+.github/workflows/            ios.yml, ios-vault.yml, screens.yml, site.yml
+.github/scripts/              select Xcode, pick a simulator, copy errors into the job summary, export screenshots
 website/                      this site: markdown sources, the builder and the gate
 issues/                       open and done work, one file each
 version                       the version, one line</code></pre>
@@ -54,10 +54,37 @@ version                       the version, one line</code></pre>
 <tbody>
 <tr><td><code>ios.yml</code></td><td>A push to <code>dev</code> or to a <code>work/</code> branch, or a pull request, that touches <code>Apps/</code>, <code>Packages/</code> or the workflow. Only <code>dev</code> uploads to TestFlight</td><td>One Mac job: the vault engine's tests, a simulator build, a Release device build (unsigned), then the app's unit tests on an iPhone and an iPad simulator</td></tr>
 <tr><td><code>ios-vault.yml</code></td><td>A change to the vault write path, every Monday, or by hand</td><td>Swift writes vaults on a Mac; <code>sgit-ai</code> on Linux clones them, verifies every signature and compares every file</td></tr>
+<tr><td><code>screens.yml</code></td><td>By hand, or a push to <code>dev</code> or a <code>work/</code> branch that touches the screens</td><td>A screenshot of every screen on an iPhone and an iPad simulator, light and dark, from invented sample data: see below</td></tr>
 <tr><td><code>site.yml</code></td><td>Every push and pull request</td><td>The gate, then (on <code>dev</code>) the release tag and the site</td></tr>
 </tbody></table></div>
 <p>Builds and tests are unsigned. The last step of <code>ios.yml</code> uploads to TestFlight on a green push to <code>dev</code>: <code>scripts/release/testflight.sh</code> archives unsigned, signs the app with its entitlements, and exports with automatic signing through the App Store Connect API key. It needs the secrets <code>ASC_KEY_ID</code>, <code>ASC_ISSUER_ID</code>, <code>ASC_KEY_P8_BASE64</code> and the variable <code>APPLE_TEAM_ID</code>, and skips itself while any is missing.</p>
 <p><strong>Reading a failure without a Mac.</strong> Each build and test step runs through <code>.github/scripts/run-and-summarize.sh</code>, which copies compiler errors and failed tests into the job summary and repeats them as the last lines of the step, so they can be read through the Actions API. Full logs are kept as the <code>ios-logs</code> artifact.</p>
+<h2 id="seeing-the-screens">Seeing the screens</h2>
+<p>Nobody who writes this app from a Linux container can run it, so CI takes a picture of every screen. <code>screens.yml</code> runs by hand, and on a push to <code>dev</code> or a <code>work/</code> branch that touches the app's <code>UI/</code> or <code>App/</code> sources, the UI tests or the project file.</p>
+<p><strong>How a picture is made.</strong> <code>Apps/VoiceDebrief/UITests/ScreensTests.swift</code> has one test per picture. Each launches the app with two launch arguments, read by <code>Sources/App/LaunchOptions.swift</code> in debug builds only:</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Argument</th><th>What it does</th></tr></thead>
+<tbody>
+<tr><td><code>-VDSampleData full</code></td><td>The app is given invented notes in a temporary folder (one finished, one transcript only, one interrupted, and where the screen needs it one being worked on or recorded), a vault book in memory, and one invented vault that the real engine writes into the same temporary folder. Never the real library or Keychain</td></tr>
+<tr><td><code>-VDSampleData empty</code></td><td>The same, with nothing in them: the empty states</td></tr>
+<tr><td><code>-VDScreen &lt;id&gt;</code></td><td>Opens that screen directly. Ignored without <code>-VDSampleData</code></td></tr>
+</tbody></table></div>
+<p>In a sample launch the network is off: reads of the sample vault are answered from the folder and every other request fails. Every invented note says in its own words that it is invented. A simulator has no speech model, no Apple Intelligence, no microphone and no passkeys, so a recording in progress, a transcript and a debrief are sample values, not results; the tests also pass <code>-vd.localeId en-GB</code>, because a simulator's speech model reports no language. None of this is compiled into a release build.</p>
+<p><strong>What a run leaves.</strong> One artifact, <code>screens-&lt;commit sha&gt;</code>, kept 30 days:</p>
+<pre><code>iphone-light-&lt;id&gt;.png   iphone-dark-&lt;id&gt;.png     one iPhone, portrait
+ipad-light-&lt;id&gt;.png     ipad-dark-&lt;id&gt;.png       one iPad, landscape
+contact-&lt;device&gt;-&lt;appearance&gt;.png                every screen of one set in a single picture
+index.md                                         the table that is also the job summary</code></pre>
+<p>The longest side is 1600 px. The ids: <code>record</code>, <code>record-empty</code>, <code>record.recording</code>, <code>record.working</code>, <code>library</code>, <code>library-empty</code>, <code>note.finished</code>, <code>note.transcript</code>, <code>note.interrupted</code>, <code>note.working</code>, <code>vaults</code>, <code>vaults-empty</code>, <code>vault.detail</code>, <code>settings</code>, <code>diagnostics</code>, <code>traffic</code>, <code>about</code>.</p>
+<p><strong>Adding a screen.</strong> Add a case to <code>LaunchScreen</code>, show it in <code>LaunchedScreen</code> if it is reached by a tap, add a test method and its id to <code>ScreensTests.shots</code>, and add the id to <code>SHOTS</code> in <code>screens.yml</code>. The run fails if a picture is missing.</p>
+<p><strong>Looking at them from a Linux container.</strong> With the GitHub Actions tools an agent session has (the GitHub MCP server):</p>
+<ol>
+<li><code>actions_list</code> with <code>list_workflow_runs</code> and <code>screens.yml</code> gives the runs; take the newest successful one for the commit.</li>
+<li><code>actions_list</code> with <code>list_workflow_run_artifacts</code> and that run's id gives the artifact <code>screens-&lt;sha&gt;</code> and its id.</li>
+<li><code>actions_get</code> with <code>download_workflow_run_artifact</code> and the artifact's id gives a download address for a zip.</li>
+<li>Fetch the zip, unzip it into an empty folder, and open the PNGs with the tool that reads images. Start with the four <code>contact-*.png</code> files.</li>
+</ol>
+<p>These steps are written before the first run has finished: <span class="chip chip-unverified">unverified</span> until a session has followed them.</p>
 <h2 id="what-ci-cannot-do">What CI cannot do</h2>
 <p>No simulator has Apple Intelligence's models, a real microphone, or a passkey in iCloud Keychain. Speech, the debrief, the passkey and the share sheet will have to be tested on a device by a person, against a written checklist. None of that exists yet.</p>
 <h2 id="the-site">The site</h2>
