@@ -27,5 +27,11 @@ struct RootView: View {
             }
         }
         .tabViewStyle(.sidebarAdaptable)
+        .task {
+            // Finishing a note saves it to the chosen vault, unless that is switched off (issue 022).
+            session.onNoteReady = { [store, book] id in
+                Task { await AutoSave.run(noteId: id, store: store, book: book) }
+            }
+        }
     }
 }

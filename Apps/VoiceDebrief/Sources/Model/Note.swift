@@ -12,6 +12,10 @@ struct Note: Codable, Identifiable, Equatable, Sendable {
     var processing: Bool
     /// The note rewritten as clear sentences, if that has been asked for (an experiment, issue 024).
     var clean: CleanText? = nil
+    /// Each time this note was saved into a vault, newest last.
+    var saves: [NoteSave]? = nil
+    /// Why the last automatic save did not happen, in plain words.
+    var saveProblem: String? = nil
 
     /// What a list shows: the debrief's one sentence, else the first words spoken, else when it was made.
     var title: String {
@@ -42,6 +46,13 @@ struct Note: Codable, Identifiable, Equatable, Sendable {
         if run.debrief == nil { return "Transcript only" }
         return "On this device"
     }
+}
+
+/// One save of a note into a vault.
+struct NoteSave: Codable, Equatable, Sendable {
+    let vaultId: String
+    let vaultName: String
+    let at: Date
 }
 
 enum NoteGrouping {

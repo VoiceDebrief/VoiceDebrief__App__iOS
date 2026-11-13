@@ -34,6 +34,16 @@ struct NoteDetailView: View {
                         Label("Kept on this device", systemImage: "lock.fill")
                             .font(.footnote)
                             .foregroundStyle(.secondary)
+                        if let last = note.saves?.last {
+                            Label("Saved to the vault \(last.vaultName), \(last.at.formatted(date: .omitted, time: .shortened))", systemImage: "lock.doc.fill")
+                                .font(.footnote)
+                                .foregroundStyle(.green)
+                        }
+                        if let why = note.saveProblem {
+                            Label("Not saved to a vault: \(why)", systemImage: "exclamationmark.triangle.fill")
+                                .font(.footnote)
+                                .foregroundStyle(.orange)
+                        }
                     }
                     if let problem = session.store.problem {
                         Label(problem, systemImage: "exclamationmark.triangle.fill").foregroundStyle(.red).font(.callout)
@@ -48,7 +58,6 @@ struct NoteDetailView: View {
 
                 if note.run.transcript != nil, !note.processing || session.workingText(for: noteId) == nil {
                     SaveToVaultSection(note: note, audioURL: session.store.audioURL(for: noteId), book: book)
-                    SendSection(noteId: noteId, session: session)
                 }
 
                 Section {
@@ -64,6 +73,7 @@ struct NoteDetailView: View {
                     Text("Running it again uses the language chosen now (\(localeId.isEmpty ? "none" : LocaleNames.name(localeId))) and replaces this note's transcript and debrief.")
                 }
             }
+            .safeAreaInset(edge: .bottom) { SendBar(noteId: noteId, session: session) }
             .navigationTitle("Note")
             .navigationBarTitleDisplayMode(.inline)
             .confirmationDialog("Delete this note from this device?", isPresented: $confirmingDelete, titleVisibility: .visible) {
