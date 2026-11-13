@@ -6,7 +6,8 @@
 > the user owns, opened with a passkey as pki.sgit.ai does it, and signed with the user's own key
 > bundle (RSA-OAEP 4096 and ECDSA P-256). STATUS: a test build (TestFlight, not public) records
 > or opens a voice note, transcribes it and writes a debrief on the device; nobody has judged the
-> results yet. It saves nothing. The account, the vault sync and the identity are NOT built.
+> results yet. It keeps notes on the device and can save one to a vault. The account, sync between
+> devices and the identity are NOT built.
 
 Part of VoiceDebrief (https://voicedebrief.ai). Content CC BY 4.0; code Apache 2.0.
 Every page has a markdown twin: replace index.html with index.md.
@@ -15,6 +16,9 @@ Every page has a markdown twin: replace index.html with index.md.
 
 - https://ios.app.voicedebrief.ai/built/index.html : the reality file. What exists, how it is
   tested, what does not exist. If it is not listed there as built, it does not exist.
+- https://ios.app.voicedebrief.ai/architecture/index.html : how it works, in four drawings (SVG under
+  /assets/diagrams/): the parts, the life of a recording, the keys, two devices. Each element is marked
+  seen working, unconfirmed, or decided and not built. Explains; the reality file certifies.
 - https://ios.app.voicedebrief.ai/plan/index.html : the implementation plan. Mostly PROPOSED:
   the pipeline on Apple's models, the passkey account (door, master, debriefs vault), the vault
   layout, the identity, the repository and CI, milestones, risks, and what was decided since.
@@ -35,6 +39,9 @@ Every page has a markdown twin: replace index.html with index.md.
   files, vault, keys, model, run) inside the app, and drawing what passes through them.
 - https://ios.app.voicedebrief.ai/articles/the-vault-is-a-version-controlled-store/index.html : vaults are
   local first and need no token; a server is a remote; several vaults and lanes; vault apps; graphs.
+- https://ios.app.voicedebrief.ai/articles/where-each-key-lives/index.html : DECIDED by the owner: vault keys
+  sync through iCloud Keychain, on by default; a user key pair that travels; a device key that never does; the
+  user vouches for the device; optionally a delegation from pki.sgit.ai.
 - https://ios.app.voicedebrief.ai/articles/voice-everywhere/index.html : never lose a recording; voice from
   every screen.
 - https://ios.app.voicedebrief.ai/articles/synthetic-users/index.html : invented users walking screenshots.
