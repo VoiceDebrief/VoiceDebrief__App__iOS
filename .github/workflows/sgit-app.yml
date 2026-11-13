@@ -135,7 +135,7 @@ jobs:
           exit $status
 
       # TestFlight: only for a green push to dev, and only once the owner has made the App Store Connect
-      # record for ai.sgit.app and set the repository variable SGIT_APP_TESTFLIGHT to 1. The signing
+      # record for ai.sgit.vaults.app and set the repository variable SGIT_APP_TESTFLIGHT to 1. The signing
       # secrets are the ones ios.yml uses.
       - name: TestFlight (archive, sign, upload)
         if: github.ref == 'refs/heads/dev' && vars.SGIT_APP_TESTFLIGHT == '1'
@@ -145,7 +145,7 @@ jobs:
           ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
           ASC_KEY_P8_BASE64: ${{ secrets.ASC_KEY_P8_BASE64 }}
           APPLE_TEAM_ID: ${{ vars.APPLE_TEAM_ID || secrets.APPLE_TEAM_ID }}
-          EXPECTED_BUNDLE: ai.sgit.app
+          EXPECTED_BUNDLE: ai.sgit.vaults.app
           ENTITLEMENTS: Apps/SGit/SGit.entitlements
         run: |
           missing=()
@@ -159,7 +159,7 @@ jobs:
       - name: TestFlight is switched off
         if: github.ref == 'refs/heads/dev' && vars.SGIT_APP_TESTFLIGHT != '1'
         run: |
-          echo "### TestFlight skipped. The repository variable SGIT_APP_TESTFLIGHT is not 1 (it needs an App Store Connect record for ai.sgit.app first)" >> "$GITHUB_STEP_SUMMARY"
+          echo "### TestFlight skipped. The repository variable SGIT_APP_TESTFLIGHT is not 1 (it needs an App Store Connect record for ai.sgit.vaults.app first)" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Unit tests on the iPad simulator
         timeout-minutes: 20

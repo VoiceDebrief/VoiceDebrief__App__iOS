@@ -16,7 +16,7 @@ protocol SecretStore: Sendable {
 struct KeychainStore: SecretStore {
     let service: String
 
-    init(service: String = "ai.sgit.app.vaults") {
+    init(service: String = "ai.sgit.vaults.app.vaults") {
         self.service = service
     }
 
