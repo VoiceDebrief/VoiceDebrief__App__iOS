@@ -40,11 +40,15 @@ struct NoteDetailView: View {
                     }
                 }
 
+                if let transcript = note.run.transcript, !transcript.isEmpty, session.workingText(for: noteId) == nil {
+                    CleanTextSection(note: note, store: session.store)
+                }
+
                 RunSections(run: note.run)
 
                 if note.run.transcript != nil, !note.processing || session.workingText(for: noteId) == nil {
                     SaveToVaultSection(note: note, audioURL: session.store.audioURL(for: noteId), book: book)
-                    DeveloperLaneSection(noteId: noteId, session: session)
+                    SendSection(noteId: noteId, session: session)
                 }
 
                 Section {

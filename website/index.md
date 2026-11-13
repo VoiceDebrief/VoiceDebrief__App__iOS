@@ -37,6 +37,7 @@ The transcript and debrief are in a test build and have not yet been judged on a
 ## The record
 
 - [How it works](architecture/index.md): the architecture in four drawings, with what is working, what is unconfirmed and what is only decided.
+- [Receiving notes](conductors/index.md): how a person or an agent session becomes a recipient, by QR code.
 - [What is built](built/index.md): the reality file. If it is not listed there, it does not exist.
 - [The plan](plan/index.md): the pipeline, the account, the vault, the identity, milestones and risks.
 - [Build and test](develop/index.md): how the repository works and how CI stands in for a Mac.
