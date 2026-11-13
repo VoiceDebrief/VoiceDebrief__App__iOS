@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The sgit app for iPhone, iPad and Mac: design for milestone one</title>
+<meta name="description" content="sgit as a native app: put photos, videos and large files in an encrypted vault, browse them, share the vault and read its history. The jobs, the decisions, the screens, the share mechanisms and the limits.">
+<link rel="canonical" href="https://ios.app.voicedebrief.ai/sgit-app/design/index.html">
+<meta property="og:url" content="https://ios.app.voicedebrief.ai/sgit-app/design/index.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="VoiceDebrief for iOS">
+<meta property="og:title" content="The sgit app for iPhone, iPad and Mac: design for milestone one">
+<meta property="og:description" content="sgit as a native app: put photos, videos and large files in an encrypted vault, browse them, share the vault and read its history. The jobs, the decisions, the screens, the share mechanisms and the limits.">
+<link rel="alternate" type="text/markdown" href="index.md" title="This page as markdown">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/vd-tokens.css">
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+
+<nav class="site"><div class="row">
+  <a class="brand" href="../../index.html">Voice<em>Debrief</em> <span>iOS</span></a>
+  <span class="beta" title="In development: there is nothing to install yet">IN DEVELOPMENT</span>
+  <a class="parent" href="https://voicedebrief.ai" title="A VoiceDebrief product">&#8599; part of <b>voicedebrief.ai</b></a>
+  <a class="ver" href="../../versions/index.html" title="Release history">v0.1.8</a>
+  <a class="nl" href="../../built/index.html">Built</a>
+  <a class="nl" href="../../architecture/index.html">How it works</a>
+  <a class="nl" href="../../design/index.html">Design</a>
+  <a class="nl" href="../../plan/index.html">Plan</a>
+  <a class="nl" href="../../articles/index.html">Articles</a>
+  <a class="nl" href="../../develop/index.html">Build</a>
+  <a class="gh" href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">&#9733; GitHub</a>
+</div></nav>
+
+<main class="doc">
+<div class="crumb"><a href="../../index.html">VoiceDebrief iOS</a> / sgit-app / design</div>
+<h1 id="the-sgit-app-design-for-milestone-one">The sgit app: design for milestone one</h1>
+<p>sgit as a native app for iPhone, iPad and Mac: vaults, files and commits, with the same encrypted format as the <code>sgit</code> command and the web Vault UI. This page is intention. <a href="../built/index.html">What is built</a> says how much of it exists. It lives in this repository for now, beside VoiceDebrief for iOS, and shares its vault engine; it will move to a repository of its own.</p>
+<h2 id="why-it-starts-here">Why it starts here</h2>
+<p>The owner's words, 13 November 2026: the team needs to share photos, videos and large files, and &quot;at the moment there isn't an easy way to do it&quot;. So the first milestone is narrow: a person picks photos, videos or any files on a phone, they go into a vault, and a teammate can open them. Managing vaults and commits grows from there towards what the web Vault UI does.</p>
+<h2 id="the-jobs-in-order">The jobs, in order</h2>
+<ol>
+<li><strong>Put files in a vault without losing them.</strong> A selection is copied into the app before anything else happens. From then on a failed upload, a closed app or a lost connection can be taken up again.</li>
+<li><strong>Find and open what is in a vault.</strong> Folders, thumbnails, a full-size view, a video player.</li>
+<li><strong>Give the vault to somebody</strong>, knowing what that gives them.</li>
+<li><strong>See what happened.</strong> Every commit, which key signed it, what it changed.</li>
+</ol>
+<h2 id="what-was-read-first">What was read first</h2>
+<div class="tablewrap"><table>
+<thead><tr><th>Source</th><th>What it settled</th></tr></thead>
+<tbody>
+<tr><td><code>sgit-ai</code> 0.27.0 (the Python package)</td><td>The format and the protocol. A blob over 4 MB encrypted is uploaded in parts of 10 MB to URLs the server signs, flagged <code>large</code> in its tree entry, and read back from a signed URL in ranges of 8 MB</td></tr>
+<tr><td>The web Vault UI at vault.sgraph.ai (its JavaScript, read as published)</td><td>The features and the words. It reads a whole file into memory, encrypts it whole and sends it in one request, with no upload in parts, so a file of more than about 4 MB probably does not go through the hosted server from the browser. It moves a branch without compare-and-swap</td></tr>
+<tr><td>The server's published API description</td><td>Reading needs no access token, including the signed URL for a large object. Writing needs the access token and the vault's write key</td></tr>
+<tr><td>The live server, with <code>sgit</code> itself</td><td>The exchange for a large object works on <code>dev.send.sgraph.ai</code> as the package describes it (a throwaway vault, destroyed afterwards)</td></tr>
+</tbody></table></div>
+<p>The two source repositories could not be attached to this session, so nothing here comes from unpublished code.</p>
+<h2 id="decisions">Decisions</h2>
+<div class="tablewrap"><table>
+<thead><tr><th></th><th>Decision</th></tr></thead>
+<tbody>
+<tr><td>One selection, one commit</td><td>Everything picked together becomes one signed commit on the branch <code>current</code>, with the message the web Vault UI writes: <code>Add IMG_0001.HEIC</code>, or <code>Add 3 files: a, b, c</code></td></tr>
+<tr><td>Staging</td><td>A picked file is copied into the app, then encrypted to disk under its object id, then uploaded, then named in the commit. Each step is recorded, so a retry sends only what the server lacks</td></tr>
+<tr><td>A refused push</td><td>If somebody else committed first the server refuses the move (compare-and-swap). Adding files needs no merge: the same staged files are committed again on the new head, automatically</td></tr>
+<tr><td>Large files</td><td>Encrypted and decrypted from disk to disk, a megabyte at a time. Uploaded in parts, three at a time; downloaded in ranges, three at a time. See &quot;Limits&quot;</td></tr>
+<tr><td>Where a file goes</td><td>Into the folder that is open, under its own name. A name already taken gets a number</td></tr>
+<tr><td>Reading</td><td>A file is fetched and decrypted when it is opened. The decrypted copy is in the app's cache folder only, which the system may empty, and which Settings can empty</td></tr>
+<tr><td>Server</td><td>One server (<code>dev.send.sgraph.ai</code>) and one access token, as the engine has them today. Local-first vaults with named remotes (issue 011) are adopted when they land</td></tr>
+<tr><td>Keys</td><td>Vault keys, the access token and the device's commit-signing key are in this app's Keychain, on this device only. This app does not share a Keychain with VoiceDebrief</td></tr>
+<tr><td>Honesty</td><td>No screen says a file is in the vault before the commit that names it has been pushed and read back</td></tr>
+</tbody></table></div>
+<h2 id="the-words">The words</h2>
+<p>The owner's and sgit's: <strong>vault</strong>, <strong>vault key</strong> (reads and writes), <strong>read key</strong> (reads only), <strong>access token</strong> (the web UI calls it an access key), <strong>commit</strong>, <strong>history</strong>, <strong>branch</strong>. The app says <strong>Add</strong> for putting files in and <strong>Refresh</strong> for fetching the latest; the web UI's Push and Pull arrive with local-first vaults, when there is something local to push.</p>
+<h2 id="the-screens">The screens</h2>
+<p><strong>Vaults.</strong> The vaults this device knows. Add one by pasting its key or scanning a QR code; create one. Each row says whether the key can write.</p>
+<p><strong>A vault.</strong> The folder that is open: folders first, then files, as a grid of thumbnails or a list. Add (from Photos, from Files), New folder by naming one when adding, Refresh, Share, History. Uploads in progress sit at the top with a bar for each file and one for the whole selection, and a failed one says why and offers Try again and Discard.</p>
+<p><strong>A file.</strong> An image at full size with zoom; a video in the system player; anything else in Quick Look. Save to Photos and Share. Delete and rename are a commit each.</p>
+<p><strong>Share.</strong> The vault key as text and as a QR code, under a plain statement: whoever holds it can read everything, add, change and delete, and it cannot be taken back. Below it the read key, for somebody who should only look. See &quot;Giving somebody the vault&quot;.</p>
+<p><strong>History.</strong> The commits, newest first: the message, the time, the short id, the fingerprint of the key that signed it and whether the signature verified, and whether that key is this device's. A commit opens to the files it added, changed and removed.</p>
+<p><strong>Settings.</strong> The server and the access token; this device's signing key (its fingerprint); the cache and a button to empty it; every step the vault engine has taken; the version.</p>
+<h2 id="giving-somebody-the-vault">Giving somebody the vault</h2>
+<p>What exists today, and what each gives:</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Mechanism</th><th>Where it exists</th><th>What the other person gets</th></tr></thead>
+<tbody>
+<tr><td>The vault key, <code>passphrase:vault id</code></td><td>sgit, the web UI, this app</td><td>Everything, for ever: read, write, delete. It cannot be revoked; the only remedy is a new vault</td></tr>
+<tr><td>The same key as a link, <code>vault.sgraph.ai/#key</code></td><td>The web UI</td><td>The same, opened in a browser with nothing to install</td></tr>
+<tr><td>A read key, <code>sgit_private_read_…</code></td><td>sgit and this app's engine. The web UI shows it but cannot yet open with it</td><td>Read only, live, for ever. Cannot be revoked</td></tr>
+<tr><td>A read-only token, <code>ro-word-word-1234</code></td><td>The web UI's token manager, marked there as a test harness</td><td>Read only, live, with an expiry and a way to revoke it. The token unlocks a small encrypted record on the server that holds the read key</td></tr>
+<tr><td><code>sgit publish</code></td><td>sgit</td><td>A static, read-only copy for a website</td></tr>
+</tbody></table></div>
+<p>There is no snapshot share: nothing gives &quot;these files as they are now and nothing later&quot;.</p>
+<p><strong>Proposal.</strong> Milestone one ships the first three, because they need nothing new on any side: the key as text and QR, the web link, and the read key. For a team sharing photos that is enough, and the warning is on the screen. The right next step is the read-only token, because it is the only one that can be taken back, but it should be built once: the web UI's version is a test harness, and the app, sgit and the web UI should agree on one format first. That is a question for the owner, and is issue 104.</p>
+<h2 id="limits-stated-plainly">Limits, stated plainly</h2>
+<ul>
+<li><strong>The format encrypts a file as one AES-GCM message.</strong> sgit and the web UI therefore hold a whole file, and its whole ciphertext, in memory. The app does not: it computes the same bytes as a stream. Its limit is free space on the device (the staged copy and the ciphertext exist together until the upload ends, so about twice the file), and AES-GCM's own limit of about 64 GB a message.</li>
+<li><strong>What could not be avoided.</strong> Each upload part is held in memory while it is sent: three parts of 10 MB. A blob that sgit deflated and that is over 4 MB is inflated in memory, up to 64 MB. A server without signed URLs (a self-hosted one) takes a large object in one request, which the app allows up to 64 MB. Thumbnails are made from the full image, so a folder of photographs is fetched whole the first time it is shown.</li>
+<li><strong>The other end.</strong> A teammate opening a large video in the web UI needs it to fit in the browser's memory; <code>sgit clone</code> on a computer needs it to fit in memory once.</li>
+<li><strong>An upload stops when the app is suspended.</strong> It is taken up again when the app returns: parts already sent in an unfinished object are sent again, finished objects are not. Background uploads are after milestone one.</li>
+<li><strong>A vault with packs</strong> (objects stored as zips) is refused, as it is by the engine today.</li>
+</ul>
+<h2 id="milestone-one">Milestone one</h2>
+<ol>
+<li>Add a vault by key or QR code; create one.</li>
+<li>Add photos, videos and files; progress for each and overall; retry and discard; nothing picked is lost.</li>
+<li>Files over 4 MB, written and read, checked against sgit in both directions by CI.</li>
+<li>Browse: folders, thumbnails, full size, video, Quick Look, Save to Photos, Share.</li>
+<li>Share the vault: key, QR code, web link, read key, with the warning.</li>
+<li>History: commits, signer, what changed.</li>
+</ol>
+<h2 id="after-it-in-this-order">After it, in this order</h2>
+<ol>
+<li>Local-first vaults and named remotes (issue 011), then keys in iCloud Keychain (017), as the VoiceDebrief app adopts them.</li>
+<li>A share extension: &quot;send to vault&quot; from Photos and Files.</li>
+<li>Background uploads.</li>
+<li>A file-level merge for edits and deletions that collide (adding already needs none).</li>
+<li>Branches: list, switch, create.</li>
+<li>A read-only token that can be revoked, once its format is agreed.</li>
+</ol>
+</main>
+
+<footer class="site"><div class="cols">
+  <div>
+    <div class="brandline">Voice<em>Debrief</em> <span>iOS</span></div>
+    <p>The VoiceDebrief transcript and debrief as a native iPhone and iPad app, on Apple's own models, with the results in a vault you own. In development: there is nothing to install yet. Content CC BY 4.0; code Apache 2.0.</p>
+    <p class="partnote">This site is static and has no analytics.</p>
+    <p class="verline">site v0.1.8 · <a href="index.md">this page as markdown</a> · <a href="../../llms.txt">llms.txt</a></p>
+  </div>
+  <div>
+    <h4>The app</h4>
+    <a href="../../built/index.html">What is built</a>
+    <a href="../../plan/index.html">The plan</a>
+    <a href="../../develop/index.html">Build and test</a>
+    <a href="../../versions/index.html">Release history</a>
+    <a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">GitHub</a>
+  </div>
+  <div>
+    <h4>VoiceDebrief</h4>
+    <a href="https://voicedebrief.ai">voicedebrief.ai</a>
+    <a href="https://meetscribe.chrome-extension.voicedebrief.ai">MeetScribe for Google Meet</a>
+  </div>
+  <div>
+    <h4>Built on</h4>
+    <a href="https://sgit.ai">sgit.ai</a>
+    <a href="https://pki.sgit.ai">pki.sgit.ai</a>
+    <a href="https://sgit.ai/security/index.html">The vault security model</a>
+  </div>
+</div></footer>
+</body>
+</html>

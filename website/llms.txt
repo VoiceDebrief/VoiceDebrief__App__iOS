@@ -29,6 +29,14 @@ Every page has a markdown twin: replace index.html with index.md.
 - https://ios.app.voicedebrief.ai/versions/index.html : release history.
 - https://ios.app.voicedebrief.ai/index.html : the home page.
 
+## The sgit app (a second app in this repository, for now)
+
+- https://ios.app.voicedebrief.ai/sgit-app/design/index.html : sgit as a native app for iPhone, iPad and
+  Mac. Intention: put photos, videos and large files in a vault, browse, share, history; the share
+  mechanisms that exist; the limits. It will move to its own repository and site.
+- https://ios.app.voicedebrief.ai/sgit-app/built/index.html : its reality file. If it is not listed
+  there as built, it does not exist.
+
 ## Articles (ideas, positions and briefs; intention, not fact)
 
 - https://ios.app.voicedebrief.ai/articles/index.html : the list.

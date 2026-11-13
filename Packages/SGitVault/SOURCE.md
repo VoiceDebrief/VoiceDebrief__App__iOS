@@ -15,5 +15,10 @@ brought here by diff against the commit above.
 | 13 Nov 2026 | `Tests/SGitVaultTests/SiteDoorTests.swift` | New: the vector published at `newsroom.sgit.ai/passkey/vectors.json`, and that the default site is unchanged |
 | 13 Nov 2026 | `Sources/SGitVault/VaultCreate.swift`, `Tests/SGitVaultTests/CreateTests.swift` | New: create a vault (random key, or at a given key), in the form `sgit init` writes, without a clone branch. The created vault is exported for the sgit read-back job |
 | 13 Nov 2026 | `Tests/Fixtures/sgit_reads_swift.py` | Does not switch branch when the branch is `current` |
+| 13 Nov 2026 | `Sources/SGitVault/VaultStreamCipher.swift` | New (issue 023, the sgit app session): `VaultGCMStream`, AES-256-GCM a piece at a time (AES-CTR from CommonCrypto, GHASH computed here), producing the same bytes as CryptoKit; `VaultFileCipher` seals and opens a file from disk to disk in constant memory |
+| 13 Nov 2026 | `Sources/SGitVault/VaultLargeTransport.swift` | New: `VaultLargeTransport`. Over HTTP it is sgit's presigned exchange (initiate, PUT the parts, complete, cancel; read-url and byte ranges), with sgit's fallbacks for a server without it; for a folder it is a copy |
+| 13 Nov 2026 | `Sources/SGitVault/VaultLargeFiles.swift` | New: `VaultBlobStager` encrypts a file to disk under its object id; `SGitVault.commit(staged:removing:…)` uploads what the server lacks, then trees, commit and the ref with compare-and-swap, with the `large` flag; `SGitVault.download` fetches a file to disk and checks id, tag, size and content hash; `VaultChange.between` |
+| 13 Nov 2026 | `Sources/SGitVault/SGitVault.swift` | Added `files(in:)`: the files of any commit, so two commits can be compared. Nothing else changed |
+| 13 Nov 2026 | `Tests/SGitVaultTests/LargeFileTests.swift`, `Tests/Fixtures/sgit_writes_large.py` | New: the stream cipher against CryptoKit; staged commits, resuming, a lost race; Swift reads what sgit wrote over 4 MB, and exports what it wrote for sgit to read (`.github/workflows/sgit-app.yml`) |
 
 Nothing else differs from the source commit.
