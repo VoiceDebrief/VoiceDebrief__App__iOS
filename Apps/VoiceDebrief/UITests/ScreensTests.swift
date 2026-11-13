@@ -31,19 +31,19 @@ final class ScreensTests: XCTestCase {
     @MainActor func test04_record_working() { shoot("record.working") }
     @MainActor func test05_library() { shoot("library") }
     @MainActor func test06_library_empty() { shoot("library", set: "empty") }
-    @MainActor func test07_note_finished() { shoot("note.finished") }
+    @MainActor func test07_note_finished() { shoot("note.finished", wait: 6) }
     @MainActor func test08_note_transcript() { shoot("note.transcript") }
     @MainActor func test09_note_interrupted() { shoot("note.interrupted") }
     @MainActor func test10_note_working() { shoot("note.working") }
-    @MainActor func test11_vaults() { shoot("vaults") }
+    @MainActor func test11_vaults() { shoot("vaults", wait: 6) }
     @MainActor func test12_vaults_empty() { shoot("vaults", set: "empty") }
     @MainActor func test13_vault_detail() { shoot("vault.detail", wait: 8) }
     @MainActor func test14_settings() { shoot("settings") }
     @MainActor func test15_diagnostics() { shoot("diagnostics", wait: 5) }
     @MainActor func test16_traffic() { shoot("traffic", wait: 8) }
     @MainActor func test17_about() { shoot("about") }
-    @MainActor func test18_note_finished_end() { shoot("note.finished", toTheEnd: true) }
-    @MainActor func test19_vaults_end() { shoot("vaults", toTheEnd: true) }
+    @MainActor func test18_note_finished_end() { shoot("note.finished", wait: 6, toTheEnd: true) }
+    @MainActor func test19_vaults_end() { shoot("vaults", wait: 6, toTheEnd: true) }
     @MainActor func test20_vault_detail_end() { shoot("vault.detail", wait: 8, toTheEnd: true) }
     @MainActor func test21_diagnostics_end() { shoot("diagnostics", wait: 5, toTheEnd: true) }
     @MainActor func test22_about_end() { shoot("about", toTheEnd: true) }

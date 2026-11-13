@@ -2,39 +2,23 @@ import SGitVault
 import SwiftUI
 import UIKit
 
-/// The vaults this device knows: add an access token, create a vault, add one made elsewhere, and
-/// look inside. Built to show how a vault works, not to hide it.
+/// The vaults this device knows. A vault is created and used on this device, with no server and no
+/// token; a server is added, with its address and its token, when a vault should also be elsewhere.
+/// Built to show how a vault works, not to hide it.
 struct VaultsView: View {
     let book: VaultBook
-    @State private var token = ""
     @State private var newName = ""
     @State private var pastedKey = ""
     @State private var pastedName = ""
+    @State private var pastedFrom = ""
+    @State private var serverName = ""
+    @State private var serverAddress = VaultRemote.suggestedAddress
+    @State private var serverToken = ""
 
     var body: some View {
         NavigationStack {
             List {
                 Section {
-                    if book.hasToken {
-                        LabeledContent("Access token", value: "In the Keychain")
-                        Button("Remove the token", role: .destructive) { book.setToken("") }
-                    } else {
-                        SecureField("SG/Send access token", text: $token)
-                            .textInputAutocapitalization(.never)
-                            .autocorrectionDisabled()
-                        Button("Save the token") {
-                            book.setToken(token)
-                            token = ""
-                        }
-                        .disabled(token.trimmingCharacters(in: .whitespaces).isEmpty)
-                    }
-                } header: {
-                    Text("Access token")
-                } footer: {
-                    Text("Creating a vault or writing to one needs an SG/Send access token. Opening and reading need none. The token is kept in this device's Keychain and sent only to \(book.server.host() ?? "the vault server").")
-                }
-
-                Section("Vaults on this device") {
                     if book.vaults.isEmpty {
                         Text("None yet.").foregroundStyle(.secondary)
                     }
@@ -45,25 +29,17 @@ struct VaultsView: View {
                                 Text("\(vault.id) · \(vault.canWrite ? "read and write" : "read only")")
                                     .font(.footnote.monospaced())
                                     .foregroundStyle(.secondary)
+                                Text(book.status(of: vault))
+                                    .font(.footnote)
+                                    .foregroundStyle(vault.pushProblem == nil ? Color.secondary : Color.red)
                             }
                         }
                     }
+                } header: {
+                    Text("Vaults")
                 }
 
-                if let busy = book.busy {
-                    Section {
-                        HStack(spacing: 12) {
-                            ProgressView()
-                            Text(busy)
-                        }
-                    }
-                }
-                if let problem = book.problem {
-                    Section {
-                        Label(problem, systemImage: "exclamationmark.triangle").foregroundStyle(.red).font(.callout)
-                        Button("Dismiss") { book.clearProblem() }
-                    }
-                }
+                VaultActivitySection(book: book)
 
                 Section {
                     TextField("Name, for this device only", text: $newName)
@@ -72,11 +48,44 @@ struct VaultsView: View {
                         newName = ""
                         Task { await book.create(name: name) }
                     }
-                    .disabled(!book.hasToken || book.busy != nil)
+                    .disabled(book.busy != nil)
                 } header: {
                     Text("Create")
                 } footer: {
-                    Text("A new vault is a random key, an empty folder and one signed commit. The key is made on this device and never sent: the server stores only encrypted objects it cannot read.")
+                    Text("A new vault is a random key, an empty folder and one signed commit, made and kept on this device. It needs no server, no token and no network. To have it elsewhere as well, add a server below and push the vault to it.")
+                }
+
+                Section {
+                    ForEach(book.remotes) { remote in
+                        NavigationLink(value: remote) {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(remote.name)
+                                Text("\(remote.url.absoluteString) · \(book.hasToken(remote) ? "token in the Keychain" : "no token: read only")")
+                                    .font(.footnote)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                    }
+                    TextField("Name", text: $serverName)
+                    TextField("Address", text: $serverAddress)
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled()
+                        .keyboardType(.URL)
+                    SecureField("Access token (can be added later)", text: $serverToken)
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled()
+                    Button("Add this server") {
+                        if book.addRemote(name: serverName, address: serverAddress, token: serverToken) != nil {
+                            serverName = ""
+                            serverToken = ""
+                            serverAddress = VaultRemote.suggestedAddress
+                        }
+                    }
+                    .disabled(serverAddress.trimmingCharacters(in: .whitespaces).isEmpty)
+                } header: {
+                    Text("Servers")
+                } footer: {
+                    Text("A server is somewhere a vault can be pushed to and pulled from. It stores only encrypted objects it cannot read. Its access token is needed to write to it, not to read; the token is kept in this device's Keychain and sent only to that server.")
                 }
 
                 Section {
@@ -84,17 +93,27 @@ struct VaultsView: View {
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled()
                     TextField("Name, for this device only", text: $pastedName)
+                    if book.remotes.isEmpty {
+                        Text("Add the server that holds the vault first.").font(.footnote).foregroundStyle(.secondary)
+                    } else {
+                        Picker("From", selection: $pastedFrom) {
+                            ForEach(book.remotes) { remote in
+                                Text(remote.name).tag(remote.id)
+                            }
+                        }
+                    }
                     Button("Add this vault") {
+                        guard let remote = book.remote(pastedFrom) ?? book.remotes.first else { return }
                         let key = pastedKey, name = pastedName
                         pastedKey = ""
                         pastedName = ""
-                        Task { await book.add(keyText: key, name: name) }
+                        Task { await book.add(keyText: key, name: name, from: remote) }
                     }
-                    .disabled(pastedKey.trimmingCharacters(in: .whitespaces).isEmpty || book.busy != nil)
+                    .disabled(pastedKey.trimmingCharacters(in: .whitespaces).isEmpty || book.remotes.isEmpty || book.busy != nil)
                 } header: {
                     Text("Add a vault made elsewhere")
                 } footer: {
-                    Text("Paste the key sgit printed when the vault was created, or a read key someone gave you.")
+                    Text("Paste the key sgit printed when the vault was created, or a read key someone gave you. The vault is read from its server; a copy can then be kept on this device.")
                 }
 
                 Section("What the vault engine has done") {
@@ -111,11 +130,91 @@ struct VaultsView: View {
             .navigationDestination(for: SavedVault.self) { vault in
                 VaultDetailView(book: book, vault: vault)
             }
+            .navigationDestination(for: VaultRemote.self) { remote in
+                RemoteDetailView(book: book, remote: remote)
+            }
+            .onAppear {
+                if book.remote(pastedFrom) == nil { pastedFrom = book.remotes.first?.id ?? "" }
+            }
         }
     }
 }
 
-/// One vault: its head, files, history and keys.
+/// What the book is doing, what it last did, and what went wrong.
+struct VaultActivitySection: View {
+    let book: VaultBook
+
+    var body: some View {
+        if let busy = book.busy {
+            Section {
+                HStack(spacing: 12) {
+                    ProgressView()
+                    Text(busy)
+                }
+            }
+        }
+        if let notice = book.notice {
+            Section {
+                Label(notice, systemImage: "checkmark.circle").foregroundStyle(.secondary).font(.callout)
+            }
+        }
+        if let problem = book.problem {
+            Section {
+                Label(problem, systemImage: "exclamationmark.triangle").foregroundStyle(.red).font(.callout)
+                Button("Dismiss") { book.clearProblem() }
+            }
+        }
+    }
+}
+
+/// One server: its address and its token.
+struct RemoteDetailView: View {
+    let book: VaultBook
+    let remote: VaultRemote
+    @State private var token = ""
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        List {
+            Section("Server") {
+                LabeledContent("Name", value: remote.name)
+                LabeledContent("Address", value: remote.url.absoluteString)
+                LabeledContent("Vaults using it", value: "\(book.vaults.filter { $0.remoteId == remote.id }.count)")
+            }
+            Section {
+                if book.hasToken(remote) {
+                    LabeledContent("Access token", value: "In the Keychain")
+                    Button("Remove the token", role: .destructive) { book.setToken("", for: remote) }
+                } else {
+                    SecureField("Access token", text: $token)
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled()
+                    Button("Save the token") {
+                        book.setToken(token, for: remote)
+                        token = ""
+                    }
+                    .disabled(token.trimmingCharacters(in: .whitespaces).isEmpty)
+                }
+            } header: {
+                Text("Access token")
+            } footer: {
+                Text("Pushing a vault to \(remote.name) needs its access token. Reading needs none. The token is kept in this device's Keychain and sent only to \(remote.url.host() ?? "this server").")
+            }
+            VaultActivitySection(book: book)
+            Section {
+                Button("Remove this server", role: .destructive) {
+                    book.removeRemote(remote)
+                    if book.remote(remote.id) == nil { dismiss() }
+                }
+            } footer: {
+                Text("Vaults kept on this device stay, with no server. A vault that exists only on this server must be copied to this device, or forgotten, first.")
+            }
+        }
+        .navigationTitle(remote.name)
+    }
+}
+
+/// One vault: where it lives, its head, files, history and key.
 struct VaultDetailView: View {
     let book: VaultBook
     let vault: SavedVault
@@ -123,10 +222,57 @@ struct VaultDetailView: View {
     @State private var problem: String?
     @State private var loading = false
     @State private var showKey = false
+    @State private var confirmForget = false
     @Environment(\.dismiss) private var dismiss
+
+    /// The vault as the book holds it now: its place changes while this screen is open.
+    private var now: SavedVault { book.current(vault) }
 
     var body: some View {
         List {
+            Section {
+                Text(book.status(of: vault))
+                    .foregroundStyle(now.pushProblem == nil ? Color.primary : Color.red)
+                if now.onDevice {
+                    Picker("Server", selection: Binding(
+                        get: { now.remoteId ?? "" },
+                        set: { book.setRemote($0.isEmpty ? nil : $0, for: vault) })) {
+                        Text("None").tag("")
+                        ForEach(book.remotes) { remote in
+                            Text(remote.name).tag(remote.id)
+                        }
+                    }
+                    if let remote = book.remote(now.remoteId) {
+                        if now.canWrite {
+                            Button("Push to \(remote.name)") {
+                                Task { await book.push(vault); await load() }
+                            }
+                            .disabled(book.busy != nil)
+                        }
+                        Button("Pull from \(remote.name)") {
+                            Task { await book.pull(vault); await load() }
+                        }
+                        .disabled(book.busy != nil)
+                    }
+                } else if let remote = book.remote(now.remoteId) {
+                    Button("Keep a copy on this device") {
+                        Task { await book.pull(vault); await load() }
+                    }
+                    .disabled(book.busy != nil)
+                    Text("Until then this vault is read from, and written to, \(remote.name) directly, and needs the network.")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
+            } header: {
+                Text("Where it lives")
+            } footer: {
+                if now.onDevice {
+                    Text("This vault is kept on this device and works with no network. Push sends what the server lacks and moves its branch forward; pull fetches what the server has. Neither overwrites: if both sides have changed, they say so and stop.")
+                }
+            }
+
+            VaultActivitySection(book: book)
+
             if let problem {
                 Section {
                     Label(problem, systemImage: "exclamationmark.triangle").foregroundStyle(.red).font(.callout)
@@ -178,7 +324,6 @@ struct VaultDetailView: View {
 
             Section {
                 LabeledContent("Vault id", value: vault.id)
-                LabeledContent("Server", value: book.server.host() ?? "")
                 LabeledContent("Access", value: vault.canWrite ? "Read and write" : "Read only")
                 if showKey {
                     Text(vault.keyText)
@@ -192,16 +337,21 @@ struct VaultDetailView: View {
             } header: {
                 Text("Key")
             } footer: {
-                Text("The key is the whole credential: whoever has it can open this vault, and with a vault key, write to it. There is no reset. On a computer, sgit clone followed by this key opens the same vault.")
+                Text("The key is the whole credential: whoever has it can open this vault, and with a vault key, write to it. There is no reset. Once the vault has been pushed to a server, sgit clone followed by this key opens the same vault on a computer.")
             }
 
             Section {
-                Button("Forget this vault on this device", role: .destructive) {
-                    book.remove(vault)
-                    dismiss()
-                }
+                Button("Forget this vault on this device", role: .destructive) { confirmForget = true }
+                    .confirmationDialog("Forget this vault?", isPresented: $confirmForget, titleVisibility: .visible) {
+                        Button(now.onDevice ? "Forget it and delete this device's copy" : "Forget it", role: .destructive) {
+                            book.remove(vault)
+                            dismiss()
+                        }
+                    } message: {
+                        Text(Self.forgetWarning(now, server: book.remote(now.remoteId)?.name))
+                    }
             } footer: {
-                Text("The vault stays on the server. Without its key nobody can open it again, so copy the key first if you want to keep it.")
+                Text(Self.forgetWarning(now, server: book.remote(now.remoteId)?.name))
             }
         }
         .navigationTitle(vault.name)
@@ -210,6 +360,7 @@ struct VaultDetailView: View {
     }
 
     private func load() async {
+        guard book.vaults.contains(where: { $0.id == vault.id }) else { return }
         loading = true
         defer { loading = false }
         do {
@@ -218,6 +369,20 @@ struct VaultDetailView: View {
         } catch {
             problem = VaultBook.describe(error)
         }
+    }
+
+    /// What forgetting costs, which depends on where the vault is.
+    static func forgetWarning(_ vault: SavedVault, server: String?) -> String {
+        if !vault.onDevice {
+            return "The vault stays on \(server ?? "its server"). Without its key nobody can open it again, so copy the key first if you want to keep it."
+        }
+        if vault.remoteId == nil || vault.remoteHead == nil {
+            return "This vault exists only on this device: forgetting it deletes it, and it cannot be brought back."
+        }
+        if vault.remoteHead != vault.localHead {
+            return "This device's copy is deleted. What has not been pushed to \(server ?? "the server") is lost. Copy the key first if you want to open the pushed part again."
+        }
+        return "This device's copy is deleted. The vault stays on \(server ?? "the server"); copy the key first if you want to open it again."
     }
 
     static func signature(_ status: VaultSignatureStatus) -> String {
@@ -351,7 +516,7 @@ struct SaveToVaultSection: View {
         } header: {
             Text("Save to vault")
         } footer: {
-            Text("The note is already kept on this device. Saving also writes it, encrypted, to your vault as one signed commit.")
+            Text("The note is already kept on this device. Saving also writes it, encrypted, into your vault as one signed commit. A vault on this device needs no network; pushing it to a server is done on the Vaults tab.")
         }
         .onAppear {
             if !writable.contains(where: { $0.id == chosen }) { chosen = writable.first?.id ?? "" }

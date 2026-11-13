@@ -50,7 +50,7 @@ Nobody who writes this app from a Linux container can run it, so CI takes a pict
 | `-VDSampleData empty` | The same, with nothing in them: the empty states |
 | `-VDScreen <id>` | Opens that screen directly. Ignored without `-VDSampleData` |
 
-In a sample launch the network is off: reads of the sample vault are answered from the folder and every other request fails. Every invented note says in its own words that it is invented. A simulator has no speech model, no Apple Intelligence, no microphone and no passkeys, so a recording in progress, a transcript and a debrief are sample values, not results; the tests also pass `-vd.localeId en-GB`, because a simulator's speech model reports no language. None of this is compiled into a release build.
+In a sample launch the network is off: every request fails as if the device were offline. The sample vault is made on the device by the app's own vault book, with one invented server beside it that is never reached. Every invented note says in its own words that it is invented. A simulator has no speech model, no Apple Intelligence, no microphone and no passkeys, so a recording in progress, a transcript and a debrief are sample values, not results; the tests also pass `-vd.localeId en-GB`, because a simulator's speech model reports no language. None of this is compiled into a release build.
 
 **What a run leaves.** One artifact, `screens-<commit sha>`, kept 30 days:
 

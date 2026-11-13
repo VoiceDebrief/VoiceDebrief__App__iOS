@@ -60,8 +60,9 @@ struct SampleDataTests {
         let finishedId = try #require(world.noteIds[.finished])
         let finished = try #require(world.store.note(finishedId))
         #expect(finished.title.hasPrefix("Invented sample"))
-        #expect(world.book.vaults.map(\.name) == [SampleData.vaultName])
-        #expect(world.book.hasToken)
+        #expect(world.book.remotes.map(\.name) == [SampleData.serverName])
+        #expect(world.book.localRoot.path.hasPrefix(world.root.path))
+        #expect(world.book.localRoot != VaultBook.localFolder)
     }
 
     @Test func theRecordingScreenIsARecordingWithoutAMicrophone() {
@@ -78,22 +79,23 @@ struct SampleDataTests {
         let world = SampleWorld(set: .empty, screen: .library)
         #expect(world.store.notes.isEmpty)
         #expect(world.book.vaults.isEmpty)
-        #expect(!world.book.hasToken)
+        #expect(world.book.remotes.isEmpty)
         #expect(world.session.phase == .idle)
         #expect(world.vault == nil)
     }
 
-    @Test func theSampleVaultIsARealVaultInAFolder() async throws {
+    @Test func theSampleVaultIsARealVaultOnThisDevice() async throws {
         let world = SampleWorld(set: .full, screen: .vaultDetail)
+        #expect(world.vault == nil)
         await world.prepareVault()
         #expect(world.vaultProblem == nil)
         let vault = try #require(world.vault)
-        let bare = world.serverFolder.appending(path: vault.id).appending(path: "bare")
-        #expect(FileManager.default.fileExists(atPath: bare.appending(path: "refs").path))
-        // A read of the vault server's API maps into that folder; anything else is refused.
-        let read = try #require(URL(string: "https://dev.send.sgraph.ai/api/vault/read/\(vault.id)/bare%2Frefs%2Fabc"))
-        #expect(SampleNetwork.file(for: read, in: world.serverFolder)?.path == bare.appending(path: "refs/abc").path)
-        let other = try #require(URL(string: "https://example.com/api/vault/read/\(vault.id)/bare%2Frefs%2Fabc"))
-        #expect(SampleNetwork.file(for: other, in: world.serverFolder) == nil)
+        #expect(vault.name == SampleData.vaultName)
+        #expect(vault.onDevice)
+        #expect(FileManager.default.fileExists(atPath: world.book.folder(of: vault.id).appending(path: "bare/refs").path))
+        // Read back through the book: the debrief that was saved is there, with no network.
+        let contents = try await world.book.contents(of: vault)
+        #expect(contents.files.contains { $0.path.hasSuffix("debrief.md") })
+        #expect(contents.history.count == 2)
     }
 }

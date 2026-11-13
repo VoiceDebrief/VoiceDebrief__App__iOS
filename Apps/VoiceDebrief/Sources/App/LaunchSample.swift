@@ -5,9 +5,10 @@ import SwiftUI
 
 /// Everything the app is given instead of the real library and Keychain when it is launched with
 /// `-VDSampleData` (issue 016): a `NoteStore` in a temporary folder holding invented notes, a
-/// `VaultBook` over a `MemoryStore`, and, in the full set, one invented vault that is a real sgit
-/// vault written to the same temporary folder. The network is switched off for the whole launch
-/// (`SampleNetwork`): reads of the sample vault are answered from the folder, everything else fails.
+/// `VaultBook` over a `MemoryStore` whose vaults live in the same temporary folder, and, in the full
+/// set, one invented vault and one invented server. The vault is made by the book itself, as the
+/// app makes one: on this device, with no network. The network is switched off for the whole
+/// launch (`SampleNetwork`): every request fails as if the device were offline.
 /// Not replaced: the recipients and the glossary, which the app keeps in stores of its own
 /// (`RecipientStore.shared`, `GlossaryStore.shared`); on a simulator they are empty.
 /// A new launch starts again from nothing. Not compiled into a release build.
@@ -17,7 +18,7 @@ final class SampleWorld {
     static let launched: SampleWorld? = {
         guard let set = LaunchOptions.sampleSet() else { return nil }
         let world = SampleWorld(set: set, screen: LaunchOptions.screen() ?? .record)
-        SampleNetwork.start(folder: world.serverFolder)
+        SampleNetwork.start()
         world.preparing = Task { await world.prepareVault() }
         return world
     }()
@@ -30,8 +31,8 @@ final class SampleWorld {
     let book: VaultBook
     /// The id each invented note was given in the store.
     let noteIds: [SampleData.Kind: String]
-    /// The invented vault, in the full set.
-    let vault: SavedVault?
+    /// The invented vault, once `prepareVault` has made it (full set only).
+    var vault: SavedVault? { book.vaults.first }
     private(set) var vaultProblem: String?
     private var preparing: Task<Void, Never>?
 
@@ -64,17 +65,12 @@ final class SampleWorld {
             }
         }
 
-        // The vault's key is made at random on every launch, as the app makes a real one: there is
-        // no key in the source. The token is not a token; it only makes the screens show one is held.
-        let secrets = MemoryStore()
-        var vault: SavedVault?
+        // Vaults live in the temporary folder, their keys in memory. The server is invented and
+        // never reached; its token is not a token, it only makes the screens show one is held.
+        let book = VaultBook(store: MemoryStore(), localRoot: root.appending(path: "vaults", directoryHint: .isDirectory),
+                             cacheRoot: root.appending(path: "vault-cache", directoryHint: .isDirectory))
         if set == .full {
-            let keyText = VaultCreate.newKeyText()
-            let saved = SavedVault(id: String(keyText.split(separator: ":").last ?? ""), name: SampleData.vaultName,
-                                   keyText: keyText, addedAt: now.addingTimeInterval(-3 * 86_400), createdHere: true)
-            secrets.set("vaults", try? JSONEncoder().encode([saved]))
-            secrets.set("access-token", Data("invented-sample-token".utf8))
-            vault = saved
+            book.addRemote(name: SampleData.serverName, address: SampleData.serverAddress, token: "invented-sample-token")
         }
 
         self.set = set
@@ -82,13 +78,9 @@ final class SampleWorld {
         self.root = root
         self.store = store
         self.session = session
-        self.book = VaultBook(store: secrets)
+        self.book = book
         self.noteIds = ids
-        self.vault = vault
     }
-
-    /// The folder that stands in for the vault server: `<vault id>/bare/…`, as the server holds a vault.
-    var serverFolder: URL { root.appending(path: "server", directoryHint: .isDirectory) }
 
     func noteId(for screen: LaunchScreen) -> String? {
         SampleData.kind(for: screen).flatMap { noteIds[$0] }
@@ -99,47 +91,29 @@ final class SampleWorld {
         await preparing?.value
     }
 
-    /// Writes the invented vault with the real engine: created as the app creates one, then the
-    /// finished sample note saved into it as one signed commit. No request leaves the process.
+    /// Makes the invented vault through the book, as the Vaults screen does: created on this device,
+    /// then the finished sample note saved into it as one signed commit. No request is made.
     func prepareVault() async {
-        guard let vault else { return }
+        guard set == .full, book.vaults.isEmpty else { return }
+        await book.create(name: SampleData.vaultName)
+        guard let made = book.vaults.first else {
+            vaultProblem = book.problem ?? "The sample vault was not created."
+            return
+        }
         do {
-            let signer = try book.commitSigner()
-            let transport = FolderVaultTransport(root: serverFolder, perVaultSubfolder: "")
-            let created = try await VaultCreate.create(keyText: vault.keyText, signer: signer, accessToken: nil, writer: transport,
-                                                       timestampMs: Int64(vault.addedAt.timeIntervalSince1970 * 1000))
-            guard let writeKey = created.key.writeKey else { return }
-            let handle = SGitVault(address: VaultAddress(vaultId: vault.id), readKey: created.key.readKey,
-                                   cache: root.appending(path: "setup-cache", directoryHint: .isDirectory),
-                                   log: VaultTrafficLog(), transport: transport)
-            let files = VaultBook.files(for: SampleData.finished.run, audio: SampleData.silentWAV, audioName: "audio.wav",
-                                        id: "sample01", date: Date())
-            let changes: [String: Data?] = Dictionary(uniqueKeysWithValues: files.map { ($0.key, Optional($0.value)) })
-            _ = try await handle.commit(changes, message: "Debrief sample01", branch: "current", signer: signer,
-                                        writeKey: writeKey, accessToken: nil, writer: transport)
+            let audio = noteIds[.finished].flatMap { store.audioURL(for: $0) }
+            _ = try await book.save(run: SampleData.finished.run, audioURL: audio, to: made)
         } catch {
             vaultProblem = VaultBook.describe(error)
         }
     }
 }
 
-/// No network in a sample launch. Every http and https request the app makes is answered here:
-/// a read of the vault server's API comes from the sample folder (200, or 404 when there is no
-/// such file, as the server answers), and anything else fails as if the device were offline.
+/// No network in a sample launch: every http and https request the app makes fails here as if
+/// the device were offline. The sample vault is on this device and needs none.
 final class SampleNetwork: URLProtocol {
-    nonisolated(unsafe) private static var folder: URL?
-
-    static func start(folder: URL) {
-        self.folder = folder
+    static func start() {
         URLProtocol.registerClass(SampleNetwork.self)
-    }
-
-    /// The file a request reads, if it is a read of the vault server's API.
-    static func file(for url: URL, in folder: URL) -> URL? {
-        let prefix = "/api/vault/read/"
-        let path = url.path(percentEncoded: false)
-        guard url.host() == VaultAddress.defaultServer.host(), path.hasPrefix(prefix) else { return nil }
-        return folder.appending(path: String(path.dropFirst(prefix.count)))
     }
 
     override class func canInit(with request: URLRequest) -> Bool {
@@ -150,20 +124,7 @@ final class SampleNetwork: URLProtocol {
     override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
 
     override func startLoading() {
-        guard let url = request.url, let folder = Self.folder, let file = Self.file(for: url, in: folder) else {
-            client?.urlProtocol(self, didFailWithError: URLError(.notConnectedToInternet))
-            return
-        }
-        let data = try? Data(contentsOf: file)
-        let body = data ?? Data()
-        guard let response = HTTPURLResponse(url: url, statusCode: data == nil ? 404 : 200, httpVersion: "HTTP/1.1",
-                                             headerFields: ["Content-Length": "\(body.count)"]) else {
-            client?.urlProtocol(self, didFailWithError: URLError(.badServerResponse))
-            return
-        }
-        client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
-        client?.urlProtocol(self, didLoad: body)
-        client?.urlProtocolDidFinishLoading(self)
+        client?.urlProtocol(self, didFailWithError: URLError(.notConnectedToInternet))
     }
 
     override func stopLoading() {}

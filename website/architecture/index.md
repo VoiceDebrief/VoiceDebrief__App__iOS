@@ -110,7 +110,7 @@ Reading is the same in reverse, and the engine verifies the signature of every c
 
 ### What is not there yet
 
-A vault today cannot be created without a server token, because creation and the first push are one step. The decision is that they should be two: a vault is created on the device with no network, and a server is a remote added later, as in git. That work, with merge and several named vaults, is in progress and is described in [The vault is a version-controlled store](../articles/the-vault-is-a-version-controlled-store/index.md).
+Up to v0.1.9 a vault could not be created without a server token, because creation and the first push were one step. Since v0.1.10 they are two: a vault is created on the device with no network, and a server is a remote added later, as in git, with push and pull as separate steps. That is written and tested against folders, but has not yet run on a device or against a real server. A merge when both sides have changed, and several named vaults, are not built; they are described in [The vault is a version-controlled store](../articles/the-vault-is-a-version-controlled-store/index.md).
 
 ## 4. A lane
 

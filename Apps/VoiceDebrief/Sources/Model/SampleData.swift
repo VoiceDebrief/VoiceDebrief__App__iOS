@@ -146,6 +146,9 @@ enum SampleData {
     }
 
     static let vaultName = "Sample vault (invented)"
+    static let serverName = "Sample server (invented)"
+    /// A name that can never resolve (RFC 6761), in case anything ever tried.
+    static let serverAddress = "https://sample-server.invalid"
 
     /// Half a second of silence as a 16 kHz mono WAV, so a sample note has an audio file as a real one does.
     static var silentWAV: Data {
