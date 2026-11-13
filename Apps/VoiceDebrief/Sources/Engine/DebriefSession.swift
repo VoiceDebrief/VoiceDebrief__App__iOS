@@ -14,9 +14,33 @@ final class DebriefSession {
         case failed(String)
     }
 
+    /// Sending the last note to the developer's lane: nothing, in progress, done, or why it failed.
+    enum Sharing: Equatable {
+        case idle
+        case sending(Int, Int)
+        case sent(Int)
+        case failed(String)
+    }
+
     private(set) var phase: Phase = .idle
     private(set) var run: DebriefRun?
+    private(set) var sharing: Sharing = .idle
+    /// The audio of the last run, kept only so that it can be sent if the user asks. Deleted when
+    /// the next run starts or the result is cleared.
+    private var lastAudio: URL?
     private let recorder = VoiceRecorder()
+
+    /// While recording: the words heard so far (settled, and still changing), recent loudness for the
+    /// level display, and why there is no live text if there is none.
+    private(set) var liveSettled = ""
+    private(set) var liveVolatile = ""
+    private(set) var liveNote = ""
+    private(set) var levels: [Double] = []
+    static let levelCount = 40
+    private let live = LiveTranscriber()
+    private var meter: Task<Void, Never>?
+
+    var canShareAudio: Bool { lastAudio != nil && run?.transcript != nil }
 
     var isBusy: Bool {
         switch phase {
@@ -27,23 +51,54 @@ final class DebriefSession {
 
     // MARK: Recording
 
-    func startRecording() async {
+    func startRecording(localeId: String) async {
         do {
             try await recorder.start()
+            forgetAudio()
             run = nil
+            liveSettled = ""
+            liveVolatile = ""
+            liveNote = ""
+            levels = []
             phase = .recording(since: Date())
         } catch {
             phase = .failed(error.localizedDescription)
+            return
+        }
+        meter = Task { [weak self] in
+            while !Task.isCancelled {
+                try? await Task.sleep(for: .milliseconds(80))
+                self?.pushLevel()
+            }
+        }
+        // The live text is a preview. If it cannot start, the recording goes on without it.
+        do {
+            try await live.start(localeId: localeId) { settled, volatile in
+                Task { @MainActor [weak self] in
+                    self?.liveSettled = settled
+                    self?.liveVolatile = volatile
+                }
+            }
+        } catch {
+            liveNote = "No live text: \(error.localizedDescription). The recording is still running."
         }
     }
 
+    private func pushLevel() {
+        guard case .recording = phase else { return }
+        levels.append(recorder.level())
+        if levels.count > Self.levelCount { levels.removeFirst(levels.count - Self.levelCount) }
+    }
+
     func stopRecording(localeId: String) async {
+        meter?.cancel()
+        meter = nil
+        await live.stop()
         guard let url = recorder.stop() else {
             phase = .failed("Nothing was recorded.")
             return
         }
         await process(url: url, source: "Recorded here", localeId: localeId)
-        try? FileManager.default.removeItem(at: url)
     }
 
     // MARK: Importing
@@ -61,12 +116,19 @@ final class DebriefSession {
             return
         }
         await process(url: copy, source: picked.lastPathComponent, localeId: localeId)
-        try? FileManager.default.removeItem(at: copy)
     }
 
     // MARK: The pipeline
 
+    private func forgetAudio() {
+        if let lastAudio { try? FileManager.default.removeItem(at: lastAudio) }
+        lastAudio = nil
+        sharing = .idle
+    }
+
     private func process(url: URL, source: String, localeId: String) async {
+        forgetAudio()
+        lastAudio = url
         var current = DebriefRun(source: source, localeId: localeId)
         current.audioSeconds = SpeechFileTranscriber.audioSeconds(url: url)
         run = current
@@ -161,7 +223,30 @@ final class DebriefSession {
 
     func reset() {
         guard !isBusy else { return }
+        forgetAudio()
         run = nil
         phase = .idle
+    }
+
+    // MARK: Sending to the developer
+
+    /// Sends the last note's audio, transcript and debrief to the developer's lane, encrypted to the
+    /// developer's key. Only ever called from the button that says so.
+    func shareWithDeveloper(lane: DeveloperLane) async {
+        guard let url = lastAudio, let run else { return }
+        if case .sending = sharing { return }
+        sharing = .sending(0, 0)
+        do {
+            let audio = try Data(contentsOf: url)
+            let noteId = UUID().uuidString.lowercased()
+            let messages = try DeveloperLane.messages(audio: audio, audioName: url.lastPathComponent, run: run,
+                                                      noteId: noteId, app: AppInfo.versionLine(), at: Date())
+            try await lane.send(messages) { done, total in
+                Task { @MainActor [weak self] in self?.sharing = .sending(done, total) }
+            }
+            sharing = .sent(messages.count)
+        } catch {
+            sharing = .failed(error.localizedDescription)
+        }
     }
 }

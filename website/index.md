@@ -28,6 +28,8 @@ A voice note in, a transcript and a short debrief out, on the device. The app is
 
 **Nowhere, for transcription and the debrief.** Both run on the device with Apple's models. That is the design, and it is why the app needs no key and no account with us.
 
+**One exception, and only when you press it.** The test build can send a single note (its audio, transcript and debrief) to the developer, to help judge the models. It is off unless a lane link has been pasted in, it happens only when the button is pressed, and the note is encrypted on the device to the developer's key before it leaves.
+
 **Your vault is the one thing that leaves the device, and it leaves encrypted.** Files are encrypted on the device before upload, with keys derived from a vault key the server never sees. The server can see the vault's identifier, the size of each encrypted object and when it was written. It cannot see file names, contents or keys. [sgit's security model](https://sgit.ai/security/index.html) states this precisely.
 
 The transcript and debrief are in a test build and have not yet been judged on a real device. The vault is not built. This page will say so when either changes.

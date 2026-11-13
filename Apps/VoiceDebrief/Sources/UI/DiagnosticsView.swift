@@ -5,6 +5,7 @@ import SwiftUI
 struct DiagnosticsView: View {
     let session: DebriefSession
     @State private var report: Diagnostics?
+    @AppStorage("vd.developerLane") private var laneLink = ""
 
     var body: some View {
         NavigationStack {
@@ -36,6 +37,24 @@ struct DiagnosticsView: View {
                     }
                 } else {
                     ProgressView()
+                }
+                Section {
+                    TextField("sgi1. lane link", text: $laneLink, axis: .vertical)
+                        .lineLimit(1...3)
+                        .font(.footnote.monospaced())
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled()
+                    if let lane = DeveloperLane.parse(laneLink) {
+                        LabeledContent("Vault", value: lane.vault)
+                        LabeledContent("Key", value: lane.fingerprint)
+                        Button("Remove the lane", role: .destructive) { laneLink = "" }
+                    } else if !laneLink.isEmpty {
+                        Text("That is not a lane link.").font(.footnote).foregroundStyle(.orange)
+                    }
+                } header: {
+                    Text("Developer lane")
+                } footer: {
+                    Text("Optional. With a lane link here, a button appears after each run to send that note, encrypted, to the developer. Nothing is sent without pressing it. Check the key above matches the one the developer gave you.")
                 }
             }
             .navigationTitle("Diagnostics")

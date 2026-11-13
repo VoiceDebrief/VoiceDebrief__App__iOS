@@ -1,0 +1,134 @@
+import CryptoKit
+import Foundation
+
+/// Sending a voice note to the developer, by the user's choice, for judging Apple's models on real
+/// notes. The note goes to an sgit append lane: a write-only channel on a vault server. It is
+/// encrypted on this device to the developer's public key, so the server stores bytes it cannot read.
+///
+/// The lane is not built in. It is pasted in as a link, `sgi1.<vault>.<token>.<public key>`, the form
+/// newsroom.sgit.ai and the PrompTugal apps already use. No link, no sending.
+struct DeveloperLane: Equatable, Sendable {
+    let vault: String
+    let token: String
+    let publicKeyPEM: String
+    let fingerprint: String
+
+    /// The one host with the append routes (sgit.ai /api/append-lanes). Not configurable.
+    static let endpoint = URL(string: "https://dev.send.sgraph.ai")!
+    /// Raw bytes per message. Encrypting and encoding twice makes a message about 1.8 times this, and
+    /// the server refuses a payload over 5 MB.
+    static let partSize = 2_000_000
+
+    var writeURL: URL { Self.endpoint.appendingPathComponent("api/vault/append/write/\(vault)") }
+
+    /// A lane from an `sgi1.` link, alone or inside other text. Nil if there is none, or its key is not RSA.
+    static func parse(_ text: String) -> DeveloperLane? {
+        guard let match = text.firstMatch(of: #/sgi1\.([a-z0-9]{4,24})\.([0-9a-f]{16,128})\.([A-Za-z0-9_-]{200,3000})/#) else { return nil }
+        var base64 = String(match.3).replacingOccurrences(of: "-", with: "+").replacingOccurrences(of: "_", with: "/")
+        while base64.count % 4 != 0 { base64 += "=" }
+        guard let spki = Data(base64Encoded: base64), (try? LaneCrypto.pkcs1(fromSPKI: spki)) != nil else { return nil }
+        return DeveloperLane(vault: String(match.1), token: String(match.2),
+                             publicKeyPEM: LaneCrypto.pem(spki: spki), fingerprint: LaneCrypto.fingerprint(spki: spki))
+    }
+
+    // MARK: What is sent
+
+    /// The first line of every message: what it is and which note it belongs to.
+    struct Header: Codable, Equatable, Sendable {
+        var kind: String
+        var note: String
+        var part: Int
+        var of: Int
+        var name: String
+        var size: Int
+        var sha256: String
+        var app: String
+        var sentAt: String
+
+        static let audioKind = "voicedebrief/audio/v1"
+        static let runKind = "voicedebrief/run/v1"
+    }
+
+    /// A file's bytes cut into pieces of at most `size`. An empty file has no pieces.
+    static func parts(of data: Data, size: Int = partSize) -> [Data] {
+        guard size > 0 else { return [] }
+        var out: [Data] = []
+        var start = data.startIndex
+        while start < data.endIndex {
+            let end = data.index(start, offsetBy: size, limitedBy: data.endIndex) ?? data.endIndex
+            out.append(data.subdata(in: start..<end))
+            start = end
+        }
+        return out
+    }
+
+    /// One message before encryption: the header as one line of JSON, a newline, then the bytes.
+    static func message(header: Header, body: Data) throws -> Data {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.sortedKeys]
+        var out = try encoder.encode(header)
+        out.append(0x0A)
+        out.append(body)
+        return out
+    }
+
+    static func sha256Hex(_ data: Data) -> String {
+        SHA256.hash(data: data).map { String(format: "%02x", $0) }.joined()
+    }
+
+    /// Every message for one note: the audio in parts, then the run (transcript, debrief, timings) as JSON.
+    static func messages(audio: Data, audioName: String, run: DebriefRun, noteId: String, app: String, at date: Date) throws -> [Data] {
+        let sentAt = ISO8601DateFormatter().string(from: date)
+        let pieces = parts(of: audio)
+        let digest = sha256Hex(audio)
+        var out: [Data] = []
+        for (index, piece) in pieces.enumerated() {
+            let header = Header(kind: Header.audioKind, note: noteId, part: index + 1, of: pieces.count, name: audioName,
+                                size: audio.count, sha256: digest, app: app, sentAt: sentAt)
+            out.append(try message(header: header, body: piece))
+        }
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.sortedKeys]
+        let runJSON = try encoder.encode(run)
+        let header = Header(kind: Header.runKind, note: noteId, part: 1, of: 1, name: "run.json",
+                            size: runJSON.count, sha256: sha256Hex(runJSON), app: app, sentAt: sentAt)
+        out.append(try message(header: header, body: runJSON))
+        return out
+    }
+
+    // MARK: Sending
+
+    enum SendError: LocalizedError {
+        case refused(Int)
+        case tooLarge
+
+        var errorDescription: String? {
+            switch self {
+            case .refused(let status):
+                return status == 404 ? "The lane refused the note (404): the link may be out of date."
+                                     : "The lane refused the note (status \(status))."
+            case .tooLarge:
+                return "The lane refused the note as too large."
+            }
+        }
+    }
+
+    /// Encrypts each message to the developer's key and appends it to the lane. The server's answer is
+    /// blind by design: it says only that the write was accepted.
+    func send(_ messages: [Data], onProgress: @escaping @Sendable (Int, Int) -> Void) async throws {
+        let key = try LaneCrypto.publicKey(pem: publicKeyPEM)
+        for (index, message) in messages.enumerated() {
+            onProgress(index + 1, messages.count)
+            let payload = LaneCrypto.lanePayload(encText: try LaneCrypto.encrypt(message, to: key))
+            var request = URLRequest(url: writeURL, timeoutInterval: 120)
+            request.httpMethod = "POST"
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.httpBody = try JSONSerialization.data(withJSONObject: ["append_token": token, "payload": payload],
+                                                          options: [.sortedKeys])
+            let (_, response) = try await URLSession.shared.data(for: request)
+            let status = (response as? HTTPURLResponse)?.statusCode ?? 0
+            if status == 413 { throw SendError.tooLarge }
+            guard (200..<300).contains(status) else { throw SendError.refused(status) }
+        }
+    }
+}

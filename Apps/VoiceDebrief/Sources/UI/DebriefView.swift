@@ -27,11 +27,14 @@ struct DebriefView: View {
                 Section {
                     controls
                 } footer: {
-                    Text("Transcribed and summarised on this device by Apple's models. Nothing is sent anywhere, and in this build nothing is saved: closing the app loses the result.")
+                    Text("Transcribed and summarised on this device by Apple's models. Nothing is sent anywhere unless you choose to send a note to the developer, and in this build nothing is saved: closing the app loses the result.")
                 }
 
                 if let run = session.run {
                     RunSections(run: run)
+                    if session.canShareAudio {
+                        DeveloperLaneSection(session: session)
+                    }
                 }
             }
             .navigationTitle("VoiceDebrief")
@@ -49,11 +52,21 @@ struct DebriefView: View {
     private var controls: some View {
         switch session.phase {
         case .recording(let since):
-            HStack {
-                Image(systemName: "waveform").foregroundStyle(.red)
-                Text("Recording")
+            HStack(spacing: 12) {
+                LevelBars(levels: session.levels)
                 Spacer()
                 Text(since, style: .timer).monospacedDigit().foregroundStyle(.secondary)
+            }
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("Recording")
+            if !session.liveSettled.isEmpty || !session.liveVolatile.isEmpty {
+                (Text(session.liveSettled) + Text(session.liveVolatile).foregroundStyle(.secondary))
+                    .font(.callout)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            } else if !session.liveNote.isEmpty {
+                Text(session.liveNote).font(.footnote).foregroundStyle(.orange)
+            } else {
+                Text("Listening").font(.callout).foregroundStyle(.secondary)
             }
             Button("Stop and debrief") {
                 let chosen = localeId
@@ -72,7 +85,8 @@ struct DebriefView: View {
                     .font(.callout)
             }
             Button {
-                Task { await session.startRecording() }
+                let chosen = localeId
+                Task { await session.startRecording(localeId: chosen) }
             } label: {
                 Label("Record a voice note", systemImage: "mic")
             }
@@ -172,5 +186,72 @@ enum LocaleNames {
     /// "English (United Kingdom)" for "en-GB", in the device's own language.
     static func name(_ id: String) -> String {
         Locale.current.localizedString(forIdentifier: id) ?? id
+    }
+}
+
+/// The microphone's recent loudness as moving bars: the sign that the recording is being heard.
+struct LevelBars: View {
+    let levels: [Double]
+
+    var body: some View {
+        HStack(alignment: .center, spacing: 3) {
+            Image(systemName: "mic.fill").foregroundStyle(.red)
+            ForEach(Array(padded.enumerated()), id: \.offset) { _, level in
+                Capsule()
+                    .fill(Color.red.opacity(0.35 + 0.65 * level))
+                    .frame(width: 3, height: 4 + 24 * level)
+            }
+        }
+        .frame(height: 30)
+        .animation(.linear(duration: 0.08), value: levels)
+    }
+
+    /// Always the same number of bars, so the row does not grow as the recording starts.
+    private var padded: [Double] {
+        let count = DebriefSession.levelCount
+        let recent = Array(levels.suffix(count))
+        return Array(repeating: 0, count: count - recent.count) + recent
+    }
+}
+
+/// Sending this note to the developer. Shown only after a run; does nothing without a lane link.
+struct DeveloperLaneSection: View {
+    let session: DebriefSession
+    @AppStorage("vd.developerLane") private var link = ""
+
+    var body: some View {
+        Section {
+            if let lane = DeveloperLane.parse(link) {
+                switch session.sharing {
+                case .sending(let done, let total):
+                    HStack(spacing: 12) {
+                        ProgressView()
+                        Text(total > 0 ? "Sending part \(done) of \(total)" : "Encrypting")
+                    }
+                case .sent(let count):
+                    Label("Sent, in \(count) encrypted messages", systemImage: "checkmark.circle")
+                        .foregroundStyle(.secondary)
+                default:
+                    if case .failed(let why) = session.sharing {
+                        Label(why, systemImage: "exclamationmark.triangle").foregroundStyle(.red).font(.callout)
+                    }
+                    Button {
+                        Task { await session.shareWithDeveloper(lane: lane) }
+                    } label: {
+                        Label("Send this note to the developer", systemImage: "paperplane")
+                    }
+                }
+            } else {
+                Text("No developer lane is set. Paste a lane link on the Diagnostics tab to be able to send a note.")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
+        } header: {
+            Text("Help judge the models")
+        } footer: {
+            if let lane = DeveloperLane.parse(link) {
+                Text("This sends the audio, the transcript and the debrief of this note off this device, encrypted to the developer's key (\(lane.fingerprint)). The server that carries it cannot read it. Send only a note you are happy to share.")
+            }
+        }
     }
 }
