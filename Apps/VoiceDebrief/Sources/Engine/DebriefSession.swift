@@ -302,16 +302,18 @@ final class DebriefSession {
     /// Once a note is finished, its WAV recording is replaced by a small .m4a. The WAV stays if that fails.
     private func compressAudio(of noteId: String) {
         guard let wav = store.audioURL(for: noteId), wav.pathExtension.lowercased() == "wav" else {
-            onNoteReady?(noteId)
+            noteReady(noteId)
             return
         }
         let m4a = store.folderURL(for: noteId).appending(path: "audio.m4a")
+        compressing.insert(noteId)
         Task {
             let done = await Task.detached(priority: .utility) { () -> Bool in
                 (try? AudioCompressor.compress(wav: wav, to: m4a)) != nil
             }.value
             if done, !isBusyWith(noteId) { store.replaceAudio(noteId, with: "audio.m4a") }
-            onNoteReady?(noteId)
+            compressing.remove(noteId)
+            noteReady(noteId)
         }
     }
 
@@ -336,7 +338,41 @@ final class DebriefSession {
         if case .failed = phase { phase = .idle }
     }
 
-    // MARK: Sending to the developer
+    // MARK: Sending
+
+    /// Notes waiting to be sent as soon as they are finished, and to whom: note id to recipient name.
+    private(set) var queuedSends: [String: String] = [:]
+    private var queuedLanes: [String: DeveloperLane] = [:]
+    /// Notes whose recording is being compressed right now.
+    private var compressing: Set<String> = []
+
+    /// Sends a note to a recipient. A note that is still being recorded, transcribed or compressed is
+    /// sent the moment it is finished, so the button can be pressed at once and the phone put away.
+    func send(noteId: String, to recipient: Recipient) {
+        guard let lane = recipient.lane, let note = store.note(noteId) else { return }
+        if note.processing || isBusyWith(noteId) || compressing.contains(noteId) {
+            queuedLanes[noteId] = lane
+            queuedSends[noteId] = recipient.name
+        } else {
+            Task { await share(noteId: noteId, lane: lane) }
+        }
+    }
+
+    func cancelQueuedSend(_ noteId: String) {
+        queuedLanes[noteId] = nil
+        queuedSends[noteId] = nil
+    }
+
+    /// A note is finished and its audio is in its final form: send it if that was asked for, then tell
+    /// whoever else is waiting (the automatic save to a vault).
+    private func noteReady(_ noteId: String) {
+        queuedSends[noteId] = nil
+        if let lane = queuedLanes.removeValue(forKey: noteId) {
+            Task { await share(noteId: noteId, lane: lane) }
+        }
+        onNoteReady?(noteId)
+    }
+
 
     /// Sends the last note's audio, transcript and debrief to the developer's lane, encrypted to the
     /// developer's key. Only ever called from the button that says so.
