@@ -30,7 +30,6 @@ One file per piece of work: `open/NNN-slug.md`, moved to `done/` when it is done
 | 026 | Act on a note at once: send without waiting | |
 | 027 | Show where work happens; remarks; talking to the app | 013, 020 |
 | 100 | The sgit app, milestone one | a device and the live server |
-| 101 | TestFlight for the sgit app | the owner: App Store Connect record for `ai.sgit.vaults.app`, then the variable |
 | 102 | Prove the sgit app's large files against the live server | 100 on a device |
 | 103 | The sgit app after milestone one | 100; 011 and 017 |
 | 104 | A read-only share that can be taken back | the owner's decision |
