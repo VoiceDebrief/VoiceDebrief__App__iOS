@@ -40,7 +40,7 @@
 <pre><code>Apps/VoiceDebrief/            the app: a hand-written Xcode project, sources, resources, tests, UI tests
 Packages/SGitVault/           the vault engine (copied; see its SOURCE.md)
 Config/                       Local.xcconfig.example, for building on your own device
-.github/workflows/            ios.yml, ios-vault.yml, screens.yml, site.yml
+.github/workflows/            ios.yml, ios-vault.yml, pki-interop.yml, screens.yml, site.yml
 .github/scripts/              select Xcode, pick a simulator, copy errors into the job summary, export screenshots
 website/                      this site: markdown sources, the builder and the gate
 issues/                       open and done work, one file each
@@ -55,6 +55,7 @@ version                       the version, one line, written by CI only</code></
 <tbody>
 <tr><td><code>ios.yml</code></td><td>A push to <code>dev</code> or to a <code>work/</code> branch, or a pull request, that touches <code>Apps/</code>, <code>Packages/</code> or the workflow. Only <code>dev</code> uploads to TestFlight</td><td>One Mac job: the vault engine's tests, a simulator build, a Release device build (unsigned), then the app's unit tests on an iPhone and an iPad simulator</td></tr>
 <tr><td><code>ios-vault.yml</code></td><td>A change to the vault write path, every Monday, or by hand</td><td>Swift writes vaults on a Mac; <code>sgit-ai</code> on Linux clones them, verifies every signature and compares every file</td></tr>
+<tr><td><code>pki-interop.yml</code></td><td>A change to the app's PKI files or <code>scripts/pki-interop/</code>, every Monday, or by hand</td><td><code>sgit pki</code> and pki.sgit.ai's <code>keys.js</code> make keys, signatures, envelopes, a statement and a sign-in on Linux; the app's PKI files, compiled as a tool on a Mac, read them and make their own; sgit and <code>keys.js</code> read those</td></tr>
 <tr><td><code>screens.yml</code></td><td>By hand, or a push to <code>dev</code> or a <code>work/</code> branch that touches the screens</td><td>A screenshot of every screen on an iPhone and an iPad simulator, light and dark, from invented sample data: see below</td></tr>
 <tr><td><code>site.yml</code></td><td>Every push and pull request</td><td>The gate, then (on <code>dev</code>) the next version, its tag, and the site</td></tr>
 </tbody></table></div>

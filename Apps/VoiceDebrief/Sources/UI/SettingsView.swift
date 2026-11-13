@@ -44,6 +44,12 @@ struct SettingsView: View {
                 }
 
                 Section {
+                    NavigationLink("Identity") { IdentityView(vaults: book) }
+                } footer: {
+                    Text("Your key pair, this device's key, and what links them.")
+                }
+
+                Section {
                     NavigationLink {
                         CreditView()
                     } label: {
