@@ -22,7 +22,7 @@
   <a class="brand" href="../index.html">Voice<em>Debrief</em> <span>iOS</span></a>
   <span class="beta" title="In development: there is nothing to install yet">IN DEVELOPMENT</span>
   <a class="parent" href="https://voicedebrief.ai" title="A VoiceDebrief product">&#8599; part of <b>voicedebrief.ai</b></a>
-  <a class="ver" href="../versions/index.html" title="Release history">v0.1.9</a>
+  <a class="ver" href="../versions/index.html" title="Release history">v0.1.10</a>
   <a class="nl" href="../built/index.html">Built</a>
   <a class="nl here" href="../architecture/index.html">How it works</a>
   <a class="nl" href="../design/index.html">Design</a>
@@ -128,7 +128,7 @@
 <p>That last condition is compare-and-swap, and it is what makes two writers safe: the second one is refused, not merged over. The first save from the app, on 13 November 2026, was 4 files, 12 objects and 192.5 KB, and was pulled back with its signature verified.</p>
 <p>Reading is the same in reverse, and the engine verifies the signature of every commit it reads. The vault's screen shows the head, the files, the history and the traffic that produced them.</p>
 <h3 id="what-is-not-there-yet">What is not there yet</h3>
-<p>Up to v0.1.8 a vault could not be created without a server token, because creation and the first push were one step. Since v0.1.9 they are two: a vault is created on the device with no network, and a server is a remote added later, as in git, with push and pull as separate steps. That is written and tested against folders, but has not yet run on a device or against a real server. A merge when both sides have changed, and several named vaults, are not built; they are described in <a href="../articles/the-vault-is-a-version-controlled-store/index.html">The vault is a version-controlled store</a>.</p>
+<p>Up to v0.1.9 a vault could not be created without a server token, because creation and the first push were one step. Since v0.1.10 they are two: a vault is created on the device with no network, and a server is a remote added later, as in git, with push and pull as separate steps. That is written and tested against folders, but has not yet run on a device or against a real server. A merge when both sides have changed, and several named vaults, are not built; they are described in <a href="../articles/the-vault-is-a-version-controlled-store/index.html">The vault is a version-controlled store</a>.</p>
 <h2 id="4-a-lane">4. A lane</h2>
 <p>A lane is for giving something to somebody without being able to read what else they have been given. It is an append-only inbox on a vault server, described by one link, <code>sgi1.&lt;vault&gt;.&lt;token&gt;.&lt;public key&gt;</code>:</p>
 <ul>
@@ -197,7 +197,7 @@
     <div class="brandline">Voice<em>Debrief</em> <span>iOS</span></div>
     <p>The VoiceDebrief transcript and debrief as a native iPhone and iPad app, on Apple's own models, with the results in a vault you own. In development: there is nothing to install yet. Content CC BY 4.0; code Apache 2.0.</p>
     <p class="partnote">This site is static and has no analytics.</p>
-    <p class="verline">site v0.1.9 · <a href="index.md">this page as markdown</a> · <a href="../llms.txt">llms.txt</a></p>
+    <p class="verline">site v0.1.10 · <a href="index.md">this page as markdown</a> · <a href="../llms.txt">llms.txt</a></p>
   </div>
   <div>
     <h4>The app</h4>
