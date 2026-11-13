@@ -60,7 +60,8 @@ final class SampleWorld {
                                    liveSettled: SampleData.liveSettled, liveVolatile: SampleData.liveVolatile,
                                    levels: SampleData.levels)
             case .library, .recordWorking, .noteWorking, .noteQueued:
-                session.showSample(phase: .working("Writing the debrief"), noteId: ids[.working])
+                session.showSample(phase: .working("Writing the debrief"), noteId: ids[.working],
+                                   waiting: ids[.waiting].map { [$0] } ?? [])
                 // Send pressed before the note is finished: it waits. Nothing is sent, now or later.
                 if screen == .noteQueued, let id = ids[.working], let recipient = RecipientStore.shared.builtIn {
                     session.send(noteId: id, to: recipient)

@@ -11,7 +11,7 @@ enum SampleData {
     static let source = "Sample data, not a recording"
 
     enum Kind: String, CaseIterable, Sendable {
-        case finished, transcriptOnly, interrupted, working, recording
+        case finished, transcriptOnly, interrupted, working, waiting, recording
     }
 
     /// One invented note: how long ago it was made, its run, and whether it is still marked as in progress.
@@ -105,6 +105,13 @@ enum SampleData {
         return Sample(kind: .working, secondsAgo: 60, run: run, processing: true)
     }
 
+    /// A note recorded while the one before it was still being written up: it waits its turn.
+    static var waiting: Sample {
+        var run = DebriefRun(source: source, localeId: localeId)
+        run.audioSeconds = 12
+        return Sample(kind: .waiting, secondsAgo: 15, run: run, processing: true)
+    }
+
     /// The note that exists from the moment a recording starts.
     static var recording: Sample {
         Sample(kind: .recording, secondsAgo: recordingSeconds, run: DebriefRun(source: source, localeId: localeId), processing: true)
@@ -129,7 +136,7 @@ enum SampleData {
         guard set == .full else { return [] }
         var out = [interrupted, transcriptOnly, finished]
         switch screen {
-        case .library, .recordWorking, .noteWorking, .noteQueued: out.append(working)
+        case .library, .recordWorking, .noteWorking, .noteQueued: out += [working, waiting]
         case .recordRecording: out.append(recording)
         default: break
         }

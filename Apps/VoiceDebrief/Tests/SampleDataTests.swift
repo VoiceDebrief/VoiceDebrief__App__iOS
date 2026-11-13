@@ -33,7 +33,8 @@ struct SampleDataTests {
     }
 
     @Test func everySampleNoteSaysItIsInvented() {
-        for sample in [SampleData.finished, SampleData.transcriptOnly, SampleData.interrupted, SampleData.working, SampleData.recording] {
+        for sample in [SampleData.finished, SampleData.transcriptOnly, SampleData.interrupted, SampleData.working,
+                       SampleData.waiting, SampleData.recording] {
             #expect(sample.run.source == SampleData.source)
             if let first = sample.run.transcript?.lines.first?.text {
                 #expect(first.lowercased().contains("invented sample"))
@@ -51,8 +52,12 @@ struct SampleDataTests {
         #expect(world.store.root.path.hasPrefix(FileManager.default.temporaryDirectory.path))
         #expect(world.store.root != NoteStore.defaultRoot)
         let states = world.store.notes.map(\.stateLine)
-        // Newest first: being written, finished, transcript only, interrupted.
-        #expect(states == ["Interrupted: open it to run it again", "On this device", "Too short to summarise", "Interrupted: open it to run it again"])
+        // Newest first: waiting its turn, being written, finished, transcript only, interrupted. The
+        // first two are marked as in progress in the store; the session knows they are not interrupted.
+        #expect(states == ["Interrupted: open it to run it again", "Interrupted: open it to run it again", "On this device",
+                           "Too short to summarise", "Interrupted: open it to run it again"])
+        let waiting = try #require(world.noteIds[.waiting])
+        #expect(world.session.workingText(for: waiting) == "Waiting its turn")
         let working = try #require(world.noteIds[.working])
         #expect(world.session.workingText(for: working) == "Writing the debrief")
         let interrupted = try #require(world.noteIds[.interrupted])
