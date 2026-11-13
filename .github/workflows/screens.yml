@@ -1,0 +1,189 @@
+name: screens
+
+# A picture of every screen, so that the people and agents who write this app can see it without
+# a Mac (issue 016). The UI tests in Apps/VoiceDebrief/UITests launch the app once per screen with
+# invented sample data (-VDSampleData, -VDScreen) and keep a screenshot.
+#
+#   shoot     one Mac job per device (one iPhone, one iPad): build once, then run the tests in
+#             light and in dark, export the PNGs and make them upright, longest side 1600 px
+#   collect   both devices in one artifact, screens-<commit sha>, with a contact sheet per set
+#             and an index; the index is also the job summary
+#
+# Files: <iphone|ipad>-<light|dark>-<screen id>.png, contact-<device>-<appearance>.png, index.md.
+# A simulator has no speech model, no Apple Intelligence, no microphone and no passkeys: every
+# state that depends on them is shown from sample data, never from a real run.
+on:
+  workflow_dispatch:
+  push:
+    branches: [dev, 'work/**']
+    paths:
+      - 'Apps/VoiceDebrief/Sources/UI/**'
+      - 'Apps/VoiceDebrief/Sources/App/**'
+      - 'Apps/VoiceDebrief/Sources/Model/SampleData.swift'
+      - 'Apps/VoiceDebrief/Sources/Model/Roadmap.swift'
+      - 'Apps/VoiceDebrief/UITests/**'
+      - 'Apps/VoiceDebrief/Resources/**'
+      - 'Apps/VoiceDebrief/VoiceDebrief.xcodeproj/**'
+      - '.github/workflows/screens.yml'
+      - '.github/scripts/export-screens.py'
+      - '.github/scripts/png-normalize.py'
+      - '.github/scripts/contact-sheet.py'
+
+permissions:
+  contents: read
+
+env:
+  PROJECT: Apps/VoiceDebrief/VoiceDebrief.xcodeproj
+  SCHEME: VoiceDebriefScreens
+  # One per entry in ScreensTests.shots. Update both together.
+  SHOTS: record,record-empty,record.recording,record.working,library,library-empty,note.finished,note.transcript,note.interrupted,note.working,vaults,vaults-empty,vault.detail,settings,diagnostics,traffic,about
+
+jobs:
+  shoot:
+    name: Screens (${{ matrix.device }})
+    strategy:
+      fail-fast: false
+      matrix:
+        device: [iPhone, iPad]
+    runs-on: macos-26
+    timeout-minutes: 45
+    # A started job is never cancelled; a newer push replaces one that is still waiting.
+    concurrency:
+      group: screens-${{ matrix.device }}-${{ github.ref }}
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Select Xcode
+        run: .github/scripts/select-xcode.sh
+
+      - name: Version from the version file
+        run: |
+          v=$(tr -d ' \n' < version); v=${v#v}
+          echo "MARKETING_VERSION=$v" >> "$GITHUB_ENV"
+
+      - name: Pick and boot an ${{ matrix.device }} simulator
+        id: sim
+        timeout-minutes: 8
+        run: |
+          u=$(.github/scripts/pick-simulator.py "${{ matrix.device }}")
+          echo "udid=$u" >> "$GITHUB_OUTPUT"
+          .github/scripts/boot-simulator.sh "$u"
+
+      - name: Build the app and the screen tests
+        run: |
+          .github/scripts/run-and-summarize.sh "Build for screens (${{ matrix.device }})" "$RUNNER_TEMP/logs/screens-build.log" -- \
+            xcodebuild build-for-testing -project "$PROJECT" -scheme "$SCHEME" -configuration Debug \
+              -destination "id=${{ steps.sim.outputs.udid }}" -derivedDataPath "$RUNNER_TEMP/dd" \
+              MARKETING_VERSION="$MARKETING_VERSION" CURRENT_PROJECT_VERSION="$GITHUB_RUN_NUMBER" \
+              CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
+
+      - name: Take the screenshots, light then dark
+        timeout-minutes: 25
+        run: |
+          u="${{ steps.sim.outputs.udid }}"
+          device=$(echo "${{ matrix.device }}" | tr '[:upper:]' '[:lower:]')
+          # The same status bar in every picture.
+          xcrun simctl status_bar "$u" override --time "9:41" --batteryState charged --batteryLevel 100 \
+            --cellularMode active --cellularBars 4 --wifiBars 3 || true
+          .github/scripts/export-screens.py --self-test
+          status=0
+          for appearance in light dark; do
+            xcrun simctl ui "$u" appearance "$appearance"
+            result="$RUNNER_TEMP/Screens-$appearance.xcresult"
+            .github/scripts/run-and-summarize.sh "Screens (${{ matrix.device }}, $appearance)" "$RUNNER_TEMP/logs/screens-$appearance.log" -- \
+              xcodebuild test-without-building -project "$PROJECT" -scheme "$SCHEME" -configuration Debug \
+                -destination "id=$u" -derivedDataPath "$RUNNER_TEMP/dd" -resultBundlePath "$result" \
+                -parallel-testing-enabled NO \
+                CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO || status=1
+            # Export whatever was taken, even after a failed test: a missing picture is found below.
+            .github/scripts/export-screens.py "$result" "$RUNNER_TEMP/screens" "$device-$appearance" || status=1
+          done
+          xcrun simctl shutdown "$u" 2>/dev/null || true
+          exit $status
+
+      - name: Make the PNGs upright and at most 1600 px
+        if: always()
+        run: |
+          # XCTest stores the framebuffer and an EXIF Orientation tag saying how to turn it (iPad
+          # landscape: the portrait buffer). Read the tag, strip it so no viewer turns the picture
+          # again, then turn the stored pixels the way the tag said (sips -r is clockwise).
+          shopt -s nullglob
+          python3 .github/scripts/png-normalize.py --self-test
+          bad=0
+          for f in "$RUNNER_TEMP"/screens/*.png; do
+            o=$(python3 .github/scripts/png-normalize.py --orientation "$f")
+            python3 .github/scripts/png-normalize.py "$f" >/dev/null
+            case "$o" in
+              1) ;;
+              3) sips -r 180 "$f" >/dev/null ;;
+              6) sips -r 90 "$f" >/dev/null ;;
+              8) sips -r 270 "$f" >/dev/null ;;
+              *) echo "::warning::$(basename "$f"): mirrored EXIF orientation $o, left as captured" ;;
+            esac
+            sips -Z 1600 "$f" >/dev/null
+          done
+          files=("$RUNNER_TEMP"/screens/*.png)
+          if [ "${{ matrix.device }}" = iPad ]; then landscape=--landscape; else landscape=; fi
+          if [ ${#files[@]} -gt 0 ]; then python3 .github/scripts/png-normalize.py $landscape "${files[@]}" || bad=1; fi
+          want=$(( $(echo "$SHOTS" | tr ',' '\n' | wc -l) * 2 ))
+          echo "${#files[@]} screenshots for ${{ matrix.device }} (expected $want)" | tee -a "$GITHUB_STEP_SUMMARY"
+          if [ "${#files[@]}" -ne "$want" ]; then echo "::error::${#files[@]} screenshots for ${{ matrix.device }}, expected $want"; bad=1; fi
+          [ "$bad" = 0 ]
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: screens-part-${{ github.sha }}-${{ matrix.device }}
+          path: ${{ runner.temp }}/screens/
+          if-no-files-found: warn
+          retention-days: 1
+
+      - name: Keep the logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screens-logs-${{ matrix.device }}
+          path: ${{ runner.temp }}/logs/
+          if-no-files-found: ignore
+          retention-days: 7
+
+  collect:
+    name: One artifact, with contact sheets
+    needs: shoot
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: screens-part-${{ github.sha }}-*
+          path: screens
+          merge-multiple: true
+
+      - name: Contact sheets and the index
+        shell: bash
+        run: |
+          python3 -m pip install --quiet --disable-pip-version-check pillow
+          mkdir -p screens
+          {
+            echo "## Screens at \`${GITHUB_SHA:0:7}\`"
+            echo
+            echo "Artifact \`screens-$GITHUB_SHA\`. How to fetch and read it from a Linux container: \`website/develop/index.md\`."
+            echo
+          } >> "$GITHUB_STEP_SUMMARY"
+          python3 .github/scripts/contact-sheet.py screens "$SHOTS" | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: screens-${{ github.sha }}
+          path: screens/
+          if-no-files-found: error
+          retention-days: 30
