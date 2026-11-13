@@ -33,9 +33,11 @@ on:
 permissions:
   contents: read
 
+# A new push waits for the build in progress instead of cancelling it: cancelling meant that three
+# releases in a row (v0.1.2 to v0.1.4) never reached TestFlight. GitHub keeps only the newest waiting run.
 concurrency:
   group: ios-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 env:
   PROJECT: Apps/VoiceDebrief/VoiceDebrief.xcodeproj
@@ -96,21 +98,6 @@ jobs:
           xcrun simctl shutdown "$u" 2>/dev/null || true
           exit $status
 
-      - name: Unit tests on the iPad simulator
-        timeout-minutes: 20
-        run: |
-          u=$(.github/scripts/pick-simulator.py iPad)
-          echo "simulator $u"
-          .github/scripts/boot-simulator.sh "$u"
-          .github/scripts/run-and-summarize.sh "Unit tests (iPad)" "$RUNNER_TEMP/logs/test-ipad.log" -- \
-            xcodebuild test-without-building -project "$PROJECT" -scheme "$SCHEME" -configuration Debug \
-              -derivedDataPath "$RUNNER_TEMP/dd" -destination "id=$u" \
-              -parallel-testing-enabled NO -test-timeouts-enabled YES \
-              -default-test-execution-time-allowance 60 -maximum-test-execution-time-allowance 180 \
-              CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO && status=0 || status=$?
-          xcrun simctl shutdown "$u" 2>/dev/null || true
-          exit $status
-
       # TestFlight: only for a green push to dev (or a manual run), and only when the signing
       # secrets exist. Everything above passed, or this step does not run.
       - name: TestFlight (archive, sign, upload)
@@ -131,6 +118,22 @@ jobs:
             exit 0
           fi
           scripts/release/testflight.sh
+
+      # After the upload: the same logic tests again on an iPad. A failure here still fails the run.
+      - name: Unit tests on the iPad simulator
+        timeout-minutes: 20
+        run: |
+          u=$(.github/scripts/pick-simulator.py iPad)
+          echo "simulator $u"
+          .github/scripts/boot-simulator.sh "$u"
+          .github/scripts/run-and-summarize.sh "Unit tests (iPad)" "$RUNNER_TEMP/logs/test-ipad.log" -- \
+            xcodebuild test-without-building -project "$PROJECT" -scheme "$SCHEME" -configuration Debug \
+              -derivedDataPath "$RUNNER_TEMP/dd" -destination "id=$u" \
+              -parallel-testing-enabled NO -test-timeouts-enabled YES \
+              -default-test-execution-time-allowance 60 -maximum-test-execution-time-allowance 180 \
+              CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO && status=0 || status=$?
+          xcrun simctl shutdown "$u" 2>/dev/null || true
+          exit $status
 
       - name: Keep the logs
         if: always()
