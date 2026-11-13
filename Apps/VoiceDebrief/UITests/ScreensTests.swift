@@ -23,6 +23,7 @@ final class ScreensTests: XCTestCase {
         "settings", "diagnostics", "traffic", "about",
         "note.finished-end", "vaults-end", "vault.detail-end", "diagnostics-end", "about-end",
         "recipients", "words", "settings-end", "lab", "lab.prompt", "credit", "identity",
+        "note.queued", "note.finished-send", "note.finished-delete", "record.recording-discard",
     ]
 
     @MainActor func test01_record() { shoot("record") }
@@ -54,9 +55,14 @@ final class ScreensTests: XCTestCase {
     @MainActor func test27_lab_prompt() { shoot("lab.prompt") }
     @MainActor func test28_credit() { shoot("credit", wait: 6) }
     @MainActor func test29_identity() { shoot("identity") }
+    @MainActor func test30_note_queued() { shoot("note.queued") }
+    // What the app asks before it sends, deletes or discards: tap the control, then the picture.
+    @MainActor func test31_send_asks() { shoot("note.finished", wait: 6, tap: "Send to the developer of this test build", as: "note.finished-send") }
+    @MainActor func test32_delete_asks() { shoot("note.finished", wait: 6, toTheEnd: true, tap: "Delete from this device", as: "note.finished-delete") }
+    @MainActor func test33_discard_asks() { shoot("record.recording", tap: "Discard", as: "record.recording-discard") }
 
     func testTheListMatchesTheTestMethods() {
-        XCTAssertEqual(Self.shots.count, 29)
+        XCTAssertEqual(Self.shots.count, 33)
         XCTAssertEqual(Set(Self.shots).count, Self.shots.count)
     }
 
@@ -65,7 +71,8 @@ final class ScreensTests: XCTestCase {
     }
 
     @MainActor
-    private func shoot(_ screen: String, set: String = "full", wait: UInt32 = 3, toTheEnd: Bool = false) {
+    private func shoot(_ screen: String, set: String = "full", wait: UInt32 = 3, toTheEnd: Bool = false,
+                       tap: String? = nil, as name: String? = nil) {
         // Landscape on iPad: the size at which the layout has most room to go wrong. screens.yml
         // turns the PNG upright from its EXIF orientation (the capture is the portrait framebuffer).
         if UIDevice.current.userInterfaceIdiom == .pad {
@@ -84,14 +91,24 @@ final class ScreensTests: XCTestCase {
             for _ in 0..<4 { app.swipeUp(velocity: .fast) }
             sleep(1)
         }
+        var tapped = true
+        if let tap {
+            let control = app.buttons[tap].firstMatch
+            tapped = control.waitForExistence(timeout: 5)
+            if tapped {
+                control.tap()
+                sleep(2)
+            }
+        }
         // The picture first: a slow accessibility query must not cost the screenshot. The whole
         // screen, not the app element, whose capture is cropped wrongly in landscape on iPad.
         let attachment = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
-        attachment.name = toTheEnd ? "\(screen)-end" : (set == "full" ? screen : "\(screen)-\(set)")
+        attachment.name = name ?? (toTheEnd ? "\(screen)-end" : (set == "full" ? screen : "\(screen)-\(set)"))
         attachment.lifetime = .keepAlways
         add(attachment)
         let marker = app.descendants(matching: .any).matching(identifier: "vd.screen.\(screen)").firstMatch
         XCTAssertTrue(marker.waitForExistence(timeout: 10), "The app did not open \(screen) from its launch arguments")
+        XCTAssertTrue(tapped, "There is no button named \(tap ?? "") on \(screen): the picture is of the screen without it")
         app.terminate()
     }
 }

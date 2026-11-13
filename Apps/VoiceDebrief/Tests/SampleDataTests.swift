@@ -27,9 +27,9 @@ struct SampleDataTests {
     @Test func everyScreenHasItsOwnIdAndATab() {
         let ids = LaunchScreen.allCases.map(\.rawValue)
         #expect(Set(ids).count == ids.count)
-        for screen in LaunchScreen.allCases where screen.isPushed {
-            #expect(screen.tab != .record)
-        }
+        // A note being made opens on the Record tab, as stopping a recording leaves it.
+        #expect(LaunchScreen.noteWorking.tab == .record)
+        #expect(LaunchScreen.noteFinished.tab == .library)
     }
 
     @Test func everySampleNoteSaysItIsInvented() {
@@ -57,7 +57,9 @@ struct SampleDataTests {
         #expect(world.session.workingText(for: working) == "Writing the debrief")
         let interrupted = try #require(world.noteIds[.interrupted])
         #expect(world.session.workingText(for: interrupted) == nil)
-        #expect(world.store.audioURL(for: interrupted) != nil)
+        let kept = try #require(world.store.audioURL(for: interrupted))
+        // The interrupted note's recording is as long as it says: 132 seconds of 16 kHz, 16-bit mono.
+        #expect(try Data(contentsOf: kept).count == 44 + 132 * 32_000)
         let finishedId = try #require(world.noteIds[.finished])
         let finished = try #require(world.store.note(finishedId))
         #expect(finished.title.hasPrefix("Invented sample"))
@@ -74,6 +76,12 @@ struct SampleDataTests {
         }
         #expect(!world.session.liveSettled.isEmpty)
         #expect(world.session.levels.count == DebriefSession.levelCount)
+    }
+
+    @Test func aSendPressedEarlyWaits() throws {
+        let world = SampleWorld(set: .full, screen: .noteQueued)
+        let working = try #require(world.noteIds[.working])
+        #expect(world.session.queuedSends[working] == RecipientStore.builtInName)
     }
 
     @Test func theEmptySetIsEmpty() {

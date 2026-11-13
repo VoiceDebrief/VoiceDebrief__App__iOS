@@ -48,7 +48,7 @@ final class SampleWorld {
         for sample in SampleData.notes(for: screen, set: set) {
             guard let made = store.begin(source: sample.run.source, localeId: sample.run.localeId,
                                          now: now.addingTimeInterval(-sample.secondsAgo)) else { continue }
-            try? SampleData.silentWAV.write(to: made.audio)
+            try? SampleData.silence(seconds: sample.recordedSeconds).write(to: made.audio)
             store.update(made.note.id, run: sample.run, processing: sample.processing)
             ids[sample.kind] = made.note.id
         }
@@ -59,8 +59,12 @@ final class SampleWorld {
                 session.showSample(phase: .recording(since: now.addingTimeInterval(-SampleData.recordingSeconds)),
                                    liveSettled: SampleData.liveSettled, liveVolatile: SampleData.liveVolatile,
                                    levels: SampleData.levels)
-            case .library, .recordWorking, .noteWorking:
+            case .library, .recordWorking, .noteWorking, .noteQueued:
                 session.showSample(phase: .working("Writing the debrief"), noteId: ids[.working])
+                // Send pressed before the note is finished: it waits. Nothing is sent, now or later.
+                if screen == .noteQueued, let id = ids[.working], let recipient = RecipientStore.shared.builtIn {
+                    session.send(noteId: id, to: recipient)
+                }
             default:
                 break
             }
@@ -177,7 +181,7 @@ struct LaunchedScreen: View {
     @ViewBuilder
     private var destination: some View {
         switch sample.screen {
-        case .noteFinished, .noteTranscript, .noteInterrupted, .noteWorking:
+        case .noteFinished, .noteTranscript, .noteInterrupted, .noteWorking, .noteQueued:
             NoteDetailView(noteId: sample.noteId(for: sample.screen) ?? "", session: sample.session, book: sample.book)
         case .vaultDetail:
             if let vault = sample.vault {

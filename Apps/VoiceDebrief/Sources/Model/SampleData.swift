@@ -20,6 +20,8 @@ enum SampleData {
         let secondsAgo: TimeInterval
         let run: DebriefRun
         let processing: Bool
+        /// How long the silent recording written for this note is.
+        var recordedSeconds: Double { run.audioSeconds ?? (kind == .interrupted ? 132 : 0.5) }
     }
 
     private static func lines(_ texts: [(Int, String)], last: Int) -> [TranscriptLine] {
@@ -127,7 +129,7 @@ enum SampleData {
         guard set == .full else { return [] }
         var out = [interrupted, transcriptOnly, finished]
         switch screen {
-        case .library, .recordWorking, .noteWorking: out.append(working)
+        case .library, .recordWorking, .noteWorking, .noteQueued: out.append(working)
         case .recordRecording: out.append(recording)
         default: break
         }
@@ -140,7 +142,7 @@ enum SampleData {
         case .noteFinished: return .finished
         case .noteTranscript: return .transcriptOnly
         case .noteInterrupted: return .interrupted
-        case .noteWorking: return .working
+        case .noteWorking, .noteQueued: return .working
         default: return nil
         }
     }
@@ -150,9 +152,13 @@ enum SampleData {
     /// A name that can never resolve (RFC 6761), in case anything ever tried.
     static let serverAddress = "https://sample-server.invalid"
 
-    /// Half a second of silence as a 16 kHz mono WAV, so a sample note has an audio file as a real one does.
-    static var silentWAV: Data {
-        let samples = 8000
+    /// Half a second of silence, for where only the form matters.
+    static var silentWAV: Data { silence(seconds: 0.5) }
+
+    /// Silence as a 16 kHz mono WAV of the given length, so a sample note has an audio file as a real
+    /// one does and a player shows the length the note claims.
+    static func silence(seconds: Double) -> Data {
+        let samples = max(1, Int(seconds * 16_000))
         let dataBytes = UInt32(samples * 2)
         var out = Data()
         func append32(_ value: UInt32) { withUnsafeBytes(of: value.littleEndian) { out.append(contentsOf: $0) } }
