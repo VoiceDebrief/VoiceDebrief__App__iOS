@@ -18,11 +18,11 @@ The owner's words, 13 November 2026: the team needs to share photos, videos and 
 | Source | What it settled |
 |---|---|
 | `sgit-ai` 0.27.0 (the Python package) | The format and the protocol. A blob over 4 MB encrypted is uploaded in parts of 10 MB to URLs the server signs, flagged `large` in its tree entry, and read back from a signed URL in ranges of 8 MB |
-| The web Vault UI at vault.sgraph.ai (its JavaScript, read as published) | The features and the words. It reads a whole file into memory, encrypts it whole and sends it in one request, with no upload in parts, so a file of more than about 4 MB probably does not go through the hosted server from the browser. It moves a branch without compare-and-swap |
+| The web Vault UI: its JavaScript as served at vault.sgraph.ai, read by this session; its source (the Send repository at commit `da293d4`, 18 October 2026), read by the parent session | The features and the words. It encrypts each file whole and sends it in a batch, and refuses a write over 3 MB from a vault app; its own source says a large upload through signed URLs "is not yet supported". It does read large files through a signed URL. Its library can move a branch with compare-and-swap (`pushIfMatch`), but its screens use the unconditional `push`, which the source notes can drop somebody else's commits |
 | The server's published API description | Reading needs no access token, including the signed URL for a large object. Writing needs the access token and the vault's write key |
 | The live server, with `sgit` itself | The exchange for a large object works on `dev.send.sgraph.ai` as the package describes it (a throwaway vault, destroyed afterwards) |
 
-The two source repositories could not be attached to this session, so nothing here comes from unpublished code.
+The two source repositories could not be attached to this session. What is said about the web Vault UI's source is the parent session's reading of it, passed on; the rest is from published code.
 
 ## Decisions
 

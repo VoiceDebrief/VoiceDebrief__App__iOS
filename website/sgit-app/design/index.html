@@ -50,11 +50,11 @@
 <thead><tr><th>Source</th><th>What it settled</th></tr></thead>
 <tbody>
 <tr><td><code>sgit-ai</code> 0.27.0 (the Python package)</td><td>The format and the protocol. A blob over 4 MB encrypted is uploaded in parts of 10 MB to URLs the server signs, flagged <code>large</code> in its tree entry, and read back from a signed URL in ranges of 8 MB</td></tr>
-<tr><td>The web Vault UI at vault.sgraph.ai (its JavaScript, read as published)</td><td>The features and the words. It reads a whole file into memory, encrypts it whole and sends it in one request, with no upload in parts, so a file of more than about 4 MB probably does not go through the hosted server from the browser. It moves a branch without compare-and-swap</td></tr>
+<tr><td>The web Vault UI: its JavaScript as served at vault.sgraph.ai, read by this session; its source (the Send repository at commit <code>da293d4</code>, 18 October 2026), read by the parent session</td><td>The features and the words. It encrypts each file whole and sends it in a batch, and refuses a write over 3 MB from a vault app; its own source says a large upload through signed URLs &quot;is not yet supported&quot;. It does read large files through a signed URL. Its library can move a branch with compare-and-swap (<code>pushIfMatch</code>), but its screens use the unconditional <code>push</code>, which the source notes can drop somebody else's commits</td></tr>
 <tr><td>The server's published API description</td><td>Reading needs no access token, including the signed URL for a large object. Writing needs the access token and the vault's write key</td></tr>
 <tr><td>The live server, with <code>sgit</code> itself</td><td>The exchange for a large object works on <code>dev.send.sgraph.ai</code> as the package describes it (a throwaway vault, destroyed afterwards)</td></tr>
 </tbody></table></div>
-<p>The two source repositories could not be attached to this session, so nothing here comes from unpublished code.</p>
+<p>The two source repositories could not be attached to this session. What is said about the web Vault UI's source is the parent session's reading of it, passed on; the rest is from published code.</p>
 <h2 id="decisions">Decisions</h2>
 <div class="tablewrap"><table>
 <thead><tr><th></th><th>Decision</th></tr></thead>
