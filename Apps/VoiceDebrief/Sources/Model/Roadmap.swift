@@ -1,14 +1,16 @@
 import Foundation
 
-/// Where one piece of the app stands. The words are the VoiceDebrief family's: built means it is in
-/// this build and tested; proposed means it does not exist yet.
+/// Where one piece of the app stands. Built means it is in this build and proven; testing means the
+/// code is in this build but nobody has yet judged it on a real device; proposed means it does not exist.
 enum StageStatus: String, Sendable, CaseIterable {
     case built
+    case testing
     case proposed
 
     var label: String {
         switch self {
         case .built: return "Built"
+        case .testing: return "In test"
         case .proposed: return "Proposed"
         }
     }
@@ -35,16 +37,20 @@ enum Roadmap {
               detail: "Reads and writes sgit vaults and derives a passkey's door. In the app, not yet used by a screen.",
               status: .built),
         Stage(id: "record",
-              title: "Record or bring a voice note",
-              detail: "Record here, or share a voice note from WhatsApp or Files.",
-              status: .proposed),
+              title: "Record or open a voice note",
+              detail: "Record here or choose an audio file. Sharing from WhatsApp, and its Ogg Opus files, are not built.",
+              status: .testing),
         Stage(id: "transcript",
               title: "Transcript, on this device",
-              detail: "Apple's speech models, with the time of every line.",
-              status: .proposed),
+              detail: "Apple's speech model, with the time of every line.",
+              status: .testing),
         Stage(id: "debrief",
               title: "Debrief, on this device",
-              detail: "Key points, actions and one sentence, written by Apple Intelligence.",
+              detail: "Key points, actions and one sentence, written by Apple's on-device model.",
+              status: .testing),
+        Stage(id: "keep",
+              title: "Keeping a debrief",
+              detail: "Nothing is saved yet: a result lasts until the app closes.",
               status: .proposed),
         Stage(id: "account",
               title: "Your account, opened by a passkey",

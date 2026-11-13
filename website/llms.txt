@@ -4,9 +4,9 @@
 > short debrief using Apple's on-device models only (SpeechAnalyzer and the Foundation Models
 > framework): no OpenRouter, no API key, no inference server. Results are kept in an sgit vault
 > the user owns, opened with a passkey as pki.sgit.ai does it, and signed with the user's own key
-> bundle (RSA-OAEP 4096 and ECDSA P-256). STATUS: the repository holds an app skeleton that
-> builds and tests, the SGitVault vault engine, CI and the plan. It does NOT record, transcribe
-> or summarise anything yet, and there is nothing to install.
+> bundle (RSA-OAEP 4096 and ECDSA P-256). STATUS: a test build (TestFlight, not public) records
+> or opens a voice note, transcribes it and writes a debrief on the device; nobody has judged the
+> results yet. It saves nothing. The account, the vault sync and the identity are NOT built.
 
 Part of VoiceDebrief (https://voicedebrief.ai). Content CC BY 4.0; code Apache 2.0.
 Every page has a markdown twin: replace index.html with index.md.

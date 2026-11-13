@@ -9,7 +9,7 @@ struct StatusView: View {
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Voice note in, transcript and debrief out, on this device.")
                             .font(.title3.weight(.semibold))
-                        Text("This is an early build. It does not transcribe anything yet: it exists so that every later step arrives in an app that already builds, tests and installs.")
+                        Text("This is an early build. It can record or open a voice note, transcribe it and write a debrief, so that Apple's models can be judged on real notes. It saves nothing and has no account yet.")
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                     }
@@ -18,6 +18,12 @@ struct StatusView: View {
 
                 Section("In this build") {
                     ForEach(Roadmap.stages(.built)) { stage in
+                        StageRow(stage: stage)
+                    }
+                }
+
+                Section("Being tested on real devices") {
+                    ForEach(Roadmap.stages(.testing)) { stage in
                         StageRow(stage: stage)
                     }
                 }
@@ -35,7 +41,7 @@ struct StatusView: View {
                     Link("Source code", destination: AppInfo.source)
                 }
             }
-            .navigationTitle("VoiceDebrief")
+            .navigationTitle("About")
         }
     }
 }

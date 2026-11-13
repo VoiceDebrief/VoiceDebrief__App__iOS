@@ -11,14 +11,16 @@ struct RoadmapTests {
     }
 
     @Test func builtAndProposedTogetherAreEverything() {
-        #expect(Roadmap.stages(.built).count + Roadmap.stages(.proposed).count == Roadmap.stages.count)
+        #expect(StageStatus.allCases.map { Roadmap.stages($0).count }.reduce(0, +) == Roadmap.stages.count)
     }
 
-    @Test func nothingClaimsATranscriptYet() {
-        // The status screen must not say the app transcribes before it does.
+    @Test func nothingClaimsToBeProvenBeforeItIs() {
+        // The transcript and the debrief are in the build, and nobody has judged them on a device
+        // yet: the status screen must say "in test", not "built".
         let built = Roadmap.stages(.built).map(\.id)
         #expect(!built.contains("transcript"))
         #expect(!built.contains("debrief"))
+        #expect(Roadmap.stages(.testing).map(\.id).contains("transcript"))
     }
 }
 

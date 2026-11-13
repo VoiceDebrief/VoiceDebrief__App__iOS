@@ -12,3 +12,5 @@ One file per piece of work: `open/NNN-slug.md`, moved to `done/` when it is done
 | 006 | What SGitVault still lacks | |
 | 007 | One shared SGitVault | scheduling |
 | 008 | Credit and top-up | the account; a price |
+| 009 | Read WhatsApp's Ogg Opus | |
+| 010 | Judge Apple's models on real notes | the owner, on a device |
