@@ -28,6 +28,7 @@ struct SettingsView: View {
                 Section("Advanced") {
                     NavigationLink("Diagnostics and lane") { DiagnosticsView(session: session) }
                     NavigationLink("Every step the vault engine took") { TrafficView(log: book.log) }
+                    NavigationLink("Lab") { LabView(store: session.store) }
                 }
 
                 Section("About") {
