@@ -45,16 +45,24 @@ struct DiagnosticsView: View {
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled()
                     if let lane = DeveloperLane.parse(laneLink) {
+                        LabeledContent("Using", value: "The pasted lane")
                         LabeledContent("Vault", value: lane.vault)
                         LabeledContent("Key", value: lane.fingerprint)
-                        Button("Remove the lane", role: .destructive) { laneLink = "" }
-                    } else if !laneLink.isEmpty {
-                        Text("That is not a lane link.").font(.footnote).foregroundStyle(.orange)
+                        Button("Remove the pasted lane", role: .destructive) { laneLink = "" }
+                    } else {
+                        if !laneLink.isEmpty {
+                            Text("That is not a lane link.").font(.footnote).foregroundStyle(.orange)
+                        }
+                        if let lane = DeveloperLane.builtIn {
+                            LabeledContent("Using", value: "The built-in lane")
+                            LabeledContent("Vault", value: lane.vault)
+                            LabeledContent("Key", value: lane.fingerprint)
+                        }
                     }
                 } header: {
                     Text("Developer lane")
                 } footer: {
-                    Text("Optional. With a lane link here, a button appears after each run to send that note, encrypted, to the developer. Nothing is sent without pressing it. Check the key above matches the one the developer gave you.")
+                    Text("After each run a button can send that note, encrypted, to the developer's lane. Nothing is sent without pressing it. This build has a lane built in; a link pasted here is used instead.")
                 }
             }
             .navigationTitle("Diagnostics")

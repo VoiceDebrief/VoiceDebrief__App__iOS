@@ -31,6 +31,8 @@ passkey. The plan is `website/plan/index.md`. Load-bearing decisions, not to be 
 - **Never commit secrets**: no vault key, access key, API key or private key. Nothing that decrypts
   what is committed may be committed. `node website/admin/validate.mjs` scans the whole repository
   and CI runs it on every push. The fixture vaults under `Packages/SGitVault/Tests/` are throwaway.
+  One thing that looks like a secret is committed on purpose: the developer lane link in
+  `DeveloperLane.swift` (a vault id, an append token that can only write, a public key).
 - **`Packages/SGitVault` is a copy** from `PrompTugal__App__iOS`. Record every change to it in
   `Packages/SGitVault/SOURCE.md`.
 - **The Xcode project is hand-written** with folder-synchronised groups: adding a Swift file needs

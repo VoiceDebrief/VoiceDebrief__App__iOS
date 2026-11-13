@@ -29,6 +29,19 @@ struct DeveloperLaneTests {
         #expect(DeveloperLane.parse("paste this: \(link) thanks") == lane)
     }
 
+    @Test func theBuiltInLaneIsTheOneItSaysItIs() throws {
+        let lane = try #require(DeveloperLane.builtIn)
+        #expect(lane.fingerprint == DeveloperLane.builtInFingerprint)
+        #expect(lane.vault == "fjq2ekcw")
+    }
+
+    @Test func aPastedLinkTakesTheBuiltInLanesPlace() throws {
+        let (_, link) = try Self.keyAndLink()
+        #expect(DeveloperLane.current(pasted: link)?.vault == "abcd1234")
+        #expect(DeveloperLane.current(pasted: "") == DeveloperLane.builtIn)
+        #expect(DeveloperLane.current(pasted: "nonsense") == DeveloperLane.builtIn)
+    }
+
     @Test func whatIsNotALinkIsRefused() {
         #expect(DeveloperLane.parse("") == nil)
         #expect(DeveloperLane.parse("sgi1.abcd1234.0123456789abcdef.notakey") == nil)

@@ -221,7 +221,7 @@ struct DeveloperLaneSection: View {
 
     var body: some View {
         Section {
-            if let lane = DeveloperLane.parse(link) {
+            if let lane = DeveloperLane.current(pasted: link) {
                 switch session.sharing {
                 case .sending(let done, let total):
                     HStack(spacing: 12) {
@@ -242,14 +242,14 @@ struct DeveloperLaneSection: View {
                     }
                 }
             } else {
-                Text("No developer lane is set. Paste a lane link on the Diagnostics tab to be able to send a note.")
+                Text("There is no developer lane in this build. Paste a lane link on the Diagnostics tab to be able to send a note.")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             }
         } header: {
             Text("Help judge the models")
         } footer: {
-            if let lane = DeveloperLane.parse(link) {
+            if let lane = DeveloperLane.current(pasted: link) {
                 Text("This sends the audio, the transcript and the debrief of this note off this device, encrypted to the developer's key (\(lane.fingerprint)). The server that carries it cannot read it. Send only a note you are happy to share.")
             }
         }

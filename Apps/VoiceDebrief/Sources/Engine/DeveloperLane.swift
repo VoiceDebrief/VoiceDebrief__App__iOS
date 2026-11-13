@@ -5,13 +5,28 @@ import Foundation
 /// notes. The note goes to an sgit append lane: a write-only channel on a vault server. It is
 /// encrypted on this device to the developer's public key, so the server stores bytes it cannot read.
 ///
-/// The lane is not built in. It is pasted in as a link, `sgi1.<vault>.<token>.<public key>`, the form
-/// newsroom.sgit.ai and the PrompTugal apps already use. No link, no sending.
+/// A lane is a link, `sgi1.<vault>.<token>.<public key>`, the form newsroom.sgit.ai and the PrompTugal
+/// apps already use. One is built in, so that a test build can send without setting anything up; a
+/// link pasted on the Diagnostics tab takes its place. Either way nothing is sent without the button.
 struct DeveloperLane: Equatable, Sendable {
     let vault: String
     let token: String
     let publicKeyPEM: String
     let fingerprint: String
+
+    /// The developer's lane during the test period (13 November 2026). Committed on purpose, at the
+    /// owner's request: a lane link holds a vault id, a token that can only write, and a public key.
+    /// It cannot read the lane or decrypt anything. The private key is held by the developer session
+    /// that made it; when that session ends the lane goes dead and this link must be replaced.
+    static let builtInLink = "sgi1.fjq2ekcw.e123c04c7e9a754afd2c37340b2ba786fc34de3729c33042.MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAsy-kwYsyRxMcnEwiMTZZYDDUUhVwBOamnuBL4Q_w8MweDR7-y7tugd4s1TGpU3M_eY0-7Pb60WReUoxCnfcmEnEq6WDuEzxlLxHnr5vALhcap8xbnTWG_udhfuOYkCIMqKaP4cTb4nYS82Uo-TkFu1JWa3b0Cdc1nIXZlzphfq3XHzfKkFCc6GIxTPpXc7OLmfcx5aqDcw56heNeMPjXuPadNabwjHyxffTKxtgepYgTPPo7jMMFi7cGmLo2XAfCz0vCxNYExaJXBg9HRonHIpcj-CS1wu9-puVCvMAp8w8O4JorcjucjhuKOv7zKu63jM1F1ArxovXGNDed7LBuV0ZWdBW-99T_OpOIMOmm-iF9o3oyoQgbVYBJhaDIr8IvHiGb6DHAnrF2I8b0je50uFAH0P-3IqsdUsrX-9_0uegopTcgTwxvgPTNzKLejjpJJa-Wvs0nkYRO-OzargFsf2RuQCzOoszmgvzO3FH-wR2o3fGpYOaV79LXqpiVlbf8VF4eh6s93qLxrmBE50trq4pB3ifyUiuH8zO0-Pv3UwvCDbaOHojHYCDY7wOtWzAqgtsteOQmUA7z8fKGraLUjHMiZlqC-JC_XhWxHtN7ZI3ulRmSaMdWKMt9j4aPUTt2-XuWs4Bq81JIdst_XWwO6AEeXUqLmMzn-1tM15TcKU0CAwEAAQ"
+    static let builtInFingerprint = "sha256:81021cb4dd6d073e"
+
+    static var builtIn: DeveloperLane? { parse(builtInLink) }
+
+    /// The lane to send to: a valid pasted link if there is one, otherwise the built-in lane.
+    static func current(pasted: String) -> DeveloperLane? {
+        parse(pasted) ?? builtIn
+    }
 
     /// The one host with the append routes (sgit.ai /api/append-lanes). Not configurable.
     static let endpoint = URL(string: "https://dev.send.sgraph.ai")!
