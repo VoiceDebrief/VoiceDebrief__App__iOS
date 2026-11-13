@@ -44,6 +44,12 @@ struct RootView: View {
         #if DEBUG
         .overlay(alignment: .topLeading) { LaunchMarker() }
         #endif
+        .task {
+            // Finishing a note saves it to the chosen vault, unless that is switched off (issue 022).
+            session.onNoteReady = { [store, book] id in
+                Task { await AutoSave.run(noteId: id, store: store, book: book) }
+            }
+        }
     }
 
     /// A tab's own first screen, or, in a sample launch that names a screen reached by a tap from

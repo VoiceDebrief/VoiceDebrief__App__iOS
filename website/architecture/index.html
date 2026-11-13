@@ -47,7 +47,7 @@
 <li>The app records to a file inside a note that already exists, so a recording cannot be lost by anything that happens later.</li>
 <li>Apple's speech model turns the file into timed text, and Apple's language model turns the text into a debrief. Both run on the device. No audio and no words go to a server for this.</li>
 <li>The note is kept as plain files in the app's own storage. That is the library.</li>
-<li>If you choose, the note is also written to a vault: every file encrypted on the device, one signed commit, pushed to a server that holds bytes it cannot read.</li>
+<li>Unless you switch it off, the finished note is also written to a vault: every file encrypted on the device, one signed commit, pushed to a server that holds bytes it cannot read.</li>
 <li>If you choose, and each time you are asked, the note is sealed to somebody's public key and dropped into a lane, which is a write-only inbox.</li>
 <li>Keys decide everything. A vault key opens a vault. A device key says which device wrote a commit. A person's key pair says who they are, and vouches for their devices.</li>
 </ol>
@@ -90,7 +90,7 @@
 <li><strong>Transcript.</strong> <code>SpeechFileTranscriber</code> gives the whole file to <code>SpeechAnalyzer</code>. The model for the chosen language is downloaded the first time. The result is a list of lines with times, written into the note.</li>
 <li><strong>Debrief.</strong> If the transcript has fewer than 25 words there is nothing to summarise and the app says so. Otherwise <code>DebriefPrompt</code> builds one prompt and <code>OnDeviceModel.respond(to:)</code> asks it once. If the note is longer than the model's context (4,096 tokens on the devices tried), <code>Chunker</code> splits it, each part is summarised, and the parts are merged with one more call. The answer is checked for its three headings; an answer in the wrong shape is kept and flagged, not hidden.</li>
 <li><strong>Compress.</strong> This happens after the note is finished, never while recording. <code>AudioCompressor</code> writes an AAC <code>.m4a</code> beside the WAV, reads it back, and replaces the WAV only if the copy has the same length. A 16-second note is about 190 KB.</li>
-<li><strong>Save to a vault</strong>, by choice. Section 3 below.</li>
+<li><strong>Save to a vault.</strong> When the note is finished and its audio compressed, it is saved into the vault chosen in Settings, unless that is switched off or there is no vault yet. A save that fails is written on the note and loses nothing. Section 3 below.</li>
 <li><strong>Send to a lane</strong>, by choice, asked every time. Section 4 below.</li>
 </ol>
 <h3 id="when-something-fails">When something fails</h3>
@@ -128,7 +128,7 @@
 <p>That last condition is compare-and-swap, and it is what makes two writers safe: the second one is refused, not merged over. The first save from the app, on 13 November 2026, was 4 files, 12 objects and 192.5 KB, and was pulled back with its signature verified.</p>
 <p>Reading is the same in reverse, and the engine verifies the signature of every commit it reads. The vault's screen shows the head, the files, the history and the traffic that produced them.</p>
 <h3 id="what-is-not-there-yet">What is not there yet</h3>
-<p>Up to v0.1.9 a vault could not be created without a server token, because creation and the first push were one step. Since v0.1.10 they are two: a vault is created on the device with no network, and a server is a remote added later, as in git, with push and pull as separate steps. That is written and tested against folders, but has not yet run on a device or against a real server. A merge when both sides have changed, and several named vaults, are not built; they are described in <a href="../articles/the-vault-is-a-version-controlled-store/index.html">The vault is a version-controlled store</a>.</p>
+<p>In the first builds with vaults (from v0.1.5) a vault could not be created without a server token, because creation and the first push were one step. They are now two: a vault is created on the device with no network, and a server is a remote added later, as in git, with push and pull as separate steps. That is written and tested against folders, but has not yet run on a device or against a real server. A merge when both sides have changed, and several named vaults, are not built; they are described in <a href="../articles/the-vault-is-a-version-controlled-store/index.html">The vault is a version-controlled store</a>.</p>
 <h2 id="4-a-lane">4. A lane</h2>
 <p>A lane is for giving something to somebody without being able to read what else they have been given. It is an append-only inbox on a vault server, described by one link, <code>sgi1.&lt;vault&gt;.&lt;token&gt;.&lt;public key&gt;</code>:</p>
 <ul>
