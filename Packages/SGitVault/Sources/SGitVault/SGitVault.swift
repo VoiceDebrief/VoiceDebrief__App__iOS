@@ -199,6 +199,12 @@ public actor SGitVault {
         return treeRoot
     }
 
+    /// The files of any commit (not only the head), so two commits can be compared.
+    public func files(in commit: VaultCommit) async throws -> [VaultFile] {
+        _ = try await walkTree(commit.treeId, name: "", prefix: "")
+        return (treeFilesMemo[commit.treeId] ?? []).sorted { $0.path < $1.path }
+    }
+
     /// Fetch every blob of the head into the cache, so `read` works offline.
     public func prefetch() async throws -> Int {
         var fetched = 0
