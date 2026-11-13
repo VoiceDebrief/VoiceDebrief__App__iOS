@@ -12,4 +12,5 @@ Most of these come from the owner's voice memos, written up by the agent working
 | [The vault is a version-controlled store](the-vault-is-a-version-controlled-store/index.md) | Position and brief | A vault needs no server to exist. A server is a remote you add |
 | [Where each key lives](where-each-key-lives/index.md) | Position and brief | Vault keys and your own key travel through iCloud Keychain; a device's key never leaves it; you vouch for your devices; optionally the register vouches for you |
 | [Voice everywhere](voice-everywhere/index.md) | Idea | Voice as the way in from every screen, and a recording that is never lost |
+| [A private voice note, and a clinic](a-private-voice-note-and-a-clinic/index.md) | Idea, with corrections | The same workflow between a patient and a clinician: what is built, what was overstated, and what data protection still asks |
 | [Synthetic users](synthetic-users/index.md) | Brief | Invented users walking the screens, to find where a real one would get lost |

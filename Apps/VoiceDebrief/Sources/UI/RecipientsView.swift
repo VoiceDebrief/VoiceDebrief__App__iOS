@@ -198,8 +198,9 @@ struct QRScanner: UIViewControllerRepresentable {
     }
 }
 
-/// On a note: one button per recipient.
-struct SendSection: View {
+/// On a note: one button per recipient, in a bar that stays at the bottom of the screen however
+/// the note above it grows. A note that is not finished yet is sent the moment it is.
+struct SendBar: View {
     let noteId: String
     let session: DebriefSession
     private let recipients = RecipientStore.shared
@@ -211,57 +212,80 @@ struct SendSection: View {
     }
 
     var body: some View {
-        Section {
-            switch session.sharing(for: noteId) {
-            case .sending(let done, let total):
-                HStack(spacing: 12) {
-                    ProgressView()
-                    Text(total > 0 ? "Sending part \(done) of \(total)" : "Encrypting")
-                }
-            case .sent(let count):
-                Label("Sent, in \(count) encrypted messages", systemImage: "checkmark.circle.fill")
-                    .foregroundStyle(.green)
-            case .failed(let why):
-                Label(why, systemImage: "exclamationmark.triangle").foregroundStyle(.red).font(.callout)
-            case .idle:
-                EmptyView()
-            }
-            ForEach(recipients.all) { recipient in
-                Button {
-                    if recipients.isBuiltIn(recipient) {
-                        confirmingBuiltIn = true
-                    } else {
-                        send(to: recipient)
+        VStack(alignment: .leading, spacing: 8) {
+            status
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    ForEach(recipients.all) { recipient in
+                        Button {
+                            if recipients.isBuiltIn(recipient) {
+                                confirmingBuiltIn = true
+                            } else {
+                                session.send(noteId: noteId, to: recipient)
+                            }
+                        } label: {
+                            Label("Send to \(recipient.name)", systemImage: "paperplane.fill")
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .buttonBorderShape(.capsule)
+                        .disabled(sending || recipient.lane == nil || session.queuedSends[noteId] != nil)
                     }
-                } label: {
-                    Label("Send to \(recipient.name)", systemImage: "paperplane")
+                    NavigationLink {
+                        RecipientsView()
+                    } label: {
+                        Label("Add", systemImage: "person.badge.plus")
+                    }
+                    .buttonStyle(.bordered)
+                    .buttonBorderShape(.capsule)
                 }
-                .disabled(sending || recipient.lane == nil)
+                .padding(.horizontal, 16)
             }
-            NavigationLink {
-                RecipientsView()
-            } label: {
-                Label("Add a recipient", systemImage: "person.badge.plus")
-            }
-        } header: {
-            Text("Send")
-                .confirmationDialog("Send this note to the developer of this test build?",
-                            isPresented: $confirmingBuiltIn,
-                            titleVisibility: .visible) {
+        }
+        .padding(.vertical, 10)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(.bar)
+        .confirmationDialog("Send this note to the developer of this test build?", isPresented: $confirmingBuiltIn, titleVisibility: .visible) {
             Button("Send the audio, transcript and debrief") {
-                if let recipient = recipients.builtIn { send(to: recipient) }
+                if let recipient = recipients.builtIn { session.send(noteId: noteId, to: recipient) }
             }
             Button("Cancel", role: .cancel) {}
         } message: {
             Text("It is encrypted on this device to the key \(DeveloperLane.builtInFingerprint). The server that carries it cannot read it.")
         }
-        } footer: {
-            Text("The audio, transcript and debrief, encrypted on this device to the recipient's key. Nothing is sent until a button here is pressed.")
-        }
     }
 
-    private func send(to recipient: Recipient) {
-        guard let lane = recipient.lane else { return }
-        Task { await session.share(noteId: noteId, lane: lane) }
+    @ViewBuilder
+    private var status: some View {
+        if let name = session.queuedSends[noteId] {
+            HStack(spacing: 8) {
+                Label("Will be sent to \(name) as soon as it is finished", systemImage: "clock")
+                    .font(.footnote)
+                Spacer()
+                Button("Cancel") { session.cancelQueuedSend(noteId) }
+                    .font(.footnote)
+            }
+            .padding(.horizontal, 16)
+        } else {
+            switch session.sharing(for: noteId) {
+            case .sending(let done, let total):
+                HStack(spacing: 8) {
+                    ProgressView()
+                    Text(total > 0 ? "Sending part \(done) of \(total)" : "Encrypting").font(.footnote)
+                }
+                .padding(.horizontal, 16)
+            case .sent(let count):
+                Label("Sent, in \(count) encrypted messages", systemImage: "checkmark.circle.fill")
+                    .font(.footnote)
+                    .foregroundStyle(.green)
+                    .padding(.horizontal, 16)
+            case .failed(let why):
+                Label(why, systemImage: "exclamationmark.triangle")
+                    .font(.footnote)
+                    .foregroundStyle(.red)
+                    .padding(.horizontal, 16)
+            case .idle:
+                EmptyView()
+            }
+        }
     }
 }
