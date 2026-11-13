@@ -6,7 +6,7 @@ A Lab section: one prompt to the on-device model with a chosen set of tools, and
 model was given, each tool call, the answer, the time. This is also the first slice of the model "door"
 (issue 013). Find out how reliably the on-device model calls tools before building anything on it.
 
-## Where it stands (13 November 2026, v0.1.10)
+## Where it stands (13 November 2026)
 
 Built and in the test build: the Lab under Settings, L01, four read-only tools, six presets, the export.
 Compiled and unit tested in CI; never run against a model. Open until the owner runs the presets on an iPhone,
