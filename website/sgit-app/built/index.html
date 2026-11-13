@@ -36,15 +36,33 @@
 <div class="crumb"><a href="../../index.html">VoiceDebrief iOS</a> / sgit-app / built</div>
 <h1 id="what-is-built-in-the-sgit-app">What is built in the sgit app</h1>
 <p>The reality file for the sgit app. <strong>If it is not listed here as built, it does not exist.</strong> The <a href="../design/index.html">design</a> is intention; this page is fact, and it changes in the same commit as the code it describes.</p>
-<p>Status words: <span class="chip chip-built">built</span> is in the repository and proven by a test that ran; <span class="chip chip-unverified">unverified</span> is written and compiles but has not been proven by a run on a device or against a server; <span class="chip chip-proposed">proposed</span> does not exist.</p>
+<p>Status words: <span class="chip chip-built">built</span> is in the repository and proven by a test that ran; <span class="chip chip-unverified">unverified</span> is written but has not been proven by a run (of CI, on a device, or against a server, as the row says); <span class="chip chip-proposed">proposed</span> does not exist.</p>
 <h2 id="built">Built</h2>
-<p>Nothing yet. The first build is in progress on the branch <code>work/sgit-app</code>.</p>
+<p>Nothing is marked built yet: the code below has been written on the branch <code>work/sgit-app</code> and has not yet been compiled. CI is the compiler; this page changes when it has run.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>What</th><th>Where</th><th>What would prove it</th></tr></thead>
+<tbody>
+<tr><td>Files over 4 MB in the vault engine <span class="chip chip-unverified">unverified</span></td><td><code>Packages/SGitVault</code>: <code>VaultStreamCipher.swift</code> (AES-256-GCM as a stream, so a file is sealed and opened from disk to disk), <code>VaultLargeTransport.swift</code> (sgit's upload in parts and download in ranges), <code>VaultLargeFiles.swift</code> (staging, a commit of staged files, download with every check)</td><td><code>LargeFileTests</code> on the CI Mac; <code>sgit-app.yml</code> has sgit clone what Swift wrote and Swift read what sgit wrote. The exchange with the live server has only been run with sgit itself, not with the Swift code</td></tr>
+<tr><td>The app <span class="chip chip-unverified">unverified</span></td><td><code>Apps/SGit/</code>: its own project, bundle <code>ai.sgit.app</code>, iPhone and iPad, iOS 26, SwiftUI, Apple SDK only</td><td><code>sgit-app.yml</code>: a simulator build, a Release build, unit tests on an iPhone and an iPad simulator</td></tr>
+<tr><td>Vaults on the device <span class="chip chip-unverified">unverified</span></td><td><code>Engine/VaultShelf.swift</code>, <code>UI/VaultsView.swift</code>: add by key, read key or web link, pasted or scanned as a QR code; create; keys, access token and signing key in this app's Keychain</td><td>Unit tests against a vault in a folder. Never run on a device</td></tr>
+<tr><td>Adding photos, videos and files <span class="chip chip-unverified">unverified</span></td><td><code>Engine/Outbox.swift</code>, <code>Engine/Intake.swift</code>, <code>UI/VaultView.swift</code>: a selection is copied in, encrypted to disk, uploaded and committed as one signed commit; progress for each file and the whole; a failed job is kept and can be tried again or discarded; a job survives the app closing; a refused push is tried again on the new head</td><td>Unit tests: a selection read back byte for byte, a failed upload carried on by a new <code>Outbox</code>, discard, a read key refused. The pickers and the live server: never run</td></tr>
+<tr><td>Browsing <span class="chip chip-unverified">unverified</span></td><td><code>UI/VaultView.swift</code>, <code>UI/FileView.swift</code>: folders, a grid or a list, thumbnails for images, an image at full size, a video player, Quick Look, Save to Photos, Share, rename, delete</td><td>The listing, rename and delete have unit tests. The screens have never been seen</td></tr>
+<tr><td>Sharing a vault <span class="chip chip-unverified">unverified</span></td><td><code>UI/ShareVaultView.swift</code>: the vault key and the read key as text and QR code, with what each gives; a link for the web Vault UI</td><td>The link's form has a unit test. Whether the web Vault UI opens a vault this app wrote has not been tried</td></tr>
+<tr><td>History <span class="chip chip-unverified">unverified</span></td><td><code>UI/HistoryView.swift</code>: commits, signature, the signing key's fingerprint, whether it is this device's, what changed</td><td>Unit tests for the changes and the fingerprint</td></tr>
+</tbody></table></div>
 <h2 id="not-built">Not built</h2>
 <div class="tablewrap"><table>
 <thead><tr><th>What</th><th>Status</th></tr></thead>
 <tbody>
-<tr><td>Everything on the design page</td><td><span class="chip chip-proposed">proposed</span></td></tr>
+<tr><td>TestFlight: wired in <code>sgit-app.yml</code>, switched off until there is an App Store Connect record for <code>ai.sgit.app</code></td><td><span class="chip chip-proposed">proposed</span>: needs the owner</td></tr>
+<tr><td>Local-first vaults and named remotes; keys in iCloud Keychain</td><td><span class="chip chip-proposed">proposed</span>: after issues 011 and 017</td></tr>
+<tr><td>A share extension; background uploads</td><td><span class="chip chip-proposed">proposed</span></td></tr>
+<tr><td>A merge for colliding edits; branches</td><td><span class="chip chip-proposed">proposed</span></td></tr>
+<tr><td>A read-only token that can be revoked</td><td><span class="chip chip-proposed">proposed</span>: the format is not agreed</td></tr>
+<tr><td>Video thumbnails; streaming a video without fetching it whole</td><td><span class="chip chip-proposed">proposed</span></td></tr>
 </tbody></table></div>
+<h2 id="known-limits">Known limits</h2>
+<p>See &quot;Limits, stated plainly&quot; on the <a href="../design/index.html">design page</a>.</p>
 </main>
 
 <footer class="site"><div class="cols">

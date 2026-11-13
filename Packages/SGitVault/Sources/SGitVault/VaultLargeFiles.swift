@@ -115,6 +115,30 @@ extension SGitVault {
         return VaultBlobStager(readKey: readKey, idWidth: format?.objectIdWidth ?? 12)
     }
 
+    /// A fingerprint of the public key a commit was signed with: sha256 of the key (X9.63 form), hex,
+    /// first 16. The key id in a commit is only a random name; this is the key itself.
+    public func signerFingerprint(keyId: String) async throws -> String {
+        let allowed = keyId.utf8.allSatisfy { c in
+            (c >= 48 && c <= 57) || (c >= 97 && c <= 122) || (c >= 65 && c <= 90) || c == 45 || c == 95
+        }
+        guard allowed, !keyId.isEmpty, keyId.count <= 128 else {
+            throw VaultError.malformed(path: "bare/keys", detail: "unsafe key id")
+        }
+        let path = "bare/keys/\(keyId)"
+        let data = try await fetch(path, cacheable: true)
+        let wire: WirePublicKey = try await decode(data, path: path, what: "public key")
+        guard let key = try? P256.Signing.PublicKey(pemRepresentation: wire.pem) else {
+            throw VaultError.malformed(path: path, detail: "not a P-256 public key")
+        }
+        return String(Data(SHA256.hash(data: key.x963Representation)).hexString.prefix(16))
+    }
+
+    /// The same fingerprint for a signer held on this device.
+    public static func fingerprint(of signer: any VaultCommitSigner) -> String? {
+        guard let key = try? P256.Signing.PublicKey(pemRepresentation: signer.publicKeyPEM) else { return nil }
+        return String(Data(SHA256.hash(data: key.x963Representation)).hexString.prefix(16))
+    }
+
     /// One file of the head, or nil.
     public func file(at path: String) async throws -> VaultFile? {
         if head == nil { try await pull() }

@@ -1,0 +1,3 @@
+// Settings for the sgit app target. Values set in the project file win over these.
+// Your own team and overrides, never committed: copy Config/Local.xcconfig.example.
+#include? "../../Config/Local.xcconfig"

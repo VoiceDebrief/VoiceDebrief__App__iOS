@@ -1,0 +1,195 @@
+name: sgit app
+
+# The sgit app (Apps/SGit) has its own project, its own version file and this workflow, so that it
+# does not contend with the VoiceDebrief app's. It will move to a repository of its own.
+#
+#   sgit-writes        Linux: sgit-ai writes a vault holding files over 4 MB (issue 023)
+#   mac                one Mac: the engine's large-file tests, reading what sgit wrote and exporting
+#                      what Swift wrote; build for testing; Release build; unit tests on an iPhone and
+#                      an iPad simulator; TestFlight when switched on
+#   sgit-reads-swift   Linux: sgit-ai clones the vault Swift wrote, verifies signatures, compares files
+#
+# ios.yml still runs the whole of SGitVault's tests on any push that touches the package.
+on:
+  push:
+    branches: [dev, 'work/sgit-app*']
+    paths:
+      - 'Apps/SGit/**'
+      - 'Packages/SGitVault/**'
+      - '.github/workflows/sgit-app.yml'
+      - '.github/scripts/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sgit-app-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  PROJECT: Apps/SGit/SGit.xcodeproj
+  SCHEME: SGit
+
+jobs:
+  sgit-writes:
+    name: sgit writes large files
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: pip install sgit-ai==0.27.0
+      - name: sgit commits and pushes two files over 4 MB
+        run: python3 -I Packages/SGitVault/Tests/Fixtures/sgit_writes_large.py "$RUNNER_TEMP/sgit-wrote" | tee -a "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sgit-written-large
+          path: ${{ runner.temp }}/sgit-wrote/
+          if-no-files-found: error
+
+  mac:
+    name: Build and test (one Mac)
+    needs: sgit-writes
+    runs-on: macos-26
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Select Xcode
+        run: .github/scripts/select-xcode.sh
+
+      - name: Version from the app's version file
+        run: |
+          v=$(tr -d ' \n' < Apps/SGit/version); v=${v#v}
+          echo "MARKETING_VERSION=$v" >> "$GITHUB_ENV"
+          echo "BUILD_NUMBER=$GITHUB_RUN_NUMBER" >> "$GITHUB_ENV"
+          echo "**sgit app version:** \`$v ($GITHUB_RUN_NUMBER)\`" >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: sgit-written-large
+          path: ${{ runner.temp }}/sgit-wrote
+
+      - name: Large files in SGitVault (reads what sgit wrote, exports what Swift wrote)
+        working-directory: Packages/SGitVault
+        env:
+          SGITVAULT_SGIT_WROTE: ${{ runner.temp }}/sgit-wrote
+          SGITVAULT_ROUNDTRIP_OUT: ${{ runner.temp }}/roundtrip
+        run: ../../.github/scripts/run-and-summarize.sh "SGitVault large files" "$RUNNER_TEMP/logs/sgitvault-large.log" -- swift test --filter LargeFileTests
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: swift-written-large
+          path: ${{ runner.temp }}/roundtrip/
+          if-no-files-found: error
+
+      - name: Build for testing (Debug, iOS Simulator, unsigned)
+        run: |
+          .github/scripts/run-and-summarize.sh "Build for testing" "$RUNNER_TEMP/logs/build-for-testing.log" -- \
+            xcodebuild build-for-testing -project "$PROJECT" -scheme "$SCHEME" -configuration Debug \
+              -destination 'generic/platform=iOS Simulator' -derivedDataPath "$RUNNER_TEMP/dd" \
+              MARKETING_VERSION="$MARKETING_VERSION" CURRENT_PROJECT_VERSION="$BUILD_NUMBER" \
+              CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
+
+      - name: Release build (iOS device, unsigned)
+        run: |
+          .github/scripts/run-and-summarize.sh "Release build" "$RUNNER_TEMP/logs/release.log" -- \
+            xcodebuild build -project "$PROJECT" -scheme "$SCHEME" -configuration Release \
+              -destination 'generic/platform=iOS' -derivedDataPath "$RUNNER_TEMP/dd-release" \
+              MARKETING_VERSION="$MARKETING_VERSION" CURRENT_PROJECT_VERSION="$BUILD_NUMBER" \
+              CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
+
+      - name: Unit tests on the iPhone simulator
+        timeout-minutes: 20
+        run: |
+          u=$(.github/scripts/pick-simulator.py iPhone)
+          echo "simulator $u"
+          .github/scripts/boot-simulator.sh "$u"
+          .github/scripts/run-and-summarize.sh "Unit tests (iPhone)" "$RUNNER_TEMP/logs/test-iphone.log" -- \
+            xcodebuild test-without-building -project "$PROJECT" -scheme "$SCHEME" -configuration Debug \
+              -derivedDataPath "$RUNNER_TEMP/dd" -destination "id=$u" \
+              -parallel-testing-enabled NO -test-timeouts-enabled YES \
+              -default-test-execution-time-allowance 60 -maximum-test-execution-time-allowance 180 \
+              CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO && status=0 || status=$?
+          xcrun simctl shutdown "$u" 2>/dev/null || true
+          exit $status
+
+      # TestFlight: only for a green push to dev, and only once the owner has made the App Store Connect
+      # record for ai.sgit.app and set the repository variable SGIT_APP_TESTFLIGHT to 1. The signing
+      # secrets are the ones ios.yml uses.
+      - name: TestFlight (archive, sign, upload)
+        if: github.ref == 'refs/heads/dev' && vars.SGIT_APP_TESTFLIGHT == '1'
+        timeout-minutes: 30
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_P8_BASE64: ${{ secrets.ASC_KEY_P8_BASE64 }}
+          APPLE_TEAM_ID: ${{ vars.APPLE_TEAM_ID || secrets.APPLE_TEAM_ID }}
+          EXPECTED_BUNDLE: ai.sgit.app
+          ENTITLEMENTS: Apps/SGit/SGit.entitlements
+        run: |
+          missing=()
+          for s in ASC_KEY_ID ASC_ISSUER_ID ASC_KEY_P8_BASE64 APPLE_TEAM_ID; do [ -n "${!s:-}" ] || missing+=("$s"); done
+          if [ ${#missing[@]} -gt 0 ]; then
+            echo "### TestFlight skipped: not set: ${missing[*]}" | tee -a "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          scripts/release/testflight.sh
+
+      - name: TestFlight is switched off
+        if: github.ref == 'refs/heads/dev' && vars.SGIT_APP_TESTFLIGHT != '1'
+        run: |
+          echo "### TestFlight skipped. The repository variable SGIT_APP_TESTFLIGHT is not 1 (it needs an App Store Connect record for ai.sgit.app first)" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Unit tests on the iPad simulator
+        timeout-minutes: 20
+        run: |
+          u=$(.github/scripts/pick-simulator.py iPad)
+          echo "simulator $u"
+          .github/scripts/boot-simulator.sh "$u"
+          .github/scripts/run-and-summarize.sh "Unit tests (iPad)" "$RUNNER_TEMP/logs/test-ipad.log" -- \
+            xcodebuild test-without-building -project "$PROJECT" -scheme "$SCHEME" -configuration Debug \
+              -derivedDataPath "$RUNNER_TEMP/dd" -destination "id=$u" \
+              -parallel-testing-enabled NO -test-timeouts-enabled YES \
+              -default-test-execution-time-allowance 60 -maximum-test-execution-time-allowance 180 \
+              CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO && status=0 || status=$?
+          xcrun simctl shutdown "$u" 2>/dev/null || true
+          exit $status
+
+      - name: Keep the logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sgit-app-logs
+          path: ${{ runner.temp }}/logs/
+          if-no-files-found: ignore
+
+  sgit-reads-swift:
+    name: sgit reads the large files Swift wrote
+    needs: mac
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: pip install sgit-ai==0.27.0
+      - uses: actions/download-artifact@v4
+        with:
+          name: swift-written-large
+          path: ${{ runner.temp }}/roundtrip
+      - name: sgit clones, verifies signatures, compares files
+        run: |
+          set -o pipefail
+          python3 -I Packages/SGitVault/Tests/Fixtures/sgit_reads_swift.py "$RUNNER_TEMP/roundtrip" | tee -a "$GITHUB_STEP_SUMMARY"

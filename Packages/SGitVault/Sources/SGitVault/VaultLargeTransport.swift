@@ -156,17 +156,18 @@ extension HTTPVaultTransport: VaultLargeTransport {
                                                        returning: [VaultUploadedPart].self) { group in
                 var waiting = upload.part_urls.sorted { $0.part_number < $1.part_number }[...]
                 var finished: [VaultUploadedPart] = []
-                func start(_ part: VaultPresignedUpload.Part) {
+                for _ in 0..<Self.partsInFlight {
+                    guard let part = waiting.popFirst() else { break }
                     group.addTask {
                         try await self.put(part: part, of: file, partSize: partSize, total: size, tally: tally)
                     }
                 }
-                for _ in 0..<Self.partsInFlight {
-                    if let part = waiting.popFirst() { start(part) }
-                }
                 for try await part in group {
                     finished.append(part)
-                    if let next = waiting.popFirst() { start(next) }
+                    guard let next = waiting.popFirst() else { continue }
+                    group.addTask {
+                        try await self.put(part: next, of: file, partSize: partSize, total: size, tally: tally)
+                    }
                 }
                 return finished.sorted { $0.number < $1.number }
             }
@@ -333,11 +334,9 @@ extension HTTPVaultTransport: VaultLargeTransport {
         var received = first.data.count
         try await withThrowingTaskGroup(of: RangeAnswer.self) { group in
             var starts = Array(stride(from: step, to: total, by: step))[...]
-            func begin(_ start: Int) {
-                group.addTask { try await self.range(url, start: start, end: min(start + step, total) - 1) }
-            }
             for _ in 0..<Self.partsInFlight {
-                if let start = starts.popFirst() { begin(start) }
+                guard let start = starts.popFirst() else { break }
+                group.addTask { try await self.range(url, start: start, end: min(start + step, total) - 1) }
             }
             for try await answer in group {
                 let want = min(answer.start + step, total) - answer.start
@@ -348,7 +347,8 @@ extension HTTPVaultTransport: VaultLargeTransport {
                 try handle.write(contentsOf: answer.data)
                 received += answer.data.count
                 progress(received)
-                if let next = starts.popFirst() { begin(next) }
+                guard let next = starts.popFirst() else { continue }
+                group.addTask { try await self.range(url, start: next, end: min(next + step, total) - 1) }
             }
         }
     }
