@@ -96,7 +96,8 @@ struct CleanTextTests {
         let with = try DeveloperLane.messages(audio: Data([1, 2]), audioName: "a.m4a", run: run, clean: clean, noteId: "n", app: "t", at: Date())
         #expect(with.count == without.count + 1)
         let last = try #require(with.last)
-        let head = try #require(String(data: last.prefix(while: { $0 != 0x0A }), encoding: .utf8))
-        #expect(head.contains("voicedebrief/clean/v1"))
+        let header = try JSONDecoder().decode(DeveloperLane.Header.self, from: last.prefix(while: { $0 != 0x0A }))
+        #expect(header.kind == DeveloperLane.Header.cleanKind)
+        #expect(header.name == "clean.json")
     }
 }

@@ -153,6 +153,18 @@ final class DebriefSession {
         return id
     }
 
+    /// Throws the recording in progress away: the audio and its note. The one way a recording is
+    /// lost on purpose, so the screen asks twice before calling it.
+    func discardRecording() async {
+        meter?.cancel()
+        meter = nil
+        await live.stop()
+        recorder.stop()
+        if let id = recordingNoteId { store.delete(id) }
+        recordingNoteId = nil
+        phase = .idle
+    }
+
     // MARK: Importing
 
     /// A file picked in the Files sheet. It is copied first: the picked URL is only readable for a moment.

@@ -17,6 +17,7 @@ struct RecordView: View {
     }
 
     private static let bottomId = "record-bottom"
+    @State private var confirmingDiscard = false
 
     private var isWorking: Bool {
         if case .working = session.phase { return true }
@@ -50,6 +51,21 @@ struct RecordView: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     LanguageMenu()
                         .disabled(session.isBusy)
+                }
+                // Throwing a recording away is kept far from the thumb and takes two presses.
+                if isRecording {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button("Discard", role: .destructive) { confirmingDiscard = true }
+                            .font(.footnote)
+                            .confirmationDialog("Throw this recording away?", isPresented: $confirmingDiscard, titleVisibility: .visible) {
+                                Button("Throw it away", role: .destructive) {
+                                    Task { await session.discardRecording() }
+                                }
+                                Button("Keep recording", role: .cancel) {}
+                            } message: {
+                                Text("What you have said so far will be deleted from this device. It cannot be brought back.")
+                            }
+                    }
                 }
             }
             .navigationDestination(for: String.self) { id in
@@ -192,9 +208,9 @@ struct RecordView: View {
             } label: {
                 ZStack {
                     Circle()
-                        .fill(isWorking || localeId.isEmpty ? Color.gray : Color.red)
+                        .fill(isWorking || localeId.isEmpty ? Color.gray : Color.green)
                         .frame(width: 88, height: 88)
-                    Image(systemName: isRecording ? "stop.fill" : "mic.fill")
+                    Image(systemName: isRecording ? "checkmark" : "mic.fill")
                         .font(.system(size: 34, weight: .semibold))
                         .foregroundStyle(.white)
                         .contentTransition(.symbolEffect(.replace))
@@ -203,7 +219,7 @@ struct RecordView: View {
             }
             .buttonStyle(.plain)
             .disabled(isWorking || localeId.isEmpty)
-            .accessibilityLabel(isRecording ? "Stop and debrief" : "Record")
+            .accessibilityLabel(isRecording ? "Finish and debrief" : "Record")
 
             Text(caption)
                 .font(.caption)
@@ -227,7 +243,7 @@ struct RecordView: View {
     }
 
     private var caption: String {
-        if isRecording { return "Tap to stop and debrief" }
+        if isRecording { return "Tap to finish: the note is kept, then transcribed and debriefed" }
         if case .working(let what) = session.phase { return "Finishing the last note: \(what)" }
         return "Tap to record"
     }
