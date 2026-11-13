@@ -19,3 +19,5 @@ One file per piece of work: `open/NNN-slug.md`, moved to `done/` when it is done
 | 014 | Several vaults and lanes, by name | |
 | 015 | The larger Apple model, as an option | the entitlement; the iOS 27 SDK in CI |
 | 016 | Screens and synthetic users | |
+| 017 | Vault keys in iCloud Keychain, on by default | |
+| 018 | User key, device key, vouching, pki.sgit.ai | |

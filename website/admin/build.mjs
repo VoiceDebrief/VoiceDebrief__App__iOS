@@ -34,6 +34,8 @@ const PAGES = [
     description: 'A brief: give the model its network, files, keys and vaults through separate doors, in the shape of SHarness, and draw what passes through them.' },
   { path: 'articles/the-vault-is-a-version-controlled-store', nav: null, title: 'The vault is a version-controlled store',
     description: 'A position and a brief: a vault needs no server to exist; a server is a remote; several vaults and lanes; a file system, vault apps and graphs.' },
+  { path: 'articles/where-each-key-lives', nav: null, title: 'Where each key lives',
+    description: 'A position and a brief: vault keys and the user key travel through iCloud Keychain, the device key never leaves the device, the person vouches for the device, and optionally a delegation from pki.sgit.ai.' },
   { path: 'articles/voice-everywhere', nav: null, title: 'Voice everywhere, and a recording that is never lost',
     description: 'An idea: voice as the way in from every screen, why the live words matter, and more than one interface to try.' },
   { path: 'articles/synthetic-users', nav: null, title: 'Synthetic users for an app its builder cannot see',
