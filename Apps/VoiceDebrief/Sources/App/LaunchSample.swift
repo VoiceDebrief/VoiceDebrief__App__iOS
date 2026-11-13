@@ -188,6 +188,10 @@ struct LaunchedScreen: View {
             RecipientsView()
         case .words:
             GlossaryView()
+        case .lab:
+            LabView(store: sample.store)
+        case .labPrompt:
+            LabOnePromptView(store: sample.store)
         case .diagnostics:
             DiagnosticsView(session: sample.session)
         case .traffic:

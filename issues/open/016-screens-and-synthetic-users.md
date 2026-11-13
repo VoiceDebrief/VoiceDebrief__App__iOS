@@ -11,5 +11,5 @@ iPhone and iPad. Then synthetic users walking them. The screenshots are also how
   `VoiceDebriefScreens`, and the launch arguments `-VDSampleData` and `-VDScreen`. Run 1 produced 68 pictures
   (17 screens, iPhone and iPad, light and dark). How to fetch them: `website/develop/index.md`, "Seeing the screens".
 - **Stage 2, synthetic users: in progress** on `work/screens`.
-- The Lab's screens are not photographed yet: the Lab was not in `dev` when this was built. Adding a screen is
-  four small edits, listed on the develop page.
+- The Lab's two screens (`lab`, `lab.prompt`) were added when the Lab reached `dev`. Adding a screen is four
+  small edits, listed on the develop page.

@@ -33,7 +33,7 @@ if len(sys.argv) == 2 and sys.argv[1] == "--self-test":
     cases = {f"record_0_{u}.png": "record", f"record-empty_0_{u}.png": "record-empty",
              f"note_0_{u}.finished": "note.finished", f"vault_1_{u}.detail": "vault.detail",
              f"record_0_{u}.recording": "record.recording", "plain.png": "plain",
-             f"note_0_{u}.finished-end": "note.finished-end"}
+             f"note_0_{u}.finished-end": "note.finished-end", f"lab_0_{u}.prompt": "lab.prompt"}
     for given, want in cases.items():
         got = attachment_id(given)
         assert got == want, (given, got, want)

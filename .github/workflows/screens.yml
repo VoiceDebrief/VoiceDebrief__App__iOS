@@ -36,7 +36,7 @@ env:
   PROJECT: Apps/VoiceDebrief/VoiceDebrief.xcodeproj
   SCHEME: VoiceDebriefScreens
   # One per entry in ScreensTests.shots. Update both together.
-  SHOTS: record,record-empty,record.recording,record.working,library,library-empty,note.finished,note.transcript,note.interrupted,note.working,vaults,vaults-empty,vault.detail,settings,diagnostics,traffic,about,note.finished-end,vaults-end,vault.detail-end,diagnostics-end,about-end,recipients,words,settings-end
+  SHOTS: record,record-empty,record.recording,record.working,library,library-empty,note.finished,note.transcript,note.interrupted,note.working,vaults,vaults-empty,vault.detail,settings,diagnostics,traffic,about,note.finished-end,vaults-end,vault.detail-end,diagnostics-end,about-end,recipients,words,settings-end,lab,lab.prompt
 
 jobs:
   shoot:
