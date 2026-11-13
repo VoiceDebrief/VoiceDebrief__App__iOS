@@ -67,12 +67,12 @@ The longest side is 1600 px. The ids: `record`, `record-empty`, `record.recordin
 
 **Looking at them from a Linux container.** With the GitHub Actions tools an agent session has (the GitHub MCP server):
 
-1. `actions_list` with `list_workflow_runs` and `screens.yml` gives the runs; take the newest successful one for the commit.
-2. `actions_list` with `list_workflow_run_artifacts` and that run's id gives the artifact `screens-<sha>` and its id.
-3. `actions_get` with `download_workflow_run_artifact` and the artifact's id gives a download address for a zip.
-4. Fetch the zip, unzip it into an empty folder, and open the PNGs with the tool that reads images. Start with the four `contact-*.png` files.
+1. `actions_list` with `list_workflow_runs` and `screens.yml` lists the runs; take the newest successful one for the commit or branch.
+2. `actions_list` with `list_workflow_run_artifacts` and that run's id lists its artifacts; take the id of `screens-<sha>` (about 17 MB).
+3. `actions_get` with `download_workflow_run_artifact` and that artifact id returns a `download_url` for a zip. The address is on GitHub's blob store (`*.blob.core.windows.net`), needs no token, and expires within minutes.
+4. `curl -sSL -o screens.zip '<download_url>'`, unzip into an empty folder, and open the PNGs with the tool that reads images. Start with the four `contact-*.png` files, then open a single screen at full size where a detail matters.
 
-These steps are written before the first run has finished: [[unverified]] until a session has followed them.
+Followed from a Linux container on 13 November 2026 for the first run (`work/screens`, 68 pictures). A person can download the same artifact from the run's page on GitHub.
 
 ## What CI cannot do
 

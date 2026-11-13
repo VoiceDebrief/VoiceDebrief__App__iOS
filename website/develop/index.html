@@ -22,7 +22,7 @@
   <a class="brand" href="../index.html">Voice<em>Debrief</em> <span>iOS</span></a>
   <span class="beta" title="In development: there is nothing to install yet">IN DEVELOPMENT</span>
   <a class="parent" href="https://voicedebrief.ai" title="A VoiceDebrief product">&#8599; part of <b>voicedebrief.ai</b></a>
-  <a class="ver" href="../versions/index.html" title="Release history">v0.1.7</a>
+  <a class="ver" href="../versions/index.html" title="Release history">v0.1.8</a>
   <a class="nl" href="../built/index.html">Built</a>
   <a class="nl" href="../architecture/index.html">How it works</a>
   <a class="nl" href="../design/index.html">Design</a>
@@ -80,12 +80,12 @@ index.md                                         the table that is also the job 
 <p><strong>Adding a screen.</strong> Add a case to <code>LaunchScreen</code>, show it in <code>LaunchedScreen</code> if it is reached by a tap, add a test method and its id to <code>ScreensTests.shots</code>, and add the id to <code>SHOTS</code> in <code>screens.yml</code>. The run fails if a picture is missing.</p>
 <p><strong>Looking at them from a Linux container.</strong> With the GitHub Actions tools an agent session has (the GitHub MCP server):</p>
 <ol>
-<li><code>actions_list</code> with <code>list_workflow_runs</code> and <code>screens.yml</code> gives the runs; take the newest successful one for the commit.</li>
-<li><code>actions_list</code> with <code>list_workflow_run_artifacts</code> and that run's id gives the artifact <code>screens-&lt;sha&gt;</code> and its id.</li>
-<li><code>actions_get</code> with <code>download_workflow_run_artifact</code> and the artifact's id gives a download address for a zip.</li>
-<li>Fetch the zip, unzip it into an empty folder, and open the PNGs with the tool that reads images. Start with the four <code>contact-*.png</code> files.</li>
+<li><code>actions_list</code> with <code>list_workflow_runs</code> and <code>screens.yml</code> lists the runs; take the newest successful one for the commit or branch.</li>
+<li><code>actions_list</code> with <code>list_workflow_run_artifacts</code> and that run's id lists its artifacts; take the id of <code>screens-&lt;sha&gt;</code> (about 17 MB).</li>
+<li><code>actions_get</code> with <code>download_workflow_run_artifact</code> and that artifact id returns a <code>download_url</code> for a zip. The address is on GitHub's blob store (<code>*.blob.core.windows.net</code>), needs no token, and expires within minutes.</li>
+<li><code>curl -sSL -o screens.zip '&lt;download_url&gt;'</code>, unzip into an empty folder, and open the PNGs with the tool that reads images. Start with the four <code>contact-*.png</code> files, then open a single screen at full size where a detail matters.</li>
 </ol>
-<p>These steps are written before the first run has finished: <span class="chip chip-unverified">unverified</span> until a session has followed them.</p>
+<p>Followed from a Linux container on 13 November 2026 for the first run (<code>work/screens</code>, 68 pictures). A person can download the same artifact from the run's page on GitHub.</p>
 <h2 id="what-ci-cannot-do">What CI cannot do</h2>
 <p>No simulator has Apple Intelligence's models, a real microphone, or a passkey in iCloud Keychain. Speech, the debrief, the passkey and the share sheet will have to be tested on a device by a person, against a written checklist. None of that exists yet.</p>
 <h2 id="the-site">The site</h2>
@@ -113,7 +113,7 @@ node website/admin/validate.mjs     # the gate CI runs</code></pre>
     <div class="brandline">Voice<em>Debrief</em> <span>iOS</span></div>
     <p>The VoiceDebrief transcript and debrief as a native iPhone and iPad app, on Apple's own models, with the results in a vault you own. In development: there is nothing to install yet. Content CC BY 4.0; code Apache 2.0.</p>
     <p class="partnote">This site is static and has no analytics.</p>
-    <p class="verline">site v0.1.7 · <a href="index.md">this page as markdown</a> · <a href="../llms.txt">llms.txt</a></p>
+    <p class="verline">site v0.1.8 · <a href="index.md">this page as markdown</a> · <a href="../llms.txt">llms.txt</a></p>
   </div>
   <div>
     <h4>The app</h4>
