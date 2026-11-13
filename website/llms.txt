@@ -6,8 +6,10 @@
 > the user owns, opened with a passkey as pki.sgit.ai does it, and signed with the user's own key
 > bundle (RSA-OAEP 4096 and ECDSA P-256). STATUS: a test build (TestFlight, not public) records
 > or opens a voice note, transcribes it and writes a debrief on the device; nobody has judged the
-> results yet. It keeps notes on the device and can save one to a vault. The account, sync between
-> devices and the identity are NOT built.
+> results yet. It keeps notes on the device and can save one to a vault. An identity (a user key
+> pair in iCloud Keychain, a device key, a vouching statement, optionally a delegation from
+> pki.sgit.ai) is in test: its formats are proven against sgit and pki.sgit.ai in CI, and it has
+> not run on a device. The account and sync between devices are NOT built.
 
 Part of VoiceDebrief (https://voicedebrief.ai). Content CC BY 4.0; code Apache 2.0.
 Every page has a markdown twin: replace index.html with index.md.
@@ -33,6 +35,9 @@ Every page has a markdown twin: replace index.html with index.md.
 - https://ios.app.voicedebrief.ai/develop/index.html : repository layout, what CI does (it is
   the compiler: Swift is not built on Linux), how the site is built, how a release is made.
 - https://ios.app.voicedebrief.ai/versions/index.html : release history.
+- https://ios.app.voicedebrief.ai/identity/return/index.html : not documentation. The page pki.sgit.ai
+  sends a person back to after they vouch for the app on a device; it says how to hand the answer in
+  the address to the app. No script: the answer stays in the address.
 - https://ios.app.voicedebrief.ai/index.html : the home page.
 
 ## The sgit app (a second app in this repository, for now)

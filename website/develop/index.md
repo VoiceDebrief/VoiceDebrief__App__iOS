@@ -8,7 +8,7 @@ How this repository works. The short version: **CI is the compiler.** Most of th
 Apps/VoiceDebrief/            the app: a hand-written Xcode project, sources, resources, tests
 Packages/SGitVault/           the vault engine (copied; see its SOURCE.md)
 Config/                       Local.xcconfig.example, for building on your own device
-.github/workflows/            ios.yml, ios-vault.yml, site.yml
+.github/workflows/            ios.yml, ios-vault.yml, pki-interop.yml, site.yml
 .github/scripts/              select Xcode, pick a simulator, copy errors into the job summary
 website/                      this site: markdown sources, the builder and the gate
 issues/                       open and done work, one file each
@@ -31,6 +31,7 @@ cd Packages/SGitVault && swift test          # the vault engine, on the Mac itse
 |---|---|---|
 | `ios.yml` | A push to `dev` or to a `work/` branch, or a pull request, that touches `Apps/`, `Packages/` or the workflow. Only `dev` uploads to TestFlight | One Mac job: the vault engine's tests, a simulator build, a Release device build (unsigned), then the app's unit tests on an iPhone and an iPad simulator |
 | `ios-vault.yml` | A change to the vault write path, every Monday, or by hand | Swift writes vaults on a Mac; `sgit-ai` on Linux clones them, verifies every signature and compares every file |
+| `pki-interop.yml` | A change to the app's PKI files or `scripts/pki-interop/`, every Monday, or by hand | `sgit pki` and pki.sgit.ai's `keys.js` make keys, signatures, envelopes, a statement and a sign-in on Linux; the app's PKI files, compiled as a tool on a Mac, read them and make their own; sgit and `keys.js` read those |
 | `site.yml` | Every push and pull request | The gate, then (on `dev`) the next version, its tag, and the site |
 
 Builds and tests are unsigned. The last step of `ios.yml` uploads to TestFlight on a green push to `dev`: `scripts/release/testflight.sh` archives unsigned, signs the app with its entitlements, and exports with automatic signing through the App Store Connect API key. It needs the secrets `ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_KEY_P8_BASE64` and the variable `APPLE_TEAM_ID`, and skips itself while any is missing.
