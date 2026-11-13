@@ -191,6 +191,8 @@ struct LaunchedScreen: View {
             GlossaryView()
         case .credit:
             CreditView()
+        case .identity:
+            IdentityView(vaults: sample.book)
         case .lab:
             LabView(store: sample.store)
         case .labPrompt:

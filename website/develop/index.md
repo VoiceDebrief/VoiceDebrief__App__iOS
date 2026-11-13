@@ -62,7 +62,7 @@ contact-<device>-<appearance>.png                every screen of one set in a si
 index.md                                         the table that is also the job summary
 ```
 
-The longest side is 1600 px. The ids: `record`, `record-empty`, `record.recording`, `record.working`, `library`, `library-empty`, `note.finished`, `note.transcript`, `note.interrupted`, `note.working`, `vaults`, `vaults-empty`, `vault.detail`, `settings`, `recipients`, `words`, `credit`, `lab`, `lab.prompt`, `diagnostics`, `traffic`, `about`; and six long screens again, scrolled to their end: `note.finished-end`, `vaults-end`, `vault.detail-end`, `settings-end`, `diagnostics-end`, `about-end`.
+The longest side is 1600 px. The ids: `record`, `record-empty`, `record.recording`, `record.working`, `library`, `library-empty`, `note.finished`, `note.transcript`, `note.interrupted`, `note.working`, `vaults`, `vaults-empty`, `vault.detail`, `settings`, `recipients`, `words`, `credit`, `identity`, `lab`, `lab.prompt`, `diagnostics`, `traffic`, `about`; and six long screens again, scrolled to their end: `note.finished-end`, `vaults-end`, `vault.detail-end`, `settings-end`, `diagnostics-end`, `about-end`.
 
 **Adding a screen.** Add a case to `LaunchScreen`, show it in `LaunchedScreen` if it is reached by a tap, add a test method and its id to `ScreensTests.shots`, and add the id to `SHOTS` in `screens.yml`. The run fails if a picture is missing.
 

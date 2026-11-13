@@ -77,6 +77,7 @@ enum LaunchScreen: String, CaseIterable, Sendable {
     case recipients
     case words
     case credit
+    case identity
     case lab
     case labPrompt = "lab.prompt"
     case diagnostics
@@ -88,7 +89,7 @@ enum LaunchScreen: String, CaseIterable, Sendable {
         case .record, .recordRecording, .recordWorking: return .record
         case .library, .noteFinished, .noteTranscript, .noteInterrupted, .noteWorking: return .library
         case .vaults, .vaultDetail: return .vaults
-        case .settings, .recipients, .words, .credit, .lab, .labPrompt, .diagnostics, .traffic, .about: return .settings
+        case .settings, .recipients, .words, .credit, .identity, .lab, .labPrompt, .diagnostics, .traffic, .about: return .settings
         }
     }
 
