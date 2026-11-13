@@ -22,7 +22,7 @@
   <a class="brand" href="../index.html">Voice<em>Debrief</em> <span>iOS</span></a>
   <span class="beta" title="In development: there is nothing to install yet">IN DEVELOPMENT</span>
   <a class="parent" href="https://voicedebrief.ai" title="A VoiceDebrief product">&#8599; part of <b>voicedebrief.ai</b></a>
-  <a class="ver" href="../versions/index.html" title="Release history">v0.1.11</a>
+  <a class="ver" href="../versions/index.html" title="Release history">dev</a>
   <a class="nl" href="../built/index.html">Built</a>
   <a class="nl" href="../architecture/index.html">How it works</a>
   <a class="nl" href="../design/index.html">Design</a>
@@ -44,7 +44,7 @@ Config/                       Local.xcconfig.example, for building on your own d
 .github/scripts/              select Xcode, pick a simulator, copy errors into the job summary, export screenshots
 website/                      this site: markdown sources, the builder and the gate
 issues/                       open and done work, one file each
-version                       the version, one line</code></pre>
+version                       the version, one line, written by CI only</code></pre>
 <p>The Xcode project uses folder-synchronised groups: a Swift file added under <code>Apps/VoiceDebrief/Sources/</code> is part of the app without editing the project file. Resources are copied flat into the bundle, so two resource files with the same name break the build.</p>
 <h2 id="on-a-mac">On a Mac</h2>
 <p>Xcode 26 or later. Open <code>Apps/VoiceDebrief/VoiceDebrief.xcodeproj</code> and run the <code>VoiceDebrief</code> scheme on a simulator. To run on your own device, copy <code>Config/Local.xcconfig.example</code> to <code>Config/Local.xcconfig</code> and set your team.</p>
@@ -56,7 +56,7 @@ version                       the version, one line</code></pre>
 <tr><td><code>ios.yml</code></td><td>A push to <code>dev</code> or to a <code>work/</code> branch, or a pull request, that touches <code>Apps/</code>, <code>Packages/</code> or the workflow. Only <code>dev</code> uploads to TestFlight</td><td>One Mac job: the vault engine's tests, a simulator build, a Release device build (unsigned), then the app's unit tests on an iPhone and an iPad simulator</td></tr>
 <tr><td><code>ios-vault.yml</code></td><td>A change to the vault write path, every Monday, or by hand</td><td>Swift writes vaults on a Mac; <code>sgit-ai</code> on Linux clones them, verifies every signature and compares every file</td></tr>
 <tr><td><code>screens.yml</code></td><td>By hand, or a push to <code>dev</code> or a <code>work/</code> branch that touches the screens</td><td>A screenshot of every screen on an iPhone and an iPad simulator, light and dark, from invented sample data: see below</td></tr>
-<tr><td><code>site.yml</code></td><td>Every push and pull request</td><td>The gate, then (on <code>dev</code>) the release tag and the site</td></tr>
+<tr><td><code>site.yml</code></td><td>Every push and pull request</td><td>The gate, then (on <code>dev</code>) the next version, its tag, and the site</td></tr>
 </tbody></table></div>
 <p>Builds and tests are unsigned. The last step of <code>ios.yml</code> uploads to TestFlight on a green push to <code>dev</code>: <code>scripts/release/testflight.sh</code> archives unsigned, signs the app with its entitlements, and exports with automatic signing through the App Store Connect API key. It needs the secrets <code>ASC_KEY_ID</code>, <code>ASC_ISSUER_ID</code>, <code>ASC_KEY_P8_BASE64</code> and the variable <code>APPLE_TEAM_ID</code>, and skips itself while any is missing.</p>
 <p><strong>Reading a failure without a Mac.</strong> Each build and test step runs through <code>.github/scripts/run-and-summarize.sh</code>, which copies compiler errors and failed tests into the job summary and repeats them as the last lines of the step, so they can be read through the Actions API. Full logs are kept as the <code>ios-logs</code> artifact.</p>
@@ -94,12 +94,13 @@ index.md                                         the table that is also the job 
 node website/admin/validate.mjs     # the gate CI runs</code></pre>
 <p>The gate fails on a page that is out of date, a broken link or anchor, a key-shaped string anywhere in the repository, an em-dash, or a script on a page. A page added, moved or removed updates <a href="../llms.txt">llms.txt</a> in the same commit.</p>
 <h2 id="a-release">A release</h2>
+<p>Every push to <code>dev</code> is one. Nobody sets a version.</p>
 <ol>
-<li>Set the next version in the <code>version</code> file (a push to <code>dev</code> is the next patch number: <code>v0.1.0</code> then <code>v0.1.1</code>).</li>
-<li>Add a row to <a href="../versions/index.html">the release history</a> and update <a href="../built/index.html">What is built</a> for anything that changed.</li>
-<li>Run the builder and the gate, commit, push to <code>dev</code>.</li>
+<li>Add a row headed <code>next</code> to <a href="../versions/index.html">the release history</a> and update <a href="../built/index.html">What is built</a> for anything that changed.</li>
+<li>Push to <code>dev</code>.</li>
 </ol>
-<p>CI tags the commit with the version if that tag does not exist yet, and publishes the site. A push that does not change the version is not a release: it is built, tested and published, but not tagged.</p>
+<p>CI (<code>site.yml</code>) takes the latest tag, adds one to its last number, writes the <code>version</code> file and the badge in the README, tags that commit, and publishes the site with the number stamped into every page. The pages committed to the repository say <code>dev</code> where the number goes. <code>ios.yml</code> gives the app the same number: the tag this push was given, with the run number as the build.</p>
+<p>Because CI adds a commit to <code>dev</code> after every push, pull before pushing.</p>
 <h2 id="rules-that-are-easy-to-break">Rules that are easy to break</h2>
 <ul>
 <li><strong>Nothing that decrypts what is committed may be committed.</strong> No vault key, access key, API key or private key in the repository. The only exceptions are the throwaway fixture vaults under <code>Packages/SGitVault/Tests/</code>, which exist on no server.</li>
@@ -113,7 +114,7 @@ node website/admin/validate.mjs     # the gate CI runs</code></pre>
     <div class="brandline">Voice<em>Debrief</em> <span>iOS</span></div>
     <p>The VoiceDebrief transcript and debrief as a native iPhone and iPad app, on Apple's own models, with the results in a vault you own. In development: there is nothing to install yet. Content CC BY 4.0; code Apache 2.0.</p>
     <p class="partnote">This site is static and has no analytics.</p>
-    <p class="verline">site v0.1.11 · <a href="index.md">this page as markdown</a> · <a href="../llms.txt">llms.txt</a></p>
+    <p class="verline">site dev · <a href="index.md">this page as markdown</a> · <a href="../llms.txt">llms.txt</a></p>
   </div>
   <div>
     <h4>The app</h4>

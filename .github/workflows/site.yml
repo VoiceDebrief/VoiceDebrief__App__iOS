@@ -4,10 +4,10 @@ name: site
 #
 #   1. validate     the gate (website/admin/validate.mjs): generated pages current, links and anchors,
 #                   no key-shaped string anywhere in the repository, house style. Runs on pull requests too.
-#   2. tag-release  on a push to dev: if the version file names a version that has no tag yet, that
-#                   commit is the release and is tagged. A push that does not change the version is
-#                   published but not tagged.
-#   3. deploy       publishes website/ to GitHub Pages, from dev only, never when validation failed.
+#   2. increment-tag  on a push to dev: CI works out the next version from the latest tag, writes the
+#                   version file and tags. Nobody edits the version file by hand.
+#   3. deploy       stamps that version into the pages and publishes website/ to GitHub Pages, from dev
+#                   only, never when validation failed.
 #
 # GitHub Pages must be set to "GitHub Actions" as its source in the repository settings.
 on:
@@ -37,7 +37,12 @@ jobs:
       - name: Validate the site and the repository
         run: node website/admin/validate.mjs
 
-  tag-release:
+  increment-tag:
+    # CI owns the version file, as in the other VoiceDebrief and SGraph repositories (the behaviour of
+    # owasp-sbot/OSBot-GitHub-Actions git__increment-tag, written out here so that it retries when
+    # another push lands first): every push to dev is a release. The latest tag's last number goes up
+    # by one, the version file and the README badge are rewritten, and that commit is tagged. The
+    # commit is pushed with GITHUB_TOKEN, which starts no workflow, so there is no loop.
     runs-on: ubuntu-latest
     timeout-minutes: 5
     needs: [validate]
@@ -47,29 +52,40 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: dev
           fetch-depth: 0
-      - name: Tag this commit if the version file names a new version
+      - name: Increment the tag and write the version file
         run: |
           set -euo pipefail
-          git fetch --tags --quiet
-          TAG=$(tr -d ' \n' < version)
-          if ! [[ "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then echo "::error::version file holds \"$TAG\""; exit 1; fi
-          if git rev-parse -q --verify "refs/tags/$TAG" >/dev/null; then
-            echo "$TAG is already tagged: this push is not a release"; exit 0
-          fi
-          PREV=$(git tag --list 'v*' | sort -V | tail -1 || true)
-          if [ -n "$PREV" ] && [ "$(printf '%s\n%s\n' "$PREV" "$TAG" | sort -V | tail -1)" != "$TAG" ]; then
-            echo "::error::version file says $TAG but $PREV is already released"; exit 1
-          fi
-          git tag "$TAG" "$GITHUB_SHA"
-          git push origin "refs/tags/$TAG"
-          echo "tagged ${GITHUB_SHA:0:9} as $TAG" | tee -a "$GITHUB_STEP_SUMMARY"
+          git config user.name 'GitHub Actions'
+          git config user.email 'actions@github.com'
+          for attempt in 1 2 3 4 5; do
+            git fetch --quiet --tags origin dev
+            git reset --quiet --hard origin/dev
+            LATEST=$(git tag --list 'v[0-9]*' | sort -V | tail -1)
+            [ -n "$LATEST" ] || LATEST=v0.0.0
+            IFS=. read -r MAJOR MINOR PATCH <<< "${LATEST#v}"
+            NEW="v$MAJOR.$MINOR.$((PATCH + 1))"
+            echo "$NEW" > version
+            sed -i "s/release-v[0-9]*\.[0-9]*\.[0-9]*/release-$NEW/" README.md
+            git add version README.md
+            git commit --quiet -m "Update release badge and version file"
+            if git push --quiet origin HEAD:dev; then
+              git tag "$NEW"
+              git push --quiet origin "refs/tags/$NEW"
+              echo "tagged $(git rev-parse --short HEAD) as $NEW" | tee -a "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            echo "dev moved, trying again ($attempt)"
+            sleep $((attempt * 3))
+          done
+          echo "::error::could not push the version commit"; exit 1
 
   deploy:
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    needs: [validate, tag-release]
-    if: always() && github.event_name != 'pull_request' && github.ref == 'refs/heads/dev' && needs.validate.result == 'success' && (needs.tag-release.result == 'success' || needs.tag-release.result == 'skipped')
+    needs: [validate, increment-tag]
+    if: always() && github.event_name != 'pull_request' && github.ref == 'refs/heads/dev' && needs.validate.result == 'success' && (needs.increment-tag.result == 'success' || needs.increment-tag.result == 'skipped')
     permissions:
       pages: write
       id-token: write
@@ -79,7 +95,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: dev            # the commit CI has just written the version into
           persist-credentials: false
+      - name: Stamp the version into the pages
+        run: SITE_VERSION="$(tr -d ' \n' < version)" node website/admin/build.mjs
       - name: Assemble the site
         run: |
           mkdir -p "$RUNNER_TEMP/site"
