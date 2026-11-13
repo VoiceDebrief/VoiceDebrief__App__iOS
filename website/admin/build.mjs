@@ -44,6 +44,8 @@ const PAGES = [
     description: 'A position and a brief: vault keys and the user key travel through iCloud Keychain, the device key never leaves the device, the person vouches for the device, and optionally a delegation from pki.sgit.ai.' },
   { path: 'articles/voice-everywhere', nav: null, title: 'Voice everywhere, and a recording that is never lost',
     description: 'An idea: voice as the way in from every screen, why the live words matter, and more than one interface to try.' },
+  { path: 'articles/a-private-voice-note-and-a-clinic', nav: null, title: 'A private voice note, and what it would take to use it in a clinic',
+    description: 'An idea, with corrections: the on-device, encrypted, account-free workflow of VoiceDebrief applied between a patient and a clinician; what is built, what the conversation overstated, and what data protection still asks.' },
   { path: 'articles/synthetic-users', nav: null, title: 'Synthetic users for an app its builder cannot see',
     description: 'A brief: invented users walking screenshots of every screen to find where a real one would get lost.' },
   { path: 'sgit-app/design', nav: null, title: 'The sgit app for iPhone, iPad and Mac: design for milestone one',

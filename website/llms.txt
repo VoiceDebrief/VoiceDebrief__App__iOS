@@ -54,6 +54,8 @@ Every page has a markdown twin: replace index.html with index.md.
   user vouches for the device; optionally a delegation from pki.sgit.ai.
 - https://ios.app.voicedebrief.ai/articles/voice-everywhere/index.html : never lose a recording; voice from
   every screen.
+- https://ios.app.voicedebrief.ai/articles/a-private-voice-note-and-a-clinic/index.html : the workflow between a
+  patient and a clinician, with a drawing; what is built, what was overstated, what data protection still asks.
 - https://ios.app.voicedebrief.ai/articles/synthetic-users/index.html : invented users walking screenshots.
 
 ## Facts worth knowing before you work on it
