@@ -4,6 +4,7 @@ import UniformTypeIdentifiers
 /// The working screen: choose the language, record or bring a voice note, read the result.
 struct DebriefView: View {
     let session: DebriefSession
+    let book: VaultBook
     @AppStorage("vd.localeId") private var localeId = ""
     @State private var locales: [String] = []
     @State private var importing = false
@@ -27,11 +28,14 @@ struct DebriefView: View {
                 Section {
                     controls
                 } footer: {
-                    Text("Transcribed and summarised on this device by Apple's models. Nothing is sent anywhere unless you choose to send a note to the developer, and in this build nothing is saved: closing the app loses the result.")
+                    Text("Transcribed and summarised on this device by Apple's models. Nothing is sent anywhere unless you choose to save a debrief to your vault or send a note to the developer. A result that is not saved is lost when the app closes.")
                 }
 
                 if let run = session.run {
                     RunSections(run: run)
+                    if run.transcript != nil, !session.isBusy {
+                        SaveToVaultSection(session: session, book: book)
+                    }
                     if session.canShareAudio {
                         DeveloperLaneSection(session: session)
                     }

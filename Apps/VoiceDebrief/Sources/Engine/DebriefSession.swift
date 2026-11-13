@@ -41,6 +41,8 @@ final class DebriefSession {
     private var meter: Task<Void, Never>?
 
     var canShareAudio: Bool { lastAudio != nil && run?.transcript != nil }
+    /// The audio of the last run, for saving it with the debrief.
+    var lastAudioURL: URL? { lastAudio }
 
     var isBusy: Bool {
         switch phase {

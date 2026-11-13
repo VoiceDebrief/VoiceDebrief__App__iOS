@@ -13,5 +13,7 @@ brought here by diff against the commit above.
 |---|---|---|
 | 13 Nov 2026 | `Sources/SGitVault/VaultDoor.swift` | Added `door(fromSecret:site:counter:)`, `prfSalt(site:)` and `pkiSite`, so a door can be derived for a site other than the one compiled in. The existing `door(fromSecret:counter:)` and `prfSalt` are unchanged in behaviour and now call the new function |
 | 13 Nov 2026 | `Tests/SGitVaultTests/SiteDoorTests.swift` | New: the vector published at `newsroom.sgit.ai/passkey/vectors.json`, and that the default site is unchanged |
+| 13 Nov 2026 | `Sources/SGitVault/VaultCreate.swift`, `Tests/SGitVaultTests/CreateTests.swift` | New: create a vault (random key, or at a given key), in the form `sgit init` writes, without a clone branch. The created vault is exported for the sgit read-back job |
+| 13 Nov 2026 | `Tests/Fixtures/sgit_reads_swift.py` | Does not switch branch when the branch is `current` |
 
 Nothing else differs from the source commit.

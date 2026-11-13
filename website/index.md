@@ -11,7 +11,7 @@ A voice note in, a transcript and a short debrief out, on the device. The app is
 | Bring a voice note | Record in the app or choose a file: in test. Sharing from WhatsApp and its `.opus` files: proposed | [[unverified]] |
 | Transcript | Apple's `SpeechAnalyzer`, on the device, with the time of every line | [[unverified]] |
 | Debrief | Apple Intelligence, on the device: key points, actions, one sentence | [[unverified]] |
-| Keep it | An sgit vault the user owns, encrypted before anything leaves the device | [[proposed]] |
+| Keep it | An sgit vault the user owns, encrypted before anything leaves the device. Creating a vault and saving a debrief into it: in test | [[unverified]] |
 | Sign in | One passkey, the same account as [pki.sgit.ai](https://pki.sgit.ai), and a recovery code | [[proposed]] |
 | One identity | One key bundle (RSA-OAEP 4096 and ECDSA P-256) that signs every debrief | [[proposed]] |
 
@@ -32,7 +32,7 @@ A voice note in, a transcript and a short debrief out, on the device. The app is
 
 **Your vault is the one thing that leaves the device, and it leaves encrypted.** Files are encrypted on the device before upload, with keys derived from a vault key the server never sees. The server can see the vault's identifier, the size of each encrypted object and when it was written. It cannot see file names, contents or keys. [sgit's security model](https://sgit.ai/security/index.html) states this precisely.
 
-The transcript and debrief are in a test build and have not yet been judged on a real device. The vault is not built. This page will say so when either changes.
+The transcript and debrief are in a test build and have not yet been judged on a real device. Creating a vault and saving into it are in the test build and have not run on a device. This page will say so when either changes.
 
 ## The record
 

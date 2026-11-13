@@ -4,7 +4,7 @@ name: iOS vault round trip
 # ios.yml already runs `swift test` for Packages/SGitVault and builds the app, so this
 # workflow runs only when the write path changes, weekly (so a change in sgit's format is
 # noticed the week it lands), or by hand:
-#   swift-writes     macOS: the write tests export the vaults Swift wrote (SGITVAULT_ROUNDTRIP_OUT)
+#   swift-writes     macOS: the write and create tests export the vaults Swift wrote (SGITVAULT_ROUNDTRIP_OUT)
 #   sgit-reads-swift Linux: sgit-ai 0.27 clones each, switches to the Swift branch,
 #                    verifies every signature and compares every file
 #   reference-reader Linux: the fixtures, read by the Python reference reader
@@ -15,6 +15,8 @@ on:
     paths:
       - 'Packages/SGitVault/Sources/SGitVault/VaultCommitBuilder.swift'
       - 'Packages/SGitVault/Sources/SGitVault/VaultWrite.swift'
+      - 'Packages/SGitVault/Sources/SGitVault/VaultCreate.swift'
+      - 'Packages/SGitVault/Tests/SGitVaultTests/CreateTests.swift'
       - 'Packages/SGitVault/Sources/SGitVault/PythonJSON.swift'
       - 'Packages/SGitVault/Sources/SGitVault/CanonicalJSON.swift'
       - 'Packages/SGitVault/Sources/SGitVault/VaultCrypto.swift'
@@ -45,7 +47,7 @@ jobs:
           SGITVAULT_ROUNDTRIP_OUT: ${{ runner.temp }}/roundtrip
         run: |
           set -o pipefail
-          swift test --filter WriteTests 2>&1 | tee "$RUNNER_TEMP/write-tests.log" || {
+          swift test --filter 'WriteTests|CreateTests' 2>&1 | tee "$RUNNER_TEMP/write-tests.log" || {
             { echo "### ❌ Swift write tests failed"; echo '```'
               grep -E "error:|failed" "$RUNNER_TEMP/write-tests.log" | head -40; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
             exit 1; }

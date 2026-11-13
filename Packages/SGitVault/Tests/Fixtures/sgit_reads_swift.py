@@ -25,7 +25,8 @@ def check(export: Path) -> None:
     with tempfile.TemporaryDirectory() as tmp:
         work = str(Path(tmp) / 'clone')
         sync.clone(want['vault_key'], work)
-        sync.switch_branch(work, want['branch'])
+        if want['branch'] != 'current':                 # a clone is already on current
+            sync.switch_branch(work, want['branch'])
         got = {}
         for p in sorted(Path(work).rglob('*')):
             if p.is_file() and '.sg_vault' not in p.parts:

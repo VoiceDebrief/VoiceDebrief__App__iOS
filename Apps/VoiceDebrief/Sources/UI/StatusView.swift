@@ -9,7 +9,7 @@ struct StatusView: View {
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Voice note in, transcript and debrief out, on this device.")
                             .font(.title3.weight(.semibold))
-                        Text("This is an early build. It can record or open a voice note, transcribe it and write a debrief, so that Apple's models can be judged on real notes. It saves nothing and has no account yet.")
+                        Text("This is an early build. It can record or open a voice note, transcribe it and write a debrief, so that Apple's models can be judged on real notes. A debrief can be saved to a vault you create. There is no account yet.")
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                     }
