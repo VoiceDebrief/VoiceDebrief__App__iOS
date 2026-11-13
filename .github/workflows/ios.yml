@@ -20,7 +20,6 @@ on:
     paths:
       - 'Apps/**'
       - 'Packages/**'
-      - 'version'
       - 'scripts/release/**'
       - '.github/workflows/ios.yml'
       - '.github/scripts/**'
@@ -58,9 +57,22 @@ jobs:
       - name: Select Xcode
         run: .github/scripts/select-xcode.sh
 
-      - name: Version from the version file
+      - name: Version, which CI owns (on dev, the tag this push was given)
         run: |
-          v=$(tr -d ' \n' < version); v=${v#v}
+          # site.yml tags every push to dev on a commit placed on top of it. The app's version is that
+          # tag; if it has not been written yet, it is the latest tag plus one, which is what it will be.
+          v=$(tr -d ' \n' < version)
+          if [ "$GITHUB_REF" = "refs/heads/dev" ]; then
+            git fetch --quiet --tags --depth=200 origin dev || true
+            tag=$(git tag --contains "$GITHUB_SHA" 2>/dev/null | sort -V | head -1)
+            if [ -z "$tag" ]; then
+              latest=$(git tag --list 'v[0-9]*' | sort -V | tail -1)
+              IFS=. read -r a b c <<< "${latest#v}"
+              tag="v$a.$b.$((c + 1))"
+            fi
+            v=$tag
+          fi
+          v=${v#v}
           echo "MARKETING_VERSION=$v" >> "$GITHUB_ENV"
           echo "BUILD_NUMBER=$GITHUB_RUN_NUMBER" >> "$GITHUB_ENV"
           echo "**Version:** \`$v ($GITHUB_RUN_NUMBER)\`" >> "$GITHUB_STEP_SUMMARY"
