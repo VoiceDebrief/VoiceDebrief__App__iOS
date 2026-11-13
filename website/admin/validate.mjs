@@ -7,7 +7,7 @@
 //    sgit vault keys. Packages/SGitVault/Tests/ is exempt: its vaults and keys are throwaway fixtures.
 // 5. house style on the site: no em-dashes
 // 6. no script on any page: this site is static
-// 7. the version file is vMAJOR.MINOR.PATCH, and the release history names it
+// 7. the version file is vMAJOR.MINOR.PATCH (CI writes it; nobody else does)
 import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -80,7 +80,6 @@ for (const f of site.filter(f => /\.(md|html|txt)$/.test(f))) {
 // 7
 const version = readFileSync(join(REPO_ROOT, 'version'), 'utf8').trim();
 if (!/^v\d+\.\d+\.\d+$/.test(version)) fail(`version file: "${version}" is not vMAJOR.MINOR.PATCH`);
-if (!readFileSync(join(SITE_ROOT, 'versions/index.md'), 'utf8').includes(version)) fail(`website/versions/index.md does not name ${version}`);
 
 if (fails.length) { console.error(`validate: ${fails.length} problem(s)\n- ${fails.join('\n- ')}`); process.exit(1); }
 console.log(`validate: ok (${site.length} site files, ${version})`);
