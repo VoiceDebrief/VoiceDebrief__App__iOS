@@ -70,7 +70,9 @@ final class ScreensTests: XCTestCase {
         let app = XCUIApplication()
         // -vd.localeId is the app's own setting, given for this launch only: a simulator's speech
         // model reports no languages, and without one the record screen shows only that warning.
-        app.launchArguments = ["-VDSampleData", set, "-VDScreen", screen, "-vd.localeId", "en-GB"]
+        // British dates and numbers, whatever the runner's simulator was set up with.
+        app.launchArguments = ["-VDSampleData", set, "-VDScreen", screen, "-vd.localeId", "en-GB",
+                               "-AppleLanguages", "(en-GB)", "-AppleLocale", "en_GB"]
         app.launch()
         sleep(wait)
         if toTheEnd {
