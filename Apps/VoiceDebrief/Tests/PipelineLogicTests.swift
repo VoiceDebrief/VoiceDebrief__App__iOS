@@ -118,6 +118,17 @@ struct DebriefPromptTests {
         #expect(!DebriefPrompt.notes(section: 1, of: 2, transcript: "", voice: voice).contains("\""))
     }
 
+    @Test func thePromptSaysTheNoteIsTheReadersOwn() {
+        // The first real debriefs wrote "Speaker is..." and "[Speaker]": the prompt itself said "the speaker".
+        let voice = DebriefPrompt.voice(forLocale: "en-GB")
+        for prompt in [DebriefPrompt.debrief(transcript: "", voice: voice), DebriefPrompt.merge(notes: "", voice: voice),
+                       DebriefPrompt.notes(section: 1, of: 2, transcript: "", voice: voice)] {
+            #expect(prompt.contains("[me]"))
+            #expect(prompt.contains("Never write the word Speaker") || prompt.contains("my own voice note"))
+            #expect(!prompt.contains("the speaker"))
+        }
+    }
+
     @Test func wordsAreCountedAcrossLines() {
         let lines = [
             TranscriptLine(startMs: 0, endMs: 1, text: "Okay, let's see if it works."),

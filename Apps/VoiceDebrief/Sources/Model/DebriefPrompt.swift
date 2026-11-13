@@ -41,7 +41,7 @@ enum DebriefPrompt {
     /// The shape the model fills in. No quotation marks anywhere: a small model copies them into its answer.
     private static let shape = """
         ## Key points
-        - one bullet for each thing the speaker said that matters: facts, decisions, numbers, names
+        - one bullet for each thing said that matters: facts, decisions, numbers, names
 
         ## Actions
         - one bullet for each task or follow-up, starting with who does it in square brackets
@@ -56,7 +56,8 @@ enum DebriefPrompt {
         - Keep the three heading lines exactly as they are above, in that order: ## Key points, ## Actions, ## In one sentence.
         - Use only what is in the \(source). Do not invent or embellish. Do not copy a whole line as a bullet: say what it means.
         - Write between 1 and 6 key points. A short note has few.
-        - The speaker is the person who recorded the note. Write their own tasks as [me]. Use a name only when the speaker names someone.
+        - This is my own voice note: I recorded it and I am the one reading the summary. Write the points as plain statements with no subject, for example: Testing the new workflow. Never write the word Speaker.
+        - Under Actions, my own tasks start with [me]. Use a name in the brackets only when I name someone else.
         - An action is something somebody has to do later. A passing remark or a hope is not an action. If there are no actions, the only bullet under Actions is: - none mentioned
         - Do not put quotation marks around bullets. Ignore filler words such as um and uh.
         - Keep names, numbers and technical terms exactly as spoken.
@@ -67,7 +68,7 @@ enum DebriefPrompt {
     /// The whole debrief from a transcript that fits in one request.
     static func debrief(transcript: String, voice: Voice) -> String {
         """
-        Summarise the voice note transcript at the end, in markdown, in exactly this shape:
+        Summarise my voice note, whose transcript is at the end, in markdown, in exactly this shape:
 
         \(shape)
 
@@ -81,10 +82,10 @@ enum DebriefPrompt {
     /// Notes on one section of a long transcript, to be merged later.
     static func notes(section: Int, of total: Int, transcript: String, voice: Voice) -> String {
         """
-        This is part \(section) of \(total) of a voice note transcript. List what the speaker said in this part.
+        This is part \(section) of \(total) of the transcript of my own voice note. List what is said in this part, as plain statements with no subject. Never write the word Speaker.
 
         Write up to 6 bullets, each starting with a hyphen: facts, decisions, numbers and names.
-        Then one bullet for each task or follow-up, each starting with a hyphen and the word ACTION, then who does it in square brackets. The speaker's own tasks are [me].
+        Then one bullet for each task or follow-up, each starting with a hyphen and the word ACTION, then who does it in square brackets. My own tasks are [me].
 
         Rules: use only what is in this part. Do not invent or embellish. A passing remark is not an action. No quotation marks. Write in \(voice.language).
 
@@ -96,7 +97,7 @@ enum DebriefPrompt {
     /// The debrief from the notes on every section.
     static func merge(notes: String, voice: Voice) -> String {
         """
-        Below are notes on each part of one voice note, in order. Write one summary of the whole note, in markdown, in exactly this shape:
+        Below are notes on each part of my own voice note, in order. Write one summary of the whole note, in markdown, in exactly this shape:
 
         \(shape)
 
