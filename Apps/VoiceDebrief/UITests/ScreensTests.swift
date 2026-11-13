@@ -11,7 +11,8 @@ import XCTest
 /// no passkeys, so every state that depends on them is shown from sample data.
 ///
 /// One test per shot, so a crash on one screen cannot stop the others. The attachment's name is
-/// the PNG's name: `<screen id>` or `<screen id>-empty`.
+/// the PNG's name: `<screen id>`, `<screen id>-empty` for the empty sample set, or `<screen id>-end`
+/// for the same screen scrolled to its end (a long screen needs two pictures).
 final class ScreensTests: XCTestCase {
     /// screens.yml expects one PNG per entry. Keep it equal to the test methods below.
     static let shots = [
@@ -20,6 +21,7 @@ final class ScreensTests: XCTestCase {
         "note.finished", "note.transcript", "note.interrupted", "note.working",
         "vaults", "vaults-empty", "vault.detail",
         "settings", "diagnostics", "traffic", "about",
+        "note.finished-end", "vaults-end", "vault.detail-end", "diagnostics-end", "about-end",
     ]
 
     @MainActor func test01_record() { shoot("record") }
@@ -39,9 +41,14 @@ final class ScreensTests: XCTestCase {
     @MainActor func test15_diagnostics() { shoot("diagnostics", wait: 5) }
     @MainActor func test16_traffic() { shoot("traffic", wait: 8) }
     @MainActor func test17_about() { shoot("about") }
+    @MainActor func test18_note_finished_end() { shoot("note.finished", toTheEnd: true) }
+    @MainActor func test19_vaults_end() { shoot("vaults", toTheEnd: true) }
+    @MainActor func test20_vault_detail_end() { shoot("vault.detail", wait: 8, toTheEnd: true) }
+    @MainActor func test21_diagnostics_end() { shoot("diagnostics", wait: 5, toTheEnd: true) }
+    @MainActor func test22_about_end() { shoot("about", toTheEnd: true) }
 
     func testTheListMatchesTheTestMethods() {
-        XCTAssertEqual(Self.shots.count, 17)
+        XCTAssertEqual(Self.shots.count, 22)
         XCTAssertEqual(Set(Self.shots).count, Self.shots.count)
     }
 
@@ -50,7 +57,7 @@ final class ScreensTests: XCTestCase {
     }
 
     @MainActor
-    private func shoot(_ screen: String, set: String = "full", wait: UInt32 = 3) {
+    private func shoot(_ screen: String, set: String = "full", wait: UInt32 = 3, toTheEnd: Bool = false) {
         // Landscape on iPad: the size at which the layout has most room to go wrong. screens.yml
         // turns the PNG upright from its EXIF orientation (the capture is the portrait framebuffer).
         if UIDevice.current.userInterfaceIdiom == .pad {
@@ -62,10 +69,15 @@ final class ScreensTests: XCTestCase {
         app.launchArguments = ["-VDSampleData", set, "-VDScreen", screen, "-vd.localeId", "en-GB"]
         app.launch()
         sleep(wait)
+        if toTheEnd {
+            // Four fast swipes reach the end of every screen there is today; a fifth would do no harm.
+            for _ in 0..<4 { app.swipeUp(velocity: .fast) }
+            sleep(1)
+        }
         // The picture first: a slow accessibility query must not cost the screenshot. The whole
         // screen, not the app element, whose capture is cropped wrongly in landscape on iPad.
         let attachment = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
-        attachment.name = set == "full" ? screen : "\(screen)-\(set)"
+        attachment.name = toTheEnd ? "\(screen)-end" : (set == "full" ? screen : "\(screen)-\(set)")
         attachment.lifetime = .keepAlways
         add(attachment)
         let marker = app.descendants(matching: .any).matching(identifier: "vd.screen.\(screen)").firstMatch

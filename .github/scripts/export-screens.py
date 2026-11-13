@@ -32,7 +32,8 @@ if len(sys.argv) == 2 and sys.argv[1] == "--self-test":
     u = "70EE4FB8-EA45-427B-A980-DF8C0874723C"
     cases = {f"record_0_{u}.png": "record", f"record-empty_0_{u}.png": "record-empty",
              f"note_0_{u}.finished": "note.finished", f"vault_1_{u}.detail": "vault.detail",
-             f"record_0_{u}.recording": "record.recording", "plain.png": "plain"}
+             f"record_0_{u}.recording": "record.recording", "plain.png": "plain",
+             f"note_0_{u}.finished-end": "note.finished-end"}
     for given, want in cases.items():
         got = attachment_id(given)
         assert got == want, (given, got, want)
