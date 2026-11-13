@@ -19,11 +19,6 @@ struct RecordView: View {
     private static let bottomId = "record-bottom"
     @State private var confirmingDiscard = false
 
-    private var isWorking: Bool {
-        if case .working = session.phase { return true }
-        return false
-    }
-
     var body: some View {
         NavigationStack(path: $path) {
             ScrollViewReader { proxy in
@@ -111,7 +106,7 @@ struct RecordView: View {
             VStack(spacing: 6) {
                 Text("Record a voice note")
                     .font(.title2.weight(.semibold))
-                Text("Transcript and debrief, made on this device.")
+                Text("Saved as you speak, then transcribed and debriefed on this device.")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
@@ -212,7 +207,7 @@ struct RecordView: View {
             } label: {
                 ZStack {
                     Circle()
-                        .fill(isWorking || localeId.isEmpty ? Color.gray : Color.green)
+                        .fill(localeId.isEmpty ? Color.gray : Color.green)
                         .frame(width: 88, height: 88)
                     Image(systemName: isRecording ? "checkmark" : "mic.fill")
                         .font(.system(size: 34, weight: .semibold))
@@ -222,7 +217,9 @@ struct RecordView: View {
                 .contentShape(Circle())
             }
             .buttonStyle(.plain)
-            .disabled(isWorking || localeId.isEmpty)
+            // Live whatever the pipeline is doing: a thought that arrives while the last note is being
+            // written up is recorded, and waits its turn (issue 030).
+            .disabled(localeId.isEmpty)
             .accessibilityLabel(isRecording ? "Finish and debrief" : "Record")
 
             Text(caption)
@@ -237,7 +234,7 @@ struct RecordView: View {
                 }
                 .buttonStyle(.bordered)
                 .buttonBorderShape(.capsule)
-                .disabled(isWorking || localeId.isEmpty)
+                .disabled(localeId.isEmpty)
             }
         }
         .padding(.top, 12)
@@ -248,8 +245,11 @@ struct RecordView: View {
 
     private var caption: String {
         if isRecording { return "Tap to finish: the note is kept, then transcribed and debriefed" }
-        if case .working(let what) = session.phase { return "Finishing the last note: \(what)" }
-        return "Tap to record"
+        if session.isProcessing {
+            let more = session.waiting.isEmpty ? "" : ", \(session.waiting.count) more waiting"
+            return "Tap to record. The last note is being written up\(more)."
+        }
+        return "Tap to record. It is saved as you speak."
     }
 
     private func toggle() async {

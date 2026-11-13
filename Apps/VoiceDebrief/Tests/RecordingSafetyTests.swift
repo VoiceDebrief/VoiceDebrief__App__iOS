@@ -98,3 +98,23 @@ struct RecordingNoteTests {
         #expect(!FileManager.default.fileExists(atPath: audio.path))
     }
 }
+
+@Suite("The session's states")
+@MainActor
+struct SessionStateTests {
+    @Test func processingRecordingAndIdleReadAsTheyShould() throws {
+        let store = NoteStore(root: NoteStoreTests.temporaryRoot())
+        let session = DebriefSession(store: store)
+        let note = try #require(store.create(audioAt: try NoteStoreTests.audioFile(), source: "Recorded here", localeId: "en-GB"))
+        session.showSample(phase: .working("Writing the debrief"), noteId: note.id)
+        #expect(session.isProcessing)
+        #expect(session.workingText(for: note.id) == "Writing the debrief")
+        session.showSample(phase: .recording(since: Date()), noteId: note.id)
+        guard case .recording = session.phase else { Issue.record("expected the recording state"); return }
+        #expect(session.isBusy)
+        session.showSample(phase: .idle)
+        #expect(session.phase == .idle)
+        #expect(!session.isBusy)
+        #expect(session.waiting.isEmpty)
+    }
+}

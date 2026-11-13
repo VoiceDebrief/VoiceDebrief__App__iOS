@@ -1,5 +1,7 @@
 # 030: Record again while the last note is being written up
 
+**Built (untried on a device): recording and processing are separate; notes queue for the pipeline and say "Waiting its turn"; the control stays live, and its caption says how many are waiting.**
+
 **Status:** open. From review round 1 (13 November 2026, `website/reviews/round-1/index.md`). **Owner:** the main session (`RecordView`, `DebriefSession`).
 
 Finding 2. Screen `record.working`. Found by the driver (it blocked the task: a second memo straight after the

@@ -80,9 +80,11 @@ struct NoteTitleTests {
         let debrief = "## Key points\n- a\n\n## Actions\n- none mentioned\n\n## In one sentence\n**Testing** the workflow.\n"
         #expect(Self.note("a", at: 0, debrief: debrief, first: "Okay so this is now").title == "Testing the workflow.")
         #expect(Self.note("b", at: 0, debrief: "no headings here", first: "Okay so this is now").title == "Okay so this is now")
-        #expect(Self.note("c", at: 0).title == "Recording")
+        #expect(Self.note("c", at: 0).title == "Voice note with no words found")
+        #expect(Self.note("e", at: 0, processing: true).title == "Voice note, not yet transcribed")
         let long = (1...20).map { "w\($0)" }.joined(separator: " ")
         #expect(Self.note("d", at: 0, first: long).title.split(separator: " ").count == 12)
+        #expect(Self.note("d", at: 0, first: long).title.hasSuffix("…"))
     }
 
     @Test func aSentenceIsNotTakenFromTheNextSection() {
@@ -92,8 +94,8 @@ struct NoteTitleTests {
     }
 
     @Test func theStateIsSaidInWords() {
-        #expect(Self.note("a", at: 0, processing: true).stateLine == "Not finished")
-        #expect(Self.note("b", at: 0).stateLine == "No transcript")
+        #expect(Self.note("a", at: 0, processing: true).stateLine == "Interrupted: open it to run it again")
+        #expect(Self.note("b", at: 0).stateLine == "No words found")
         #expect(Self.note("c", at: 0, first: "Hello").stateLine == "Transcript only")
         #expect(Self.note("d", at: 0, debrief: "x", first: "Hello").stateLine == "On this device")
     }

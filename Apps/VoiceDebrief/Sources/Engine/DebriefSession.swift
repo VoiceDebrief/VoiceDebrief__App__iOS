@@ -26,7 +26,21 @@ final class DebriefSession {
     let store: NoteStore
     /// Called once a note is finished and its audio is in its final form: the moment to save it elsewhere.
     var onNoteReady: ((String) -> Void)?
-    private(set) var phase: Phase = .idle
+    /// What the record screen shows. Recording and processing are kept apart, so that a recording can
+    /// start while the last note is still being written up (review round 1, issue 030); a recording in
+    /// progress is what the screen shows first.
+    var phase: Phase {
+        if let since = recordingSince { return .recording(since: since) }
+        if let working { return .working(working) }
+        if let failure { return .failed(failure) }
+        return .idle
+    }
+    private var recordingSince: Date?
+    /// What the pipeline is doing to `currentNoteId` right now, in words; nil when it is idle.
+    private var working: String?
+    private var failure: String?
+    /// Notes waiting their turn for the pipeline, oldest first.
+    private(set) var waiting: [String] = []
     /// The note being processed now, or the last one that was.
     private(set) var currentNoteId: String?
     private(set) var sharing: Sharing = .idle
@@ -51,7 +65,7 @@ final class DebriefSession {
     }
 
     private func recordingWasInterrupted() async {
-        guard case .recording = phase else { return }
+        guard recordingSince != nil else { return }
         _ = await stopRecording()
         notice = "The recording was interrupted (a call, or another app took the microphone). What was recorded is kept and is being transcribed."
     }
@@ -66,9 +80,13 @@ final class DebriefSession {
     var recordingNote: String? { recordingNoteId }
 
     func workingText(for noteId: String) -> String? {
-        guard noteId == currentNoteId, case .working(let text) = phase else { return nil }
-        return text
+        if noteId == currentNoteId, let working { return working }
+        if waiting.contains(noteId) { return "Waiting its turn" }
+        return nil
     }
+
+    /// True while the pipeline is writing up a note: the record control stays live all the same.
+    var isProcessing: Bool { working != nil }
 
     /// While recording: the words heard so far (settled, and still changing), recent loudness for the
     /// level display, and why there is no live text if there is none.
@@ -80,12 +98,8 @@ final class DebriefSession {
     private let live = LiveTranscriber()
     private var meter: Task<Void, Never>?
 
-    var isBusy: Bool {
-        switch phase {
-        case .recording, .working: return true
-        default: return false
-        }
-    }
+    /// Recording, or writing a note up: the language cannot be changed then.
+    var isBusy: Bool { recordingSince != nil || working != nil }
 
     // MARK: Recording
 
@@ -93,7 +107,7 @@ final class DebriefSession {
         notice = nil
         // The note and its file exist before recording starts: see NoteStore.begin.
         guard let (note, audio) = store.begin(source: "Recorded here", localeId: localeId) else {
-            phase = .failed(store.problem ?? "A place for the recording could not be made.")
+            failure = store.problem ?? "A place for the recording could not be made."
             return
         }
         do {
@@ -104,10 +118,11 @@ final class DebriefSession {
             liveVolatile = ""
             liveNote = ""
             levels = []
-            phase = .recording(since: Date())
+            failure = nil
+            recordingSince = Date()
         } catch {
             store.delete(note.id)
-            phase = .failed(error.localizedDescription)
+            failure = error.localizedDescription
             return
         }
         meter = Task { [weak self] in
@@ -130,7 +145,7 @@ final class DebriefSession {
     }
 
     private func pushLevel() {
-        guard case .recording = phase else { return }
+        guard recordingSince != nil else { return }
         levels.append(recorder.level())
         if levels.count > Self.levelCount { levels.removeFirst(levels.count - Self.levelCount) }
     }
@@ -142,19 +157,18 @@ final class DebriefSession {
         meter = nil
         await live.stop()
         recorder.stop()
+        recordingSince = nil
         guard let id = recordingNoteId else {
-            phase = .failed("Nothing was recorded.")
+            failure = "Nothing was recorded."
             return nil
         }
         recordingNoteId = nil
         guard store.audioURL(for: id) != nil else {
             store.delete(id)
-            phase = .failed("Nothing was recorded.")
+            failure = "Nothing was recorded."
             return nil
         }
-        phase = .working("Transcribing")
-        currentNoteId = id
-        Task { await process(noteId: id) }
+        enqueue(id)
         return id
     }
 
@@ -167,7 +181,7 @@ final class DebriefSession {
         recorder.stop()
         if let id = recordingNoteId { store.delete(id) }
         recordingNoteId = nil
-        phase = .idle
+        recordingSince = nil
     }
 
     // MARK: Importing
@@ -181,7 +195,7 @@ final class DebriefSession {
         do {
             try FileManager.default.copyItem(at: picked, to: copy)
         } catch {
-            phase = .failed("That file could not be opened.")
+            failure = "That file could not be opened."
             return nil
         }
         let id = begin(audioAt: copy, source: picked.lastPathComponent, localeId: localeId)
@@ -192,31 +206,48 @@ final class DebriefSession {
     /// Keeps the audio as a new note, then processes it without making the caller wait.
     private func begin(audioAt url: URL, source: String, localeId: String) -> String? {
         guard let note = store.create(audioAt: url, source: source, localeId: localeId) else {
-            phase = .failed(store.problem ?? "The recording could not be kept.")
+            failure = store.problem ?? "The recording could not be kept."
             return nil
         }
-        phase = .working("Transcribing")
-        currentNoteId = note.id
-        Task { await process(noteId: note.id) }
+        enqueue(note.id)
         return note.id
     }
 
     /// Transcribes and debriefs a note again from its kept audio: for a note that was interrupted,
     /// or after changing the language or switching Apple Intelligence on.
     func reprocess(_ noteId: String, localeId: String) {
-        guard !isBusy, var run = store.note(noteId)?.run else { return }
+        guard noteId != recordingNoteId, !isBusyWith(noteId), var run = store.note(noteId)?.run else { return }
         run = DebriefRun(source: run.source, localeId: localeId)
         store.update(noteId, run: run, processing: true)
-        phase = .working("Transcribing")
-        currentNoteId = noteId
-        Task { await process(noteId: noteId) }
+        enqueue(noteId)
+    }
+
+    /// Puts a note in line for the pipeline, and starts it if nothing is being written up.
+    private func enqueue(_ noteId: String) {
+        guard !waiting.contains(noteId), !(noteId == currentNoteId && working != nil) else { return }
+        waiting.append(noteId)
+        startNext()
+    }
+
+    private func startNext() {
+        guard working == nil, !waiting.isEmpty else { return }
+        let next = waiting.removeFirst()
+        currentNoteId = next
+        working = "Transcribing"
+        Task { await process(noteId: next) }
+    }
+
+    /// The pipeline has finished with the current note: take the next one waiting.
+    private func doneProcessing() {
+        working = nil
+        startNext()
     }
 
     // MARK: The pipeline
 
     private func process(noteId: String) async {
         guard let note = store.note(noteId), let url = store.audioURL(for: noteId) else {
-            phase = .idle
+            doneProcessing()
             return
         }
         let localeId = note.run.localeId
@@ -226,14 +257,14 @@ final class DebriefSession {
         func publish(finished: Bool = false) {
             store.update(noteId, run: current, processing: !finished)
             if finished {
-                phase = .idle
                 compressAudio(of: noteId)
+                doneProcessing()
             }
         }
         publish()
 
         // 1. Transcript
-        phase = .working("Transcribing")
+        working = "Transcribing"
         var started = Date()
         current.steps.append(StepRecord(name: "Transcript", outcome: .running, seconds: 0, note: ""))
         publish()
@@ -257,7 +288,7 @@ final class DebriefSession {
         publish()
 
         // 2. Debrief. A failure here degrades: the transcript stands on its own.
-        phase = .working("Writing the debrief")
+        working = "Writing the debrief"
         started = Date()
         current.steps.append(StepRecord(name: "Debrief", outcome: .running, seconds: 0, note: ""))
         publish()
@@ -326,11 +357,11 @@ final class DebriefSession {
 
     /// True while this note is the one being recorded or processed: its audio must not be swapped then.
     private func isBusyWith(_ noteId: String) -> Bool {
-        noteId == recordingNoteId || (noteId == currentNoteId && isBusy)
+        noteId == recordingNoteId || (noteId == currentNoteId && working != nil) || waiting.contains(noteId)
     }
 
     private func setWorking(_ text: String) {
-        if case .working = phase { phase = .working(text) }
+        if working != nil { working = text }
     }
 
     private func finish(_ run: inout DebriefRun, outcome: StepRecord.Outcome, since: Date, note: String) {
@@ -342,7 +373,7 @@ final class DebriefSession {
     }
 
     func clearFailure() {
-        if case .failed = phase { phase = .idle }
+        failure = nil
     }
 
     // MARK: Sending
@@ -414,7 +445,12 @@ final class DebriefSession {
 // exists only when the app is launched with -VDSampleData; not compiled into a release build.
 extension DebriefSession {
     func showSample(phase: Phase, noteId: String? = nil, liveSettled: String = "", liveVolatile: String = "", levels: [Double] = []) {
-        self.phase = phase
+        switch phase {
+        case .recording(let since): recordingSince = since; working = nil; failure = nil
+        case .working(let text): recordingSince = nil; working = text; failure = nil
+        case .failed(let why): recordingSince = nil; working = nil; failure = why
+        case .idle: recordingSince = nil; working = nil; failure = nil
+        }
         self.currentNoteId = noteId
         self.liveSettled = liveSettled
         self.liveVolatile = liveVolatile
