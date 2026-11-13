@@ -6,7 +6,12 @@ import Observation
 @MainActor
 @Observable
 final class GlossaryStore {
-    static let shared = GlossaryStore()
+    // Seam for the screenshots (issue 016, work/screens): a launch with -VDSampleData (debug builds
+    // only) keeps this in the sample's temporary folder, never in the real file.
+    static let shared: GlossaryStore = {
+        if let file = LaunchOptions.sampleFile("glossary.json") { return GlossaryStore(file: file) }
+        return GlossaryStore()
+    }()
 
     let file: URL
     private(set) var terms: [GlossaryTerm] = []
@@ -20,8 +25,10 @@ final class GlossaryStore {
     }
 
     func add(_ word: String, heardAs: [String]) {
+        let before = terms.count
         terms = Glossary.adding(word, heardAs: heardAs, to: terms)
         write()
+        if terms.count > before { CreditLedger.shared.charge(.glossaryWord) }
     }
 
     func remove(_ term: GlossaryTerm) {
@@ -68,6 +75,7 @@ final class Cleaner {
                 result.passages[index].clean = made.clean.isEmpty ? nil : made.clean
                 result.passages[index].questions = made.questions
                 if made.clean.isEmpty { result.passages[index].problem = "The model returned nothing for this passage." }
+                else { CreditLedger.shared.charge(.cleanPassage, noteId: noteId) }
             } catch {
                 result.passages[index].problem = error.localizedDescription
             }

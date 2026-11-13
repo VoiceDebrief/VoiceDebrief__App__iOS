@@ -22,7 +22,7 @@ final class ScreensTests: XCTestCase {
         "vaults", "vaults-empty", "vault.detail",
         "settings", "diagnostics", "traffic", "about",
         "note.finished-end", "vaults-end", "vault.detail-end", "diagnostics-end", "about-end",
-        "recipients", "words", "settings-end", "lab", "lab.prompt",
+        "recipients", "words", "settings-end", "lab", "lab.prompt", "credit",
     ]
 
     @MainActor func test01_record() { shoot("record") }
@@ -52,9 +52,10 @@ final class ScreensTests: XCTestCase {
     @MainActor func test25_settings_end() { shoot("settings", toTheEnd: true) }
     @MainActor func test26_lab() { shoot("lab") }
     @MainActor func test27_lab_prompt() { shoot("lab.prompt") }
+    @MainActor func test28_credit() { shoot("credit", wait: 6) }
 
     func testTheListMatchesTheTestMethods() {
-        XCTAssertEqual(Self.shots.count, 27)
+        XCTAssertEqual(Self.shots.count, 28)
         XCTAssertEqual(Set(Self.shots).count, Self.shots.count)
     }
 

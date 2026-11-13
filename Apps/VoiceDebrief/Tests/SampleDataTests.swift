@@ -12,8 +12,9 @@ struct SampleDataTests {
         #expect(LaunchOptions.sampleSet(in: ["VoiceDebrief", "-VDSampleData", "real"]) == nil)
         #expect(LaunchOptions.sampleSet(in: ["VoiceDebrief", "-VDSampleData", "full"]) == .full)
         #expect(LaunchOptions.sampleSet(in: ["VoiceDebrief", "-VDSampleData", "empty"]) == .empty)
-        // The unit tests themselves are a normal launch.
+        // The unit tests themselves are a normal launch: no sample world, and the one-file stores stay where they are.
         #expect(SampleWorld.launched == nil)
+        #expect(LaunchOptions.sampleFile("credit-ledger.json") == nil)
     }
 
     @Test func aScreenIsOpenedOnlyOverSampleData() {

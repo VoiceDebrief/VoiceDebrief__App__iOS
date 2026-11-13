@@ -7,7 +7,8 @@ import Foundation
 ///     -VDScreen note.finished   open that screen directly (see `LaunchScreen` for the ids)
 ///
 /// Debug builds only: in a release build every option reads as absent, and the sample code
-/// (`SampleData.swift`, `LaunchSample.swift`) is not compiled at all. `-VDScreen` does nothing
+/// (`SampleData.swift`, `LaunchSample.swift`) is not compiled at all. The stores that keep one file
+/// each (recipients, glossary, credit ledger) ask `sampleFile` where to keep it. `-VDScreen` does nothing
 /// without `-VDSampleData`: a screen is only ever opened directly over invented data.
 enum LaunchOptions {
     static var arguments: [String] {
@@ -33,6 +34,19 @@ enum LaunchOptions {
     static func screen(in arguments: [String] = LaunchOptions.arguments) -> LaunchScreen? {
         guard sampleSet(in: arguments) != nil else { return nil }
         return value("-VDScreen", in: arguments).flatMap(LaunchScreen.init(rawValue:)) ?? .record
+    }
+}
+
+extension LaunchOptions {
+    /// The temporary folder a sample launch keeps everything in. A new one for every launch.
+    static let sampleRoot: URL = FileManager.default.temporaryDirectory
+        .appending(path: "vd-sample-\(UUID().uuidString)", directoryHint: .isDirectory)
+
+    /// Where a store that normally keeps one file in Application Support keeps it in a sample
+    /// launch; nil in a normal launch, and always nil in a release build.
+    static func sampleFile(_ name: String) -> URL? {
+        guard sampleSet() != nil else { return nil }
+        return sampleRoot.appending(path: name)
     }
 }
 
@@ -62,6 +76,7 @@ enum LaunchScreen: String, CaseIterable, Sendable {
     case settings
     case recipients
     case words
+    case credit
     case lab
     case labPrompt = "lab.prompt"
     case diagnostics
@@ -73,7 +88,7 @@ enum LaunchScreen: String, CaseIterable, Sendable {
         case .record, .recordRecording, .recordWorking: return .record
         case .library, .noteFinished, .noteTranscript, .noteInterrupted, .noteWorking: return .library
         case .vaults, .vaultDetail: return .vaults
-        case .settings, .recipients, .words, .lab, .labPrompt, .diagnostics, .traffic, .about: return .settings
+        case .settings, .recipients, .words, .credit, .lab, .labPrompt, .diagnostics, .traffic, .about: return .settings
         }
     }
 

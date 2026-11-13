@@ -9,15 +9,16 @@ import SwiftUI
 /// set, one invented vault and one invented server. The vault is made by the book itself, as the
 /// app makes one: on this device, with no network. The network is switched off for the whole
 /// launch (`SampleNetwork`): every request fails as if the device were offline.
-/// Not replaced: the recipients and the glossary, which the app keeps in stores of its own
-/// (`RecipientStore.shared`, `GlossaryStore.shared`); on a simulator they are empty.
+/// The recipients, the glossary and the credit ledger are stores of their own; in a sample launch
+/// each keeps its file in the same temporary folder (`LaunchOptions.sampleFile`). Not replaced:
+/// the settings in UserDefaults (the language, the vault chosen for saving).
 /// A new launch starts again from nothing. Not compiled into a release build.
 @MainActor
 final class SampleWorld {
     /// The world this launch asked for, or nil for a normal launch. Made once.
     static let launched: SampleWorld? = {
         guard let set = LaunchOptions.sampleSet() else { return nil }
-        let world = SampleWorld(set: set, screen: LaunchOptions.screen() ?? .record)
+        let world = SampleWorld(set: set, screen: LaunchOptions.screen() ?? .record, root: LaunchOptions.sampleRoot)
         SampleNetwork.start()
         world.preparing = Task { await world.prepareVault() }
         return world
@@ -36,9 +37,9 @@ final class SampleWorld {
     private(set) var vaultProblem: String?
     private var preparing: Task<Void, Never>?
 
-    init(set: SampleSet, screen: LaunchScreen, now: Date = Date()) {
-        let root = FileManager.default.temporaryDirectory
-            .appending(path: "vd-sample-\(UUID().uuidString)", directoryHint: .isDirectory)
+    init(set: SampleSet, screen: LaunchScreen, now: Date = Date(),
+         root: URL = FileManager.default.temporaryDirectory
+            .appending(path: "vd-sample-\(UUID().uuidString)", directoryHint: .isDirectory)) {
         let store = NoteStore(root: root.appending(path: "notes", directoryHint: .isDirectory))
         let session = DebriefSession(store: store)
 
@@ -188,6 +189,8 @@ struct LaunchedScreen: View {
             RecipientsView()
         case .words:
             GlossaryView()
+        case .credit:
+            CreditView()
         case .lab:
             LabView(store: sample.store)
         case .labPrompt:
