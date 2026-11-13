@@ -1,0 +1,11 @@
+{
+ "WARNING": "THROWAWAY test keys for test fixtures only. These vaults exist on no server.",
+ "prf_bytes_hex": "0101010101010101010101010101010101010101010101010101010101010101",
+ "door_vault_id": "07qqefdr",
+ "master_vault_id": "fixtmaster1",
+ "reader_vault_id": "fixtreader1",
+ "reader_files": [
+  "README.md",
+  "apps/schedule.json"
+ ]
+}

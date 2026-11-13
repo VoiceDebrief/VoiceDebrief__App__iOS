@@ -218,3 +218,14 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Local Xcode signing overrides (see Config/Local.xcconfig.example)
+Config/Local.xcconfig
+
+# Xcode and SwiftPM
+xcuserdata/
+DerivedData/
+*.xcresult
+.build/
+.swiftpm/
+node_modules/

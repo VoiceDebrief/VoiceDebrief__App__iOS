@@ -1,0 +1,630 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The VoiceDebrief iOS plan</title>
+<meta name="description" content="The implementation plan: the pipeline on Apple's models, the passkey account, the vault, the identity, the repository and CI, milestones and risks.">
+<link rel="canonical" href="https://ios.app.voicedebrief.ai/plan/index.html">
+<meta property="og:url" content="https://ios.app.voicedebrief.ai/plan/index.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="VoiceDebrief for iOS">
+<meta property="og:title" content="The VoiceDebrief iOS plan">
+<meta property="og:description" content="The implementation plan: the pipeline on Apple's models, the passkey account, the vault, the identity, the repository and CI, milestones and risks.">
+<link rel="alternate" type="text/markdown" href="index.md" title="This page as markdown">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/vd-tokens.css">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+
+<nav class="site"><div class="row">
+  <a class="brand" href="../index.html">Voice<em>Debrief</em> <span>iOS</span></a>
+  <span class="beta" title="In development: there is nothing to install yet">IN DEVELOPMENT</span>
+  <a class="parent" href="https://voicedebrief.ai" title="A VoiceDebrief product">&#8599; part of <b>voicedebrief.ai</b></a>
+  <a class="ver" href="../versions/index.html" title="Release history">v0.1.0</a>
+  <a class="nl" href="../built/index.html">Built</a>
+  <a class="nl here" href="../plan/index.html">Plan</a>
+  <a class="nl" href="../develop/index.html">Build</a>
+  <a class="gh" href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">&#9733; GitHub</a>
+</div></nav>
+
+<main class="doc">
+<div class="crumb"><a href="../index.html">VoiceDebrief iOS</a> / plan</div>
+<h1 id="voicedebrief-for-iphone-and-ipad-the-implementation-plan">VoiceDebrief for iPhone and iPad: the implementation plan</h1>
+<p><strong>Status: the plan.</strong> Nearly everything on this page is proposed and does not exist yet. What does exist is
+listed on <a href="../built/index.html">What is built</a>, and that page wins wherever the two disagree. Written 13 November
+2026, before the repository existed; the section just below records what has been decided since.</p>
+<p>Sources read: <code>VoiceDebrief__Website</code> at v0.1.31, <code>VoiceDebrief__Chrome_Extension__MeetScribe</code>
+at v0.3.5, <code>PrompTugal__App__iOS</code> at v0.4.103, sgit.ai (site v0.7.87), pki.sgit.ai (v0.2.33),
+newsroom.sgit.ai, and Apple's WWDC26 developer pages. Section 12 lists them.</p>
+<h2 id="decided-since-this-plan-was-written">Decided since this plan was written</h2>
+<p>13 November 2026, in the conversation that started the repository:</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Decision</th><th>What was decided</th></tr></thead>
+<tbody>
+<tr><td>D7, the repository</td><td><code>VoiceDebrief/VoiceDebrief__App__iOS</code>, default branch <code>dev</code>, site at <code>ios.app.voicedebrief.ai</code></td></tr>
+<tr><td>D8, sharing the Swift vault code</td><td><code>SGitVault</code> was copied in at a recorded commit; extraction into a shared repository is still to schedule</td></tr>
+<tr><td>Paying for it</td><td>A consumption model on the pattern of newsroom.sgit.ai's SG Meter: £5.00 of starting credit, a few pence per minute of audio debriefed, the balance allowed to go negative, nothing ever blocked, a charge can be declined with a reason. The ledger lives in the user's vault. Top-up is an In-App Purchase of about £5 (Apple does not allow Apple Pay itself for digital credit used inside an app). This replaces &quot;no payment in v1&quot; below: it is its own milestone, after the account and vault</td></tr>
+<tr><td>D4, Private Cloud Compute</td><td>Still an opt-in mode and not in the first build. Confirmed from Apple's session: the same API with one line changed, a 32,768-token context, reasoning levels, no key and no cost to us, a daily limit counted against the user's iCloud account</td></tr>
+<tr><td>The on-device context</td><td>8,192 tokens on newer devices under iOS 27, not only the 4,096 assumed in section 5.2. Chunking is still needed for older devices and long notes</td></tr>
+<tr><td>Infographics</td><td>Not by image generation: Image Playground is a system sheet only and its code-only API is deprecated in iOS 27. Instead the model produces the content as structured data and the app draws it with native templates. After v1</td></tr>
+</tbody></table></div>
+<p>Still open: D1 (the passkey's relying party; this plan assumes <code>pki.sgit.ai</code>), D5 (who issues SG/Send access
+keys to app users), D6 (keeping the audio in the vault), and the price per minute.</p>
+<hr>
+<h2 id="1-what-is-being-built">1. What is being built</h2>
+<p>A native iPhone and iPad app that does VoiceDebrief's one job (voice note in, transcript and
+short debrief out) with <strong>no OpenRouter, no API key and no inference server</strong>: Apple's
+on-device speech-to-text does the transcript, Apple Intelligence does the debrief. Results are
+kept in an <strong>sgit vault the user owns</strong>, opened with a <strong>passkey</strong> exactly as pki.sgit.ai does
+it, and the user has <strong>one identity</strong>: one sgit key bundle (an encryption pair and a signing
+pair) that signs what the app produces.</p>
+<p>In the product's own vocabulary this is the third privacy mode, the one the web app only has
+as a proposal: <strong>device-local</strong>. Audio and transcript never leave the device for inference.
+The only thing that leaves is ciphertext, to the vault server, and only once the user has a
+vault.</p>
+<h3 id="in-scope-for-v1">In scope for v1</h3>
+<div class="tablewrap"><table>
+<thead><tr><th>Area</th><th>v1</th></tr></thead>
+<tbody>
+<tr><td>Input</td><td>Record in the app; import from Files; receive from the share sheet (WhatsApp <code>.opus</code>/<code>.ogg</code>, <code>.m4a</code>, <code>.mp3</code>, <code>.wav</code>)</td></tr>
+<tr><td>Transcript</td><td>Apple <code>SpeechAnalyzer</code> + <code>SpeechTranscriber</code>, on-device, with time ranges</td></tr>
+<tr><td>Debrief</td><td>Apple Foundation Models, on-device: classify, summary in the web app's three sections, optional translation</td></tr>
+<tr><td>Storage</td><td>Local first; an sgit vault as the second home, synced when online</td></tr>
+<tr><td>Sign-in</td><td>One passkey button (signs up and in); recovery code as the second door</td></tr>
+<tr><td>Identity</td><td>One sgit-compatible bundle: RSA-OAEP 4096 + ECDSA P-256; debriefs signed with it</td></tr>
+<tr><td>Devices</td><td>iPhone and iPad, one universal target; the same account on both through iCloud Keychain</td></tr>
+</tbody></table></div>
+<h3 id="not-in-v1-labelled-so-nobody-assumes-them">Not in v1 (labelled so nobody assumes them)</h3>
+<ul>
+<li>Infographics (the web step calls an image model; there is no on-device equivalent to rely on).</li>
+<li>Speaker diarization. Apple's speech stack does not provide it; MeetScribe does not have it either.</li>
+<li>Chat over a transcript, personas, web of trust, registering in the pki.sgit.ai register from the app.</li>
+<li>Sealing a debrief to another person's key (milestone 6, after v1).</li>
+<li>Android, Mac Catalyst, watchOS.</li>
+<li>Any payment. With no inference cost there is nothing to bill, which also keeps the app clear of the App Store commission question the strategy brief raised.</li>
+</ul>
+<hr>
+<h2 id="2-decisions-for-you">2. Decisions for you</h2>
+<p>These change the plan if you answer differently. Each has my recommendation, and the plan
+below assumes it.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>#</th><th>Decision</th><th>Recommendation</th><th>Why</th></tr></thead>
+<tbody>
+<tr><td>D1</td><td>Which relying party owns the passkey</td><td><strong><code>pki.sgit.ai</code></strong></td><td>The same passkey, door, master vault and key bundle as the web register: genuinely one identity. Costs one static file on pki.sgit.ai (section 6.2). The alternative, <code>voicedebrief.ai</code>, gives a separate door and a separate identity that would need linking later</td></tr>
+<tr><td>D2</td><td>How the app writes vaults</td><td><strong>Reuse the <code>SGitVault</code> Swift package from <code>PrompTugal__App__iOS</code></strong> and finish what it lacks</td><td>A native reader and writer already exists (about 2,500 lines, CryptoKit and CommonCrypto only), with a CI job in which sgit-ai 0.27 reads back what Swift wrote. sgit.ai's &quot;one code base writes vaults&quot; rule argues against a <em>new</em> port; this one is already written and tested, so the cost is keeping it in step, not building it (section 6.3)</td></tr>
+<tr><td>D3</td><td>Minimum OS</td><td><strong>iOS/iPadOS 26.0</strong>, built with the iOS 27 SDK</td><td><code>SpeechAnalyzer</code> and Foundation Models both arrive in 26. Passkey PRF needs 18.4 or later for consistent bytes. iOS 27 adds an optional better model (D4)</td></tr>
+<tr><td>D4</td><td>Apple's Private Cloud Compute model</td><td><strong>Off in v1; a labelled opt-in mode later</strong></td><td>&quot;Only Apple&quot; is still true, but text leaves the device, so it must be a mode the user chooses, never a silent fallback</td></tr>
+<tr><td>D5</td><td>How a user gets an SG/Send access key</td><td><strong>Works local-only without one; accepts one by paste, QR, or a sealed pki.sgit.ai message</strong></td><td>Creating a vault needs an access token; reading does not. This is the same ladder pki.sgit.ai uses. Who hands out keys to app users is a product question I cannot answer from the repos</td></tr>
+<tr><td>D6</td><td>Keep the audio in the vault</td><td><strong>Yes by default, with a per-debrief and a global off switch</strong></td><td>MeetScribe's rule: check anything that matters against the audio. A 2-minute Opus note is about 200 KB</td></tr>
+<tr><td>D7</td><td>Repository</td><td><strong>New repo <code>VoiceDebrief__App__iOS</code></strong>, laid out and built like <code>PrompTugal__App__iOS</code></td><td>Follows the family naming (<code>VoiceDebrief__&lt;Kind&gt;__&lt;Name&gt;</code>); the website repo's &quot;one repo, three targets&quot; decision would need a line recording the change</td></tr>
+<tr><td>D8</td><td>How the shared Swift packages are shared</td><td><strong>Copy <code>SGitVault</code> and the passkey and Keychain code in at a recorded commit for v1; extract a shared package repo once two apps depend on it</strong></td><td>A copy is the fastest start and the vault team's fixes can be pulled by diff. Two diverging copies is exactly the drift sgit.ai warns about, so the extraction should be scheduled, not left open. You said the new repo is separate; if it turns out to be the PrompTugal monorepo instead, this becomes &quot;add an app to <code>apps.json</code>&quot; and D8 disappears</td></tr>
+</tbody></table></div>
+<hr>
+<h2 id="3-what-already-exists-and-what-does-not">3. What already exists, and what does not</h2>
+<p>Facts the plan rests on, each from a source read for this document.</p>
+<p><strong>The web pipeline (exists).</strong> <code>website/app/workflows/standard.json</code> is a state machine:
+normalise, ingest, transcribe, classify, translate (only when needed), summary, infographic
+(only when asked). All inference is OpenRouter from the browser with the user's own key.
+Prompts are markdown files in <code>website/app/prompts/</code>. The summary is markdown with exactly
+three sections: <code>## Key points</code> (3 to 6 bullets), <code>## Actions</code> (<code>- [who] what</code>, or
+<code>- none mentioned</code>), <code>## In one sentence</code>. Classify returns a validated JSON shape (language
+with confidence, up to 5 topics, register, sentiment, urgency, signals, a summary line).
+Results are held in memory only; there is no history.</p>
+<p><strong>MeetScribe (exists).</strong> Adds the conventions worth inheriting: transcript lines are
+immutable with edits as a revision layer; flags never delete; cost is <code>null</code>, never <code>0</code>;
+exports carry a <code>format</code> and <code>version</code>; and the standing caveat, &quot;Written by a model, not a
+stenographer.&quot;</p>
+<p><strong>Vaults, PKI and passkeys in the VoiceDebrief repos: none.</strong> No vault, crypto, key or
+WebAuthn code exists in either VoiceDebrief repo. Native apps are an open, unscheduled issue
+(011) with no repo name or structure decided. Everything in sections 5 to 7 is built from the
+sgit estate, not from VoiceDebrief code.</p>
+<p><strong>The sgit vault format (exists, documented, test-vectored).</strong></p>
+<div class="tablewrap"><table>
+<thead><tr><th>Piece</th><th>Construction</th></tr></thead>
+<tbody>
+<tr><td>Vault key</td><td><code>&lt;passphrase&gt;:&lt;vault id&gt;</code>; generated ones are 24 + 8 characters of <code>[a-z0-9]</code>; prefixed <code>sgit_private_vault_</code> when it leaves the app</td></tr>
+<tr><td>Read key</td><td>PBKDF2-HMAC-SHA256(passphrase, <code>&quot;sg-vault-v1:&quot; + vault_id</code>, 600,000, 32 bytes)</td></tr>
+<tr><td>Write key</td><td>PBKDF2-HMAC-SHA256(passphrase, <code>&quot;sg-vault-v1:write:&quot; + vault_id</code>, 600,000, 32 bytes)</td></tr>
+<tr><td>Content</td><td>AES-256-GCM, 12-byte IV, 16-byte tag, stored as IV, then ciphertext, then tag</td></tr>
+<tr><td>Addresses</td><td><code>ref-pid-muw-</code> + first 12 hex of HMAC-SHA256(read key, <code>&quot;sg-vault-v1:file-id:ref:&quot; + vault_id</code>); branch index likewise with <code>file-id:branch-index</code>; objects are <code>obj-cas-imm-&lt;sha256 of ciphertext&gt;</code></td></tr>
+<tr><td>Server</td><td><code>https://send.sgraph.ai</code> (pki.sgit.ai uses <code>https://dev.send.sgraph.ai</code>); reads need no auth; writes need <code>x-sgraph-access-token</code> and <code>x-sgraph-vault-write-key</code>; one commit is one <code>POST /api/vault/batch/{vault_id}</code></td></tr>
+<tr><td>Publish</td><td><code>pushIfMatch()</code> compare-and-swap, merge on <code>ECAS</code>, never <code>push()</code></td></tr>
+</tbody></table></div>
+<p><strong>The passkey door (exists on newsroom.sgit.ai and pki.sgit.ai).</strong> Exact, from <code>door.js</code>:</p>
+<pre><code>prf input   = SHA-256(&quot;&lt;rp&gt;/door/v1&quot;)
+door seed   = HKDF-SHA256(ikm = prf bytes, salt = SHA-256(&quot;&lt;rp&gt;&quot;), info = &quot;sgit/door/v1&quot;, 32)
+passphrase  = hex(HKDF-SHA256(ikm = seed, salt = empty, info = &quot;sgit/door/v1/passphrase&quot;, 32))
+vault id    = 8 chars of [a-z0-9] from HKDF-SHA256(seed, empty, &quot;sgit/door/v1/id&quot;, 64),
+              a byte used only when &lt; 252
+recovery    = the same, with the 16 bytes of a 26-character base32 recovery code as the ikm</code></pre>
+<p><code>&lt;rp&gt;</code> is <code>pki.sgit.ai</code> on the register. The chain is passkey to door vault to master vault
+to book vault. The master holds the private keys in sgit's key store layout
+(`keys/sha256_&lt;fp&gt;/{metadata.json, private_key.pem, public_key.pem, signing_private.pem,
+signing_public.pem}<code>), </code>identity.json<code>, </code>doors.json<code>, </code>book.json<code>, </code>inbox.json` and
+<code>.vault/access-token.json</code>. Test vectors checked against sgit's Python are published at
+<code>newsroom.sgit.ai/passkey/vectors.json</code>.</p>
+<p>Two findings from that work that shape this plan:</p>
+<ul>
+<li><strong>The passkey is a lock, not an identity.</strong> Key pairs are generated at random and stored in the master; they are never derived from PRF bytes.</li>
+<li><strong>One door per path.</strong> The same passkey gave different PRF bytes through the QR (hybrid) path than on the device. The design treats an unknown address as &quot;no door here for this path yet&quot; and offers the recovery code or adding a door from an open device.</li>
+</ul>
+<p><strong>The key bundle (exists, byte-compatible with <code>sgit pki</code>).</strong></p>
+<div class="tablewrap"><table>
+<thead><tr><th>Piece</th><th>Construction</th></tr></thead>
+<tbody>
+<tr><td>Encryption pair</td><td>RSA-OAEP 4096, e = 65537, SHA-256</td></tr>
+<tr><td>Signing pair</td><td>ECDSA P-256 / SHA-256, signatures raw (r then s), 64 bytes</td></tr>
+<tr><td>Fingerprint</td><td><code>&quot;sha256:&quot;</code> + first 16 hex of SHA-256 over the DER SPKI</td></tr>
+<tr><td>Public bundle</td><td><code>{ v: 1, encrypt, sign, label, fingerprint, signing_fingerprint }</code>, keys as PEM</td></tr>
+<tr><td>Envelope v2</td><td>base64 of <code>{ v: 2, w, i, c[, s, f] }</code>: RSA-OAEP wraps a fresh AES-256-GCM key; <code>s</code> signs <code>c</code> only</td></tr>
+<tr><td>Detached signature</td><td><code>&lt;file&gt;.sig</code> holding <code>{ signature, fingerprint }</code>, as <code>sgit pki sign</code> writes</td></tr>
+</tbody></table></div>
+<p><strong>Swift code that already exists in <code>PrompTugal__App__iOS</code> (v0.4.103).</strong> This is the largest
+finding of the research, and it removes most of the risk from sections 6 and 7.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Exists</th><th>Where</th><th>State</th></tr></thead>
+<tbody>
+<tr><td>sgit vault reader and writer</td><td><code>Packages/SGitVault</code> (<code>SGitVault</code> actor, <code>VaultCommitBuilder</code>, <code>VaultWrite</code>, <code>VaultCrypto</code>, <code>VaultKey</code>, <code>HTTPVaultTransport</code>, <code>FolderVaultTransport</code>)</td><td>Reads are live. Writes use one batch with compare-and-swap and per-device branches; proven against sgit's in-memory server and by <code>sgit</code> reading them back (<code>ios-vault.yml</code>), <strong>never against the live server</strong>, because nobody had an access token</td></tr>
+<tr><td>The passkey door</td><td><code>SGitVault/VaultDoor.swift</code></td><td>The same derivation as <code>door.js</code>, with the site constant <code>web-summit.newsroom.sgit.ai</code></td></tr>
+<tr><td>Account unlock</td><td><code>VaultAccount.unlock</code></td><td>Door to master to reader vault, reads <code>.vault/access-token.json</code>. <strong>Unlock only</strong>: I found no account creation, no add-a-door, no vault creation with a derived id</td></tr>
+<tr><td>Passkey with PRF</td><td><code>PTVaultUI/VaultUnlock.swift</code> (<code>PasskeyPRF</code>)</td><td><code>ASAuthorizationPlatformPublicKeyCredentialProvider</code>, RP <code>promptugal.news</code>, behind a feature flag</td></tr>
+<tr><td>Keychain and Face ID</td><td><code>PTVaultUI</code> (<code>VaultKeychain</code>, <code>VaultKeyWrap</code>, <code>VaultDeviceSigner</code>)</td><td>Keys behind biometrics with a 60-second reuse window</td></tr>
+<tr><td>sgit hybrid envelope v2</td><td><code>PTLanes/LaneCrypto.swift</code></td><td>RSA-OAEP SHA-256 through the Security framework, SPKI and PKCS#1 conversion, fingerprints. Encrypt and decrypt with imported keys; <strong>I found no RSA key generation and no bundle export</strong></td></tr>
+<tr><td>On-device model wrapper</td><td><code>Apps/RiskMandate/Sources/Workbench/OnDeviceModel.swift</code></td><td><code>SystemLanguageModel</code> availability mapped to UI text, streaming responses. Its notes record a context of about 4K tokens and English more reliable than Portuguese</td></tr>
+<tr><td>Dictation</td><td><code>PTAsk/SpeechDictation.swift</code></td><td>The older <code>SFSpeechRecognizer</code>, live only, audio not kept. Not <code>SpeechAnalyzer</code></td></tr>
+<tr><td>Not present anywhere</td><td></td><td>A share extension, file recording, <code>SpeechAnalyzer</code>, three-way merge in the vault writer</td></tr>
+</tbody></table></div>
+<p>The repo's rules matter as much as its code: Apple SDK only, no third-party packages;
+hand-written Xcode projects with folder-synchronised groups; Swift Testing; and &quot;CI is the
+compiler&quot;, since no agent can build Swift in a Linux container.</p>
+<p><strong>Apple's side.</strong> iOS 26 ships <code>SpeechAnalyzer</code> / <code>SpeechTranscriber</code> (long-form, on-device,
+models downloaded through <code>AssetInventory</code>) and the Foundation Models framework
+(<code>LanguageModelSession</code>, <code>@Generable</code> guided generation, <code>SystemLanguageModel.default.availability</code>).
+Per Apple's WWDC26 pages, iOS 27 adds a language-model protocol so a session can run on other
+models, a newer Apple model on Private Cloud Compute at no API cost for apps in the Small
+Business Program with under 2 million first-time downloads, and an Evaluations framework for
+testing prompts. I found no Apple statement of iOS 27 changes to <code>SpeechAnalyzer</code>; treat the
+speech API as the iOS 26 one until spike S2 says otherwise.</p>
+<hr>
+<h2 id="4-architecture">4. Architecture</h2>
+<pre><code> ┌────────────────────────── App (SwiftUI, iPhone + iPad) ──────────────────────────┐
+ │  Record · Import · Library · Debrief view · Account · Settings                    │
+ └───────────────┬───────────────────────────┬───────────────────────┬──────────────┘
+                 │                           │                       │
+        ┌────────▼────────┐        ┌─────────▼────────┐     ┌────────▼─────────┐
+        │  DebriefPipeline │        │   DebriefStore   │     │    AccountKit    │
+        │  (state machine  │        │  local, the      │     │  passkey → door  │
+        │   from a JSON    │        │  source of truth │     │  → master → vault│
+        │   workflow)      │        │  on this device  │     │  + identity      │
+        └──┬─────┬─────┬───┘        └─────────┬────────┘     └───┬─────────┬────┘
+           │     │     │                      │                  │         │
+   ┌───────▼┐ ┌──▼───┐ ┌▼──────────┐   ┌──────▼──────┐   ┌───────▼──┐ ┌────▼─────┐
+   │AudioKit│ │Speech│ │Intelligence│   │  VaultSync  │   │ VaultDoor│ │  PKIKit  │
+   │ decode │ │ Kit  │ │    Kit     │   │ queue, CAS, │   │ (in      │ │ RSA-OAEP │
+   │ Ogg/   │ │Speech│ │ Foundation │   │ merge       │   │ SGitVault│ │ ECDSA,   │
+   │ Opus   │ │Analy-│ │ Models,    │   └──────┬──────┘   │ existing)│ │ bundle,  │
+   │        │ │ zer  │ │ Translation│          │          └──────────┘ │ envelope │
+   └────────┘ └──────┘ └────────────┘   ┌──────▼──────┐                └──────────┘
+                                        │  SGitVault  │
+                                        │ (existing   │── copied from PrompTugal__App__iOS,
+                                        └─────────────┘   extended: create, doors, merge</code></pre>
+<h3 id="4-1-packages">4.1 Packages</h3>
+<p>Local SwiftPM packages, Apple SDK only, each with a Swift Testing target, following the
+PrompTugal rule that packages have no upward edges.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Package</th><th>New or reused</th><th>Frameworks</th><th>Holds</th></tr></thead>
+<tbody>
+<tr><td><code>VDCore</code></td><td>new</td><td>Foundation</td><td>The debrief data model, workflow state machine, prompt loading and filling, classify validation, chunking, the vault file layout. No UI, no I/O: the most heavily tested package</td></tr>
+<tr><td><code>SGitVault</code></td><td>reused, extended</td><td>CryptoKit, CommonCrypto, Compression</td><td>Vault read and write, <code>VaultDoor</code>, <code>VaultAccount</code>. Extended with: create a vault, create with a derived id, create an account, add a door, merge</td></tr>
+<tr><td><code>PKIKit</code></td><td>new, seeded from <code>LaneCrypto</code></td><td>Security, CryptoKit</td><td>Key generation, the bundle, fingerprints, PEM and PKCS#8, envelope v2, detached signatures</td></tr>
+<tr><td><code>OggOpus</code></td><td>new</td><td>Foundation</td><td>Ogg page and packet parser; format sniffing by magic bytes</td></tr>
+<tr><td><code>AudioKit</code></td><td>new</td><td>AVFoundation, AudioToolbox</td><td>Recording to file, decode to PCM, waveform</td></tr>
+<tr><td><code>SpeechKit</code></td><td>new</td><td>Speech</td><td><code>SpeechAnalyzer</code> wrapper, model asset management</td></tr>
+<tr><td><code>IntelligenceKit</code></td><td>new, seeded from <code>OnDeviceModel</code></td><td>FoundationModels, Translation, NaturalLanguage</td><td>Sessions, guided generation, map-reduce summary, availability</td></tr>
+<tr><td><code>AccountKit</code></td><td>reused from <code>PTVaultUI</code>, reshaped</td><td>AuthenticationServices, Security, LocalAuthentication</td><td>Passkey ceremony with PRF, Keychain cache, the account state machine</td></tr>
+<tr><td><code>VaultSync</code></td><td>new</td><td>Foundation</td><td>The outbox queue, publish, pull, sync state</td></tr>
+</tbody></table></div>
+<p><code>SGitVault</code> also declares macOS, so its tests run with plain <code>swift test</code> on the CI Mac host
+without a simulator. Keep that property for <code>VDCore</code>, <code>PKIKit</code> and <code>OggOpus</code>: they are where
+most of the logic and all of the interop tests live, and a host test run is minutes faster
+than a simulator one.</p>
+<h3 id="4-2-privacy-posture-stated-the-way-the-family-states-it">4.2 Privacy posture, stated the way the family states it</h3>
+<ul>
+<li>Default and only mode in v1: <strong>device-local</strong>. The app makes no network request during record, transcribe or debrief, other than Apple's own model-asset downloads.</li>
+<li>The vault server sees what sgit.ai says it sees: vault id, object sizes, timing, object counts. Never filenames, contents or keys.</li>
+<li>No analytics, no telemetry, no third-party SDKs.</li>
+<li>The honest sentence for the UI: &quot;Transcribed and summarised on this device by Apple's models. Nothing was sent to us or to anyone else. Written by a model, not a stenographer: check anything that matters against the audio.&quot;</li>
+<li>The App Store privacy label should come out as &quot;Data Not Collected&quot;. Verify at submission.</li>
+</ul>
+<hr>
+<h2 id="5-the-pipeline-on-apple-s-models">5. The pipeline on Apple's models</h2>
+<h3 id="5-1-stages">5.1 Stages</h3>
+<p>The web app's workflow file is reused as a format: <code>workflow/standard-ios.json</code>, same schema,
+run by a Swift state machine in <code>VDCore</code>. Budgets become time ceilings, since nothing costs
+money.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Step</th><th>Web today</th><th>iOS</th></tr></thead>
+<tbody>
+<tr><td>normalise</td><td>Sniff the first 64 bytes, relabel</td><td>Same logic, ported to <code>OggOpus</code>; never trust the extension</td></tr>
+<tr><td>decode</td><td>Remote <code>sg-audio-decode</code>, WASM Opus on Safari</td><td><code>AudioKit</code>: Ogg demux in Swift, Opus packets through <code>AVAudioConverter</code> (<code>kAudioFormatOpus</code>); everything else through <code>AVAudioFile</code>. Output: the PCM format <code>SpeechAnalyzer</code> asks for</td></tr>
+<tr><td>transcribe</td><td><code>google/gemini-3.5-flash</code></td><td><code>SpeechAnalyzer</code> with a <code>SpeechTranscriber</code> module, results with audio time ranges</td></tr>
+<tr><td>classify</td><td>LLM, JSON validated against allowlists</td><td>Foundation Models guided generation into a <code>@Generable</code> struct with the same fields and allowlists; language detection from <code>NLLanguageRecognizer</code>, not the model</td></tr>
+<tr><td>translate</td><td>LLM, only when needed</td><td>Apple's Translation framework (<code>TranslationSession</code>), on-device; same &quot;only when needed&quot; rule and the same 0.75 confidence threshold</td></tr>
+<tr><td>summary</td><td>LLM, three-section markdown</td><td>Foundation Models; the same three sections; map-reduce when the transcript does not fit (5.2)</td></tr>
+<tr><td>infographic</td><td>Image model, opt-in</td><td>Not in v1</td></tr>
+<tr><td>sign</td><td>does not exist</td><td>ECDSA signature over the debrief and the manifest (section 7)</td></tr>
+<tr><td>save</td><td>does not exist</td><td><code>DebriefStore</code>, then <code>VaultSync</code></td></tr>
+</tbody></table></div>
+<p>Rules carried over unchanged: the transcript is never overwritten by a translation; nothing
+from classify is fed back into a prompt; a failed optional step degrades and says so, a
+failed transcribe aborts.</p>
+<h3 id="5-2-the-four-hard-parts">5.2 The four hard parts</h3>
+<p><strong>Language has to be known before transcription.</strong> The web pipeline lets the model work out
+the language; <code>SpeechTranscriber</code> needs a locale up front. v1: the user's chosen language
+(default: device language, remembered per input source) with the choice visible before the
+run, and a one-tap &quot;wrong language, run again&quot;. After transcription <code>NLLanguageRecognizer</code>
+checks the text and warns on a mismatch. An automatic guess (transcribe the first 15 seconds
+in each of the user's keyboard languages and pick the most confident) is a later improvement
+that spike S2 should cost.</p>
+<p><strong>The on-device model's context is small.</strong> The iOS 26 on-device model has a 4,096-token
+window for instructions, input and output together. A five-minute voice note can exceed it.
+So summary is map-reduce from day one: split the transcript on sentence boundaries into
+chunks with a token budget, extract key points and actions per chunk with guided generation,
+then merge into the three sections in a final pass. Every bullet keeps the time range of the
+chunk it came from, which gives the <code>[hh:mm:ss]</code> citations MeetScribe's debrief has. Spike S2
+measures the real limits on the iOS 27 model before the chunk size is fixed.</p>
+<p><strong>Not every device or language has the models.</strong> Three independent availabilities, each
+checked at launch and before a run, never guessed:</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Check</th><th>If missing</th></tr></thead>
+<tbody>
+<tr><td><code>SpeechTranscriber</code> supports the locale, assets installed</td><td>Offer the download; if the locale is unsupported, say so and offer <code>DictationTranscriber</code> as a lower-quality path</td></tr>
+<tr><td><code>SystemLanguageModel.default.availability</code> (device not eligible, Apple Intelligence off, model not ready)</td><td>Transcript-only mode, stated plainly, with the reason and the Settings link. The app is still useful</td></tr>
+<tr><td>The model supports the debrief language</td><td>Summarise in a supported language and translate with the Translation framework, labelled as translated</td></tr>
+</tbody></table></div>
+<p>Apple Intelligence needs an iPhone 15 Pro or later, or an iPad with an M-series or A17 Pro
+chip. <code>SpeechTranscriber</code> reaches more devices. The App Store listing must say what works
+where. pt-PT against pt-BR matters to this product: which Portuguese each Apple model
+supports is a spike S2 question, not something to assume.</p>
+<p><strong>Guardrails will refuse some real voice notes.</strong> The system model refuses or truncates on
+content it classifies as unsafe, and a family voice note about a hospital visit can trip it.
+Treat a guardrail error as a degraded step (&quot;Apple's model declined to summarise this. The
+transcript is complete.&quot;), never as a crash and never retried with altered text.</p>
+<h3 id="5-3-prompts-and-evaluation">5.3 Prompts and evaluation</h3>
+<ul>
+<li>Prompts live as markdown in the app bundle under <code>Prompts/</code>, copied from <code>website/app/prompts/</code> at a recorded commit and then adapted, because a 3-billion-parameter model needs shorter and more literal instructions than Gemini. The four locales and their tone lines (en-gb, en-us, pt-pt, pt-br) carry over.</li>
+<li>Guided generation replaces &quot;return JSON only&quot; wherever the output is structured.</li>
+<li>A fixed corpus of real voice notes (the user's own, with consent, never committed in plaintext; an encrypted vault is where they belong) is run through the pipeline on a device and scored: key points present, no invented actions, section format exact. iOS 27's Evaluations framework is the intended harness; a plain XCTest runner is the fallback.</li>
+</ul>
+<hr>
+<h2 id="6-account-passkey-doors-vaults">6. Account: passkey, doors, vaults</h2>
+<h3 id="6-1-the-flow-identical-in-shape-to-pki-sgit-ai">6.1 The flow, identical in shape to pki.sgit.ai</h3>
+<pre><code> passkey ──PRF──▶ door vault ──holds the key of──▶ master vault ──holds the key of──▶ debriefs vault
+ recovery code ─▶ recovery door ──────────────────────┘                └─▶ book vault (pki.sgit.ai's, untouched)</code></pre>
+<ol>
+<li><strong>One button.</strong> &quot;Continue with a passkey&quot; runs an assertion with the PRF extension and the fixed input <code>SHA-256(&quot;pki.sgit.ai/door/v1&quot;)</code>. If the user has no passkey for the site it runs a registration (with PRF requested) and then the assertion.</li>
+<li><strong>Derive the door</strong> from the 32 PRF bytes (<code>VaultDoor</code>, with the site constant made a parameter: today it is fixed to <code>web-summit.newsroom.sgit.ai</code>).</li>
+<li><strong>Look for the door</strong> at its derived address. Three outcomes: The user is signed in, with their identity and their debriefs, on a new device, having typed nothing. are kept on the device, encrypted with AES-256-GCM under <code>HKDF(door seed, &quot;voicedebrief.ai/local/v1&quot;)</code>, the same idea as pki.sgit.ai's <code>pki.local.v1</code> entry. Everything works except sync. write a recovery door; show the recovery code once.<ul>
+<li><em>Found</em>: read <code>master-key.json</code>, open the master, read the debriefs vault key, open it.</li>
+<li><em>Not found, no access key</em>: the <strong>local account</strong>. The debrief store and the identity</li>
+<li><em>Not found, access key present</em>: create the master, the debriefs vault and the door;</li>
+</ul></li>
+<li><strong>Add the access key later</strong> (paste, QR, or opening a sealed <code>m1</code> link from pki.sgit.ai): the local account moves into vaults, and the key is stored at <code>.vault/access-token.json</code> in the master so no other device asks for it again.</li>
+</ol>
+<p>The master gains one file, <code>voicedebrief.json</code> (<code>{ v: 1, vault: &quot;&lt;prefixed vault key&gt;&quot; }</code>).
+Nothing pki.sgit.ai wrote is changed, so an existing register account opens in the app and
+an account made in the app opens on pki.sgit.ai.</p>
+<h3 id="6-2-the-passkey-in-a-native-app">6.2 The passkey in a native app</h3>
+<ul>
+<li>API: <code>ASAuthorizationPlatformPublicKeyCredentialProvider(relyingPartyIdentifier: &quot;pki.sgit.ai&quot;)</code>, with the <code>prf</code> field on the registration and assertion requests (iOS 18 and later). <code>PasskeyPRF</code> in <code>PTVaultUI</code> already does the assertion half for <code>promptugal.news</code>; registration with PRF is to be added.</li>
+<li><strong>Requirement on pki.sgit.ai:</strong> an <code>apple-app-site-association</code> file at <code>https://pki.sgit.ai/.well-known/apple-app-site-association</code> listing the app under <code>webcredentials</code>, and the <code>webcredentials:pki.sgit.ai</code> Associated Domains entitlement in the app. It is one static JSON file, but it is a change to another site and it makes that site vouch for this app, so it needs your sign-off and a note in that site's own record.</li>
+<li>There is no server to issue or verify a challenge. The app generates a random one and discards the signature, as the web pages do. The passkey is used as a key-derivation device, not for authentication to anyone. Say so in the security notes.</li>
+<li><strong>User handle.</strong> iCloud Keychain replaces a passkey that has the same user id for the same site. The app must always try an assertion first and only register when there is none, and a registration must use a fresh random user id.</li>
+<li><strong>Same bytes as Safari?</strong> Expected yes: same credential, same input, platform path, iOS 18.4 or later. Apple's engineers have said the values should match. I could not find it confirmed for the native API against Safari, so it is spike S1. If they differ, nothing breaks: the design already calls that &quot;another path, another door&quot;, added once from the recovery code or from an open device.</li>
+<li><strong>Third-party password managers</strong> (1Password, Google Password Manager on iOS) may not return PRF bytes through the native API. On no PRF output the app says which store answered and offers the ladder: use iCloud Keychain, or use the recovery code.</li>
+<li>The door seed is cached in the Keychain (<code>WhenUnlockedThisDeviceOnly</code>, biometric access control) so opening the app is Face ID, not a passkey sheet every time. Signing out deletes it.</li>
+</ul>
+<h3 id="6-3-writing-vaults-d2">6.3 Writing vaults (D2)</h3>
+<p>Reuse <code>SGitVault</code>. What has to be added to it, in order:</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Gap</th><th>Why the app needs it</th><th>Notes</th></tr></thead>
+<tbody>
+<tr><td>Live writes proven</td><td>Everything</td><td>Run the existing write tests against <code>dev.send.sgraph.ai</code> with a real access token. This is spike S3 and needs a token from you. Until it passes, vault sync is unproven, not merely unfinished</td></tr>
+<tr><td>Create a vault</td><td>First device</td><td>There is no create endpoint: the first batch creates the vault and the server remembers the hash of the write key. First commit, named ref, clone ref and branch index in one batch</td></tr>
+<tr><td>Create with a derived id</td><td>Doors</td><td>The door's id and passphrase come from the PRF bytes, not from random</td></tr>
+<tr><td><code>createAccount</code>, <code>addDoor</code></td><td>Sign-up, recovery door, second path</td><td>Port of <code>newsroom-vault.js</code>, about 60 lines of JavaScript, with the same file names</td></tr>
+<tr><td>Merge</td><td>Two devices</td><td>With the layout in 6.4 every device only adds new folders, so a file-level merge that takes both sides and reports a conflict only on a same-path change is enough. Full three-way content merge is not needed for v1</td></tr>
+<tr><td>Presigned upload</td><td>Audio over 4 MB</td><td>Long recordings only; can follow v1 if &quot;keep audio&quot; is capped</td></tr>
+</tbody></table></div>
+<p>Three rules from sgit.ai's write-up that the Swift writer must keep, each with a test: never
+move the named ref unconditionally; refs are never cached while <code>-imm-</code> objects always are;
+and read the ref once after create, not before every publish, or compare-and-swap silently
+becomes overwrite.</p>
+<p><strong>Keeping in step with the format.</strong> The interop job (<code>ios-vault.yml</code>) comes across with the
+package and is extended to run in both directions and on a weekly schedule against the
+newest <code>sgit-ai</code> release, so a format change is noticed the week it lands rather than when a
+user's vault fails to open. The alternative, running the pinned JavaScript library in a
+hidden web view, stays on the shelf as the fallback if the format moves faster than the Swift
+writer can follow.</p>
+<h3 id="6-4-the-debriefs-vault-layout">6.4 The debriefs vault layout</h3>
+<pre><code>/README.md
+/.vault-settings.json                      (the library's)
+/debriefs/2026/11/13/&lt;id&gt;/
+    manifest.json                          format &quot;voicedebrief/debrief&quot;, version 1
+    audio.opus                             the original bytes, unless switched off
+    transcript.json                        lines with startMs, endMs, text, flags
+    transcript.md
+    debrief.md                             the three sections
+    translation.md                         only when one was made
+    manifest.json.sig                      { signature, fingerprint }
+/devices/&lt;device id&gt;.json                  label, model, app version, first seen
+/index/&lt;device id&gt;.jsonl                   one line per debrief this device wrote</code></pre>
+<ul>
+<li><code>&lt;id&gt;</code> is a time-sortable id made on the device. A debrief folder is written once, as one commit, so two devices never edit the same file and merges are fast-forwards or trivially clean. Edits (a corrected transcript line, a retitled debrief) are new files in an <code>edits/</code> subfolder, MeetScribe's revision-layer rule.</li>
+<li>Totals and the library list are recomputed from the records, never stored, as the newsroom's reader vault does.</li>
+<li>Each device commits to its own clone branch (<code>ios-&lt;8 chars&gt;</code>), as sgit.ai requires.</li>
+<li><code>manifest.json</code> carries: id, created, device, source (recorded, imported, shared), duration, locale, the classify facts, the SHA-256 of every sibling file, the engine and model identifiers with OS version, per-step durations, and <code>costUsd: null</code>.</li>
+<li>Because it is an ordinary vault, <code>sgit clone &lt;vault key&gt;</code> on a laptop and the vault browser at dev.vault.sgraph.ai both open it. That is acceptance test number one.</li>
+</ul>
+<h3 id="6-5-sync">6.5 Sync</h3>
+<p>Local first. <code>DebriefStore</code> is the source of truth on the device; <code>VaultSync</code> is a queue.</p>
+<ul>
+<li>A finished debrief is queued, written as one commit, then published with compare-and-swap. On <code>ECAS</code>: merge, publish again.</li>
+<li>Pull on app foreground and on pull-to-refresh. Refs are never cached; <code>-imm-</code> objects are cached forever on disk, keyed by id.</li>
+<li>Uploads continue in a background <code>URLSession</code> where the engine allows it; otherwise they resume on next foreground. Audio over 4 MB goes through the presigned upload path.</li>
+<li>The UI shows, per debrief, one of: on this device only, queued, in the vault.</li>
+</ul>
+<hr>
+<h2 id="7-identity-one-bundle">7. Identity: one bundle</h2>
+<p>&quot;One identity&quot; in v1 means exactly one sgit key bundle per account, with role <code>master</code>. No
+personas.</p>
+<ul>
+<li><strong>Create.</strong> RSA-OAEP 4096 and ECDSA P-256, generated on the device at account creation. RSA-4096 generation takes seconds on a phone: run it off the main actor with a visible step, and start it while the user reads the recovery code.</li>
+<li><strong>Or adopt.</strong> If the master already holds a key (the user made one on pki.sgit.ai), the app uses it and generates nothing.</li>
+<li><strong>Or import.</strong> Two private PEMs and a passphrase from an existing <code>sgit pki</code> key store, with the public bundle recomputed rather than trusted.</li>
+<li><strong>Where it lives.</strong> In the master vault, in sgit's key store layout, private halves as plain PKCS#8 inside the encrypted vault, exactly as pki.sgit.ai stores them. A copy sits in the Keychain behind Face ID for offline use. The Secure Enclave is deliberately not used: it cannot hold RSA keys or export anything, and this identity has to be the same on the iPhone and the iPad.</li>
+<li><strong>What the app does with it in v1.</strong> of the other files. <code>sgit pki verify manifest.json manifest.json.sig</code> checks it. public bundle&quot;.<ul>
+<li>Signs every debrief: a detached signature over <code>manifest.json</code>, which holds the hashes</li>
+<li>Shows the identity: label, both fingerprints, a QR code of the <code>k1</code> key link, and &quot;copy</li>
+<li>Opens a sealed message addressed to it, which is how an access key arrives (D5).</li>
+</ul></li>
+<li><strong>What exists and what does not.</strong> <code>LaneCrypto</code> already does the envelope, fingerprints and the SPKI conversions with imported keys. To add: RSA-4096 and P-256 generation (<code>SecKeyCreateRandomKey</code>, CryptoKit), PKCS#8 export and import, the bundle JSON, the key store files, detached signatures, and reading sgit's passphrase-encrypted private keys (PBES2 with PBKDF2-HMAC-SHA256 and AES-256-CBC, through CommonCrypto).</li>
+<li><strong>Milestone 6, after v1.</strong> Seal a debrief to a contact's bundle (envelope v2) and hand it over as a link or file. When that is built, sign the whole envelope, not only <code>c</code>: sgit.ai documents that today's signature covers the ciphertext alone.</li>
+<li><strong>Out of scope.</strong> Publishing to the register. That is a reviewed commit on pki.sgit.ai, and the app can export the submission JSON for it without doing more.</li>
+</ul>
+<hr>
+<h2 id="8-the-app">8. The app</h2>
+<h3 id="8-1-screens">8.1 Screens</h3>
+<div class="tablewrap"><table>
+<thead><tr><th>Screen</th><th>iPhone</th><th>iPad</th></tr></thead>
+<tbody>
+<tr><td>Library</td><td>List by day, search over titles and transcripts</td><td>Sidebar of a <code>NavigationSplitView</code></td></tr>
+<tr><td>Record</td><td>One large button, live waveform, elapsed time, language shown</td><td>Same, in the detail column</td></tr>
+<tr><td>Debrief</td><td>Tabs: Debrief, Transcript, Details. Audio scrubber; tapping a line or a <code>[hh:mm:ss]</code> seeks</td><td>Debrief and transcript side by side</td></tr>
+<tr><td>Run progress</td><td>The workflow steps with live status, as the web trace shows them</td><td>Same</td></tr>
+<tr><td>Account</td><td>Signed-in state, identity card, doors, recovery code, access key, sync state</td><td>Same</td></tr>
+<tr><td>Settings</td><td>Language and tone, keep audio, models and their download state, about, licences</td><td>Same</td></tr>
+</tbody></table></div>
+<h3 id="8-2-ways-in">8.2 Ways in</h3>
+<ul>
+<li><strong>Share extension.</strong> WhatsApp: hold a voice note, Share, VoiceDebrief. The extension only copies the file into the App Group container and opens the app; all processing happens in the app, because extensions have a tight memory limit and the models are large.</li>
+<li><strong>Files and drag and drop</strong> (iPad especially), <strong>&quot;Open in&quot;</strong> for the audio types.</li>
+<li><strong>App Intents.</strong> &quot;Debrief this voice note&quot; as a Shortcuts action and a share-sheet action; &quot;Start a voice debrief&quot; for the Action button and Siri.</li>
+<li><strong>Live recording</strong> with <code>AVAudioEngine</code>, transcribed as it is spoken (volatile results shown grey, final results black), so the transcript is done when the user stops.</li>
+</ul>
+<h3 id="8-3-conventions">8.3 Conventions</h3>
+<p>SwiftUI, Swift 6 language mode with strict concurrency, <code>@Observable</code> models, no third-party
+UI dependencies. British English, no em-dashes, the family's status words. Dynamic Type,
+VoiceOver labels on every control, and the transcript is real text, so it is selectable and
+readable by assistive technology. Localised in en-GB, en-US, pt-PT and pt-BR from the start.</p>
+<hr>
+<h2 id="9-repository-ci-and-delivery">9. Repository, CI and delivery</h2>
+<h3 id="9-1-layout">9.1 Layout</h3>
+<pre><code>VoiceDebrief__App__iOS/
+  Apps/VoiceDebrief/
+    VoiceDebrief.xcodeproj          hand-written, folder-synchronised groups
+    VoiceDebrief.xcconfig
+    Sources/{App,Model,UI}/
+    Resources/                      Assets, PrivacyInfo.xcprivacy, Prompts/, Workflows/
+    Share/                          the share extension target
+    Intents/                        App Intents
+    Tests/  UITests/
+  Packages/{VDCore,SGitVault,PKIKit,OggOpus,AudioKit,SpeechKit,IntelligenceKit,AccountKit,VaultSync}/
+  apps.json                         the package graph, checked on Linux by check_apps.py
+  scripts/{apps,release,testflight,vault}/
+  .github/{workflows,scripts}/
+  website/                          the app's pages, llms.txt, release records
+  briefs/  team/  issues/
+  VERSION  CHANGELOG.md  LICENSE  .claude/CLAUDE.md</code></pre>
+<p>Start from PrompTugal's <strong>Fringe</strong> app, the newest and simplest project there (iOS 26.0, one
+app target and one test target, empty entitlements), then add the share extension, the App
+Group and the associated domain. Two traps recorded in that repo: resources are copied flat
+into the bundle, so two files with the same name break the build; and the Keychain is per
+bundle id, so the bundle id chosen now is the one to keep.</p>
+<p>Suggested identifiers: bundle <code>ai.voicedebrief.app</code>, with <code>.share</code>, <code>.intents</code>, <code>.tests</code>,
+<code>.uitests</code>; App Group <code>group.ai.voicedebrief.app</code>. Targets <code>1,2</code> (iPhone and iPad).</p>
+<h3 id="9-2-ci-carried-over">9.2 CI, carried over</h3>
+<p>Agents work in Linux containers and cannot compile Swift, so CI is the compiler and the
+pipeline from <code>PrompTugal__App__iOS</code> is the proven way to work like that. Bring across:</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Workflow</th><th>What it does</th></tr></thead>
+<tbody>
+<tr><td><code>ios.yml</code></td><td>Linux jobs plan and gate; <strong>one</strong> macOS job (<code>macos-26</code>) builds for the generic simulator unsigned, runs package tests on the host, then iPhone and iPad simulator tests one at a time; on a green <code>dev</code> push it archives, signs and uploads to TestFlight</td></tr>
+<tr><td><code>ios-vault.yml</code></td><td>Swift writes vaults on macOS; <code>sgit-ai</code> on Linux clones and verifies them. Extend to both directions, to PKI (<code>sgit pki</code> import, encrypt, decrypt, sign, verify), and to a weekly schedule</td></tr>
+<tr><td><code>screens.yml</code></td><td>One XCUITest per screen, driven by launch arguments with sample data; PNG artefacts for iPhone and iPad. This is how an agent sees its own UI</td></tr>
+<tr><td><code>testflight-ops.yml</code>, <code>ios-submit.yml</code></td><td>App Store Connect operations and manual review submission</td></tr>
+<tr><td><code>website.yml</code></td><td>Version bump, tag, deploy the site</td></tr>
+</tbody></table></div>
+<p>Lessons already paid for there, to keep: one Mac job per push (the macOS pool is five jobs
+and queue time was about three times run time); never boot a simulator while compiling;
+build for <code>generic/platform=iOS Simulator</code>; <code>run-and-summarize.sh</code> copies <code>error:</code> lines into
+the job summary so an agent can read a failure through the Actions API; archive unsigned and
+codesign afterwards, because automatic signing created a certificate per run and hit the
+account limit.</p>
+<p><strong>What CI cannot do, and who does it.</strong> No simulator has Apple Intelligence models, a
+microphone worth testing, or a passkey in iCloud Keychain. So:</p>
+<ul>
+<li>Logic is tested in CI against protocols: a scripted <code>Transcriber</code> and <code>LanguageModel</code> replaying recorded real outputs (MeetScribe's &quot;replayed real responses&quot; rule), a folder vault transport, an in-memory secret store.</li>
+<li>Speech, the model, the passkey and the share sheet are tested <strong>on a device by you</strong>, from TestFlight, against a written checklist per milestone. The app has a hidden diagnostics screen that runs the evaluation corpus and the spike measurements and exports the results as one JSON file, so a device run produces evidence an agent can read.</li>
+</ul>
+<h3 id="9-3-what-only-you-can-do">9.3 What only you can do</h3>
+<ul>
+<li>Create the App Store Connect record and the bundle id (the API cannot).</li>
+<li>Add the secrets to the new repo's <code>testflight</code> environment: <code>ASC_KEY_ID</code>, <code>ASC_ISSUER_ID</code>, <code>ASC_KEY_P8_BASE64</code>, <code>APPLE_TEAM_ID</code>.</li>
+<li>Enable the capabilities on the app id: Associated Domains, App Groups.</li>
+<li>Publish the association file on the relying party's domain (D1).</li>
+<li>Supply an SG/Send access token for the live write tests, as a CI secret, never in the repo.</li>
+<li>Run the device checklists.</li>
+</ul>
+<h3 id="9-4-conventions-inherited-from-the-voicedebrief-repos">9.4 Conventions inherited from the VoiceDebrief repos</h3>
+<p><code>VERSION</code> owned by CI; <code>dev</code> publishes; a reality document where anything not listed does not
+exist; briefs folder read-only for agents; issues-fs-lite under <code>issues/</code>; CHANGELOG with an
+Unreleased heading; <code>llms.txt</code> updated in the same commit as any public page; docs CC BY 4.0
+and code Apache 2.0; British English and no em-dashes. One conflict to settle on day one:
+the website repo says tests use no mocks, the iOS repo uses stubs. For this app the rule
+should be MeetScribe's: no invented responses, only replayed real ones.</p>
+<hr>
+<h2 id="10-milestones">10. Milestones</h2>
+<p>Durations assume one human with agents, as in the sibling repos. Each milestone ends with
+something that runs on a device in TestFlight.</p>
+<h3 id="m0-spikes-week-1-nothing-else-starts-until-these-report">M0. Spikes (week 1). Nothing else starts until these report</h3>
+<div class="tablewrap"><table>
+<thead><tr><th>Spike</th><th>Question</th><th>Done when</th></tr></thead>
+<tbody>
+<tr><td>S1</td><td>Does a native app with RP <code>pki.sgit.ai</code> get PRF bytes, and are they the bytes Safari gets for the same passkey, on iPhone and iPad?</td><td>A test build prints a fingerprint of the bytes beside the pki.sgit.ai login page's on two devices. Needs the association file live (or a throwaway domain first)</td></tr>
+<tr><td>S2</td><td>What do Apple's models actually do on real voice notes? Locales (pt-PT in particular), accuracy on WhatsApp Opus, context limits, guardrail refusals, time per minute of audio, on the oldest supported device</td><td>A table of measurements from ten real notes, and a go or no-go on debrief quality</td></tr>
+<tr><td>S3</td><td>Do <code>SGitVault</code>'s writes work against the live server, and does <code>sgit clone</code> read them?</td><td>The existing write tests green against <code>dev.send.sgraph.ai</code> with a real access token. Needs the token</td></tr>
+<tr><td>S4</td><td>Does Ogg Opus from WhatsApp decode through <code>AVAudioConverter</code>, including odd files (forwarded notes, long ones, stereo)?</td><td>Twenty real files decode to the same sample count as <code>opusdec</code>; if not, bundle libopus</td></tr>
+</tbody></table></div>
+<p>S1 decides D1 and S3 confirms D2. S2 decides whether the product is worth shipping at all on
+Apple's models alone, so it runs first.</p>
+<h3 id="m1-repository-and-the-key-bundle-weeks-1-to-2-parallel-with-the-spikes">M1. Repository and the key bundle (weeks 1 to 2, parallel with the spikes)</h3>
+<p>The repo skeleton from 9.1 with CI green on an empty app, <code>SGitVault</code> copied in with its
+tests and interop job passing unchanged, and <code>PKIKit</code>. Done when:</p>
+<ul>
+<li>A dev push produces a TestFlight build.</li>
+<li><code>VaultDoor</code>, parameterised by site constant, reproduces every value in <code>newsroom.sgit.ai/passkey/vectors.json</code>, including the deterministic door record ciphertext and its object id.</li>
+<li>The interop job passes in both directions: a bundle made in Swift imports with <code>sgit pki import</code>; a file sealed by <code>sgit pki encrypt</code> opens in Swift and the reverse; a Swift signature passes <code>sgit pki verify</code> and the reverse; an sgit passphrase-protected key store imports in Swift.</li>
+<li>Fingerprints match pki.sgit.ai's <code>keys.js</code> for its five published fixture identities.</li>
+</ul>
+<h3 id="m2-transcript-on-a-device-weeks-2-to-3">M2. Transcript on a device (weeks 2 to 3)</h3>
+<p>Record, import, share extension, decode, <code>SpeechKit</code>, the transcript view with audio
+seeking, <code>DebriefStore</code> local only. No account. Done when a WhatsApp voice note shared to
+the app becomes a time-aligned transcript with the phone in aeroplane mode.</p>
+<h3 id="m3-the-debrief-weeks-3-to-4">M3. The debrief (weeks 3 to 4)</h3>
+<p><code>IntelligenceKit</code>: classify, translate, map-reduce summary, the workflow runner and its
+progress view, the three availability checks and transcript-only mode, the evaluation corpus
+and runner. Done when the corpus passes the format checks and you have read ten debriefs and
+judged them usable.</p>
+<h3 id="m4-account-and-vault-weeks-4-to-6">M4. Account and vault (weeks 4 to 6)</h3>
+<p><code>AccountKit</code>, the <code>SGitVault</code> additions from 6.3, <code>VaultSync</code>, the local account and the move
+into vaults, recovery code, identity creation and adoption, signing. Done when:</p>
+<ul>
+<li>A debrief made on the iPhone appears on the iPad after a passkey gesture and nothing else.</li>
+<li><code>sgit clone</code> opens the debriefs vault and <code>sgit pki verify</code> passes on a manifest.</li>
+<li>An account made on pki.sgit.ai opens in the app with its existing key, and the reverse.</li>
+<li>Deleting the app and reinstalling restores everything from the passkey; with the passkey gone, the recovery code does.</li>
+</ul>
+<h3 id="m5-hardening-and-release-weeks-6-to-8">M5. Hardening and release (weeks 6 to 8)</h3>
+<p>iPad layouts, App Intents, accessibility pass, localisation, security review (section 11),
+the site pages and <code>llms.txt</code>, App Store review notes that explain the passkey (reviewers
+need a path that does not require an access key: the local account is that path), TestFlight
+beta, then submission.</p>
+<h3 id="m6-after-v1">M6. After v1</h3>
+<p>Seal a debrief to a person; the Private Cloud Compute mode (D4); automatic language guess;
+import of MeetScribe's <code>meetscribe/meeting</code> JSON; opening a debrief on voicedebrief.ai from
+the vault with a read key.</p>
+<hr>
+<h2 id="11-risks-and-the-security-review">11. Risks and the security review</h2>
+<div class="tablewrap"><table>
+<thead><tr><th>Risk</th><th>Likelihood</th><th>What the plan does about it</th></tr></thead>
+<tbody>
+<tr><td>Debrief quality from the on-device model is not good enough</td><td>Real</td><td>S2 runs first and can stop the project; transcript-only is still a product; D4 is the upgrade path</td></tr>
+<tr><td>The language the user needs is not supported</td><td>Real for pt-PT</td><td>S2 measures it; the summarise-then-translate path; the listing says what is supported</td></tr>
+<tr><td>Native PRF bytes differ from Safari's</td><td>Low</td><td>The design already handles a new path; the recovery code bridges</td></tr>
+<tr><td>Live vault writes from Swift fail in ways the in-memory server did not show</td><td>Medium</td><td>S3 in week 1, before anything is built on it</td></tr>
+<tr><td>The vault format changes under the app</td><td>Medium</td><td>The interop job runs weekly against the newest <code>sgit-ai</code>; the web-view engine is the fallback</td></tr>
+<tr><td>Two copies of <code>SGitVault</code> drift apart</td><td>High if left alone</td><td>D8: a recorded source commit, and a scheduled extraction into a shared repo</td></tr>
+<tr><td>Nothing can be tested on a device by an agent</td><td>Certain</td><td>Protocol seams with replayed real outputs in CI; a diagnostics export from device runs; your checklist per milestone</td></tr>
+<tr><td>A user loses both the passkey and the recovery code</td><td>Certain, eventually</td><td>Stated at creation, as sgit states it: there is no reset. The recovery code screen cannot be skipped without an explicit &quot;I understand&quot;</td></tr>
+<tr><td>App Review questions the passkey with no server, or the associated domain</td><td>Medium</td><td>Review notes; a demo path through the local account</td></tr>
+<tr><td>Access keys do not scale past a beta</td><td>Certain</td><td>D5 is a product decision; the app does not depend on the answer to be useful</td></tr>
+<tr><td>Apple's models change between OS releases and debriefs change with them</td><td>Certain</td><td>The manifest records OS and model identifiers; the evaluation corpus runs on every OS beta</td></tr>
+</tbody></table></div>
+<p><strong>For the AppSec review before M5 closes:</strong></p>
+<ul>
+<li>Keys in memory: the master's contents exist only while unlocked; zeroed on background after a timeout; never logged; no key-shaped string in any crash report or analytics (there are none).</li>
+<li>The passkey ceremony verifies nothing (there is no server): confirm that nothing in the app treats a successful assertion as proof of anything except possession of the PRF bytes.</li>
+<li>Vault content is untrusted input. A debrief written by another device is rendered as text and markdown, never as HTML with scripts.</li>
+<li>The ciphertext rule from the website repo applies to this one: no vault key, access key or private key in the repository, with a pre-commit and CI scanner from the first commit rather than later (the website's issue 013 is still open on this).</li>
+<li>Test fixtures use published fixture keys only (pki.sgit.ai publishes five).</li>
+<li>File protection <code>completeUnlessOpen</code> on the local store; the App Group container holds a shared file only until the app picks it up.</li>
+<li>Third-party code: none, by the iOS repo's rule. libopus is the one possible exception (spike S4), and it would need a written reason.</li>
+<li>RSA through the Security framework means hand-written DER for SPKI and PKCS#8. That code is small and exactly where parsing bugs live: fuzz it, and test it against sgit's files.</li>
+</ul>
+<hr>
+<h2 id="12-sources">12. Sources</h2>
+<p>Repositories (local clones): <code>VoiceDebrief__Website</code> v0.1.31 (reality doc, brief v0.33.53,
+<code>website/app/</code>), <code>VoiceDebrief__Chrome_Extension__MeetScribe</code> v0.3.5, <code>PrompTugal__App__iOS</code>
+v0.4.103.</p>
+<p>sgit estate:</p>
+<ul>
+<li>https://sgit.ai/security/index.html (the crypto stack, the two key systems)</li>
+<li>https://sgit.ai/docs/pki.html (key bundle, envelope v2, what the signature covers)</li>
+<li>https://sgit.ai/docs/vault/vault-from-javascript.html (one code base; create, write, publish)</li>
+<li>https://sgit.ai/docs/vault/reading-a-vault-file.html (address derivation, untrusted content)</li>
+<li>https://sgit.ai/api/index.html, <code>/api/vault-objects.html</code>, <code>/api/authentication.html</code></li>
+<li>https://pki.sgit.ai/llms.txt, <code>/assets/people/door.js</code>, <code>keys.js</code>, <code>account.js</code></li>
+<li>https://pki.sgit.ai/articles/a-login-made-of-a-passkey.html</li>
+<li>https://pki.sgit.ai/articles/in-person-by-qr-code.html</li>
+<li>https://newsroom.sgit.ai/articles/the-passkey-opens-the-vault.html</li>
+<li>https://newsroom.sgit.ai/admin/notes/2026-10-12__one-door-per-passkey-path.md</li>
+<li>https://newsroom.sgit.ai/passkey/vectors.json</li>
+<li>https://newsroom.sgit.ai/articles/how-a-vault-works.html</li>
+<li>https://newsroom.sgit.ai/articles/a-key-for-every-person.html</li>
+<li>https://newsroom.sgit.ai/articles/meetscribe.html</li>
+</ul>
+<p>Apple:</p>
+<ul>
+<li>https://developer.apple.com/machine-learning/whats-new</li>
+<li>https://developer.apple.com/wwdc26/guides/ios/</li>
+<li>https://developer.apple.com/documentation/authenticationservices/supporting-passkeys</li>
+<li>https://developer.apple.com/forums/thread/764730 (PRF output across platform and hybrid paths)</li>
+</ul>
+<p><strong>What I could not verify and have marked as spikes rather than facts:</strong> native-app PRF
+bytes matching Safari's (S1); the iOS 27 model's context size, languages and quality (S2);
+whether <code>SpeechAnalyzer</code> changed in iOS 27 (S2); live vault writes from Swift (S3);
+<code>AVAudioConverter</code> on WhatsApp's Ogg Opus (S4). The 4,096-token figure and the device eligibility list are the iOS 26 values.</p>
+</main>
+
+<footer class="site"><div class="cols">
+  <div>
+    <div class="brandline">Voice<em>Debrief</em> <span>iOS</span></div>
+    <p>The VoiceDebrief transcript and debrief as a native iPhone and iPad app, on Apple's own models, with the results in a vault you own. In development: there is nothing to install yet. Content CC BY 4.0; code Apache 2.0.</p>
+    <p class="partnote">This site is static and has no analytics.</p>
+    <p class="verline">site v0.1.0 · <a href="index.md">this page as markdown</a> · <a href="../llms.txt">llms.txt</a></p>
+  </div>
+  <div>
+    <h4>The app</h4>
+    <a href="../built/index.html">What is built</a>
+    <a href="../plan/index.html">The plan</a>
+    <a href="../develop/index.html">Build and test</a>
+    <a href="../versions/index.html">Release history</a>
+    <a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">GitHub</a>
+  </div>
+  <div>
+    <h4>VoiceDebrief</h4>
+    <a href="https://voicedebrief.ai">voicedebrief.ai</a>
+    <a href="https://meetscribe.chrome-extension.voicedebrief.ai">MeetScribe for Google Meet</a>
+  </div>
+  <div>
+    <h4>Built on</h4>
+    <a href="https://sgit.ai">sgit.ai</a>
+    <a href="https://pki.sgit.ai">pki.sgit.ai</a>
+    <a href="https://sgit.ai/security/index.html">The vault security model</a>
+  </div>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Build, test and release VoiceDebrief for iOS</title>
+<meta name="description" content="How the repository is laid out, how CI compiles and tests the app on a Mac, how the site is built, and how a release is made.">
+<link rel="canonical" href="https://ios.app.voicedebrief.ai/develop/index.html">
+<meta property="og:url" content="https://ios.app.voicedebrief.ai/develop/index.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="VoiceDebrief for iOS">
+<meta property="og:title" content="Build, test and release VoiceDebrief for iOS">
+<meta property="og:description" content="How the repository is laid out, how CI compiles and tests the app on a Mac, how the site is built, and how a release is made.">
+<link rel="alternate" type="text/markdown" href="index.md" title="This page as markdown">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/vd-tokens.css">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+
+<nav class="site"><div class="row">
+  <a class="brand" href="../index.html">Voice<em>Debrief</em> <span>iOS</span></a>
+  <span class="beta" title="In development: there is nothing to install yet">IN DEVELOPMENT</span>
+  <a class="parent" href="https://voicedebrief.ai" title="A VoiceDebrief product">&#8599; part of <b>voicedebrief.ai</b></a>
+  <a class="ver" href="../versions/index.html" title="Release history">v0.1.0</a>
+  <a class="nl" href="../built/index.html">Built</a>
+  <a class="nl" href="../plan/index.html">Plan</a>
+  <a class="nl here" href="../develop/index.html">Build</a>
+  <a class="gh" href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">&#9733; GitHub</a>
+</div></nav>
+
+<main class="doc">
+<div class="crumb"><a href="../index.html">VoiceDebrief iOS</a> / develop</div>
+<h1 id="build-test-and-release">Build, test and release</h1>
+<p>How this repository works. The short version: <strong>CI is the compiler.</strong> Most of the work here is done by agents in Linux containers that cannot build Swift, so every change is compiled and tested on a Mac by GitHub Actions, and a failure is read from the job summary.</p>
+<h2 id="layout">Layout</h2>
+<pre><code>Apps/VoiceDebrief/            the app: a hand-written Xcode project, sources, resources, tests
+Packages/SGitVault/           the vault engine (copied; see its SOURCE.md)
+Config/                       Local.xcconfig.example, for building on your own device
+.github/workflows/            ios.yml, ios-vault.yml, site.yml
+.github/scripts/              select Xcode, pick a simulator, copy errors into the job summary
+website/                      this site: markdown sources, the builder and the gate
+issues/                       open and done work, one file each
+version                       the version, one line</code></pre>
+<p>The Xcode project uses folder-synchronised groups: a Swift file added under <code>Apps/VoiceDebrief/Sources/</code> is part of the app without editing the project file. Resources are copied flat into the bundle, so two resource files with the same name break the build.</p>
+<h2 id="on-a-mac">On a Mac</h2>
+<p>Xcode 26 or later. Open <code>Apps/VoiceDebrief/VoiceDebrief.xcodeproj</code> and run the <code>VoiceDebrief</code> scheme on a simulator. To run on your own device, copy <code>Config/Local.xcconfig.example</code> to <code>Config/Local.xcconfig</code> and set your team.</p>
+<pre><code>cd Packages/SGitVault &amp;&amp; swift test          # the vault engine, on the Mac itself</code></pre>
+<h2 id="what-ci-does">What CI does</h2>
+<div class="tablewrap"><table>
+<thead><tr><th>Workflow</th><th>When</th><th>What</th></tr></thead>
+<tbody>
+<tr><td><code>ios.yml</code></td><td>A push to <code>dev</code> or a pull request that touches <code>Apps/</code>, <code>Packages/</code> or the workflow</td><td>One Mac job: the vault engine's tests, a simulator build, a Release device build (unsigned), then the app's unit tests on an iPhone and an iPad simulator</td></tr>
+<tr><td><code>ios-vault.yml</code></td><td>A change to the vault write path, every Monday, or by hand</td><td>Swift writes vaults on a Mac; <code>sgit-ai</code> on Linux clones them, verifies every signature and compares every file</td></tr>
+<tr><td><code>site.yml</code></td><td>Every push and pull request</td><td>The gate, then (on <code>dev</code>) the release tag and the site</td></tr>
+</tbody></table></div>
+<p>Everything is built unsigned. Signing and TestFlight are not set up yet; that needs the App Store Connect record and signing secrets.</p>
+<p><strong>Reading a failure without a Mac.</strong> Each build and test step runs through <code>.github/scripts/run-and-summarize.sh</code>, which copies compiler errors and failed tests into the job summary and repeats them as the last lines of the step, so they can be read through the Actions API. Full logs are kept as the <code>ios-logs</code> artifact.</p>
+<h2 id="what-ci-cannot-do">What CI cannot do</h2>
+<p>No simulator has Apple Intelligence's models, a real microphone, or a passkey in iCloud Keychain. Speech, the debrief, the passkey and the share sheet will have to be tested on a device by a person, against a written checklist. None of that exists yet.</p>
+<h2 id="the-site">The site</h2>
+<p>Each page is an <code>index.md</code>; <code>index.html</code> beside it is generated and committed.</p>
+<pre><code>node website/admin/build.mjs        # regenerate the pages, sitemap.xml and robots.txt
+node website/admin/validate.mjs     # the gate CI runs</code></pre>
+<p>The gate fails on a page that is out of date, a broken link or anchor, a key-shaped string anywhere in the repository, an em-dash, or a script on a page. A page added, moved or removed updates <a href="../llms.txt">llms.txt</a> in the same commit.</p>
+<h2 id="a-release">A release</h2>
+<ol>
+<li>Set the next version in the <code>version</code> file (a push to <code>dev</code> is the next patch number: <code>v0.1.0</code> then <code>v0.1.1</code>).</li>
+<li>Add a row to <a href="../versions/index.html">the release history</a> and update <a href="../built/index.html">What is built</a> for anything that changed.</li>
+<li>Run the builder and the gate, commit, push to <code>dev</code>.</li>
+</ol>
+<p>CI tags the commit with the version if that tag does not exist yet, and publishes the site. A push that does not change the version is not a release: it is built, tested and published, but not tagged.</p>
+<h2 id="rules-that-are-easy-to-break">Rules that are easy to break</h2>
+<ul>
+<li><strong>Nothing that decrypts what is committed may be committed.</strong> No vault key, access key, API key or private key in the repository. The only exceptions are the throwaway fixture vaults under <code>Packages/SGitVault/Tests/</code>, which exist on no server.</li>
+<li><strong>Apple SDK only.</strong> No third-party packages without a written reason.</li>
+<li><strong>If it is not on <a href="../built/index.html">What is built</a>, it does not exist.</strong> Mark anything else as proposed.</li>
+</ul>
+</main>
+
+<footer class="site"><div class="cols">
+  <div>
+    <div class="brandline">Voice<em>Debrief</em> <span>iOS</span></div>
+    <p>The VoiceDebrief transcript and debrief as a native iPhone and iPad app, on Apple's own models, with the results in a vault you own. In development: there is nothing to install yet. Content CC BY 4.0; code Apache 2.0.</p>
+    <p class="partnote">This site is static and has no analytics.</p>
+    <p class="verline">site v0.1.0 · <a href="index.md">this page as markdown</a> · <a href="../llms.txt">llms.txt</a></p>
+  </div>
+  <div>
+    <h4>The app</h4>
+    <a href="../built/index.html">What is built</a>
+    <a href="../plan/index.html">The plan</a>
+    <a href="../develop/index.html">Build and test</a>
+    <a href="../versions/index.html">Release history</a>
+    <a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">GitHub</a>
+  </div>
+  <div>
+    <h4>VoiceDebrief</h4>
+    <a href="https://voicedebrief.ai">voicedebrief.ai</a>
+    <a href="https://meetscribe.chrome-extension.voicedebrief.ai">MeetScribe for Google Meet</a>
+  </div>
+  <div>
+    <h4>Built on</h4>
+    <a href="https://sgit.ai">sgit.ai</a>
+    <a href="https://pki.sgit.ai">pki.sgit.ai</a>
+    <a href="https://sgit.ai/security/index.html">The vault security model</a>
+  </div>
+</div></footer>
+</body>
+</html>

@@ -1,0 +1,87 @@
+{
+ "WARNING": "THROWAWAY test keys for test fixtures only. These vaults exist on no server.",
+ "generator": "generate_fixtures.py with sgit-ai 0.27.0",
+ "vault_id": "fixtdefl1",
+ "vault_key": "sgit_private_vault_throwaway-fixture-deflate:fixtdefl1",
+ "read_key": "sgit_private_read_ff9de7ed0fcbeff5687d3298349df62bee6f03be0a94d0b3522ef5f54e629c59:fixtdefl1",
+ "read_key_hex": "ff9de7ed0fcbeff5687d3298349df62bee6f03be0a94d0b3522ef5f54e629c59",
+ "write_key_hex": "b43f703c617a59f0081bdd5b079ab03c49c3453addf829daa6ed152d8eb89ac8",
+ "branch_index_file_id": "idx-pid-muw-ad850fc1582a",
+ "ref_file_id": "ref-pid-muw-1c1932f23965",
+ "deflate": true,
+ "objects_on_server": 24,
+ "branches": {
+  "current": {
+   "messages": [
+    "Fixture commit two: docs",
+    "Fixture commit one",
+    "init"
+   ],
+   "files": {
+    "README.md": {
+     "size": 66,
+     "sha256": "29d6b199f62ee33c3d0a14771eab1f03f19611297efcf0712727ef5e510658cd",
+     "text": "# Fixture vault\n\nThrowaway test data for SGitVault. Not a secret.\n"
+    },
+    "docs/big.txt": {
+     "size": 11400,
+     "sha256": "f7a040c8bc7031f3f9964ec9dd863470191ef1902340543016a1dbbbced8353b"
+    },
+    "docs/deep/note.txt": {
+     "size": 10,
+     "sha256": "30cf6f2de471343739bcc1dde393c0c0771814ac3ad798f68c8a74495174521a",
+     "text": "deep file\n"
+    },
+    "notes/ünïcode name.md": {
+     "size": 14,
+     "sha256": "aedaa59fb06397980d00abbd33a3f9a46f1e343986bf7393d9f9f3be4d9df9d6",
+     "text": "Olá, Lisboa.\n"
+    },
+    "picks.json": {
+     "size": 57,
+     "sha256": "79d55ee1aae7d255b7cba1981b52b776df3b92145cf69c521e8201747cb87b6b",
+     "text": "{\"v\":1,\"picks\":[{\"id\":\"events/demo\",\"at\":1762650000000}]}"
+    }
+   }
+  },
+  "device-ipad": {
+   "messages": [
+    "Fixture commit on device-ipad",
+    "Fixture commit two: docs",
+    "Fixture commit one",
+    "init"
+   ],
+   "files": {
+    "README.md": {
+     "size": 66,
+     "sha256": "29d6b199f62ee33c3d0a14771eab1f03f19611297efcf0712727ef5e510658cd",
+     "text": "# Fixture vault\n\nThrowaway test data for SGitVault. Not a secret.\n"
+    },
+    "device.txt": {
+     "size": 27,
+     "sha256": "158b46bfb4cef35d14889ddabc92fc5597b40629517d4cee44baea7cf40f0733",
+     "text": "written on the ipad branch\n"
+    },
+    "docs/big.txt": {
+     "size": 11400,
+     "sha256": "f7a040c8bc7031f3f9964ec9dd863470191ef1902340543016a1dbbbced8353b"
+    },
+    "docs/deep/note.txt": {
+     "size": 10,
+     "sha256": "30cf6f2de471343739bcc1dde393c0c0771814ac3ad798f68c8a74495174521a",
+     "text": "deep file\n"
+    },
+    "notes/ünïcode name.md": {
+     "size": 14,
+     "sha256": "aedaa59fb06397980d00abbd33a3f9a46f1e343986bf7393d9f9f3be4d9df9d6",
+     "text": "Olá, Lisboa.\n"
+    },
+    "picks.json": {
+     "size": 57,
+     "sha256": "79d55ee1aae7d255b7cba1981b52b776df3b92145cf69c521e8201747cb87b6b",
+     "text": "{\"v\":1,\"picks\":[{\"id\":\"events/demo\",\"at\":1762650000000}]}"
+    }
+   }
+  }
+ }
+}

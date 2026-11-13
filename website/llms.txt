@@ -1,0 +1,35 @@
+# VoiceDebrief for iPhone and iPad
+
+> A native iPhone and iPad app, in development, that turns a voice note into a transcript and a
+> short debrief using Apple's on-device models only (SpeechAnalyzer and the Foundation Models
+> framework): no OpenRouter, no API key, no inference server. Results are kept in an sgit vault
+> the user owns, opened with a passkey as pki.sgit.ai does it, and signed with the user's own key
+> bundle (RSA-OAEP 4096 and ECDSA P-256). STATUS: the repository holds an app skeleton that
+> builds and tests, the SGitVault vault engine, CI and the plan. It does NOT record, transcribe
+> or summarise anything yet, and there is nothing to install.
+
+Part of VoiceDebrief (https://voicedebrief.ai). Content CC BY 4.0; code Apache 2.0.
+Every page has a markdown twin: replace index.html with index.md.
+
+## Start here
+
+- https://ios.app.voicedebrief.ai/built/index.html : the reality file. What exists, how it is
+  tested, what does not exist. If it is not listed there as built, it does not exist.
+- https://ios.app.voicedebrief.ai/plan/index.html : the implementation plan. Mostly PROPOSED:
+  the pipeline on Apple's models, the passkey account (door, master, debriefs vault), the vault
+  layout, the identity, the repository and CI, milestones, risks, and what was decided since.
+- https://ios.app.voicedebrief.ai/develop/index.html : repository layout, what CI does (it is
+  the compiler: Swift is not built on Linux), how the site is built, how a release is made.
+- https://ios.app.voicedebrief.ai/versions/index.html : release history.
+- https://ios.app.voicedebrief.ai/index.html : the home page.
+
+## Facts worth knowing before you work on it
+
+- Source: https://github.com/VoiceDebrief/VoiceDebrief__App__iOS (default branch dev, which
+  publishes this site).
+- The vault engine is Packages/SGitVault, copied from PrompTugal__App__iOS; its origin and the
+  changes made here are in Packages/SGitVault/SOURCE.md.
+- Vault format, key derivation and the passkey door are sgit's: https://sgit.ai/security/index.html
+  and https://pki.sgit.ai/llms.txt
+- No vault key, access key, API key or private key is ever committed. The fixture vaults under
+  Packages/SGitVault/Tests/ are throwaway and exist on no server.

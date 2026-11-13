@@ -1,0 +1,93 @@
+name: site
+
+# validate -> tag -> deploy, on the pattern of VoiceDebrief MeetScribe's deploy-pages.yml.
+#
+#   1. validate     the gate (website/admin/validate.mjs): generated pages current, links and anchors,
+#                   no key-shaped string anywhere in the repository, house style. Runs on pull requests too.
+#   2. tag-release  on a push to dev: if the version file names a version that has no tag yet, that
+#                   commit is the release and is tagged. A push that does not change the version is
+#                   published but not tagged.
+#   3. deploy       publishes website/ to GitHub Pages, from dev only, never when validation failed.
+#
+# GitHub Pages must be set to "GitHub Actions" as its source in the repository settings.
+on:
+  push:
+    branches: [dev, main]
+  pull_request:
+    branches: [dev, main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: site-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Node version (the runner's own; 20 or later)
+        run: node -e "const v=+process.versions.node.split('.')[0]; console.log('node', process.version); if (v < 20) process.exit(1)"
+      - name: Validate the site and the repository
+        run: node website/admin/validate.mjs
+
+  tag-release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: [validate]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Tag this commit if the version file names a new version
+        run: |
+          set -euo pipefail
+          git fetch --tags --quiet
+          TAG=$(tr -d ' \n' < version)
+          if ! [[ "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then echo "::error::version file holds \"$TAG\""; exit 1; fi
+          if git rev-parse -q --verify "refs/tags/$TAG" >/dev/null; then
+            echo "$TAG is already tagged: this push is not a release"; exit 0
+          fi
+          PREV=$(git tag --list 'v*' | sort -V | tail -1 || true)
+          if [ -n "$PREV" ] && [ "$(printf '%s\n%s\n' "$PREV" "$TAG" | sort -V | tail -1)" != "$TAG" ]; then
+            echo "::error::version file says $TAG but $PREV is already released"; exit 1
+          fi
+          git tag "$TAG" "$GITHUB_SHA"
+          git push origin "refs/tags/$TAG"
+          echo "tagged ${GITHUB_SHA:0:9} as $TAG" | tee -a "$GITHUB_STEP_SUMMARY"
+
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [validate, tag-release]
+    if: always() && github.event_name != 'pull_request' && github.ref == 'refs/heads/dev' && needs.validate.result == 'success' && (needs.tag-release.result == 'success' || needs.tag-release.result == 'skipped')
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Assemble the site
+        run: |
+          mkdir -p "$RUNNER_TEMP/site"
+          rsync -a website/ "$RUNNER_TEMP/site/" --exclude 'admin'
+          touch "$RUNNER_TEMP/site/.nojekyll"
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ${{ runner.temp }}/site
+      - id: deployment
+        uses: actions/deploy-pages@v4

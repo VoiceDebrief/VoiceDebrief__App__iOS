@@ -1,0 +1,2 @@
+// Copy to Config/Local.xcconfig (ignored by git) to build on your own device.
+// DEVELOPMENT_TEAM = ABCDE12345

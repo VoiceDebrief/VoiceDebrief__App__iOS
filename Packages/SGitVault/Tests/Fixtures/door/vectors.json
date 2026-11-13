@@ -1,0 +1,31 @@
+{
+ "source": "https://promptugal.news/assets/vault/door.js",
+ "rp_for_derivation": "web-summit.newsroom.sgit.ai",
+ "prf_input_text": "web-summit.newsroom.sgit.ai/door/v1",
+ "prf_input_sha256": "ab9b47d537318dd224196dac7a67f8f712beb48de8c74b0e57302a04f39f5ade",
+ "recovery_code": "ABCD-EFGH-IJKL-MNOP-QRST-UVWX-YZ",
+ "recovery_bytes_hex": "00443214c74254b635cf84653a56d7c6",
+ "vectors": [
+  {
+   "ikm_hex": "0101010101010101010101010101010101010101010101010101010101010101",
+   "seed_hex": "dec940c68545199084ac5f190b93b6ae6f4f9527813bd8fcd4fcc261f89db81c",
+   "passphrase": "2d2e8fd7034e339951a5236024d8d9dbb51ec2770ee3c57851cae23c8516182f",
+   "vault_id": "07qqefdr",
+   "read_key_hex": "7c9331a28a14bf927b066c7767057842a54c735f39832633f95351f9c6a1704e"
+  },
+  {
+   "ikm_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+   "seed_hex": "c233bce8273b0f4623b29f59dbaebac5852a139fe9f55cafdbbf93ef115b4147",
+   "passphrase": "076bfebe20db7cc4dd96ed8ac5bf78b994008ecbf136bb4b19f28451313d3b67",
+   "vault_id": "7pkfednw",
+   "read_key_hex": "4d78d60ac321efcb865edbe6d47597bc173b20357a83e199238ea131908af6b1"
+  },
+  {
+   "ikm_hex": "00443214c74254b635cf84653a56d7c6",
+   "seed_hex": "8ec62084d5ed51d4515f3410db59fb63068b5097412b92acd4b099c63f80141c",
+   "passphrase": "024e890ba1ce9516b860eb74130f698d6048486407c24c26b47baa2a6e529fb4",
+   "vault_id": "2f1jn4mq",
+   "read_key_hex": "4207fb3deffc0be9f96fc79f20cb6316737e597be2ff2c4cb8fdd97e484c6818"
+  }
+ ]
+}

@@ -1,0 +1,115 @@
+name: ios
+
+# CI is the compiler: nobody working on this repository from a Linux container can build Swift,
+# so every push that touches the app or a package is built and tested here, on one Mac.
+#
+#   1. SGitVault      swift test on the Mac itself (no simulator): the vault engine and its vectors
+#   2. build          build-for-testing for the generic iOS Simulator, unsigned, nothing booted
+#   3. test           the app's unit tests on one iPhone simulator, then one iPad simulator
+#   4. release build  Release for a generic iOS device, unsigned: what an archive would compile
+#
+# No signing and no TestFlight upload yet (issues/open/001): this workflow proves the code builds
+# and the tests pass. Failures are copied into the job summary by run-and-summarize.sh.
+on:
+  push:
+    branches: [dev]
+    paths:
+      - 'Apps/**'
+      - 'Packages/**'
+      - 'version'
+      - '.github/workflows/ios.yml'
+      - '.github/scripts/**'
+  pull_request:
+    paths:
+      - 'Apps/**'
+      - 'Packages/**'
+      - '.github/workflows/ios.yml'
+      - '.github/scripts/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PROJECT: Apps/VoiceDebrief/VoiceDebrief.xcodeproj
+  SCHEME: VoiceDebrief
+
+jobs:
+  mac:
+    name: Build and test (one Mac)
+    runs-on: macos-26
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Select Xcode
+        run: .github/scripts/select-xcode.sh
+
+      - name: Version from the version file
+        run: |
+          v=$(tr -d ' \n' < version); v=${v#v}
+          echo "MARKETING_VERSION=$v" >> "$GITHUB_ENV"
+          echo "BUILD_NUMBER=$GITHUB_RUN_NUMBER" >> "$GITHUB_ENV"
+          echo "**Version:** \`$v ($GITHUB_RUN_NUMBER)\`" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: SGitVault tests (on the Mac, no simulator)
+        working-directory: Packages/SGitVault
+        run: ../../.github/scripts/run-and-summarize.sh "SGitVault swift test" "$RUNNER_TEMP/logs/sgitvault.log" -- swift test
+
+      - name: Build for testing (Debug, iOS Simulator, unsigned)
+        run: |
+          .github/scripts/run-and-summarize.sh "Build for testing" "$RUNNER_TEMP/logs/build-for-testing.log" -- \
+            xcodebuild build-for-testing -project "$PROJECT" -scheme "$SCHEME" -configuration Debug \
+              -destination 'generic/platform=iOS Simulator' -derivedDataPath "$RUNNER_TEMP/dd" \
+              MARKETING_VERSION="$MARKETING_VERSION" CURRENT_PROJECT_VERSION="$BUILD_NUMBER" \
+              CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
+
+      - name: Release build (iOS device, unsigned)
+        run: |
+          .github/scripts/run-and-summarize.sh "Release build" "$RUNNER_TEMP/logs/release.log" -- \
+            xcodebuild build -project "$PROJECT" -scheme "$SCHEME" -configuration Release \
+              -destination 'generic/platform=iOS' -derivedDataPath "$RUNNER_TEMP/dd-release" \
+              MARKETING_VERSION="$MARKETING_VERSION" CURRENT_PROJECT_VERSION="$BUILD_NUMBER" \
+              CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
+
+      - name: Unit tests on the iPhone simulator
+        run: |
+          u=$(.github/scripts/pick-simulator.py iPhone)
+          xcrun simctl boot "$u" 2>/dev/null || true
+          xcrun simctl bootstatus "$u" -b || true
+          .github/scripts/run-and-summarize.sh "Unit tests (iPhone)" "$RUNNER_TEMP/logs/test-iphone.log" -- \
+            xcodebuild test-without-building -project "$PROJECT" -scheme "$SCHEME" -configuration Debug \
+              -derivedDataPath "$RUNNER_TEMP/dd" -destination "id=$u" \
+              -parallel-testing-enabled NO -test-timeouts-enabled YES \
+              -default-test-execution-time-allowance 60 -maximum-test-execution-time-allowance 180 \
+              CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO && status=0 || status=$?
+          xcrun simctl shutdown "$u" 2>/dev/null || true
+          exit $status
+
+      - name: Unit tests on the iPad simulator
+        run: |
+          u=$(.github/scripts/pick-simulator.py iPad)
+          xcrun simctl boot "$u" 2>/dev/null || true
+          xcrun simctl bootstatus "$u" -b || true
+          .github/scripts/run-and-summarize.sh "Unit tests (iPad)" "$RUNNER_TEMP/logs/test-ipad.log" -- \
+            xcodebuild test-without-building -project "$PROJECT" -scheme "$SCHEME" -configuration Debug \
+              -derivedDataPath "$RUNNER_TEMP/dd" -destination "id=$u" \
+              -parallel-testing-enabled NO -test-timeouts-enabled YES \
+              -default-test-execution-time-allowance 60 -maximum-test-execution-time-allowance 180 \
+              CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO && status=0 || status=$?
+          xcrun simctl shutdown "$u" 2>/dev/null || true
+          exit $status
+
+      - name: Keep the logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-logs
+          path: ${{ runner.temp }}/logs/
+          if-no-files-found: ignore

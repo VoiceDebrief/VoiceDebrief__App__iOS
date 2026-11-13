@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>VoiceDebrief for iPhone and iPad: transcript and debrief on the device</title>
+<meta name="description" content="A native iPhone and iPad app that turns a voice note into a transcript and a debrief with Apple's on-device models, kept in an encrypted vault the user owns. In development: what is built and what is not.">
+<link rel="canonical" href="https://ios.app.voicedebrief.ai/index.html">
+<meta property="og:url" content="https://ios.app.voicedebrief.ai/index.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="VoiceDebrief for iOS">
+<meta property="og:title" content="VoiceDebrief for iPhone and iPad: transcript and debrief on the device">
+<meta property="og:description" content="A native iPhone and iPad app that turns a voice note into a transcript and a debrief with Apple's on-device models, kept in an encrypted vault the user owns. In development: what is built and what is not.">
+<link rel="alternate" type="text/markdown" href="index.md" title="This page as markdown">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/vd-tokens.css">
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+
+<nav class="site"><div class="row">
+  <a class="brand" href="index.html">Voice<em>Debrief</em> <span>iOS</span></a>
+  <span class="beta" title="In development: there is nothing to install yet">IN DEVELOPMENT</span>
+  <a class="parent" href="https://voicedebrief.ai" title="A VoiceDebrief product">&#8599; part of <b>voicedebrief.ai</b></a>
+  <a class="ver" href="versions/index.html" title="Release history">v0.1.0</a>
+  <a class="nl" href="built/index.html">Built</a>
+  <a class="nl" href="plan/index.html">Plan</a>
+  <a class="nl" href="develop/index.html">Build</a>
+  <a class="gh" href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">&#9733; GitHub</a>
+</div></nav>
+
+<main class="doc">
+<h1 id="voicedebrief-for-iphone-and-ipad">VoiceDebrief for iPhone and iPad</h1>
+<p>A voice note in, a transcript and a short debrief out, on the device. The app is being built to do VoiceDebrief's one job with <strong>Apple's own models and nothing else</strong>: no OpenRouter, no API key, no inference server. What it produces is kept in an <strong>encrypted vault the user owns</strong>, opened with a <strong>passkey</strong>, and signed with the user's own key.</p>
+<blockquote><p><strong>In development. There is nothing to install yet.</strong> The repository holds an app that builds and tests, the vault engine it will use, and the plan. It does not record, transcribe or summarise anything yet. <a href="built/index.html">What is built</a> is the honest list, and it is short.</p></blockquote>
+<h2 id="what-it-will-do">What it will do</h2>
+<div class="tablewrap"><table>
+<thead><tr><th>Step</th><th>How</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td>Bring a voice note</td><td>Record in the app, or share one from WhatsApp or Files (<code>.opus</code>, <code>.ogg</code>, <code>.m4a</code>)</td><td><span class="chip chip-proposed">proposed</span></td></tr>
+<tr><td>Transcript</td><td>Apple's <code>SpeechAnalyzer</code>, on the device, with the time of every line</td><td><span class="chip chip-proposed">proposed</span></td></tr>
+<tr><td>Debrief</td><td>Apple Intelligence, on the device: key points, actions, one sentence</td><td><span class="chip chip-proposed">proposed</span></td></tr>
+<tr><td>Keep it</td><td>An sgit vault the user owns, encrypted before anything leaves the device</td><td><span class="chip chip-proposed">proposed</span></td></tr>
+<tr><td>Sign in</td><td>One passkey, the same account as <a href="https://pki.sgit.ai">pki.sgit.ai</a>, and a recovery code</td><td><span class="chip chip-proposed">proposed</span></td></tr>
+<tr><td>One identity</td><td>One key bundle (RSA-OAEP 4096 and ECDSA P-256) that signs every debrief</td><td><span class="chip chip-proposed">proposed</span></td></tr>
+</tbody></table></div>
+<h2 id="what-exists-today">What exists today</h2>
+<div class="tablewrap"><table>
+<thead><tr><th></th><th></th><th>Status</th></tr></thead>
+<tbody>
+<tr><td>The app</td><td>An iPhone and iPad app with one screen that says what is and is not built</td><td><span class="chip chip-built">built</span></td></tr>
+<tr><td>The vault engine</td><td><code>SGitVault</code>: reads and writes sgit vaults and derives a passkey's door, with tests against published vectors</td><td><span class="chip chip-built">built</span></td></tr>
+<tr><td>CI</td><td>Every push is compiled and tested on a Mac; the vault engine's output is read back by <code>sgit</code></td><td><span class="chip chip-built">built</span></td></tr>
+<tr><td>This site</td><td>Built from markdown, validated, and published from the <code>dev</code> branch</td><td><span class="chip chip-built">built</span></td></tr>
+</tbody></table></div>
+<h2 id="where-your-audio-will-go">Where your audio will go</h2>
+<p><strong>Nowhere, for transcription and the debrief.</strong> Both run on the device with Apple's models. That is the design, and it is why the app needs no key and no account with us.</p>
+<p><strong>Your vault is the one thing that leaves the device, and it leaves encrypted.</strong> Files are encrypted on the device before upload, with keys derived from a vault key the server never sees. The server can see the vault's identifier, the size of each encrypted object and when it was written. It cannot see file names, contents or keys. <a href="https://sgit.ai/security/index.html">sgit's security model</a> states this precisely.</p>
+<p>None of this is built yet, so none of it has been tested on a real device. This page will say so when it has.</p>
+<h2 id="the-record">The record</h2>
+<ul>
+<li><a href="built/index.html">What is built</a>: the reality file. If it is not listed there, it does not exist.</li>
+<li><a href="plan/index.html">The plan</a>: the pipeline, the account, the vault, the identity, milestones and risks.</li>
+<li><a href="develop/index.html">Build and test</a>: how the repository works and how CI stands in for a Mac.</li>
+<li><a href="versions/index.html">Release history</a></li>
+<li><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">Source on GitHub</a></li>
+</ul>
+<p>Part of <a href="https://voicedebrief.ai">voicedebrief.ai</a>, alongside <a href="https://meetscribe.chrome-extension.voicedebrief.ai">MeetScribe</a> for Google Meet.</p>
+</main>
+
+<footer class="site"><div class="cols">
+  <div>
+    <div class="brandline">Voice<em>Debrief</em> <span>iOS</span></div>
+    <p>The VoiceDebrief transcript and debrief as a native iPhone and iPad app, on Apple's own models, with the results in a vault you own. In development: there is nothing to install yet. Content CC BY 4.0; code Apache 2.0.</p>
+    <p class="partnote">This site is static and has no analytics.</p>
+    <p class="verline">site v0.1.0 · <a href="index.md">this page as markdown</a> · <a href="llms.txt">llms.txt</a></p>
+  </div>
+  <div>
+    <h4>The app</h4>
+    <a href="built/index.html">What is built</a>
+    <a href="plan/index.html">The plan</a>
+    <a href="develop/index.html">Build and test</a>
+    <a href="versions/index.html">Release history</a>
+    <a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">GitHub</a>
+  </div>
+  <div>
+    <h4>VoiceDebrief</h4>
+    <a href="https://voicedebrief.ai">voicedebrief.ai</a>
+    <a href="https://meetscribe.chrome-extension.voicedebrief.ai">MeetScribe for Google Meet</a>
+  </div>
+  <div>
+    <h4>Built on</h4>
+    <a href="https://sgit.ai">sgit.ai</a>
+    <a href="https://pki.sgit.ai">pki.sgit.ai</a>
+    <a href="https://sgit.ai/security/index.html">The vault security model</a>
+  </div>
+</div></footer>
+</body>
+</html>

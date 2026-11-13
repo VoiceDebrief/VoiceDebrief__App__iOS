@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://ios.app.voicedebrief.ai/sitemap.xml
