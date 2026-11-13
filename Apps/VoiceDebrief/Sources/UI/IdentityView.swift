@@ -136,8 +136,10 @@ struct IdentityView: View {
             } else if book.user == nil {
                 Text("Make your identity first.").foregroundStyle(.secondary)
             } else {
-                Button("Connect with pki.sgit.ai") { Task { await connectInApp() } }
-                Button("Open pki.sgit.ai in the browser instead") { connectInBrowser() }
+                if PKIDelegation.returnsToTheApp {
+                    Button("Connect with pki.sgit.ai") { Task { await connectInApp() } }
+                }
+                Button(PKIDelegation.returnsToTheApp ? "Open pki.sgit.ai in the browser instead" : "Open pki.sgit.ai to connect") { connectInBrowser() }
                 if book.hasPendingRequest {
                     TextField("Paste the address you were sent back to", text: $pasted, axis: .vertical)
                         .lineLimit(1...4)

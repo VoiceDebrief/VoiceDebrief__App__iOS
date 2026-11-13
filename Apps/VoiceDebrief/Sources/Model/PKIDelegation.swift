@@ -27,6 +27,10 @@ enum PKIDelegation {
     /// The asking site: the app's own, so that the answer comes back to an address iOS hands to the app.
     static let client = "https://ios.app.voicedebrief.ai"
     static let returnAddress = "https://ios.app.voicedebrief.ai/identity/return/"
+    /// Whether iOS hands the return address to the app. It does only when the site publishes an
+    /// apple-app-site-association file naming the app (which needs the Apple team id) and the app carries the
+    /// Associated Domains entitlement for the site. Neither is in place, so the answer is pasted in by hand.
+    static let returnsToTheApp = false
 
     struct Request: Equatable, Sendable {
         var client: String

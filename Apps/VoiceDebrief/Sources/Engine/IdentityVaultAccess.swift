@@ -5,7 +5,7 @@ import SGitVault
 ///
 /// To the `work/local-vaults` session, which owns `VaultBook`: this file reaches a vault with what `VaultBook`
 /// exposes today (v0.1.7: every vault is on one server, with one access token). It exists so that nothing of
-/// yours had to change. When `VaultBook` gains a way to commit arbitrary files (see issue 019), the body of
+/// yours had to change. When `VaultBook` gains a way to commit arbitrary files (see issue 025), the body of
 /// `write` becomes one call to it and the token lookup below goes away.
 @MainActor
 enum IdentityVaultAccess {

@@ -40,6 +40,8 @@ const PAGES = [
     description: 'An idea: voice as the way in from every screen, why the live words matter, and more than one interface to try.' },
   { path: 'articles/synthetic-users', nav: null, title: 'Synthetic users for an app its builder cannot see',
     description: 'A brief: invented users walking screenshots of every screen to find where a real one would get lost.' },
+  { path: 'identity/return', nav: null, title: 'Back from pki.sgit.ai: hand the answer to the app',
+    description: 'The page pki.sgit.ai sends a person back to after they vouch for the VoiceDebrief app on a device: how to hand the answer in the address to the app.' },
   { path: 'develop',  nav: 'Build',    title: 'Build, test and release VoiceDebrief for iOS',
     description: 'How the repository is laid out, how CI compiles and tests the app on a Mac, how the site is built, and how a release is made.' },
   { path: 'versions', nav: null,       title: 'VoiceDebrief for iOS release history',
