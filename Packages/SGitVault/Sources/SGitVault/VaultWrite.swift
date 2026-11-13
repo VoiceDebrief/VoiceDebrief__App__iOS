@@ -22,6 +22,29 @@ public struct VaultBatchOperation: Sendable {
         if let match { out["match"] = match.base64EncodedString() }
         return out
     }
+
+    /// The most operations in one batch, and the most bytes (before base64): a request stays well under
+    /// what the server accepts. One object larger than this travels alone.
+    public static let batchCount = 50
+    public static let batchBytes = 3_000_000
+
+    /// Splits operations into batches of at most `batchCount` operations and `batchBytes` bytes, in order.
+    public static func batches(_ operations: [VaultBatchOperation]) -> [[VaultBatchOperation]] {
+        var out: [[VaultBatchOperation]] = []
+        var current: [VaultBatchOperation] = []
+        var size = 0
+        for operation in operations {
+            if !current.isEmpty, current.count >= batchCount || size + operation.data.count > batchBytes {
+                out.append(current)
+                current = []
+                size = 0
+            }
+            current.append(operation)
+            size += operation.data.count
+        }
+        if !current.isEmpty { out.append(current) }
+        return out
+    }
 }
 
 public enum VaultBatchResult: Sendable, Equatable {
@@ -185,12 +208,10 @@ extension SGitVault {
             tail.append(VaultBatchOperation(op: .writeIfMatch, fileId: indexPath, data: newIndex, match: indexRaw))
         }
 
-        // Objects in chunks first (they are immutable, so a partial upload is harmless), then ref and index together.
-        let chunk = 50
+        // Objects in batches first (they are immutable, so a partial upload is harmless), then ref and index together.
         var uploaded = 0
         var bytes = 0
-        for startIndex in stride(from: 0, to: operations.count, by: chunk) {
-            let part = Array(operations[startIndex..<min(startIndex + chunk, operations.count)])
+        for part in VaultBatchOperation.batches(operations) {
             let t = ContinuousClock.now
             let result = try await writer.batch(vaultId: address.vaultId, writeKey: writeKeyHex,
                                                 accessToken: accessToken, operations: part)
