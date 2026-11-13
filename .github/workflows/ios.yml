@@ -90,6 +90,9 @@ jobs:
               CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
 
       - name: Release build (iOS device, unsigned)
+        # dev only: a work/ branch gets the simulator build and the iPhone tests, which is what
+        # finds nearly every fault, in about half the time on a Mac. dev still runs everything.
+        if: github.ref == 'refs/heads/dev'
         run: |
           .github/scripts/run-and-summarize.sh "Release build" "$RUNNER_TEMP/logs/release.log" -- \
             xcodebuild build -project "$PROJECT" -scheme "$SCHEME" -configuration Release \
@@ -135,6 +138,9 @@ jobs:
 
       # After the upload: the same logic tests again on an iPad. A failure here still fails the run.
       - name: Unit tests on the iPad simulator
+        # dev only: a work/ branch gets the simulator build and the iPhone tests, which is what
+        # finds nearly every fault, in about half the time on a Mac. dev still runs everything.
+        if: github.ref == 'refs/heads/dev'
         timeout-minutes: 20
         run: |
           u=$(.github/scripts/pick-simulator.py iPad)

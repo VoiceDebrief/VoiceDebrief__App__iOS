@@ -115,10 +115,10 @@ struct NoteTitleTests {
         #expect(groups[2].notes.map(\.id) == ["old"])
     }
 
-    @Test func aSaveIntoAVaultIsRememberedOnTheNote() throws {
-        let root = Self.temporaryRoot()
+    @Test @MainActor func aSaveIntoAVaultIsRememberedOnTheNote() throws {
+        let root = NoteStoreTests.temporaryRoot()
         let store = NoteStore(root: root)
-        let note = try #require(store.create(audioAt: try Self.audioFile(), source: "Recorded here", localeId: "en-GB"))
+        let note = try #require(store.create(audioAt: try NoteStoreTests.audioFile(), source: "Recorded here", localeId: "en-GB"))
         store.recordSave(note.id, save: nil, problem: "No network")
         #expect(store.note(note.id)?.saveProblem == "No network")
         store.recordSave(note.id, save: NoteSave(vaultId: "abcd1234", vaultName: "Notes", at: Date(timeIntervalSince1970: 0)), problem: nil)
