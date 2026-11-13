@@ -25,3 +25,5 @@ One file per piece of work: `open/NNN-slug.md`, moved to `done/` when it is done
 | 020 | Show the flow as it happens | 013 for the full record |
 | 021 | Analyse while recording: a graph, a title, pictures | |
 | 022 | Finishing saves to the vault; discarding is awkward | 011, 014 |
+| 023 | Files over 4 MB in a vault | |
+| 024 | A clean text and clarifying questions | |
