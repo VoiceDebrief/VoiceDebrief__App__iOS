@@ -21,6 +21,10 @@ Every page has a markdown twin: replace index.html with index.md.
   seen working, unconfirmed, or decided and not built. Explains; the reality file certifies.
 - https://ios.app.voicedebrief.ai/conductors/index.html : FOR AN AGENT OR PERSON WHO WANTS TO RECEIVE NOTES. How
   to make an inbox with tools/conductor/conductor.py, hand out its QR code or link, and open what arrives.
+- https://ios.app.voicedebrief.ai/credit/index.html : credit. IN TEST, NO MONEY CHANGES HANDS: a ledger on the device in
+  micro-credits (a millionth of a pound), placeholder prices, a balance that may go below zero with nothing
+  blocked, a simulated top-up. What Apple requires for a real one (in-app purchase, sandbox in TestFlight), what
+  the owner must create, and why nothing stops someone editing their own balance.
 - https://ios.app.voicedebrief.ai/plan/index.html : the implementation plan. Mostly PROPOSED:
   the pipeline on Apple's models, the passkey account (door, master, debriefs vault), the vault
   layout, the identity, the repository and CI, milestones, risks, and what was decided since.

@@ -68,6 +68,7 @@ final class Cleaner {
                 result.passages[index].clean = made.clean.isEmpty ? nil : made.clean
                 result.passages[index].questions = made.questions
                 if made.clean.isEmpty { result.passages[index].problem = "The model returned nothing for this passage." }
+                else { CreditLedger.shared.charge(.cleanPassage, noteId: noteId) }
             } catch {
                 result.passages[index].problem = error.localizedDescription
             }

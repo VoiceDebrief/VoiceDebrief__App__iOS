@@ -46,6 +46,7 @@ struct RecordView: View {
             .navigationTitle("VoiceDebrief")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                ToolbarItem(placement: .topBarLeading) { CreditCounter() }
                 ToolbarItem(placement: .topBarTrailing) {
                     LanguageMenu()
                         .disabled(session.isBusy)

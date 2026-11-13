@@ -234,6 +234,7 @@ final class DebriefSession {
             publish(finished: true)
             return
         }
+        CreditLedger.shared.charge(.transcript, quantity: current.audioSeconds ?? 0, noteId: noteId)
         publish()
 
         // 2. Debrief. A failure here degrades: the transcript stands on its own.
@@ -275,6 +276,7 @@ final class DebriefSession {
                 debrief = try await OnDeviceModel.respond(to: DebriefPrompt.merge(notes: notes.joined(separator: "\n\n"), voice: voice))
             }
             current.debrief = debrief
+            CreditLedger.shared.charge(.debrief, noteId: noteId)
             current.debriefHasAllSections = DebriefPrompt.hasAllSections(debrief)
             let note = chunks.count > 1 ? "Read in \(chunks.count) parts" : "One request"
             finish(&current, outcome: current.debriefHasAllSections ? .done : .degraded, since: started,

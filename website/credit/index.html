@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Credit in VoiceDebrief for iOS: a balance that counts down, and how a top-up will be paid for</title>
+<meta name="description" content="The credit ledger, the placeholder prices, what happens below zero, the simulated top-up, what Apple requires for a real one, what the owner must create in App Store Connect, and why nothing stops someone changing their own balance.">
+<link rel="canonical" href="https://ios.app.voicedebrief.ai/credit/index.html">
+<meta property="og:url" content="https://ios.app.voicedebrief.ai/credit/index.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="VoiceDebrief for iOS">
+<meta property="og:title" content="Credit in VoiceDebrief for iOS: a balance that counts down, and how a top-up will be paid for">
+<meta property="og:description" content="The credit ledger, the placeholder prices, what happens below zero, the simulated top-up, what Apple requires for a real one, what the owner must create in App Store Connect, and why nothing stops someone changing their own balance.">
+<link rel="alternate" type="text/markdown" href="index.md" title="This page as markdown">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/vd-tokens.css">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+
+<nav class="site"><div class="row">
+  <a class="brand" href="../index.html">Voice<em>Debrief</em> <span>iOS</span></a>
+  <span class="beta" title="In development: there is nothing to install yet">IN DEVELOPMENT</span>
+  <a class="parent" href="https://voicedebrief.ai" title="A VoiceDebrief product">&#8599; part of <b>voicedebrief.ai</b></a>
+  <a class="ver" href="../versions/index.html" title="Release history">v0.1.9</a>
+  <a class="nl" href="../built/index.html">Built</a>
+  <a class="nl" href="../architecture/index.html">How it works</a>
+  <a class="nl" href="../design/index.html">Design</a>
+  <a class="nl" href="../plan/index.html">Plan</a>
+  <a class="nl" href="../articles/index.html">Articles</a>
+  <a class="nl" href="../develop/index.html">Build</a>
+  <a class="gh" href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">&#9733; GitHub</a>
+</div></nav>
+
+<main class="doc">
+<div class="crumb"><a href="../index.html">VoiceDebrief iOS</a> / credit</div>
+<h1 id="credit-a-balance-that-counts-down-and-how-a-top-up-will-be-paid-for">Credit: a balance that counts down, and how a top-up will be paid for</h1>
+<p>The app keeps a credit balance. It starts at £5.00, counts down as the app is used, may go below zero, and is topped up by paying. The model is the reading meter of <a href="https://newsroom.sgit.ai/meter/index.html">newsroom.sgit.ai</a>: an honesty box, not a paywall.</p>
+<blockquote><p>In test, and <strong>no money changes hands</strong>. The app has the ledger, the price list, the counter, the credit screen and a simulated top-up. Paying through the App Store is written and switched off: it has never run. Every price is a placeholder. <a href="../built/index.html">What is built</a> is the record.</p></blockquote>
+<h2 id="what-the-app-does-today">What the app does today</h2>
+<div class="tablewrap"><table>
+<thead><tr><th></th><th></th></tr></thead>
+<tbody>
+<tr><td>The unit</td><td>The <strong>micro-credit</strong>: one millionth of a pound, always a whole number. A penny is 10,000. Shown as pounds and pence, to a tenth of a penny (£4.962)</td></tr>
+<tr><td>Starting credit</td><td>£5.00, written as the first entry of a new ledger. A placeholder</td></tr>
+<tr><td>What is charged</td><td>A transcript, by the second of audio; a debrief; a clean text, by the passage. Charged when the step has produced something: a step that fails costs nothing. Running a note again is charged again</td></tr>
+<tr><td>What is never charged</td><td>Recording. Capture without loss is the app's first rule, and credit never stops, delays or interrupts a recording</td></tr>
+<tr><td>The counter</td><td>The balance, in the navigation bar of the Record and Library screens and as a row in Settings. It changes as things are charged. Pressing it opens the credit screen</td></tr>
+<tr><td>The credit screen</td><td>The balance, what was used and topped up, top-up, every entry newest first with the balance after it, and the price list</td></tr>
+<tr><td>Below zero</td><td>Nothing is blocked and nothing is held back. The balance turns a warmer colour and the credit screen says how far over it is: &quot;Nothing is blocked, and nothing will be. Top up when it feels fair.&quot; No banner, no reminder</td></tr>
+<tr><td>Declining</td><td>A charge can be declined with a reason (the result was not usable, I did not need it, it was a test, another reason). It is given back as a new entry; the charge stays in the ledger</td></tr>
+<tr><td>Top-up</td><td>One pack of £5.00. In this build it is simulated: the screen says that no money is taken, and the ledger entry reads &quot;Top-up (simulated, no money taken)&quot;</td></tr>
+</tbody></table></div>
+<h3 id="the-prices-all-placeholders">The prices, all placeholders</h3>
+<p>The owner has not set the app's prices. These are in one place in the code (<code>PriceList</code> in <code>Model/Credit.swift</code>) and the credit screen says they are placeholders.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>What</th><th>Placeholder</th><th>Where the figure came from</th></tr></thead>
+<tbody>
+<tr><td>A transcript</td><td>3p a minute of audio, charged by the second</td><td>The plan's &quot;a few pence per minute&quot;</td></tr>
+<tr><td>A debrief</td><td>5p each</td><td>Newsroom's price for an article read to the end</td></tr>
+<tr><td>A clean text</td><td>1p a passage</td><td>Newsroom's price for a page</td></tr>
+<tr><td>Saving a note to a vault</td><td>free, not charged</td><td>No equivalent in newsroom</td></tr>
+<tr><td>Sending a note to a recipient</td><td>free, not charged</td><td>No equivalent in newsroom</td></tr>
+</tbody></table></div>
+<p>At these figures a 76-second note costs 3.8p to transcribe and 5p to debrief, and £5.00 is about 57 such notes.</p>
+<h2 id="where-the-ledger-lives">Where the ledger lives</h2>
+<p>One JSON file on the device, <code>credit-ledger.json</code> in the app's own storage, beside the notes. It is append-only: an entry says what was done, when, for which note, how much of it, what it cost and the balance after it. A declined charge is not removed; a refund is written after it. A top-up is credited once per payment reference.</p>
+<p>The file is one device's log, with a random name for the device. That is the shape it needs to live in the user's vault later: two devices' logs join by taking every entry once, and the balance is the sum of the amounts, which does not depend on the order. Keeping it in the vault is <span class="chip chip-proposed">proposed</span>, and waits for the account.</p>
+<p>Deleting the app deletes the ledger, and a new install starts again at £5.00.</p>
+<h2 id="how-this-differs-from-newsroom-and-why">How this differs from newsroom, and why</h2>
+<div class="tablewrap"><table>
+<thead><tr><th>Newsroom</th><th>The app</th><th>Why</th></tr></thead>
+<tbody>
+<tr><td>Counts in pence and tenths of a penny</td><td>Counts in micro-credits</td><td>A second of audio costs less than a tenth of a penny</td></tr>
+<tr><td>Charges for reading, by the share of a page read</td><td>Charges for work done by a model, by the minute or by the thing</td><td>There is nothing to read by degrees</td></tr>
+<tr><td>Keeps running totals and the last 500 charges</td><td>Keeps every entry, and the balance is their sum</td><td>A ledger that will be shared between devices cannot be a pair of running totals</td></tr>
+<tr><td>Pays through a Stripe payment link, or a simulated cart with no link</td><td>Will pay through the App Store, or a simulated payment until then</td><td>Apple's rules, below</td></tr>
+<tr><td>A usefulness rating sets the price</td><td>Not built</td><td>The app has no rating of a result yet. Declining with a reason is built</td></tr>
+</tbody></table></div>
+<h2 id="what-apple-requires-checked-on-13-november-2026">What Apple requires, checked on 13 November 2026</h2>
+<p><strong>Credit spent inside the app must be bought by in-app purchase.</strong> Apple's App Review Guidelines, 3.1.1: &quot;If you want to unlock features or functionality within your app, (by way of example: subscriptions, in-game currencies, game levels, access to premium content, or unlocking a full version), you must use in-app purchase.&quot; Apple Pay is named only for the other case, 3.1.3(e), goods and services consumed outside the app. So a top-up cannot be Apple Pay, a card form or a Stripe link. The same guideline says: &quot;Any credits or in-game currencies purchased via in-app purchase may not expire.&quot; (<a href="https://developer.apple.com/app-store/review/guidelines/#in-app-purchase">App Review Guidelines</a>)</p>
+<p><strong>A TestFlight build can make purchases that take no money.</strong> Apple's StoreKit documentation: &quot;Apps that you download from TestFlight always run in the sandbox environment&quot;, and &quot;Transactions from test accounts don’t incur charges because the sandbox environment simulates successful transactions using the App Store's infrastructure without processing actual payments.&quot; (<a href="https://developer.apple.com/documentation/storekit/testing-in-app-purchases-with-sandbox">Testing Apple In-App Purchases with sandbox</a>)</p>
+<p><strong>But only once the products exist.</strong> The same page lists what must be true first: the Apple Developer Program account is active; &quot;Your membership Account Holder has signed the Paid Applications Agreement&quot;; and &quot;You set up the product information in App Store Connect for the app you’re testing. At minimum, set up a product reference name, product ID, a localized name, and a price.&quot; Until then the App Store returns no products, and the app has nothing real to offer. That is why the top-up in this build is simulated.</p>
+<p>Not checked here: Apple's commission on each purchase, the banking and tax forms the agreement asks for, and what App Review will say about a balance that goes below zero and is paid afterwards. The last is worth asking before the first submission.</p>
+<h2 id="what-the-owner-must-create-to-switch-it-on">What the owner must create to switch it on</h2>
+<ol>
+<li>In App Store Connect, under Business, sign the <strong>Paid Applications Agreement</strong> (the Account Holder does this), with the banking and tax details it asks for.</li>
+<li>For the app <code>ai.voicedebrief.app</code>, under Monetization, In-App Purchases, create one product:</li>
+</ol>
+<div class="tablewrap"><table>
+<thead><tr><th>Field</th><th>Value</th></tr></thead>
+<tbody>
+<tr><td>Type</td><td>Consumable</td></tr>
+<tr><td>Product ID</td><td><code>ai.voicedebrief.app.credit.500</code></td></tr>
+<tr><td>Reference name</td><td>Credit, £5</td></tr>
+<tr><td>Display name</td><td>£5 of credit</td></tr>
+<tr><td>Price</td><td>The tier nearest £5 (the owner's decision)</td></tr>
+</tbody></table></div>
+<ol>
+<li>Tell this repository it is done. <code>Payments.appStoreIsOn</code> in <code>Engine/Payments.swift</code> is then set to true, and the credit screen offers what the App Store returns instead of the simulated pack. A second pack is one more line in <code>Payments.catalogue</code> and one more product with the matching id.</li>
+</ol>
+<p>StoreKit 2 needs no capability and no Info.plist key in the Xcode project, so nothing else changes. The App Store provider (<code>AppStorePayments</code>) is <span class="chip chip-unverified">unverified</span>: it compiles, it is covered by no test, and it has never met the App Store. It records the top-up in the ledger before it tells the App Store the purchase was delivered, and on opening the credit screen it collects any purchase that was paid for and never recorded.</p>
+<h2 id="what-stops-someone-changing-their-own-balance">What stops someone changing their own balance</h2>
+<p>Nothing, and this page says so on purpose. The app has no server of ours, and the ledger is a file on the user's own device: someone who can edit it changes their own balance, and deleting the app wipes a negative one.</p>
+<p>Newsroom has the same question and answers it in <a href="https://newsroom.sgit.ai/meter/security.html">its security model</a>: every way of cheating changes a number only the cheater can see, and costs the site a payment it was never going to get, because the meter never blocks anything. Its own line is the one that matters here: &quot;If the balance unlocked something, it would have to be held by a server or a signed receipt.&quot;</p>
+<p>The app is in the same position today, because nothing is held back below zero. What would make the balance trustworthy, none of it built:</p>
+<ul>
+<li><strong>App Store receipts for top-ups</strong> <span class="chip chip-proposed">proposed</span>. Each StoreKit transaction is signed by Apple and verified on the device. Keeping the signed transaction with the ledger entry makes every top-up checkable by anyone, with no server. This makes the credit side honest; it does nothing for the charges.</li>
+<li><strong>A signed ledger in the vault</strong> <span class="chip chip-proposed">proposed</span>. Each device signs its entries with the device key the <a href="../articles/where-each-key-lives/index.html">identity work</a> describes, and the log is committed to the user's vault. That gives history that cannot be quietly rewritten after it has been pushed, and the same balance on every device. It still trusts the device to write its own charges.</li>
+<li><strong>Asking Apple what has been bought</strong> <span class="chip chip-proposed">proposed</span>. By default StoreKit does not return finished consumable purchases. With the Info.plist key <code>SKIncludeConsumableInAppPurchaseHistory</code> set to true (iOS 18 and later) it does, so a new install could rebuild the top-ups from Apple instead of from the file. Apple's own note on that key asks for &quot;a way to reconcile a customer's consumable transactions on your server, not only on the device&quot;, which this app does not have. It needs an edit to the Xcode project. (<a href="https://developer.apple.com/documentation/bundleresources/information-property-list/skincludeconsumableinapppurchasehistory">the key</a>)</li>
+</ul>
+<p>None of these stops a determined owner of the device from not recording a charge. Only a server that does the work, or meters it, can. The plan has no such server, so the position for now is newsroom's: an honesty box, said plainly.</p>
+<h2 id="decisions-that-are-the-owner-s">Decisions that are the owner's</h2>
+<ul>
+<li>The prices, and whether saving and sending are charged.</li>
+<li>The starting credit (£5.00 now).</li>
+<li>What happens below zero: nothing now. A limit, or a reminder, would be a change of position.</li>
+<li>The top-up amounts and their product ids (one pack of £5.00 now).</li>
+<li>Whether running a note again is charged again (it is now).</li>
+</ul>
+</main>
+
+<footer class="site"><div class="cols">
+  <div>
+    <div class="brandline">Voice<em>Debrief</em> <span>iOS</span></div>
+    <p>The VoiceDebrief transcript and debrief as a native iPhone and iPad app, on Apple's own models, with the results in a vault you own. In development: there is nothing to install yet. Content CC BY 4.0; code Apache 2.0.</p>
+    <p class="partnote">This site is static and has no analytics.</p>
+    <p class="verline">site v0.1.9 · <a href="index.md">this page as markdown</a> · <a href="../llms.txt">llms.txt</a></p>
+  </div>
+  <div>
+    <h4>The app</h4>
+    <a href="../built/index.html">What is built</a>
+    <a href="../plan/index.html">The plan</a>
+    <a href="../develop/index.html">Build and test</a>
+    <a href="../versions/index.html">Release history</a>
+    <a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">GitHub</a>
+  </div>
+  <div>
+    <h4>VoiceDebrief</h4>
+    <a href="https://voicedebrief.ai">voicedebrief.ai</a>
+    <a href="https://meetscribe.chrome-extension.voicedebrief.ai">MeetScribe for Google Meet</a>
+  </div>
+  <div>
+    <h4>Built on</h4>
+    <a href="https://sgit.ai">sgit.ai</a>
+    <a href="https://pki.sgit.ai">pki.sgit.ai</a>
+    <a href="https://sgit.ai/security/index.html">The vault security model</a>
+  </div>
+</div></footer>
+</body>
+</html>

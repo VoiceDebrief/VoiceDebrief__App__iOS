@@ -24,6 +24,8 @@ const PAGES = [
     description: 'The parts of the app, the life of a recording, a vault from the inside, lanes, the four keys and two devices, with what is seen working, what is unconfirmed and what is decided but not built.' },
   { path: 'conductors', nav: null, title: 'Receiving VoiceDebrief notes: how to become a recipient',
     description: 'For a person or an agent session that wants to receive voice notes from the app: make an inbox (a key pair, a vault, a lane), hand out its QR code or link, and open what arrives.' },
+  { path: 'credit', nav: null, title: 'Credit in VoiceDebrief for iOS: a balance that counts down, and how a top-up will be paid for',
+    description: 'The credit ledger, the placeholder prices, what happens below zero, the simulated top-up, what Apple requires for a real one, what the owner must create in App Store Connect, and why nothing stops someone changing their own balance.' },
   { path: 'design',   nav: 'Design',   title: 'The VoiceDebrief iOS design: a recorder that does not lose things',
     description: 'What the app should look like and how it should behave: the three jobs, the decisions, the screens and three builds, agreed between a product agent and a design agent.' },
   { path: 'plan',     nav: 'Plan',     title: 'The VoiceDebrief iOS plan',
