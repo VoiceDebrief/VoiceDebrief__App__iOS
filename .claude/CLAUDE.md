@@ -40,8 +40,10 @@ passkey. The plan is `website/plan/index.md`. Load-bearing decisions, not to be 
 - **The site**: each page is `website/<path>/index.md`; run `node website/admin/build.mjs` and
   commit the generated `index.html`. A page added, moved or removed updates `website/llms.txt` in
   the same commit.
-- **Releases**: set the next version in `version`, add a row to `website/versions/index.md`, push to
-  `dev`. CI tags a version that has no tag yet.
+- **The version**: the `version` file is owned by CI. **Never edit it.** Every push to `dev` is a release:
+  CI takes the latest tag, adds one, writes `version` and the README badge, tags, and stamps the site. The
+  app's TestFlight version is that tag. Describe your change in a row headed `next` at the top of
+  `website/versions/index.md`; whoever next edits the page after CI has tagged writes the number in.
 - **Work tracking**: `issues/open/NNN-slug.md` and `issues/done/`, one file each.
 - **Style**: British English, no em-dashes, plain statements. Code is Apache 2.0; content CC BY 4.0.
 - **Tests**: Swift Testing in the app, XCTest in `SGitVault` (as it came). No invented model or
@@ -51,9 +53,10 @@ passkey. The plan is `website/plan/index.md`. Load-bearing decisions, not to be 
 
 Several sessions may work at once. Each works on a branch named `work/<topic>`: a push there is built
 and tested by `ios.yml` (no TestFlight upload). When the branch is green, merge `origin/dev` into it,
-take the next free version in `version` and `website/versions/index.md`, push the branch, wait for
-green again, then push the same commit to `dev`. Never rebase or force-push. Keep to the files your
-brief names; `version`, the versions page, the reality file and `issues/README.md` are shared and are
+push the branch, wait for green again, then push the same commit to `dev`. Never rebase or force-push.
+Never touch `version`: CI assigns the number when the push reaches `dev`, so two sessions cannot want
+the same one. CI adds a small commit to `dev` after every push, so pull before you push. Keep to the
+files your brief names; the versions page, the reality file and `issues/README.md` are shared and are
 reconciled at merge time. Only one session at a time edits the Xcode project file.
 
 ## Where the project is going (read `website/articles/` before proposing anything large)
