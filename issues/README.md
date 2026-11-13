@@ -20,3 +20,9 @@ One file per piece of work: `open/NNN-slug.md`, moved to `done/` when it is done
 | 016 | Screens and synthetic users | |
 | 017 | Vault keys in iCloud Keychain, on by default | |
 | 018 | User key, device key, vouching, pki.sgit.ai | |
+| 019 | Lanes are recipients; an inbox | 014 |
+| 020 | Show the flow as it happens | 013 for the full record |
+| 021 | Analyse while recording: a graph, a title, pictures | |
+| 022 | Finishing saves to the vault; discarding is awkward | 011, 014 |
+| 023 | Files over 4 MB in a vault | |
+| 024 | A clean text and clarifying questions | |
