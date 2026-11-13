@@ -62,13 +62,13 @@
 <text class="s" x="282" y="346" text-anchor="start">The WAV becomes a</text>
 <text class="s" x="282" y="361" text-anchor="start">small .m4a, kept only if</text>
 <text class="s" x="282" y="376" text-anchor="start">it reads back whole</text>
-<rect class="box live" x="506" y="294" width="206" height="96" rx="10"/>
+<rect class="box test" x="506" y="294" width="206" height="96" rx="10"/>
 <text class="t" x="518" y="316"></text>
 <circle class="n" cx="528" cy="318" r="11"/><text class="nt" x="528" y="322" text-anchor="middle">7</text>
 <text class="t" x="548" y="323" text-anchor="start">Save to a vault</text>
-<text class="s" x="520" y="346" text-anchor="start">By choice. Each file</text>
-<text class="s" x="520" y="361" text-anchor="start">encrypted, one signed</text>
-<text class="s" x="520" y="376" text-anchor="start">commit</text>
+<text class="s" x="520" y="346" text-anchor="start">On finishing, unless</text>
+<text class="s" x="520" y="361" text-anchor="start">switched off. Encrypted,</text>
+<text class="s" x="520" y="376" text-anchor="start">one signed commit</text>
 <rect class="box live" x="744" y="294" width="206" height="96" rx="10"/>
 <text class="t" x="756" y="316"></text>
 <circle class="n" cx="766" cy="318" r="11"/><text class="nt" x="766" y="322" text-anchor="middle">8</text>

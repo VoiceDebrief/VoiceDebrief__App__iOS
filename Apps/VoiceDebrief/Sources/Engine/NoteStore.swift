@@ -120,6 +120,14 @@ final class NoteStore {
         write(notes[index])
     }
 
+    /// Records that a note was saved into a vault, or why it was not.
+    func recordSave(_ id: String, save: NoteSave?, problem: String?) {
+        guard let index = notes.firstIndex(where: { $0.id == id }) else { return }
+        if let save { notes[index].saves = (notes[index].saves ?? []) + [save] }
+        notes[index].saveProblem = problem
+        write(notes[index])
+    }
+
     /// Sets or clears a note's clean text, and writes it.
     func setClean(_ id: String, _ clean: CleanText?) {
         guard let index = notes.firstIndex(where: { $0.id == id }) else { return }
