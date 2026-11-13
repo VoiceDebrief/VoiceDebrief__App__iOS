@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Where each key lives</title>
+<meta name="description" content="A position and a brief: vault keys and the user key travel through iCloud Keychain, the device key never leaves the device, the person vouches for the device, and optionally a delegation from pki.sgit.ai.">
+<link rel="canonical" href="https://ios.app.voicedebrief.ai/articles/where-each-key-lives/index.html">
+<meta property="og:url" content="https://ios.app.voicedebrief.ai/articles/where-each-key-lives/index.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="VoiceDebrief for iOS">
+<meta property="og:title" content="Where each key lives">
+<meta property="og:description" content="A position and a brief: vault keys and the user key travel through iCloud Keychain, the device key never leaves the device, the person vouches for the device, and optionally a delegation from pki.sgit.ai.">
+<link rel="alternate" type="text/markdown" href="index.md" title="This page as markdown">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/vd-tokens.css">
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+
+<nav class="site"><div class="row">
+  <a class="brand" href="../../index.html">Voice<em>Debrief</em> <span>iOS</span></a>
+  <span class="beta" title="In development: there is nothing to install yet">IN DEVELOPMENT</span>
+  <a class="parent" href="https://voicedebrief.ai" title="A VoiceDebrief product">&#8599; part of <b>voicedebrief.ai</b></a>
+  <a class="ver" href="../../versions/index.html" title="Release history">v0.1.7</a>
+  <a class="nl" href="../../built/index.html">Built</a>
+  <a class="nl" href="../../architecture/index.html">How it works</a>
+  <a class="nl" href="../../design/index.html">Design</a>
+  <a class="nl" href="../../plan/index.html">Plan</a>
+  <a class="nl here" href="../../articles/index.html">Articles</a>
+  <a class="nl" href="../../develop/index.html">Build</a>
+  <a class="gh" href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">&#9733; GitHub</a>
+</div></nav>
+
+<main class="doc">
+<div class="crumb"><a href="../../index.html">VoiceDebrief iOS</a> / articles / where-each-key-lives</div>
+<h1 id="where-each-key-lives">Where each key lives</h1>
+<p><em>A position and a brief. From the owner's voice memos of 13 November 2026, written up by the agent. Decided by the owner the same day. None of it is built unless <a href="../../built/index.html">what is built</a> says so.</em></p>
+<h2 id="the-design-in-one-paragraph">The design in one paragraph</h2>
+<p>A passkey, behind Face ID, proves it is you. iCloud Keychain carries your secrets to your other devices, encrypted so that Apple cannot read them. Vaults hold the data, encrypted and version controlled, on a store that sees only ciphertext. Put together: sign in to the same Apple account on a new device, authenticate, the vault keys arrive, the app pulls the vaults, and the same files are there. The vault provides the synchronisation, and when two devices write at once it behaves as git does: the first wins, the second pulls, merges and pushes.</p>
+<h2 id="four-keys-four-homes">Four keys, four homes</h2>
+<div class="tablewrap"><table>
+<thead><tr><th>Key</th><th>What it is for</th><th>Must it travel?</th><th>Where it lives</th></tr></thead>
+<tbody>
+<tr><td>Vault keys, server tokens</td><td>Open and write vaults</td><td>Yes</td><td>iCloud Keychain, synchronised. <strong>On by default</strong> (owner's decision), with a switch to keep them on this device only</td></tr>
+<tr><td>The user's key pair</td><td>Who you are: signs as you, lets others encrypt to you</td><td>Yes</td><td>iCloud Keychain to begin with; the master vault, opened by the passkey, when that is built. Never the Secure Enclave, which cannot let a key out and cannot hold an RSA key</td></tr>
+<tr><td>The device's key pair</td><td>Which device, or which install of the app, did this</td><td>Never</td><td>The Secure Enclave of that device where it can be, otherwise the Keychain marked for this device only. Meant to be lost with the device or the app</td></tr>
+<tr><td>Public halves</td><td>Checking the above</td><td>Freely</td><td>In the vault beside the data. The user's also in a register such as pki.sgit.ai</td></tr>
+</tbody></table></div>
+<p>Two details that follow:</p>
+<ul>
+<li><strong>A synchronised Keychain item cannot also demand Face ID.</strong> That protection exists only for items that stay on one device. It is the main reason the passkey and master vault remain the end state: the passkey is behind Face ID every time, and the keys sit inside a vault rather than loose in the Keychain.</li>
+<li><strong>Keychain items survive deleting an app.</strong> For the device key to die with the app, the app has to wipe it the first time it runs after a reinstall.</li>
+</ul>
+<h2 id="linking-the-device-to-the-person">Linking the device to the person</h2>
+<p>Every commit is already signed by a device key whose public half is in the vault. What is missing is anything that says whose device it is. The addition is a short statement in the vault, signed by the user's key: this device key is mine, from this date, for these uses. A reader then checks two things: the device signed the commit, and the person vouched for the device. Losing a device means withdrawing one statement and nothing else.</p>
+<h2 id="optionally-a-person-in-the-register">Optionally, a person in the register</h2>
+<p>The app must work with no register at all. As an option, the owner can connect it to the identity he already has at <a href="https://pki.sgit.ai">pki.sgit.ai</a>, where his key pair is kept behind a passkey.</p>
+<p>That site already has the flow, &quot;Sign in with pki.sgit.ai&quot;, with no server in between:</p>
+<ol>
+<li>The app makes a key pair and sends the person to <code>pki.sgit.ai/authorize/</code> with a request naming the app's public key, what it wants to do and for how long.</li>
+<li>There, signed in with their passkey, the person reads who is asking and signs a delegation with their own key: this key acts for me at this site, for these uses, until this date.</li>
+<li>The delegation comes back to the app, which keeps it and attaches it to what it signs.</li>
+<li>Anyone can then check, against the register and starting from a root they trust, that the note was signed by a key a registered person vouched for. Withdrawing the link in the register ends it.</li>
+</ol>
+<p>So without the extra step the app proves &quot;the same device signed all of these&quot;. With it, the app proves &quot;a person in the public register stands behind this device&quot;.</p>
+<p>One thing to settle when building: that flow returns its answer to a web address on the asking site, so the app needs a page on its own site that hands the answer back to the app.</p>
+</main>
+
+<footer class="site"><div class="cols">
+  <div>
+    <div class="brandline">Voice<em>Debrief</em> <span>iOS</span></div>
+    <p>The VoiceDebrief transcript and debrief as a native iPhone and iPad app, on Apple's own models, with the results in a vault you own. In development: there is nothing to install yet. Content CC BY 4.0; code Apache 2.0.</p>
+    <p class="partnote">This site is static and has no analytics.</p>
+    <p class="verline">site v0.1.7 · <a href="index.md">this page as markdown</a> · <a href="../../llms.txt">llms.txt</a></p>
+  </div>
+  <div>
+    <h4>The app</h4>
+    <a href="../../built/index.html">What is built</a>
+    <a href="../../plan/index.html">The plan</a>
+    <a href="../../develop/index.html">Build and test</a>
+    <a href="../../versions/index.html">Release history</a>
+    <a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">GitHub</a>
+  </div>
+  <div>
+    <h4>VoiceDebrief</h4>
+    <a href="https://voicedebrief.ai">voicedebrief.ai</a>
+    <a href="https://meetscribe.chrome-extension.voicedebrief.ai">MeetScribe for Google Meet</a>
+  </div>
+  <div>
+    <h4>Built on</h4>
+    <a href="https://sgit.ai">sgit.ai</a>
+    <a href="https://pki.sgit.ai">pki.sgit.ai</a>
+    <a href="https://sgit.ai/security/index.html">The vault security model</a>
+  </div>
+</div></footer>
+</body>
+</html>
