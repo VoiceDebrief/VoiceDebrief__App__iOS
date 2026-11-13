@@ -54,6 +54,6 @@ Each is small enough to test on a device from a screenshot before the next start
 
 ## Open questions for the owner
 
-1. Should saving to a vault be automatic once a vault is chosen? Recommended: yes, behind one switch, off until a vault exists.
-2. May a note ever be sent to a lane automatically? Recommended: not yet; later, per lane, only for lanes the owner added.
+1. Should saving to a vault be automatic once a vault is chosen? Recommended: yes, behind one switch, off until a vault exists. **Answered by the owner, 13 November 2026: yes. Finishing a note saves it to the vault unless it is cancelled; the finishing control is green, and discarding is red, out of the way and takes two presses** (issue 022).
+2. May a note ever be sent to a lane automatically? Recommended: not yet; later, per lane, only for lanes the owner added. **The owner, same day: sending is a main activity, not a fringe one. Lanes are recipients with names, a finished note offers them as buttons, and sending may be automatic per recipient** (issue 019).
 3. Does deleting a note in the app delete it from a vault? Recommended: no.

@@ -336,6 +336,7 @@
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_UIBackgroundModes = audio;
+				INFOPLIST_KEY_NSCameraUsageDescription = "VoiceDebrief uses the camera only to read a QR code when you add a recipient.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "VoiceDebrief records your voice note so it can be transcribed on this device.";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "VoiceDebrief transcribes your voice note on this device with Apple's speech model.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -367,6 +368,7 @@
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_UIBackgroundModes = audio;
+				INFOPLIST_KEY_NSCameraUsageDescription = "VoiceDebrief uses the camera only to read a QR code when you add a recipient.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "VoiceDebrief records your voice note so it can be transcribed on this device.";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "VoiceDebrief transcribes your voice note on this device with Apple's speech model.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;

@@ -10,6 +10,8 @@ struct Note: Codable, Identifiable, Equatable, Sendable {
     var audioName: String?
     /// True from Stop until the pipeline finishes. A note still marked so after a relaunch was interrupted.
     var processing: Bool
+    /// The note rewritten as clear sentences, if that has been asked for (an experiment, issue 024).
+    var clean: CleanText? = nil
 
     /// What a list shows: the debrief's one sentence, else the first words spoken, else when it was made.
     var title: String {

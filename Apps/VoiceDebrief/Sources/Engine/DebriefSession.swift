@@ -329,7 +329,7 @@ final class DebriefSession {
         sharing = .sending(0, 0)
         do {
             let audio = try Data(contentsOf: url)
-            let messages = try DeveloperLane.messages(audio: audio, audioName: url.lastPathComponent, run: note.run,
+            let messages = try DeveloperLane.messages(audio: audio, audioName: url.lastPathComponent, run: note.run, clean: note.clean,
                                                       noteId: noteId, app: AppInfo.versionLine(), at: Date())
             try await lane.send(messages) { done, total in
                 Task { @MainActor [weak self] in self?.sharing = .sending(done, total) }

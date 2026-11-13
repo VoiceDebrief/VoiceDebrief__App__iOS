@@ -114,8 +114,16 @@ final class NoteStore {
     /// Replaces a note's run and whether it is still being processed, and writes it.
     func update(_ id: String, run: DebriefRun, processing: Bool) {
         guard let index = notes.firstIndex(where: { $0.id == id }) else { return }
+        if notes[index].run.transcript != run.transcript { notes[index].clean = nil }   // made from the old words
         notes[index].run = run
         notes[index].processing = processing
+        write(notes[index])
+    }
+
+    /// Sets or clears a note's clean text, and writes it.
+    func setClean(_ id: String, _ clean: CleanText?) {
+        guard let index = notes.firstIndex(where: { $0.id == id }) else { return }
+        notes[index].clean = clean
         write(notes[index])
     }
 

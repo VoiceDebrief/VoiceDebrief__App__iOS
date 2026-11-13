@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Receiving VoiceDebrief notes: how to become a recipient</title>
+<meta name="description" content="For a person or an agent session that wants to receive voice notes from the app: make an inbox (a key pair, a vault, a lane), hand out its QR code or link, and open what arrives.">
+<link rel="canonical" href="https://ios.app.voicedebrief.ai/conductors/index.html">
+<meta property="og:url" content="https://ios.app.voicedebrief.ai/conductors/index.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="VoiceDebrief for iOS">
+<meta property="og:title" content="Receiving VoiceDebrief notes: how to become a recipient">
+<meta property="og:description" content="For a person or an agent session that wants to receive voice notes from the app: make an inbox (a key pair, a vault, a lane), hand out its QR code or link, and open what arrives.">
+<link rel="alternate" type="text/markdown" href="index.md" title="This page as markdown">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/vd-tokens.css">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+
+<nav class="site"><div class="row">
+  <a class="brand" href="../index.html">Voice<em>Debrief</em> <span>iOS</span></a>
+  <span class="beta" title="In development: there is nothing to install yet">IN DEVELOPMENT</span>
+  <a class="parent" href="https://voicedebrief.ai" title="A VoiceDebrief product">&#8599; part of <b>voicedebrief.ai</b></a>
+  <a class="ver" href="../versions/index.html" title="Release history">v0.1.10</a>
+  <a class="nl" href="../built/index.html">Built</a>
+  <a class="nl" href="../architecture/index.html">How it works</a>
+  <a class="nl" href="../design/index.html">Design</a>
+  <a class="nl" href="../plan/index.html">Plan</a>
+  <a class="nl" href="../articles/index.html">Articles</a>
+  <a class="nl" href="../develop/index.html">Build</a>
+  <a class="gh" href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">&#9733; GitHub</a>
+</div></nav>
+
+<main class="doc">
+<div class="crumb"><a href="../index.html">VoiceDebrief iOS</a> / conductors</div>
+<h1 id="receiving-notes-how-to-become-a-recipient">Receiving notes: how to become a recipient</h1>
+<p>A person with VoiceDebrief on their phone can send a voice note, with its transcript and debrief, to anybody who has given them a <strong>lane</strong>. The receiver is called a conductor here: it may be a person at a computer or an agent session. This page is for the conductor.</p>
+<blockquote><p>In test. The receiving script has been run against a live lane. Adding a recipient in the app by QR code is in build 0.1.9 and has not yet been tried on a device. <a href="../built/index.html">What is built</a> is the record.</p></blockquote>
+<h2 id="what-a-lane-is">What a lane is</h2>
+<p>An inbox that anybody holding its link can write to and only its owner can read. The link is one line of text, <code>sgi1.&lt;vault&gt;.&lt;token&gt;.&lt;public key&gt;</code>, optionally followed by <code>#</code> and a name:</p>
+<ul>
+<li>the <strong>vault</strong> says where the inbox is, on the vault server;</li>
+<li>the <strong>token</strong> allows writing to it and nothing else;</li>
+<li>the <strong>public key</strong> is the conductor's. Every note is encrypted to it on the sender's device.</li>
+</ul>
+<p>The link is safe to hand out, show on a screen or put in a QR code. It cannot be used to list or read the inbox. The private key that opens the notes never leaves the conductor.</p>
+<h2 id="set-up-an-inbox">Set up an inbox</h2>
+<p>The script is <a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/tools/conductor/conductor.py"><code>tools/conductor/conductor.py</code></a> in the repository. It needs Python and four packages.</p>
+<pre><code>pip install sgit-ai cryptography requests segno
+python3 conductor.py --token &lt;server access token&gt; setup &quot;Maria Silva&quot;
+python3 conductor.py qr maria.png</code></pre>
+<p><code>setup</code> makes an RSA key pair, an sgit vault on the server and a lane on that vault. Creating a vault needs the server's access token; ask the owner of the project for it. Everything secret is written to <code>~/.voicedebrief-conductor</code> (change it with <code>--home</code>): <strong>keep that folder out of any repository and never paste its contents anywhere.</strong></p>
+<p><code>qr</code> writes the link as a QR code. <code>link</code> prints it as text.</p>
+<h3 id="for-an-agent-session">For an agent session</h3>
+<p>Do not ask for the access token in chat. Ask for it as a credential for the server's host, to be sent in the header <code>x-sgraph-access-token</code>, and pass <code>--token proxy-injected</code>. Keep <code>--home</code> in the session's scratch space. Show the owner the QR code as an image.</p>
+<h2 id="give-it-to-the-sender">Give it to the sender</h2>
+<p>Any of these, whichever is to hand:</p>
+<ol>
+<li><strong>Show the QR code</strong> on a screen. In the app: Settings, Recipients, Scan their QR code.</li>
+<li><strong>Send the picture</strong> of the QR code. In the app: Choose a picture of their QR code.</li>
+<li><strong>Send the link</strong> as text. In the app: paste it.</li>
+</ol>
+<p>The name in the code becomes the recipient's name in the app. From then on every note has a button, Send to Maria Silva.</p>
+<p>A sender who already has a recipient can pass them on: the app shows each recipient's QR code.</p>
+<h2 id="read-what-arrives">Read what arrives</h2>
+<pre><code>python3 conductor.py drain notes/</code></pre>
+<p>Each note becomes a folder: the audio, <code>run.json</code> (the transcript, the debrief, how long each step took) and, if one was made, <code>clean.json</code>. The script checks each audio file against the hash sent with it, says if anything is incomplete, and marks what it fetched as processed.</p>
+<p><code>python3 conductor.py selftest</code> writes one message to the lane and reads it back, to check the inbox is alive.</p>
+<h2 id="what-is-not-here-yet">What is not here yet</h2>
+<ul>
+<li><strong>The way back.</strong> The app does not yet have a QR code of its own, so a conductor cannot write to the app or be given a vault. That needs the app's own key pair and an inbox on its vault, both in progress.</li>
+<li><strong>A link that opens the app.</strong> Today the link is scanned or pasted. A link that adds the recipient when tapped is planned.</li>
+<li><strong>Checking who a key belongs to.</strong> The app shows the key's fingerprint; compare it by eye if it matters. Tying a key to a person on the pki.sgit.ai register is planned.</li>
+</ul>
+</main>
+
+<footer class="site"><div class="cols">
+  <div>
+    <div class="brandline">Voice<em>Debrief</em> <span>iOS</span></div>
+    <p>The VoiceDebrief transcript and debrief as a native iPhone and iPad app, on Apple's own models, with the results in a vault you own. In development: there is nothing to install yet. Content CC BY 4.0; code Apache 2.0.</p>
+    <p class="partnote">This site is static and has no analytics.</p>
+    <p class="verline">site v0.1.10 · <a href="index.md">this page as markdown</a> · <a href="../llms.txt">llms.txt</a></p>
+  </div>
+  <div>
+    <h4>The app</h4>
+    <a href="../built/index.html">What is built</a>
+    <a href="../plan/index.html">The plan</a>
+    <a href="../develop/index.html">Build and test</a>
+    <a href="../versions/index.html">Release history</a>
+    <a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">GitHub</a>
+  </div>
+  <div>
+    <h4>VoiceDebrief</h4>
+    <a href="https://voicedebrief.ai">voicedebrief.ai</a>
+    <a href="https://meetscribe.chrome-extension.voicedebrief.ai">MeetScribe for Google Meet</a>
+  </div>
+  <div>
+    <h4>Built on</h4>
+    <a href="https://sgit.ai">sgit.ai</a>
+    <a href="https://pki.sgit.ai">pki.sgit.ai</a>
+    <a href="https://sgit.ai/security/index.html">The vault security model</a>
+  </div>
+</div></footer>
+</body>
+</html>
