@@ -50,6 +50,16 @@ struct SettingsView: View {
                 }
 
                 Section {
+                    NavigationLink {
+                        CreditView()
+                    } label: {
+                        LabeledContent("Credit", value: Credit.money(CreditLedger.shared.balance))
+                    }
+                } footer: {
+                    Text("Counts down as the app is used and may go below zero. In this test build a top-up is simulated: no money is taken.")
+                }
+
+                Section {
                     NavigationLink("Recipients") { RecipientsView() }
                 } footer: {
                     Text("People, devices and agent sessions a note can be sent to. Add one by scanning its QR code.")

@@ -226,6 +226,7 @@ final class VaultBook {
         let remote = VaultRemote(id: Self.newRemoteId(), name: label.isEmpty ? host : label, url: url)
         remotes.append(remote)
         persistRemotes()
+        CreditLedger.shared.charge(.addServer)
         setToken(token, for: remote)
         return remote
     }
@@ -331,6 +332,7 @@ final class VaultBook {
                                      keyText: created.keyText, addedAt: Date(), createdHere: true,
                                      onDevice: true, localHead: created.commitId))
             persist()
+            CreditLedger.shared.charge(.createVault)
             log.record(VaultTrafficEvent(kind: .verify, path: "create", detail: "created vault \(created.key.vaultId) on this device: empty tree, one signed commit, branch current, branch index", vaultId: created.key.vaultId))
         } catch {
             problem = "The vault was not created: \(Self.describe(error))"
@@ -359,6 +361,7 @@ final class VaultBook {
                                      keyText: text, addedAt: Date(), createdHere: false,
                                      onDevice: false, remoteId: remote.id, remoteHead: head.commitId, syncedAt: Date()))
             persist()
+            CreditLedger.shared.charge(.addVault)
         } catch {
             problem = "The vault was not added: \(Self.describe(error))"
         }
@@ -451,6 +454,7 @@ final class VaultBook {
                     $0.syncedAt = Date()
                     $0.pushProblem = nil
                 }
+                if result.outcome != .upToDate { CreditLedger.shared.charge(.pushVault) }
                 notice = result.outcome == .upToDate
                     ? "\(remote.name) already had everything."
                     : "Pushed \(result.commits) \(result.commits == 1 ? "commit" : "commits") to \(remote.name) (\(result.objects) objects, \(result.bytes.vaultByteString))."
@@ -487,6 +491,7 @@ final class VaultBook {
                     $0.pushProblem = nil
                 }
                 opened[vault.id] = nil
+                if result.outcome != .upToDate { CreditLedger.shared.charge(.pullVault) }
                 notice = result.outcome == .upToDate
                     ? "This device already had everything on \(remote.name)."
                     : "Fetched \(result.commits) \(result.commits == 1 ? "commit" : "commits") from \(remote.name) (\(result.objects) objects, \(result.bytes.vaultByteString))."
@@ -563,6 +568,7 @@ final class VaultBook {
         update(vault.id) {
             if $0.onDevice { $0.localHead = head } else { $0.remoteHead = head; $0.syncedAt = Date() }
         }
+        CreditLedger.shared.charge(.saveToVault, quantity: Double(files.count))
         let bytes = result.bytesUploaded.vaultByteString
         let written = "Saved \(files.count) files in one signed commit (\(result.objectsUploaded) objects, \(bytes))"
         if let server { return "\(written) on \(server.name)." + note }

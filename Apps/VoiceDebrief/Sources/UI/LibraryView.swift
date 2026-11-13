@@ -30,6 +30,7 @@ struct LibraryView: View {
                 }
             }
             .navigationTitle("Library")
+            .toolbar { ToolbarItem(placement: .topBarTrailing) { CreditCounter() } }
             .navigationDestination(for: String.self) { id in
                 NoteDetailView(noteId: id, session: session, book: book)
             }
