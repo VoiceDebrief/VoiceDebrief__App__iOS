@@ -12,7 +12,7 @@ Config/                       Local.xcconfig.example, for building on your own d
 .github/scripts/              select Xcode, pick a simulator, copy errors into the job summary
 website/                      this site: markdown sources, the builder and the gate
 issues/                       open and done work, one file each
-version                       the version, one line
+version                       the version, one line, written by CI only
 ```
 
 The Xcode project uses folder-synchronised groups: a Swift file added under `Apps/VoiceDebrief/Sources/` is part of the app without editing the project file. Resources are copied flat into the bundle, so two resource files with the same name break the build.
@@ -32,7 +32,7 @@ cd Packages/SGitVault && swift test          # the vault engine, on the Mac itse
 | `ios.yml` | A push to `dev` or to a `work/` branch, or a pull request, that touches `Apps/`, `Packages/` or the workflow. Only `dev` uploads to TestFlight | One Mac job: the vault engine's tests, a simulator build, a Release device build (unsigned), then the app's unit tests on an iPhone and an iPad simulator |
 | `ios-vault.yml` | A change to the vault write path, every Monday, or by hand | Swift writes vaults on a Mac; `sgit-ai` on Linux clones them, verifies every signature and compares every file |
 | `pki-interop.yml` | A change to the app's PKI files or `scripts/pki-interop/`, every Monday, or by hand | `sgit pki` and pki.sgit.ai's `keys.js` make keys, signatures, envelopes, a statement and a sign-in on Linux; the app's PKI files, compiled as a tool on a Mac, read them and make their own; sgit and `keys.js` read those |
-| `site.yml` | Every push and pull request | The gate, then (on `dev`) the release tag and the site |
+| `site.yml` | Every push and pull request | The gate, then (on `dev`) the next version, its tag, and the site |
 
 Builds and tests are unsigned. The last step of `ios.yml` uploads to TestFlight on a green push to `dev`: `scripts/release/testflight.sh` archives unsigned, signs the app with its entitlements, and exports with automatic signing through the App Store Connect API key. It needs the secrets `ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_KEY_P8_BASE64` and the variable `APPLE_TEAM_ID`, and skips itself while any is missing.
 
@@ -55,11 +55,14 @@ The gate fails on a page that is out of date, a broken link or anchor, a key-sha
 
 ## A release
 
-1. Set the next version in the `version` file (a push to `dev` is the next patch number: `v0.1.0` then `v0.1.1`).
-2. Add a row to [the release history](../versions/index.md) and update [What is built](../built/index.md) for anything that changed.
-3. Run the builder and the gate, commit, push to `dev`.
+Every push to `dev` is one. Nobody sets a version.
 
-CI tags the commit with the version if that tag does not exist yet, and publishes the site. A push that does not change the version is not a release: it is built, tested and published, but not tagged.
+1. Add a row headed `next` to [the release history](../versions/index.md) and update [What is built](../built/index.md) for anything that changed.
+2. Push to `dev`.
+
+CI (`site.yml`) takes the latest tag, adds one to its last number, writes the `version` file and the badge in the README, tags that commit, and publishes the site with the number stamped into every page. The pages committed to the repository say `dev` where the number goes. `ios.yml` gives the app the same number: the tag this push was given, with the run number as the build.
+
+Because CI adds a commit to `dev` after every push, pull before pushing.
 
 ## Rules that are easy to break
 

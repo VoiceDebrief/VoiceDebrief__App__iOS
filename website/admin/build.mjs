@@ -10,7 +10,9 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT    = join(dirname(fileURLToPath(import.meta.url)), '..');           // website/
 const CHECK   = process.argv.includes('--check');
-const VERSION = readFileSync(join(ROOT, '..', 'version'), 'utf8').trim();      // the repository's version file
+// CI owns the version: it is stamped in when the site is deployed (SITE_VERSION). The pages committed
+// to the repository carry a placeholder, so that a version change never makes them out of date.
+const VERSION = process.env.SITE_VERSION || 'dev';
 const REPO    = 'https://github.com/VoiceDebrief/VoiceDebrief__App__iOS';
 const SITE    = 'https://' + readFileSync(join(ROOT, 'CNAME'), 'utf8').trim();   // the CNAME file owns the domain
 const pageUrl = (p) => `${SITE}/${p.path ? p.path + '/' : ''}index.html`;

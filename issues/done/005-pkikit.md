@@ -9,7 +9,7 @@ PKCS#8 export and import, envelope v2, detached signatures, sgit's passphrase-pr
 Done when the interop job passes in both directions with `sgit pki`, and fingerprints match the five fixture
 identities published by pki.sgit.ai.
 
-## Done, 13 November 2026 (v0.1.10)
+## Done, 13 November 2026
 
 `Apps/VoiceDebrief/Sources/Engine/PKIKit.swift`, as app code rather than a package for now. `pki-interop.yml`
 passes in both directions with `sgit pki` (sgit-ai 0.27.0) and with pki.sgit.ai's `keys.js` (lib v0.2.28).

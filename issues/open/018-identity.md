@@ -9,7 +9,7 @@ vault, signed by the user key, vouching for the device key. Optionally, a delega
 (`/authorize/`, kinds `pki.sgit.ai/authorize/v1` and `pki.sgit.ai/delegation/v1`) so that a registered person
 stands behind the app's key. The app must work without the register.
 
-## Where it stands (v0.1.10)
+## Where it stands
 
 Built: `PKIKit` (issue 005, done), the Identity screen under Settings, the user's key pair in iCloud Keychain,
 the device key, the vouching statement and its place in a vault, the sign-in request and the check of the
