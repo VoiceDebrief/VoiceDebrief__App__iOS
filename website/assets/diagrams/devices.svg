@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 520" width="980" height="520" role="img" aria-labelledby="t d">
+<title id="t">The same notes on two devices</title>
+<desc id="d">An iPhone and an iPad share nothing directly. iCloud Keychain carries the vault key from one to the other; the vault server carries the encrypted data. When both write, the first wins and the second pulls, merges and pushes.</desc>
+<style>
+  .bg{fill:#F8FAFC} .box{fill:#FFFFFF;stroke:#C9D5E0;stroke-width:1.2} .zone{fill:none;stroke:#9FB2C4;stroke-width:1.2;stroke-dasharray:2 4}
+  .live{stroke:#0E9E72;stroke-width:2} .test{stroke:#8A6A18;stroke-width:1.6} .plan{stroke:#6B7F94;stroke-width:1.4;stroke-dasharray:6 5}
+  .t{font:600 14px -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;fill:#0B1B2B}
+  .s{font:400 12px -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;fill:#45596E}
+  .z{font:600 12px -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;fill:#6B7F94;letter-spacing:.06em}
+  .h{font:700 17px -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;fill:#0B1B2B}
+  .l{font:400 11.5px -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;fill:#45596E}
+  .a{fill:none;stroke:#45596E;stroke-width:1.5} .a.live{stroke:#0E9E72;stroke-width:2} .a.plan{stroke:#6B7F94;stroke-dasharray:6 5}
+  .hd{fill:#45596E} .hd.live{fill:#0E9E72} .hd.plan{fill:#6B7F94} .n{fill:#0E9E72} .nt{font:700 12px -apple-system,Helvetica,Arial,sans-serif;fill:#FFFFFF}
+  .lb{fill:#F8FAFC}
+  @media (prefers-color-scheme: dark){
+    .bg{fill:#08131F} .box{fill:#0E1E2E;stroke:#2B3F53} .zone{stroke:#48607A} .live{stroke:#12C08A} .test{stroke:#F0B429} .plan{stroke:#8CA2B8}
+    .t,.h{fill:#F2F6FA} .s,.l{fill:#A8BBCE} .z{fill:#8CA2B8} .a{stroke:#A8BBCE} .a.live{stroke:#12C08A} .a.plan{stroke:#8CA2B8}
+    .hd{fill:#A8BBCE} .hd.live{fill:#12C08A} .hd.plan{fill:#8CA2B8} .n{fill:#12C08A} .nt{fill:#04231A} .lb{fill:#08131F}
+  }
+</style>
+<rect class="bg" width="980" height="520" rx="14"/>
+<text class="h" x="24" y="34">The same notes on two devices</text>
+<rect class="box live" x="40" y="70" width="250" height="150" rx="10"/>
+<text class="t" x="52" y="92">iPhone</text>
+<text class="s" x="52" y="110">Records a note.</text>
+<text class="s" x="52" y="126">Keeps it in its library.</text>
+<text class="s" x="52" y="142">Commits it to the vault and</text>
+<text class="s" x="52" y="158">pushes: &quot;move the branch,</text>
+<text class="s" x="52" y="174">if it is still where I last</text>
+<text class="s" x="52" y="190">saw it&quot;</text>
+<rect class="box plan" x="690" y="70" width="250" height="150" rx="10"/>
+<text class="t" x="702" y="92">iPad</text>
+<text class="s" x="702" y="110">Signed in to the same Apple</text>
+<text class="s" x="702" y="126">account. Receives the vault</text>
+<text class="s" x="702" y="142">key, pulls the vault, checks</text>
+<text class="s" x="702" y="158">every signature, and shows</text>
+<text class="s" x="702" y="174">the same notes</text>
+<rect class="box plan" x="365" y="60" width="250" height="76" rx="10"/>
+<text class="t" x="377" y="82">iCloud Keychain</text>
+<text class="s" x="377" y="100">The vault key, encrypted so that</text>
+<text class="s" x="377" y="116">only your devices can read it</text>
+<rect class="box live" x="365" y="176" width="250" height="76" rx="10"/>
+<text class="t" x="377" y="198">Vault server</text>
+<text class="s" x="377" y="216">The notes as encrypted objects,</text>
+<text class="s" x="377" y="232">and one pointer: the branch</text>
+<path class="a plan" d="M290 98 L365 98"/>
+<polygon class="hd plan" points="365.0,98.0 356.8,101.7 356.8,94.3"/>
+<path class="a plan" d="M615 98 L690 98"/>
+<polygon class="hd plan" points="690.0,98.0 681.8,101.7 681.8,94.3"/>
+<path class="a live" d="M290 205 L365 205"/>
+<polygon class="hd live" points="365.0,205.0 356.8,208.7 356.8,201.3"/>
+<rect class="lb" x="309" y="186" width="35" height="18" rx="3"/>
+<text class="l" x="327" y="198" text-anchor="middle">push</text>
+<path class="a plan" d="M615 205 L690 205"/>
+<polygon class="hd plan" points="690.0,205.0 681.8,208.7 681.8,201.3"/>
+<rect class="lb" x="634" y="186" width="35" height="18" rx="3"/>
+<text class="l" x="652" y="198" text-anchor="middle">pull</text>
+<rect class="zone" x="40" y="284" width="900" height="176" rx="14"/>
+<text class="z" x="54" y="304">WHEN BOTH WRITE AT ONCE</text>
+<circle class="n" cx="72" cy="330" r="11"/><text class="nt" x="72" y="334" text-anchor="middle">1</text>
+<text class="s" x="92" y="334" text-anchor="start">Both devices commit locally. Nothing has clashed yet.</text>
+<circle class="n" cx="72" cy="362" r="11"/><text class="nt" x="72" y="366" text-anchor="middle">2</text>
+<text class="s" x="92" y="366" text-anchor="start">The iPhone pushes first. The server moves the branch, because it was where the iPhone last saw it.</text>
+<circle class="n" cx="72" cy="394" r="11"/><text class="nt" x="72" y="398" text-anchor="middle">3</text>
+<text class="s" x="92" y="398" text-anchor="start">The iPad pushes. The branch has moved, so the server refuses. Nothing is overwritten.</text>
+<circle class="n" cx="72" cy="426" r="11"/><text class="nt" x="72" y="430" text-anchor="middle">4</text>
+<text class="s" x="92" y="430" text-anchor="start">The iPad pulls, merges and pushes again. Today the app stops at step 3 and says so: the merge is not built.</text>
+<rect class="box live" x="40" y="482" width="26" height="16" rx="4"/><text class="l" x="74" y="494">Seen working on the owner’s devices</text>
+<rect class="box test" x="330" y="482" width="26" height="16" rx="4"/><text class="l" x="364" y="494">In the build, not yet confirmed</text>
+<rect class="box plan" x="620" y="482" width="26" height="16" rx="4"/><text class="l" x="654" y="494">Decided, not built</text>
+</svg>

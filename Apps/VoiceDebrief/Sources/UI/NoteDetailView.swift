@@ -40,6 +40,10 @@ struct NoteDetailView: View {
                     }
                 }
 
+                if let transcript = note.run.transcript, !transcript.isEmpty, session.workingText(for: noteId) == nil {
+                    CleanTextSection(note: note, store: session.store)
+                }
+
                 RunSections(run: note.run)
 
                 if note.run.transcript != nil, !note.processing || session.workingText(for: noteId) == nil {

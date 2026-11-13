@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 640" width="1080" height="640" role="img" aria-labelledby="t d">
+<title id="t">The parts, and what crosses between them</title>
+<desc id="d">The app on a device holds the recorder, Apple’s speech and language models, the library, the vault engine and the keys. Outside it: iCloud Keychain, a vault server, lanes and the pki.sgit.ai register. Only encrypted data and public keys cross.</desc>
+<style>
+  .bg{fill:#F8FAFC} .box{fill:#FFFFFF;stroke:#C9D5E0;stroke-width:1.2} .zone{fill:none;stroke:#9FB2C4;stroke-width:1.2;stroke-dasharray:2 4}
+  .live{stroke:#0E9E72;stroke-width:2} .test{stroke:#8A6A18;stroke-width:1.6} .plan{stroke:#6B7F94;stroke-width:1.4;stroke-dasharray:6 5}
+  .t{font:600 14px -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;fill:#0B1B2B}
+  .s{font:400 12px -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;fill:#45596E}
+  .z{font:600 12px -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;fill:#6B7F94;letter-spacing:.06em}
+  .h{font:700 17px -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;fill:#0B1B2B}
+  .l{font:400 11.5px -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;fill:#45596E}
+  .a{fill:none;stroke:#45596E;stroke-width:1.5} .a.live{stroke:#0E9E72;stroke-width:2} .a.plan{stroke:#6B7F94;stroke-dasharray:6 5}
+  .hd{fill:#45596E} .hd.live{fill:#0E9E72} .hd.plan{fill:#6B7F94} .n{fill:#0E9E72} .nt{font:700 12px -apple-system,Helvetica,Arial,sans-serif;fill:#FFFFFF}
+  .lb{fill:#F8FAFC}
+  @media (prefers-color-scheme: dark){
+    .bg{fill:#08131F} .box{fill:#0E1E2E;stroke:#2B3F53} .zone{stroke:#48607A} .live{stroke:#12C08A} .test{stroke:#F0B429} .plan{stroke:#8CA2B8}
+    .t,.h{fill:#F2F6FA} .s,.l{fill:#A8BBCE} .z{fill:#8CA2B8} .a{stroke:#A8BBCE} .a.live{stroke:#12C08A} .a.plan{stroke:#8CA2B8}
+    .hd{fill:#A8BBCE} .hd.live{fill:#12C08A} .hd.plan{fill:#8CA2B8} .n{fill:#12C08A} .nt{fill:#04231A} .lb{fill:#08131F}
+  }
+</style>
+<rect class="bg" width="1080" height="640" rx="14"/>
+<text class="h" x="24" y="34">The parts, and what crosses between them</text>
+<rect class="zone" x="20" y="52" width="560" height="520" rx="14"/>
+<text class="z" x="34" y="72">ONE DEVICE: IPHONE, IPAD OR MAC</text>
+<rect class="box live" x="40" y="86" width="160" height="74" rx="10"/>
+<text class="t" x="52" y="108">Recorder</text>
+<text class="s" x="52" y="126">Microphone to a WAV file,</text>
+<text class="s" x="52" y="142">written as you speak</text>
+<rect class="box live" x="215" y="86" width="170" height="74" rx="10"/>
+<text class="t" x="227" y="108">Speech model</text>
+<text class="s" x="227" y="126">Apple, on the device:</text>
+<text class="s" x="227" y="142">audio to timed text</text>
+<rect class="box live" x="400" y="86" width="160" height="74" rx="10"/>
+<text class="t" x="412" y="108">Language model</text>
+<text class="s" x="412" y="126">Apple, on the device:</text>
+<text class="s" x="412" y="142">text to a debrief</text>
+<rect class="box live" x="40" y="190" width="250" height="90" rx="10"/>
+<text class="t" x="52" y="212">Library</text>
+<text class="s" x="52" y="230">One folder per note: the audio,</text>
+<text class="s" x="52" y="246">the transcript, the debrief.</text>
+<text class="s" x="52" y="262">Plain files, in the app’s own storage</text>
+<rect class="box live" x="310" y="190" width="250" height="90" rx="10"/>
+<text class="t" x="322" y="212">Vault engine</text>
+<text class="s" x="322" y="230">Encrypts each file, builds trees and</text>
+<text class="s" x="322" y="246">a commit, signs it, checks every</text>
+<text class="s" x="322" y="262">signature it reads</text>
+<rect class="box live" x="40" y="318" width="250" height="108" rx="10"/>
+<text class="t" x="52" y="340">Device key</text>
+<text class="s" x="52" y="358">Signs every commit. Never leaves</text>
+<text class="s" x="52" y="374">the device. Today a Keychain key;</text>
+<text class="s" x="52" y="390">the Secure Enclave is decided,</text>
+<text class="s" x="52" y="406">not built</text>
+<rect class="box live" x="310" y="318" width="250" height="108" rx="10"/>
+<text class="t" x="322" y="340">Keychain</text>
+<text class="s" x="322" y="358">Vault keys and server tokens</text>
+<text class="s" x="322" y="374">(today: this device only)</text>
+<text class="s" x="322" y="390">The user’s key pair (not built)</text>
+<text class="s" x="322" y="406">Readable only by this app</text>
+<rect class="box plan" x="40" y="458" width="520" height="96" rx="10"/>
+<text class="t" x="52" y="480">Doors (decided, not built)</text>
+<text class="s" x="52" y="498">Every request the app or a model makes goes through one of: network, files, vault,</text>
+<text class="s" x="52" y="514">keys, model. Each has a policy and keeps a record that can be shown.</text>
+<text class="s" x="52" y="530">Today only the vault engine keeps such a record (&quot;Every step&quot;).</text>
+<path class="a " d="M120 160 L120 190"/>
+<polygon class="hd " points="120.0,190.0 116.3,181.8 123.7,181.8"/>
+<path class="a live" d="M300 160 L220 190"/>
+<polygon class="hd live" points="220.0,190.0 226.4,183.7 229.0,190.6"/>
+<path class="a live" d="M480 160 L250 190"/>
+<polygon class="hd live" points="250.0,190.0 257.7,185.3 258.6,192.6"/>
+<path class="a live" d="M290 235 L310 235"/>
+<polygon class="hd live" points="310.0,235.0 301.8,238.7 301.8,231.3"/>
+<path class="a live" d="M435 318 L435 280"/>
+<polygon class="hd live" points="435.0,280.0 438.7,288.2 431.3,288.2"/>
+<path class="a live" d="M250 318 L350 280"/>
+<polygon class="hd live" points="350.0,280.0 343.6,286.3 341.0,279.5"/>
+<rect class="zone" x="740" y="52" width="320" height="520" rx="14"/>
+<text class="z" x="754" y="72">OUTSIDE THE DEVICE</text>
+<rect class="box live" x="760" y="86" width="280" height="88" rx="10"/>
+<text class="t" x="772" y="108">A lane</text>
+<text class="s" x="772" y="126">A write-only inbox on a vault</text>
+<text class="s" x="772" y="142">server. The sender cannot read</text>
+<text class="s" x="772" y="158">it; only the owner’s key opens it</text>
+<rect class="box live" x="760" y="200" width="280" height="88" rx="10"/>
+<text class="t" x="772" y="222">Vault server</text>
+<text class="s" x="772" y="240">Stores encrypted objects under</text>
+<text class="s" x="772" y="256">opaque names. Sees sizes and</text>
+<text class="s" x="772" y="272">timing, never names or contents</text>
+<rect class="box plan" x="760" y="314" width="280" height="88" rx="10"/>
+<text class="t" x="772" y="336">iCloud Keychain (Apple)</text>
+<text class="s" x="772" y="354">Carries keys to your other devices,</text>
+<text class="s" x="772" y="370">end-to-end encrypted. Apple holds</text>
+<text class="s" x="772" y="386">bytes it cannot read</text>
+<rect class="box plan" x="760" y="428" width="280" height="108" rx="10"/>
+<text class="t" x="772" y="450">pki.sgit.ai</text>
+<text class="s" x="772" y="468">A public register of people and</text>
+<text class="s" x="772" y="484">their public keys. Optional: lets</text>
+<text class="s" x="772" y="500">a registered person vouch for</text>
+<text class="s" x="772" y="516">this device’s key</text>
+<path class="a live" d="M560 205 L660 205 L660 130 L760 130"/>
+<polygon class="hd live" points="760.0,130.0 751.8,133.7 751.8,126.3"/>
+<rect class="lb" x="667" y="166" width="104" height="32" rx="3"/>
+<text class="l" x="672" y="178" text-anchor="start">a note sealed</text>
+<text class="l" x="672" y="192" text-anchor="start">to a public key</text>
+<path class="a live" d="M560 245 L760 245"/>
+<polygon class="hd live" points="760.0,245.0 751.8,248.7 751.8,241.3"/>
+<rect class="lb" x="624" y="226" width="73" height="18" rx="3"/>
+<text class="l" x="660" y="238" text-anchor="middle">ciphertext</text>
+<path class="a plan" d="M560 358 L760 358"/>
+<polygon class="hd plan" points="760.0,358.0 751.8,361.7 751.8,354.3"/>
+<rect class="lb" x="557" y="339" width="205" height="18" rx="3"/>
+<text class="l" x="660" y="351" text-anchor="middle">keys, encrypted to your devices</text>
+<path class="a plan" d="M760 482 L660 482 L660 405 L560 405"/>
+<polygon class="hd plan" points="560.0,405.0 568.2,401.3 568.2,408.7"/>
+<rect class="lb" x="667" y="424" width="73" height="32" rx="3"/>
+<text class="l" x="672" y="436" text-anchor="start">a signed</text>
+<text class="l" x="672" y="450" text-anchor="start">delegation</text>
+<rect class="box live" x="40" y="596" width="26" height="16" rx="4"/><text class="l" x="74" y="608">Seen working on the owner’s devices</text>
+<rect class="box test" x="330" y="596" width="26" height="16" rx="4"/><text class="l" x="364" y="608">In the build, not yet confirmed</text>
+<rect class="box plan" x="620" y="596" width="26" height="16" rx="4"/><text class="l" x="654" y="608">Decided, not built</text>
+</svg>

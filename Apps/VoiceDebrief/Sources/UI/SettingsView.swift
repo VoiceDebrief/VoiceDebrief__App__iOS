@@ -31,6 +31,14 @@ struct SettingsView: View {
                     Text("Your key pair, this device's key, and what links them.")
                 }
 
+                Section {
+                    NavigationLink("Your words") { GlossaryView() }
+                } header: {
+                    Text("Experiments")
+                } footer: {
+                    Text("Words and names you use, for the clean text a note can be rewritten into.")
+                }
+
                 Section("Advanced") {
                     NavigationLink("Diagnostics and lane") { DiagnosticsView(session: session) }
                     NavigationLink("Every step the vault engine took") { TrafficView(log: book.log) }

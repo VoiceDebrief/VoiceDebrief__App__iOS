@@ -62,6 +62,7 @@ struct DeveloperLane: Equatable, Sendable {
 
         static let audioKind = "voicedebrief/audio/v1"
         static let runKind = "voicedebrief/run/v1"
+        static let cleanKind = "voicedebrief/clean/v1"
     }
 
     /// A file's bytes cut into pieces of at most `size`. An empty file has no pieces.
@@ -92,7 +93,7 @@ struct DeveloperLane: Equatable, Sendable {
     }
 
     /// Every message for one note: the audio in parts, then the run (transcript, debrief, timings) as JSON.
-    static func messages(audio: Data, audioName: String, run: DebriefRun, noteId: String, app: String, at date: Date) throws -> [Data] {
+    static func messages(audio: Data, audioName: String, run: DebriefRun, clean: CleanText? = nil, noteId: String, app: String, at date: Date) throws -> [Data] {
         let sentAt = ISO8601DateFormatter().string(from: date)
         let pieces = parts(of: audio)
         let digest = sha256Hex(audio)
@@ -108,6 +109,13 @@ struct DeveloperLane: Equatable, Sendable {
         let header = Header(kind: Header.runKind, note: noteId, part: 1, of: 1, name: "run.json",
                             size: runJSON.count, sha256: sha256Hex(runJSON), app: app, sentAt: sentAt)
         out.append(try message(header: header, body: runJSON))
+        if let clean {
+            encoder.dateEncodingStrategy = .iso8601
+            let cleanJSON = try encoder.encode(clean)
+            let cleanHeader = Header(kind: Header.cleanKind, note: noteId, part: 1, of: 1, name: "clean.json",
+                                     size: cleanJSON.count, sha256: sha256Hex(cleanJSON), app: app, sentAt: sentAt)
+            out.append(try message(header: cleanHeader, body: cleanJSON))
+        }
         return out
     }
 

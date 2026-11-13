@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 560" width="980" height="560" role="img" aria-labelledby="t d">
+<title id="t">The life of a recording</title>
+<desc id="d">Eight steps from pressing record to a note kept on the device, optionally saved to a vault and sent to a lane. The recording is safe from step one; every later step can fail without losing it.</desc>
+<style>
+  .bg{fill:#F8FAFC} .box{fill:#FFFFFF;stroke:#C9D5E0;stroke-width:1.2} .zone{fill:none;stroke:#9FB2C4;stroke-width:1.2;stroke-dasharray:2 4}
+  .live{stroke:#0E9E72;stroke-width:2} .test{stroke:#8A6A18;stroke-width:1.6} .plan{stroke:#6B7F94;stroke-width:1.4;stroke-dasharray:6 5}
+  .t{font:600 14px -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;fill:#0B1B2B}
+  .s{font:400 12px -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;fill:#45596E}
+  .z{font:600 12px -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;fill:#6B7F94;letter-spacing:.06em}
+  .h{font:700 17px -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;fill:#0B1B2B}
+  .l{font:400 11.5px -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;fill:#45596E}
+  .a{fill:none;stroke:#45596E;stroke-width:1.5} .a.live{stroke:#0E9E72;stroke-width:2} .a.plan{stroke:#6B7F94;stroke-dasharray:6 5}
+  .hd{fill:#45596E} .hd.live{fill:#0E9E72} .hd.plan{fill:#6B7F94} .n{fill:#0E9E72} .nt{font:700 12px -apple-system,Helvetica,Arial,sans-serif;fill:#FFFFFF}
+  .lb{fill:#F8FAFC}
+  @media (prefers-color-scheme: dark){
+    .bg{fill:#08131F} .box{fill:#0E1E2E;stroke:#2B3F53} .zone{stroke:#48607A} .live{stroke:#12C08A} .test{stroke:#F0B429} .plan{stroke:#8CA2B8}
+    .t,.h{fill:#F2F6FA} .s,.l{fill:#A8BBCE} .z{fill:#8CA2B8} .a{stroke:#A8BBCE} .a.live{stroke:#12C08A} .a.plan{stroke:#8CA2B8}
+    .hd{fill:#A8BBCE} .hd.live{fill:#12C08A} .hd.plan{fill:#8CA2B8} .n{fill:#12C08A} .nt{fill:#04231A} .lb{fill:#08131F}
+  }
+</style>
+<rect class="bg" width="980" height="560" rx="14"/>
+<text class="h" x="24" y="34">The life of a recording</text>
+<rect class="box live" x="30" y="64" width="206" height="96" rx="10"/>
+<text class="t" x="42" y="86"></text>
+<circle class="n" cx="52" cy="88" r="11"/><text class="nt" x="52" y="92" text-anchor="middle">1</text>
+<text class="t" x="72" y="93" text-anchor="start">Press record</text>
+<text class="s" x="44" y="116" text-anchor="start">A note is written to the</text>
+<text class="s" x="44" y="131" text-anchor="start">library before a word</text>
+<text class="s" x="44" y="146" text-anchor="start">is spoken</text>
+<rect class="box live" x="268" y="64" width="206" height="96" rx="10"/>
+<text class="t" x="280" y="86"></text>
+<circle class="n" cx="290" cy="88" r="11"/><text class="nt" x="290" y="92" text-anchor="middle">2</text>
+<text class="t" x="310" y="93" text-anchor="start">Speak</text>
+<text class="s" x="282" y="116" text-anchor="start">Audio goes straight into</text>
+<text class="s" x="282" y="131" text-anchor="start">the note as WAV. Words</text>
+<text class="s" x="282" y="146" text-anchor="start">and level show live</text>
+<rect class="box live" x="506" y="64" width="206" height="96" rx="10"/>
+<text class="t" x="518" y="86"></text>
+<circle class="n" cx="528" cy="88" r="11"/><text class="nt" x="528" y="92" text-anchor="middle">3</text>
+<text class="t" x="548" y="93" text-anchor="start">Stop</text>
+<text class="s" x="520" y="116" text-anchor="start">The file is closed. The</text>
+<text class="s" x="520" y="131" text-anchor="start">note opens at once</text>
+<text class="s" x="520" y="146" text-anchor="start">and fills in</text>
+<rect class="box live" x="744" y="64" width="206" height="96" rx="10"/>
+<text class="t" x="756" y="86"></text>
+<circle class="n" cx="766" cy="88" r="11"/><text class="nt" x="766" y="92" text-anchor="middle">4</text>
+<text class="t" x="786" y="93" text-anchor="start">Transcript</text>
+<text class="s" x="758" y="116" text-anchor="start">Apple’s speech model</text>
+<text class="s" x="758" y="131" text-anchor="start">reads the file: one</text>
+<text class="s" x="758" y="146" text-anchor="start">line per phrase, timed</text>
+<rect class="box live" x="30" y="294" width="206" height="96" rx="10"/>
+<text class="t" x="42" y="316"></text>
+<circle class="n" cx="52" cy="318" r="11"/><text class="nt" x="52" y="322" text-anchor="middle">5</text>
+<text class="t" x="72" y="323" text-anchor="start">Debrief</text>
+<text class="s" x="44" y="346" text-anchor="start">One prompt to Apple’s</text>
+<text class="s" x="44" y="361" text-anchor="start">model, or the note in</text>
+<text class="s" x="44" y="376" text-anchor="start">parts, then merged</text>
+<rect class="box live" x="268" y="294" width="206" height="96" rx="10"/>
+<text class="t" x="280" y="316"></text>
+<circle class="n" cx="290" cy="318" r="11"/><text class="nt" x="290" y="322" text-anchor="middle">6</text>
+<text class="t" x="310" y="323" text-anchor="start">Compress</text>
+<text class="s" x="282" y="346" text-anchor="start">The WAV becomes a</text>
+<text class="s" x="282" y="361" text-anchor="start">small .m4a, kept only if</text>
+<text class="s" x="282" y="376" text-anchor="start">it reads back whole</text>
+<rect class="box live" x="506" y="294" width="206" height="96" rx="10"/>
+<text class="t" x="518" y="316"></text>
+<circle class="n" cx="528" cy="318" r="11"/><text class="nt" x="528" y="322" text-anchor="middle">7</text>
+<text class="t" x="548" y="323" text-anchor="start">Save to a vault</text>
+<text class="s" x="520" y="346" text-anchor="start">By choice. Each file</text>
+<text class="s" x="520" y="361" text-anchor="start">encrypted, one signed</text>
+<text class="s" x="520" y="376" text-anchor="start">commit</text>
+<rect class="box live" x="744" y="294" width="206" height="96" rx="10"/>
+<text class="t" x="756" y="316"></text>
+<circle class="n" cx="766" cy="318" r="11"/><text class="nt" x="766" y="322" text-anchor="middle">8</text>
+<text class="t" x="786" y="323" text-anchor="start">Send to a lane</text>
+<text class="s" x="758" y="346" text-anchor="start">By choice, asked every</text>
+<text class="s" x="758" y="361" text-anchor="start">time. Sealed to the</text>
+<text class="s" x="758" y="376" text-anchor="start">recipient’s public key</text>
+<path class="a " d="M236 112 L268 112"/>
+<polygon class="hd " points="268.0,112.0 259.8,115.7 259.8,108.3"/>
+<path class="a " d="M236 342 L268 342"/>
+<polygon class="hd " points="268.0,342.0 259.8,345.7 259.8,338.3"/>
+<path class="a " d="M474 112 L506 112"/>
+<polygon class="hd " points="506.0,112.0 497.8,115.7 497.8,108.3"/>
+<path class="a " d="M474 342 L506 342"/>
+<polygon class="hd " points="506.0,342.0 497.8,345.7 497.8,338.3"/>
+<path class="a " d="M712 112 L744 112"/>
+<polygon class="hd " points="744.0,112.0 735.8,115.7 735.8,108.3"/>
+<path class="a " d="M712 342 L744 342"/>
+<polygon class="hd " points="744.0,342.0 735.8,345.7 735.8,338.3"/>
+<path class="a " d="M848 160 L848 262 L134 262 L134 294"/>
+<polygon class="hd " points="134.0,294.0 130.3,285.8 137.7,285.8"/>
+<rect class="box plan" x="30" y="176" width="444" height="66" rx="10"/>
+<text class="s" x="44" y="198" text-anchor="start">If the app dies here:</text>
+<text class="s" x="44" y="214" text-anchor="start">the note exists; the WAV header is</text>
+<text class="s" x="44" y="230" text-anchor="start">repaired when the library next opens</text>
+<rect class="box plan" x="506" y="176" width="444" height="66" rx="10"/>
+<text class="s" x="520" y="198" text-anchor="start">A call or another app takes the</text>
+<text class="s" x="520" y="214" text-anchor="start">microphone: the recording ends</text>
+<text class="s" x="520" y="230" text-anchor="start">and what was said is kept</text>
+<rect class="box plan" x="30" y="406" width="444" height="66" rx="10"/>
+<text class="s" x="44" y="428" text-anchor="start">No model, a refusal, too short:</text>
+<text class="s" x="44" y="444" text-anchor="start">the note keeps its transcript and</text>
+<text class="s" x="44" y="460" text-anchor="start">says plainly why there is no debrief</text>
+<rect class="box plan" x="506" y="406" width="444" height="66" rx="10"/>
+<text class="s" x="520" y="428" text-anchor="start">Vault or lane fails, or no network:</text>
+<text class="s" x="520" y="444" text-anchor="start">the note is already safe on the</text>
+<text class="s" x="520" y="460" text-anchor="start">device; saving and sending can be retried</text>
+<rect class="box live" x="40" y="516" width="26" height="16" rx="4"/><text class="l" x="74" y="528">Seen working on the owner’s devices</text>
+<rect class="box test" x="330" y="516" width="26" height="16" rx="4"/><text class="l" x="364" y="528">In the build, not yet confirmed</text>
+<rect class="box plan" x="620" y="516" width="26" height="16" rx="4"/><text class="l" x="654" y="528">Decided, not built</text>
+</svg>

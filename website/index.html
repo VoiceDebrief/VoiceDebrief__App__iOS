@@ -22,8 +22,9 @@
   <a class="brand" href="index.html">Voice<em>Debrief</em> <span>iOS</span></a>
   <span class="beta" title="In development: there is nothing to install yet">IN DEVELOPMENT</span>
   <a class="parent" href="https://voicedebrief.ai" title="A VoiceDebrief product">&#8599; part of <b>voicedebrief.ai</b></a>
-  <a class="ver" href="versions/index.html" title="Release history">v0.1.7</a>
+  <a class="ver" href="versions/index.html" title="Release history">v0.1.8</a>
   <a class="nl" href="built/index.html">Built</a>
+  <a class="nl" href="architecture/index.html">How it works</a>
   <a class="nl" href="design/index.html">Design</a>
   <a class="nl" href="plan/index.html">Plan</a>
   <a class="nl" href="articles/index.html">Articles</a>
@@ -34,7 +35,7 @@
 <main class="doc">
 <h1 id="voicedebrief-for-iphone-and-ipad">VoiceDebrief for iPhone and iPad</h1>
 <p>A voice note in, a transcript and a short debrief out, on the device. The app is being built to do VoiceDebrief's one job with <strong>Apple's own models and nothing else</strong>: no OpenRouter, no API key, no inference server. What it produces is kept in an <strong>encrypted vault the user owns</strong>, opened with a <strong>passkey</strong>, and signed with the user's own key.</p>
-<blockquote><p><strong>In development. There is no public build.</strong> A test build records or opens a voice note, transcribes it and writes a debrief on the device, so that Apple's models can be judged on real notes. It saves nothing and has no account. Nobody has judged the results yet. <a href="built/index.html">What is built</a> is the honest list.</p></blockquote>
+<blockquote><p><strong>In development. There is no public build.</strong> A test build records or opens a voice note, transcribes it and writes a debrief on the device, so that Apple's models can be judged on real notes. It keeps notes on the device and can save one to a vault. It has no account. Nobody has judged the results yet. <a href="built/index.html">What is built</a> is the honest list.</p></blockquote>
 <h2 id="what-it-will-do">What it will do</h2>
 <div class="tablewrap"><table>
 <thead><tr><th>Step</th><th>How</th><th>Status</th></tr></thead>
@@ -59,9 +60,10 @@
 <p><strong>Nowhere, for transcription and the debrief.</strong> Both run on the device with Apple's models. That is the design, and it is why the app needs no key and no account with us.</p>
 <p><strong>One exception, and only when you press it.</strong> The test build can send a single note (its audio, transcript and debrief) to the developer, to help judge the models. It happens only when the button is pressed, and the note is encrypted on the device to the developer's key before it leaves.</p>
 <p><strong>Your vault is the one thing that leaves the device, and it leaves encrypted.</strong> Files are encrypted on the device before upload, with keys derived from a vault key the server never sees. The server can see the vault's identifier, the size of each encrypted object and when it was written. It cannot see file names, contents or keys. <a href="https://sgit.ai/security/index.html">sgit's security model</a> states this precisely.</p>
-<p>The transcript and debrief are in a test build and have not yet been judged on a real device. Creating a vault and saving into it are in the test build and have not run on a device. This page will say so when either changes.</p>
+<p>The transcript and debrief are in a test build and have not yet been judged on a real device. Creating a vault and saving a debrief into it have each been done once from the test build, on a Mac. This page will say so when either changes.</p>
 <h2 id="the-record">The record</h2>
 <ul>
+<li><a href="architecture/index.html">How it works</a>: the architecture in four drawings, with what is working, what is unconfirmed and what is only decided.</li>
 <li><a href="built/index.html">What is built</a>: the reality file. If it is not listed there, it does not exist.</li>
 <li><a href="plan/index.html">The plan</a>: the pipeline, the account, the vault, the identity, milestones and risks.</li>
 <li><a href="develop/index.html">Build and test</a>: how the repository works and how CI stands in for a Mac.</li>
@@ -76,7 +78,7 @@
     <div class="brandline">Voice<em>Debrief</em> <span>iOS</span></div>
     <p>The VoiceDebrief transcript and debrief as a native iPhone and iPad app, on Apple's own models, with the results in a vault you own. In development: there is nothing to install yet. Content CC BY 4.0; code Apache 2.0.</p>
     <p class="partnote">This site is static and has no analytics.</p>
-    <p class="verline">site v0.1.7 · <a href="index.md">this page as markdown</a> · <a href="llms.txt">llms.txt</a></p>
+    <p class="verline">site v0.1.8 · <a href="index.md">this page as markdown</a> · <a href="llms.txt">llms.txt</a></p>
   </div>
   <div>
     <h4>The app</h4>
