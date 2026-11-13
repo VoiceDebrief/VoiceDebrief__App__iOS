@@ -10,5 +10,6 @@ Most of these come from the owner's voice memos, written up by the agent working
 | [Two decision engines](two-decision-engines/index.md) | Position | An app now has two things that decide: the code, and a model. Keep the model on a short lead, one prompt at a time |
 | [A harness inside the app](a-harness-inside-the-app/index.md) | Brief | Give the model its network, files, keys and vaults through separate doors, and draw what passes through them |
 | [The vault is a version-controlled store](the-vault-is-a-version-controlled-store/index.md) | Position and brief | A vault needs no server to exist. A server is a remote you add |
+| [Where each key lives](where-each-key-lives/index.md) | Position and brief | Vault keys and your own key travel through iCloud Keychain; a device's key never leaves it; you vouch for your devices; optionally the register vouches for you |
 | [Voice everywhere](voice-everywhere/index.md) | Idea | Voice as the way in from every screen, and a recording that is never lost |
 | [Synthetic users](synthetic-users/index.md) | Brief | Invented users walking the screens, to find where a real one would get lost |

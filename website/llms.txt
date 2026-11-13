@@ -35,6 +35,9 @@ Every page has a markdown twin: replace index.html with index.md.
   files, vault, keys, model, run) inside the app, and drawing what passes through them.
 - https://ios.app.voicedebrief.ai/articles/the-vault-is-a-version-controlled-store/index.html : vaults are
   local first and need no token; a server is a remote; several vaults and lanes; vault apps; graphs.
+- https://ios.app.voicedebrief.ai/articles/where-each-key-lives/index.html : DECIDED by the owner: vault keys
+  sync through iCloud Keychain, on by default; a user key pair that travels; a device key that never does; the
+  user vouches for the device; optionally a delegation from pki.sgit.ai.
 - https://ios.app.voicedebrief.ai/articles/voice-everywhere/index.html : never lose a recording; voice from
   every screen.
 - https://ios.app.voicedebrief.ai/articles/synthetic-users/index.html : invented users walking screenshots.
