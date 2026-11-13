@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Review, round 1: the first sight of every screen</title>
+<meta name="description" content="The first pictures of every screen of VoiceDebrief for iOS, read by the agent that made them and by four synthetic users: 21 findings and ten issues.">
+<link rel="canonical" href="https://ios.app.voicedebrief.ai/reviews/round-1/index.html">
+<meta property="og:url" content="https://ios.app.voicedebrief.ai/reviews/round-1/index.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="VoiceDebrief for iOS">
+<meta property="og:title" content="Review, round 1: the first sight of every screen">
+<meta property="og:description" content="The first pictures of every screen of VoiceDebrief for iOS, read by the agent that made them and by four synthetic users: 21 findings and ten issues.">
+<link rel="alternate" type="text/markdown" href="index.md" title="This page as markdown">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/vd-tokens.css">
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+
+<nav class="site"><div class="row">
+  <a class="brand" href="../../index.html">Voice<em>Debrief</em> <span>iOS</span></a>
+  <span class="beta" title="In development: there is nothing to install yet">IN DEVELOPMENT</span>
+  <a class="parent" href="https://voicedebrief.ai" title="A VoiceDebrief product">&#8599; part of <b>voicedebrief.ai</b></a>
+  <a class="ver" href="../../versions/index.html" title="Release history">dev</a>
+  <a class="nl" href="../../built/index.html">Built</a>
+  <a class="nl" href="../../architecture/index.html">How it works</a>
+  <a class="nl" href="../../design/index.html">Design</a>
+  <a class="nl" href="../../plan/index.html">Plan</a>
+  <a class="nl" href="../../articles/index.html">Articles</a>
+  <a class="nl" href="../../develop/index.html">Build</a>
+  <a class="gh" href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">&#9733; GitHub</a>
+</div></nav>
+
+<main class="doc">
+<div class="crumb"><a href="../../index.html">VoiceDebrief iOS</a> / reviews / round-1</div>
+<h1 id="review-round-1-the-first-sight-of-every-screen">Review, round 1: the first sight of every screen</h1>
+<p>13 November 2026. The first time anybody working on this app from a Linux container has seen it.</p>
+<h2 id="the-pictures">The pictures</h2>
+<p>Run 12 of <code>screens.yml</code> on the branch <code>work/screens</code>, commit <code>fb0c548</code>: 28 pictures in each of four sets (one iPhone in portrait, one iPad in landscape, light and dark), 112 in all, in the artifact <code>screens-fb0c548566bdf95689a7c201804d807299cc43f4</code> (kept 30 days). <a href="../../develop/index.html">Build, test and release</a> says how to fetch them. The app in the pictures is <code>dev</code> as it stood that evening: local vaults, recipients and the send bar, the clean text experiment, saving a finished note to a vault, the Lab and credit. The Identity screen was added to the pictures afterwards and is not in this round.</p>
+<p>Everything shown is invented sample data. No simulator recorded, transcribed or summarised anything: a recording in progress, a transcript and a debrief are typed-in values.</p>
+<p><img class="shot" src="contact-iphone-light.jpg" alt="Every iPhone screen in the round, light appearance, as one contact sheet" loading="lazy"></p>
+<p><img class="shot" src="contact-ipad-light.jpg" alt="Every iPad screen in the round, light appearance, as one contact sheet" loading="lazy"></p>
+<h2 id="method">Method</h2>
+<ol>
+<li>The agent that built the pictures looked at all four contact sheets and at single screens at full size, and wrote down what is plainly wrong.</li>
+<li>Four synthetic users, each a separate agent given a persona, a task and only the iPhone pictures that person would see: no source code, no documentation, no other screens. Each said, step by step, what they would tap and what they expected, where they hesitated and where the next picture disagreed.</li>
+<li>Each thing a user reported was checked against the code before it was written here, because a user who cannot tap guesses what a tap does. Three guesses were wrong and are marked.</li>
+</ol>
+<h2 id="what-is-plainly-wrong-before-any-user">What is plainly wrong, before any user</h2>
+<p>Seen by the agent, on the pictures alone.</p>
+<ul>
+<li><strong>On iPad, every list is as wide as the window.</strong> Library, a note, Vaults, Settings, Diagnostics and About run text from one edge of the detail column to the other, about 1,150 points; only the record screen holds its content to a readable width. The <a href="../../design/index.html">design</a> asks for a readable width everywhere.</li>
+<li><strong>A Library row wraps badly on iPhone.</strong> The state falls onto a third line (&quot;21:41 · 31.0 s · Writing&quot; then &quot;the debrief&quot;), and a title is cut in the middle of a word.</li>
+<li><strong>A title is the first twelve words with nothing to say it was cut</strong>: &quot;remind me to water the tomatoes on plot nine before&quot;.</li>
+<li><strong>&quot;Recent&quot; on the record screen shows a time and no day.</strong> Yesterday's interrupted note sits beside today's and reads as today's.</li>
+<li><strong>&quot;1 lines&quot;</strong> under Transcript in a note's details.</li>
+<li><strong>The note screen opens with an experiment.</strong> &quot;Clean text (experiment)&quot;, a button and three lines of explanation come before the debrief, and &quot;In one sentence&quot;, which the design puts first, is last. On an iPhone the first screen of a finished note shows two key points.</li>
+<li><strong>The send bar covers the note.</strong> It is fixed above the tab bar on every note, including one that was interrupted and has nothing to send but a recording, and one still being written.</li>
+<li><strong>File paths in a vault break in the middle</strong> (&quot;debriefs/2026/11/13/&quot; then &quot;sample01/audio.wav&quot;), and the audio's type reads &quot;application/octet-stream&quot;.</li>
+<li><strong>The language is shown as a code</strong>, &quot;en-GB&quot;, on Settings and in the record screen's toolbar, where a note shows &quot;English (United Kingdom)&quot;.</li>
+<li><strong>Nothing is clipped or overlapping in dark appearance</strong>, and the four tabs become a sidebar on iPad as intended.</li>
+</ul>
+<h2 id="the-four-users">The four users</h2>
+<h3 id="someone-who-records-while-driving-and-has-never-heard-of-a-vault">Someone who records while driving and has never heard of a vault</h3>
+<p>Task: record a memo at a red light, stop it, find it later and read the gist, then record a second straight after.</p>
+<p>Found the record control at once and liked it. Expected the control to become a red stop; it becomes a green tick lower down, explained by one line of small grey text. Could not record the second memo: the control is grey while the last note is written up, with no word on how long. Opened the finished note expecting the gist first and found a date, &quot;Clean text (experiment)&quot; and then key points cut off by the send bar. Read &quot;£4.85&quot; as paying per memo. Would be afraid of &quot;Send to The developer&quot;, the largest button on a private note. Understood none of &quot;vault&quot;, &quot;signed commit&quot;, &quot;server&quot; at the end of the note, and took them to mean the note was not yet saved. Never saw a way to listen to the memo.</p>
+<h3 id="someone-careful-about-privacy">Someone careful about privacy</h3>
+<p>Task: before speaking one confidential sentence, find out exactly what leaves the phone, when, to where, and who could read it.</p>
+<p>Got clear answers to most of it from the screens: nothing leaves on stop (&quot;Every recording is kept on this device the moment it stops&quot;), sending is always asked for (&quot;Sending to a recipient happens only when you ask&quot;, &quot;Nothing is sent without pressing it&quot;), no money is taken and there is no account. Had to infer the rest: that Apple's transcription stays on the phone, that a vault's server cannot read it, and that a note saved automatically to a vault does not go up by itself once that vault has a server. Stopped at &quot;Requests 18, Downloaded 28.4 KB&quot; on a vault that is &quot;On this device only&quot;, with no figure for what was sent. Could not tell from a note whether it is already in a vault. Did not know who &quot;The developer&quot; is, which server carries a sent note, or whether the audio goes too.</p>
+<p>Would not dictate a confidential note. The deciding thing: a one-tap &quot;Send to The developer&quot; on every note, with nothing on the screen about a confirmation or what is sent.</p>
+<h3 id="a-developer-who-wants-to-see-every-request">A developer who wants to see every request</h3>
+<p>Task: see every request the app makes, to the network and to the model, in enough detail to check the app's claims.</p>
+<p>Found the log (&quot;Every step the vault engine took&quot;) and judged its decryption rows the best thing in the app: cipher, key, iv and tag sizes and the bytes before and after, which add up. But a request row reads &quot;GET folder, not cached (mutable)&quot; with a size and &quot;0 ms&quot;: no host, no status, no clock time, nothing to say what caused it, so a real request would look the same as a read from the device. Sending a note has no description on the wire and no visible entry in any log. Requests to the model can be seen only in the Lab; a debrief's &quot;One request&quot; cannot be opened. The promise that <code>sgit clone</code> and the key open the same vault gives no command. &quot;Machine arm64&quot; is not a device.</p>
+<h3 id="someone-who-lost-a-recording-in-another-app">Someone who lost a recording in another app</h3>
+<p>Task: decide whether to trust this one with a 40-minute recording.</p>
+<p>Was convinced by the words on the recording screen (&quot;Saved to this device as you speak. If the recording is cut short, what was said is kept.&quot;) and by finding the interrupted note listed with a warning in two places. Was not convinced by the note itself: &quot;The recording is kept&quot;, and no way to play it or see how long it is. No play control on a finished note either. Found the promise only while recording, not before pressing record. Read &quot;Save each finished note to a vault&quot; as not covering the interrupted one, and saw that the vault is &quot;On this device only&quot;, so the second copy is on the same phone. Worried by &quot;Discard&quot; in the top bar while recording and by &quot;Delete from this device&quot; directly under the button to run a note again.</p>
+<p>Would not trust it. The deciding thing: a recording said to be kept that cannot be played or measured.</p>
+<h2 id="findings">Findings</h2>
+<p>Most serious first. &quot;Who&quot; is D (driver), P (privacy), V (developer), L (lost a recording), A (the agent). The owner is the session whose brief covers that screen.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>#</th><th>Screen</th><th>Who</th><th>Finding</th><th>Owner</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td>1</td><td><code>note.interrupted</code>, <code>note.finished</code></td><td>L, D</td><td>A recording is said to be kept and cannot be played, and an interrupted one shows no length. Two of four users would not use the app for this alone</td><td>main session</td><td>open, issue 029</td></tr>
+<tr><td>2</td><td><code>record.working</code></td><td>D, L</td><td>No new recording can start while the last note is being written up: the control is grey, with no word on how long. This is against &quot;never lose a recording&quot;</td><td>main session</td><td>open, issue 030</td></tr>
+<tr><td>3</td><td>every note</td><td>P, D, L</td><td>&quot;Send to The developer&quot; is the most prominent control on every note, including an unfinished one. The owner asked for the bar (issue 026) and it stays; what the screen does not say is that it asks first, who the developer is, or whether the audio goes. It decided the privacy user against the app</td><td>main session</td><td>open, issue 031</td></tr>
+<tr><td>4</td><td><code>record</code>, <code>library</code></td><td>D, L, P</td><td>A balance, &quot;£4.85&quot;, sits in the top bar of the first screen and goes down, with nothing beside it to say that no money is taken. Three users read it as paying per memo</td><td>credit session</td><td>open, issue 032</td></tr>
+<tr><td>5</td><td><code>traffic</code>, <code>vaults-end</code></td><td>V, P</td><td>The log cannot tell a request to a server from a read on the device: no host, status, time or cause. The totals call local reads &quot;Requests&quot; and &quot;Downloaded&quot; on a vault that is on the device only, and have no figure for what was sent</td><td>vaults session</td><td>open, issue 033</td></tr>
+<tr><td>6</td><td><code>note.finished</code></td><td>D, A</td><td>The gist is not first. A date, then an experiment, then key points cut off by the send bar; &quot;In one sentence&quot; is last</td><td>main session</td><td>open, issue 034</td></tr>
+<tr><td>7</td><td>all lists on iPad</td><td>A</td><td>Lists are as wide as the window on iPad</td><td>main session, vaults session</td><td>open, issue 035</td></tr>
+<tr><td>8</td><td><code>record</code>, <code>library</code>, <code>settings</code></td><td>D, L, A</td><td>States with no next step or no day: &quot;Not finished&quot; and &quot;Transcript only&quot; explain nothing; Recent shows no day; the automatic save says &quot;finished note&quot; and is silent on an interrupted one</td><td>main session</td><td>open, issue 036</td></tr>
+<tr><td>9</td><td><code>vaults</code>, <code>vault.detail</code>, <code>note.finished-end</code></td><td>D, P, L</td><td>A person who has never met a vault cannot tell what one is for, whether a note is in one, or whether notes saved automatically go to a server once the vault has one. The server form's filled-in address looks like a second saved server</td><td>vaults session</td><td>open, issue 037</td></tr>
+<tr><td>10</td><td><code>record.recording</code></td><td>D</td><td>The control to finish is a green tick in a different place from the record control, explained by one small line. Decided by the owner in issue 022; recorded here because the first user to meet it expected a red stop</td><td>main session</td><td>open, no issue: the owner's decision, to be watched on a device</td></tr>
+<tr><td>11</td><td><code>note.finished-end</code>, <code>lab</code></td><td>V</td><td>Requests to the model are visible only in the Lab; a debrief's own request cannot be opened</td><td>lab session</td><td>open, covered by issues 013 and 020</td></tr>
+<tr><td>12</td><td><code>vault.detail-end</code></td><td>V</td><td>&quot;sgit clone followed by this key&quot; gives no command, and holds only once the vault is on a server</td><td>vaults session</td><td>open, with issue 037</td></tr>
+<tr><td>13</td><td><code>diagnostics</code></td><td>V, A</td><td>&quot;Machine arm64&quot; is not a device model; the language is a code in two places and a name in a third</td><td>main session</td><td>open, with issue 036</td></tr>
+<tr><td>14</td><td><code>library</code>, <code>vault.detail</code>, note details</td><td>A</td><td>Rows that wrap or cut badly: the Library row's state, a title cut mid-word and after twelve words, file paths, &quot;1 lines&quot;</td><td>main session, vaults session</td><td>open, with issues 035 and 036</td></tr>
+<tr><td>15</td><td>the pictures themselves</td><td>D, P, V, L</td><td>What a round could not see: no picture of any confirmation, of a note opened from the record screen, of the Lab after a run, or of a server with a vault on it</td><td>screens session</td><td>open, issue 038</td></tr>
+<tr><td>16</td><td><code>note.working</code></td><td>D</td><td>&quot;Stopping throws me onto the Library tab.&quot; In the app the note opens on the Record tab; the pictures show note screens under Library</td><td>screens session</td><td>not a fault: an artefact, to be removed under issue 038</td></tr>
+<tr><td>17</td><td><code>vaults</code>, <code>vault.detail</code>, <code>vault.detail-end</code></td><td>P, V</td><td>The same vault has a different id, head and time on different screens</td><td>screens session</td><td>not a fault: each picture is a separate launch, and the sample vault's key is made at random each time so that no key is ever in the source</td></tr>
+<tr><td>18</td><td><code>settings</code>, <code>library</code></td><td>L</td><td>&quot;Notes on this device 3&quot; against four in Library</td><td>screens session</td><td>not a fault: the two pictures use different sample notes</td></tr>
+<tr><td>19</td><td><code>record</code>, <code>library</code></td><td>D, L</td><td>The same note's time differs by a minute between screens</td><td>screens session</td><td>not a fault: separate launches</td></tr>
+<tr><td>20</td><td>every note, <code>note.interrupted</code>, <code>record.recording</code></td><td>P, L</td><td>&quot;No confirmation before sending, deleting or discarding.&quot; The code asks before each of the three; no picture shows it</td><td>screens session</td><td>not a fault in the app; the missing pictures are in issue 038</td></tr>
+<tr><td>21</td><td><code>diagnostics</code></td><td>V</td><td>The speech model reports no languages while a note has a transcript</td><td>screens session</td><td>not a fault: a simulator has no speech model, and the transcript is sample data</td></tr>
+</tbody></table></div>
+<h2 id="what-worked">What worked</h2>
+<p>Said without being asked, by the users it applies to: one large record control found at a glance; the red timer with &quot;Saved to this device as you speak&quot;; the Library named by first words under &quot;Today&quot;; an interrupted note that is listed and marked rather than hidden; sending that says it is never automatic; &quot;simulated&quot; and &quot;Proposed&quot; written wherever something is not real; and a log whose decryption rows can be checked by arithmetic.</p>
+</main>
+
+<footer class="site"><div class="cols">
+  <div>
+    <div class="brandline">Voice<em>Debrief</em> <span>iOS</span></div>
+    <p>The VoiceDebrief transcript and debrief as a native iPhone and iPad app, on Apple's own models, with the results in a vault you own. In development: there is nothing to install yet. Content CC BY 4.0; code Apache 2.0.</p>
+    <p class="partnote">This site is static and has no analytics.</p>
+    <p class="verline">site dev · <a href="index.md">this page as markdown</a> · <a href="../../llms.txt">llms.txt</a></p>
+  </div>
+  <div>
+    <h4>The app</h4>
+    <a href="../../built/index.html">What is built</a>
+    <a href="../../plan/index.html">The plan</a>
+    <a href="../../develop/index.html">Build and test</a>
+    <a href="../../versions/index.html">Release history</a>
+    <a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">GitHub</a>
+  </div>
+  <div>
+    <h4>VoiceDebrief</h4>
+    <a href="https://voicedebrief.ai">voicedebrief.ai</a>
+    <a href="https://meetscribe.chrome-extension.voicedebrief.ai">MeetScribe for Google Meet</a>
+  </div>
+  <div>
+    <h4>Built on</h4>
+    <a href="https://sgit.ai">sgit.ai</a>
+    <a href="https://pki.sgit.ai">pki.sgit.ai</a>
+    <a href="https://sgit.ai/security/index.html">The vault security model</a>
+  </div>
+</div></footer>
+</body>
+</html>

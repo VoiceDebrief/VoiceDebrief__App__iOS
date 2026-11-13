@@ -77,6 +77,8 @@ Where the `gh` command is set up, one line does steps 3 and 4: `gh api repos/Voi
 
 Both ways were followed from a Linux container on 13 November 2026 (`work/screens`: 68 pictures from the first run, 100 from the fourth). A person can download the same artifact from the run's page on GitHub.
 
+**What the pictures are for.** Besides letting a session see its own work, they are read in rounds by synthetic users: see [Reviews](../reviews/index.md).
+
 ## What CI cannot do
 
 No simulator has Apple Intelligence's models, a real microphone, or a passkey in iCloud Keychain. Speech, the debrief, the passkey and the share sheet will have to be tested on a device by a person, against a written checklist. None of that exists yet.
