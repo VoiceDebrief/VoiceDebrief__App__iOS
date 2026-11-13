@@ -79,10 +79,11 @@ jobs:
               CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
 
       - name: Unit tests on the iPhone simulator
+        timeout-minutes: 20
         run: |
           u=$(.github/scripts/pick-simulator.py iPhone)
-          xcrun simctl boot "$u" 2>/dev/null || true
-          xcrun simctl bootstatus "$u" -b || true
+          echo "simulator $u"
+          .github/scripts/boot-simulator.sh "$u"
           .github/scripts/run-and-summarize.sh "Unit tests (iPhone)" "$RUNNER_TEMP/logs/test-iphone.log" -- \
             xcodebuild test-without-building -project "$PROJECT" -scheme "$SCHEME" -configuration Debug \
               -derivedDataPath "$RUNNER_TEMP/dd" -destination "id=$u" \
@@ -93,10 +94,11 @@ jobs:
           exit $status
 
       - name: Unit tests on the iPad simulator
+        timeout-minutes: 20
         run: |
           u=$(.github/scripts/pick-simulator.py iPad)
-          xcrun simctl boot "$u" 2>/dev/null || true
-          xcrun simctl bootstatus "$u" -b || true
+          echo "simulator $u"
+          .github/scripts/boot-simulator.sh "$u"
           .github/scripts/run-and-summarize.sh "Unit tests (iPad)" "$RUNNER_TEMP/logs/test-ipad.log" -- \
             xcodebuild test-without-building -project "$PROJECT" -scheme "$SCHEME" -configuration Debug \
               -derivedDataPath "$RUNNER_TEMP/dd" -destination "id=$u" \
