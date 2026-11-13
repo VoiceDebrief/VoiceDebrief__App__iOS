@@ -34,8 +34,13 @@ The owner's word, 13 November 2026: "Just about everything in the app should cos
 | Saving a note to a vault | 1p a file (a note is up to four) | `saveToVault` |
 | Sending a note to a recipient | 1p | `send` |
 | Adding a recipient | 1p | `addRecipient` |
+| Pushing a vault to a server | 1p, when something was sent | `pushVault` |
+| Pulling a vault from a server | 1p, when something was fetched | `pullVault` |
+| Adding a server | 1p | `addServer` |
 
 The 10p and the 1p a file are the owner's examples. The transcript's figure is the plan's "a few pence per minute", the debrief's is what newsroom charges for an article read to the end, and the rest are 1p. At these figures a 76-second note costs 6p to transcribe and 5p to debrief.
+
+The owner accepted these figures for now on 13 November 2026, and said that a note which saves itself when it is finished is charged like any other save, and that push and pull are charged. A push or a pull that finds nothing to move costs nothing. Bundling several of these into one price is an idea for later.
 
 Not charged yet, because nothing has been decided: looking inside a vault, reading a note, deleting, diagnostics.
 

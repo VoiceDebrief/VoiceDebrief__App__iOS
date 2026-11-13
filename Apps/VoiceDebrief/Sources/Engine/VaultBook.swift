@@ -226,6 +226,7 @@ final class VaultBook {
         let remote = VaultRemote(id: Self.newRemoteId(), name: label.isEmpty ? host : label, url: url)
         remotes.append(remote)
         persistRemotes()
+        CreditLedger.shared.charge(.addServer)
         setToken(token, for: remote)
         return remote
     }
@@ -453,6 +454,7 @@ final class VaultBook {
                     $0.syncedAt = Date()
                     $0.pushProblem = nil
                 }
+                if result.outcome != .upToDate { CreditLedger.shared.charge(.pushVault) }
                 notice = result.outcome == .upToDate
                     ? "\(remote.name) already had everything."
                     : "Pushed \(result.commits) \(result.commits == 1 ? "commit" : "commits") to \(remote.name) (\(result.objects) objects, \(result.bytes.vaultByteString))."
@@ -489,6 +491,7 @@ final class VaultBook {
                     $0.pushProblem = nil
                 }
                 opened[vault.id] = nil
+                if result.outcome != .upToDate { CreditLedger.shared.charge(.pullVault) }
                 notice = result.outcome == .upToDate
                     ? "This device already had everything on \(remote.name)."
                     : "Fetched \(result.commits) \(result.commits == 1 ? "commit" : "commits") from \(remote.name) (\(result.objects) objects, \(result.bytes.vaultByteString))."

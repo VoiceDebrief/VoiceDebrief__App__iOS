@@ -13,7 +13,8 @@ nothing blocked, a charge can be declined with a reason.
 - A price list in one place (`PriceList` in `Model/Prices.swift`), every figure a placeholder, whole pence,
   nothing free: a transcript 3p a started minute, a debrief 5p, creating a vault 10p, and 1p each for a
   clean passage, opening a file, adding a word, adding a vault, a file saved to a vault, sending, adding
-  a recipient.
+  a recipient, pushing or pulling a vault, adding a server. The owner accepted the figures for now, and
+  that a note saving itself, push and pull are charged.
 - Takings by feature on the credit screen: uses, charged, declined, given back, by period.
 - A counter on Record and Library, a row in Settings, and the credit screen: balance, top-up, entries
   newest first, prices.

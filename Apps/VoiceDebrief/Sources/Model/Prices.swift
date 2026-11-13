@@ -13,6 +13,9 @@ enum CreditAction: String, CaseIterable, Sendable {
     case saveToVault
     case send
     case addRecipient
+    case pushVault
+    case pullVault
+    case addServer
 }
 
 /// One line of the price list.
@@ -63,6 +66,9 @@ enum PriceList {
         Price(action: .saveToVault, title: "Saving a note to a vault", unit: .file, micro: 1 * Credit.perPenny),
         Price(action: .send, title: "Sending a note to a recipient", unit: .each, micro: 1 * Credit.perPenny),
         Price(action: .addRecipient, title: "Adding a recipient", unit: .each, micro: 1 * Credit.perPenny),
+        Price(action: .pushVault, title: "Pushing a vault to a server", unit: .each, micro: 1 * Credit.perPenny),
+        Price(action: .pullVault, title: "Pulling a vault from a server", unit: .each, micro: 1 * Credit.perPenny),
+        Price(action: .addServer, title: "Adding a server", unit: .each, micro: 1 * Credit.perPenny),
     ]
 
     static func price(of action: CreditAction) -> Price? {
@@ -102,6 +108,9 @@ enum PriceList {
         case .saveToVault: return count == 1 ? "Saved to a vault, 1 file" : "Saved to a vault, \(count) files"
         case .send: return "Sent to a recipient"
         case .addRecipient: return "Added a recipient"
+        case .pushVault: return "Pushed a vault to a server"
+        case .pullVault: return "Pulled a vault from a server"
+        case .addServer: return "Added a server"
         }
     }
 }
