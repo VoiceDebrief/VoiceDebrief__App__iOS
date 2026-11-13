@@ -29,7 +29,7 @@ cd Packages/SGitVault && swift test          # the vault engine, on the Mac itse
 
 | Workflow | When | What |
 |---|---|---|
-| `ios.yml` | A push to `dev` or a pull request that touches `Apps/`, `Packages/` or the workflow | One Mac job: the vault engine's tests, a simulator build, a Release device build (unsigned), then the app's unit tests on an iPhone and an iPad simulator |
+| `ios.yml` | A push to `dev` or to a `work/` branch, or a pull request, that touches `Apps/`, `Packages/` or the workflow. Only `dev` uploads to TestFlight | One Mac job: the vault engine's tests, a simulator build, a Release device build (unsigned), then the app's unit tests on an iPhone and an iPad simulator |
 | `ios-vault.yml` | A change to the vault write path, every Monday, or by hand | Swift writes vaults on a Mac; `sgit-ai` on Linux clones them, verifies every signature and compares every file |
 | `site.yml` | Every push and pull request | The gate, then (on `dev`) the release tag and the site |
 

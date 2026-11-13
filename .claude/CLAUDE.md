@@ -47,6 +47,15 @@ passkey. The plan is `website/plan/index.md`. Load-bearing decisions, not to be 
 - **Tests**: Swift Testing in the app, XCTest in `SGitVault` (as it came). No invented model or
   server responses: replay recorded real ones.
 
+## Working in parallel
+
+Several sessions may work at once. Each works on a branch named `work/<topic>`: a push there is built
+and tested by `ios.yml` (no TestFlight upload). When the branch is green, merge `origin/dev` into it,
+take the next free version in `version` and `website/versions/index.md`, push the branch, wait for
+green again, then push the same commit to `dev`. Never rebase or force-push. Keep to the files your
+brief names; `version`, the versions page, the reality file and `issues/README.md` are shared and are
+reconciled at merge time. Only one session at a time edits the Xcode project file.
+
 ## Where the project is going (read `website/articles/` before proposing anything large)
 
 For now the app is also a laboratory: the product that ships will be smaller. Standing positions:

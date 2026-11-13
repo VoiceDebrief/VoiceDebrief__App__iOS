@@ -14,7 +14,9 @@ name: ios
 # Failures are copied into the job summary by run-and-summarize.sh.
 on:
   push:
-    branches: [dev]
+    # dev builds, tests and uploads. A work/ branch builds and tests only, so that a session working
+    # in parallel can have its Swift compiled before it merges into dev.
+    branches: [dev, 'work/**']
     paths:
       - 'Apps/**'
       - 'Packages/**'
