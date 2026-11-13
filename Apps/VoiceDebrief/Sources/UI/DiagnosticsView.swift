@@ -8,7 +8,7 @@ struct DiagnosticsView: View {
     @AppStorage("vd.developerLane") private var laneLink = ""
 
     var body: some View {
-        NavigationStack {
+        Group {
             List {
                 if let report {
                     Section("This device") {
@@ -60,7 +60,7 @@ struct DiagnosticsView: View {
                         }
                     }
                 } header: {
-                    Text("Developer lane")
+                    Text("Lane")
                 } footer: {
                     Text("After each run a button can send that note, encrypted, to the developer's lane. Nothing is sent without pressing it. This build has a lane built in; a link pasted here is used instead.")
                 }

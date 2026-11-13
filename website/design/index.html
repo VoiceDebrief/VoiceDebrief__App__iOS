@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The VoiceDebrief iOS design: a recorder that does not lose things</title>
+<meta name="description" content="What the app should look like and how it should behave: the three jobs, the decisions, the screens and three builds, agreed between a product agent and a design agent.">
+<link rel="canonical" href="https://ios.app.voicedebrief.ai/design/index.html">
+<meta property="og:url" content="https://ios.app.voicedebrief.ai/design/index.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="VoiceDebrief for iOS">
+<meta property="og:title" content="The VoiceDebrief iOS design: a recorder that does not lose things">
+<meta property="og:description" content="What the app should look like and how it should behave: the three jobs, the decisions, the screens and three builds, agreed between a product agent and a design agent.">
+<link rel="alternate" type="text/markdown" href="index.md" title="This page as markdown">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/vd-tokens.css">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+
+<nav class="site"><div class="row">
+  <a class="brand" href="../index.html">Voice<em>Debrief</em> <span>iOS</span></a>
+  <span class="beta" title="In development: there is nothing to install yet">IN DEVELOPMENT</span>
+  <a class="parent" href="https://voicedebrief.ai" title="A VoiceDebrief product">&#8599; part of <b>voicedebrief.ai</b></a>
+  <a class="ver" href="../versions/index.html" title="Release history">v0.1.7</a>
+  <a class="nl" href="../built/index.html">Built</a>
+  <a class="nl here" href="../design/index.html">Design</a>
+  <a class="nl" href="../plan/index.html">Plan</a>
+  <a class="nl" href="../develop/index.html">Build</a>
+  <a class="gh" href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">&#9733; GitHub</a>
+</div></nav>
+
+<main class="doc">
+<div class="crumb"><a href="../index.html">VoiceDebrief iOS</a> / design</div>
+<h1 id="the-design-a-recorder-that-does-not-lose-things">The design: a recorder that does not lose things</h1>
+<p>What the app should look like and how it should behave, agreed over two rounds between a product agent and a design agent on 13 November 2026, with the engineer reconciling. This page is intention, like the <a href="../plan/index.html">plan</a>; <a href="../built/index.html">what is built</a> says how much of it exists.</p>
+<h2 id="the-product-in-one-sentence">The product, in one sentence</h2>
+<p>A voice recorder that turns each recording into a transcript and a short debrief on the device, keeps everything on the device, and copies it, encrypted, to vaults you own and to lanes you choose.</p>
+<p>Three jobs, in this order:</p>
+<ol>
+<li><strong>Capture without loss.</strong> A recording is on disk as it is spoken and belongs to a note before the first word. A crash, a call, a model that fails or closing the app cannot lose it.</li>
+<li><strong>Give back something readable and findable.</strong> A transcript always; a debrief when the model can; a library to find it again.</li>
+<li><strong>Move it where it is needed.</strong> Save to a vault, send to a lane, share as text.</li>
+</ol>
+<h2 id="decisions">Decisions</h2>
+<div class="tablewrap"><table>
+<thead><tr><th></th><th>Decision</th></tr></thead>
+<tbody>
+<tr><td>Tabs</td><td>Four: Record, Library, Vaults, Settings. A tab bar on iPhone, a sidebar on iPad and Mac</td></tr>
+<tr><td>No setup</td><td>Nothing is needed to record and keep notes on the device: no vault, no account, no token</td></tr>
+<tr><td>Keeping</td><td>Saving to the device is automatic and has no switch. Saving to a vault is by choice</td></tr>
+<tr><td>Sending</td><td>Sending to a lane is never automatic. It asks every time and names the key the note is encrypted to</td></tr>
+<tr><td>At Stop</td><td>The note opens at once and fills in: the transcript first, then the debrief</td></tr>
+<tr><td>Reading order</td><td>&quot;In one sentence&quot; first, then key points, then actions. Stored order is unchanged. If the model lost the headings, its text is shown as one plain block</td></tr>
+<tr><td>Actions</td><td>Share, Save to vault and Send are visible, each showing its own state. Nothing core is hidden in a menu</td></tr>
+<tr><td>Words</td><td>Vault, lane, debrief, access token: the owner's words. A library item is a &quot;note&quot;, because a note may have no debrief</td></tr>
+<tr><td>Honesty</td><td>The privacy line says where this note actually is. No step is shown as done before it is. No player is shown before there is one</td></tr>
+<tr><td>Vault key</td><td>The vault screen says plainly that the key lives on this device only and that losing it loses the vault</td></tr>
+<tr><td>Deleting</td><td>Deleting a note removes it from this device. A copy in a vault stays, and the confirmation says so</td></tr>
+</tbody></table></div>
+<h2 id="the-screens">The screens</h2>
+<p><strong>Record.</strong> One red control, 88 points across, pinned at the bottom where a thumb reaches; it does not move between idle and recording. Above it while recording: a large timer, the microphone's level as bars, and the words as they are spoken. Idle: the three most recent notes. The language is a small menu in the toolbar.</p>
+<p><strong>Note.</strong> Date and details; one line saying where the note is; the audio player; the debrief as cards; the transcript, each line a button that moves the audio to that moment; then Share, Save to vault and Send.</p>
+<p><strong>Library.</strong> Notes by day, newest first. A row is the note's one sentence, the time and length, and at most one mark: working, something wrong, or saved to a vault.</p>
+<p><strong>Vaults.</strong> Opens with what a vault is in three lines and one button. Each vault shows what was saved first; files, history, branches and the key sit behind &quot;Technical&quot;.</p>
+<p><strong>Settings.</strong> Language, saving, lanes, and an Advanced area for diagnostics and the vault engine's log.</p>
+<p><strong>Look.</strong> VoiceDebrief's green as the accent, red only for recording and failures, amber for anything degraded. System type. Cards with a hairline, no shadows. Content is held to a readable width so that a wide Mac window is not a stretched phone.</p>
+<h2 id="three-builds">Three builds</h2>
+<p>Each is small enough to test on a device from a screenshot before the next starts.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Build</th><th>What</th></tr></thead>
+<tbody>
+<tr><td>A</td><td>Capture without loss and the new shell: the note created when recording starts, the recording in a form that survives a crash, the library, four tabs, the record screen</td></tr>
+<tr><td>B</td><td>The note and the library proper: cards, the audio player, tap a line to hear it, honest banners, the colours and widths</td></tr>
+<tr><td>C</td><td>Keeping and sending: several vaults and several lanes with names, saved and sent states on each note, &quot;also save to vault&quot;, retry</td></tr>
+</tbody></table></div>
+<h2 id="open-questions-for-the-owner">Open questions for the owner</h2>
+<ol>
+<li>Should saving to a vault be automatic once a vault is chosen? Recommended: yes, behind one switch, off until a vault exists.</li>
+<li>May a note ever be sent to a lane automatically? Recommended: not yet; later, per lane, only for lanes the owner added.</li>
+<li>Does deleting a note in the app delete it from a vault? Recommended: no.</li>
+</ol>
+</main>
+
+<footer class="site"><div class="cols">
+  <div>
+    <div class="brandline">Voice<em>Debrief</em> <span>iOS</span></div>
+    <p>The VoiceDebrief transcript and debrief as a native iPhone and iPad app, on Apple's own models, with the results in a vault you own. In development: there is nothing to install yet. Content CC BY 4.0; code Apache 2.0.</p>
+    <p class="partnote">This site is static and has no analytics.</p>
+    <p class="verline">site v0.1.7 · <a href="index.md">this page as markdown</a> · <a href="../llms.txt">llms.txt</a></p>
+  </div>
+  <div>
+    <h4>The app</h4>
+    <a href="../built/index.html">What is built</a>
+    <a href="../plan/index.html">The plan</a>
+    <a href="../develop/index.html">Build and test</a>
+    <a href="../versions/index.html">Release history</a>
+    <a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">GitHub</a>
+  </div>
+  <div>
+    <h4>VoiceDebrief</h4>
+    <a href="https://voicedebrief.ai">voicedebrief.ai</a>
+    <a href="https://meetscribe.chrome-extension.voicedebrief.ai">MeetScribe for Google Meet</a>
+  </div>
+  <div>
+    <h4>Built on</h4>
+    <a href="https://sgit.ai">sgit.ai</a>
+    <a href="https://pki.sgit.ai">pki.sgit.ai</a>
+    <a href="https://sgit.ai/security/index.html">The vault security model</a>
+  </div>
+</div></footer>
+</body>
+</html>

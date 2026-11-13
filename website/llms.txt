@@ -18,6 +18,8 @@ Every page has a markdown twin: replace index.html with index.md.
 - https://ios.app.voicedebrief.ai/plan/index.html : the implementation plan. Mostly PROPOSED:
   the pipeline on Apple's models, the passkey account (door, master, debriefs vault), the vault
   layout, the identity, the repository and CI, milestones, risks, and what was decided since.
+- https://ios.app.voicedebrief.ai/design/index.html : the agreed design. Intention, not fact: the
+  three jobs (capture without loss first), the decisions, the screens, three builds, open questions.
 - https://ios.app.voicedebrief.ai/develop/index.html : repository layout, what CI does (it is
   the compiler: Swift is not built on Linux), how the site is built, how a release is made.
 - https://ios.app.voicedebrief.ai/versions/index.html : release history.

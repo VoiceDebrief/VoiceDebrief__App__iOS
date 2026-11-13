@@ -1,8 +1,10 @@
+import AVFoundation
 import Foundation
 import Observation
 
-/// One voice note at a time, taken from audio to transcript to debrief. Holds the state the
-/// screens show. Nothing is saved in this build: closing the app loses the run.
+/// One voice note at a time, taken from audio to transcript to debrief. A note is written to the
+/// library the moment its recording stops, and updated after every step, so nothing here is the
+/// only copy of anything.
 @MainActor
 @Observable
 final class DebriefSession {
@@ -10,7 +12,6 @@ final class DebriefSession {
         case idle
         case recording(since: Date)
         case working(String)
-        case done
         case failed(String)
     }
 
@@ -22,13 +23,47 @@ final class DebriefSession {
         case failed(String)
     }
 
+    let store: NoteStore
     private(set) var phase: Phase = .idle
-    private(set) var run: DebriefRun?
+    /// The note being processed now, or the last one that was.
+    private(set) var currentNoteId: String?
     private(set) var sharing: Sharing = .idle
-    /// The audio of the last run, kept only so that it can be sent if the user asks. Deleted when
-    /// the next run starts or the result is cleared.
-    private var lastAudio: URL?
+    /// The note the `sharing` state is about.
+    private(set) var sharingNoteId: String?
     private let recorder = VoiceRecorder()
+
+    /// The note being recorded now, and the language chosen for it.
+    private var recordingNoteId: String?
+    private var recordingLocaleId = ""
+    /// Something the record screen should say once, such as a recording that was cut short.
+    private(set) var notice: String?
+
+    init(store: NoteStore) {
+        self.store = store
+        // A phone call, or another app taking the microphone, ends the recording. Keep what there is.
+        NotificationCenter.default.addObserver(forName: AVAudioSession.interruptionNotification, object: nil, queue: .main) { [weak self] notification in
+            guard let raw = notification.userInfo?[AVAudioSessionInterruptionTypeKey] as? UInt,
+                  AVAudioSession.InterruptionType(rawValue: raw) == .began else { return }
+            Task { @MainActor [weak self] in await self?.recordingWasInterrupted() }
+        }
+    }
+
+    private func recordingWasInterrupted() async {
+        guard case .recording = phase else { return }
+        _ = await stopRecording()
+        notice = "The recording was interrupted (a call, or another app took the microphone). What was recorded is kept and is being transcribed."
+    }
+
+    func clearNotice() { notice = nil }
+
+    /// The run of the current note, for the diagnostics report.
+    var run: DebriefRun? { currentNoteId.flatMap { store.note($0)?.run } }
+
+    /// What is being done to a note right now, in words, if it is the one being processed.
+    func workingText(for noteId: String) -> String? {
+        guard noteId == currentNoteId, case .working(let text) = phase else { return nil }
+        return text
+    }
 
     /// While recording: the words heard so far (settled, and still changing), recent loudness for the
     /// level display, and why there is no live text if there is none.
@@ -40,10 +75,6 @@ final class DebriefSession {
     private let live = LiveTranscriber()
     private var meter: Task<Void, Never>?
 
-    var canShareAudio: Bool { lastAudio != nil && run?.transcript != nil }
-    /// The audio of the last run, for saving it with the debrief.
-    var lastAudioURL: URL? { lastAudio }
-
     var isBusy: Bool {
         switch phase {
         case .recording, .working: return true
@@ -54,16 +85,23 @@ final class DebriefSession {
     // MARK: Recording
 
     func startRecording(localeId: String) async {
+        notice = nil
+        // The note and its file exist before recording starts: see NoteStore.begin.
+        guard let (note, audio) = store.begin(source: "Recorded here", localeId: localeId) else {
+            phase = .failed(store.problem ?? "A place for the recording could not be made.")
+            return
+        }
         do {
-            try await recorder.start()
-            forgetAudio()
-            run = nil
+            try await recorder.start(writingTo: audio)
+            recordingNoteId = note.id
+            recordingLocaleId = localeId
             liveSettled = ""
             liveVolatile = ""
             liveNote = ""
             levels = []
             phase = .recording(since: Date())
         } catch {
+            store.delete(note.id)
             phase = .failed(error.localizedDescription)
             return
         }
@@ -92,54 +130,94 @@ final class DebriefSession {
         if levels.count > Self.levelCount { levels.removeFirst(levels.count - Self.levelCount) }
     }
 
-    func stopRecording(localeId: String) async {
+    /// Stops the recording and starts the transcript and debrief. The note has been in the library
+    /// since the recording began. Returns its id at once, so the screen can show it while it fills in.
+    func stopRecording() async -> String? {
         meter?.cancel()
         meter = nil
         await live.stop()
-        guard let url = recorder.stop() else {
+        recorder.stop()
+        guard let id = recordingNoteId else {
             phase = .failed("Nothing was recorded.")
-            return
+            return nil
         }
-        await process(url: url, source: "Recorded here", localeId: localeId)
+        recordingNoteId = nil
+        guard store.audioURL(for: id) != nil else {
+            store.delete(id)
+            phase = .failed("Nothing was recorded.")
+            return nil
+        }
+        phase = .working("Transcribing")
+        currentNoteId = id
+        Task { await process(noteId: id) }
+        return id
     }
 
     // MARK: Importing
 
     /// A file picked in the Files sheet. It is copied first: the picked URL is only readable for a moment.
-    func importFile(_ picked: URL, localeId: String) async {
+    func importFile(_ picked: URL, localeId: String) -> String? {
         let scoped = picked.startAccessingSecurityScopedResource()
         defer { if scoped { picked.stopAccessingSecurityScopedResource() } }
         let copy = FileManager.default.temporaryDirectory
-            .appendingPathComponent("import-\(Int(Date().timeIntervalSince1970))-\(picked.lastPathComponent)")
+            .appendingPathComponent("import-\(Int(Date().timeIntervalSince1970)).\(picked.pathExtension)")
         do {
             try FileManager.default.copyItem(at: picked, to: copy)
         } catch {
             phase = .failed("That file could not be opened.")
-            return
+            return nil
         }
-        await process(url: copy, source: picked.lastPathComponent, localeId: localeId)
+        return begin(audioAt: copy, source: picked.lastPathComponent, localeId: localeId)
+    }
+
+    /// Keeps the audio as a new note, then processes it without making the caller wait.
+    private func begin(audioAt url: URL, source: String, localeId: String) -> String? {
+        guard let note = store.create(audioAt: url, source: source, localeId: localeId) else {
+            phase = .failed(store.problem ?? "The recording could not be kept.")
+            return nil
+        }
+        phase = .working("Transcribing")
+        currentNoteId = note.id
+        Task { await process(noteId: note.id) }
+        return note.id
+    }
+
+    /// Transcribes and debriefs a note again from its kept audio: for a note that was interrupted,
+    /// or after changing the language or switching Apple Intelligence on.
+    func reprocess(_ noteId: String, localeId: String) {
+        guard !isBusy, var run = store.note(noteId)?.run else { return }
+        run = DebriefRun(source: run.source, localeId: localeId)
+        store.update(noteId, run: run, processing: true)
+        phase = .working("Transcribing")
+        currentNoteId = noteId
+        Task { await process(noteId: noteId) }
     }
 
     // MARK: The pipeline
 
-    private func forgetAudio() {
-        if let lastAudio { try? FileManager.default.removeItem(at: lastAudio) }
-        lastAudio = nil
-        sharing = .idle
-    }
-
-    private func process(url: URL, source: String, localeId: String) async {
-        forgetAudio()
-        lastAudio = url
-        var current = DebriefRun(source: source, localeId: localeId)
+    private func process(noteId: String) async {
+        guard let note = store.note(noteId), let url = store.audioURL(for: noteId) else {
+            phase = .idle
+            return
+        }
+        let localeId = note.run.localeId
+        var current = DebriefRun(source: note.run.source, localeId: localeId)
         current.audioSeconds = SpeechFileTranscriber.audioSeconds(url: url)
-        run = current
+        /// Writes the run to the library; `finished` ends the note's processing and frees the recorder.
+        func publish(finished: Bool = false) {
+            store.update(noteId, run: current, processing: !finished)
+            if finished {
+                phase = .idle
+                compressAudio(of: noteId)
+            }
+        }
+        publish()
 
         // 1. Transcript
         phase = .working("Transcribing")
         var started = Date()
         current.steps.append(StepRecord(name: "Transcript", outcome: .running, seconds: 0, note: ""))
-        run = current
+        publish()
         do {
             let transcript = try await SpeechFileTranscriber.transcribe(url: url, localeId: localeId) { status in
                 Task { @MainActor [weak self] in self?.setWorking(status) }
@@ -149,33 +227,30 @@ final class DebriefSession {
             finish(&current, outcome: transcript.isEmpty ? .degraded : .done, since: started, note: note)
         } catch {
             finish(&current, outcome: .failed, since: started, note: error.localizedDescription)
-            run = current
-            phase = .failed(error.localizedDescription)
+            publish(finished: true)
             return
         }
-        run = current
         guard let transcript = current.transcript, !transcript.isEmpty else {
-            phase = .done
+            publish(finished: true)
             return
         }
+        publish()
 
         // 2. Debrief. A failure here degrades: the transcript stands on its own.
         phase = .working("Writing the debrief")
         started = Date()
         current.steps.append(StepRecord(name: "Debrief", outcome: .running, seconds: 0, note: ""))
-        run = current
+        publish()
         let words = DebriefPrompt.wordCount(transcript.lines)
         if words < DebriefPrompt.minimumWords {
             finish(&current, outcome: .degraded, since: started,
                    note: "Too short to summarise (\(words) words): the transcript is the whole note.")
-            run = current
-            phase = .done
+            publish(finished: true)
             return
         }
         guard let contextSize = OnDeviceModel.contextSize else {
             finish(&current, outcome: .degraded, since: started, note: OnDeviceModel.status.text)
-            run = current
-            phase = .done
+            publish(finished: true)
             return
         }
         current.modelContextSize = contextSize
@@ -207,8 +282,24 @@ final class DebriefSession {
         } catch {
             finish(&current, outcome: .degraded, since: started, note: error.localizedDescription)
         }
-        run = current
-        phase = .done
+        publish(finished: true)
+    }
+
+    /// Once a note is finished, its WAV recording is replaced by a small .m4a. The WAV stays if that fails.
+    private func compressAudio(of noteId: String) {
+        guard let wav = store.audioURL(for: noteId), wav.pathExtension.lowercased() == "wav" else { return }
+        let m4a = store.folderURL(for: noteId).appending(path: "audio.m4a")
+        Task {
+            let done = await Task.detached(priority: .utility) { () -> Bool in
+                (try? AudioCompressor.compress(wav: wav, to: m4a)) != nil
+            }.value
+            if done, !isBusyWith(noteId) { store.replaceAudio(noteId, with: "audio.m4a") }
+        }
+    }
+
+    /// True while this note is the one being recorded or processed: its audio must not be swapped then.
+    private func isBusyWith(_ noteId: String) -> Bool {
+        noteId == recordingNoteId || (noteId == currentNoteId && isBusy)
     }
 
     private func setWorking(_ text: String) {
@@ -223,25 +314,22 @@ final class DebriefSession {
         run.steps[last].note = note
     }
 
-    func reset() {
-        guard !isBusy else { return }
-        forgetAudio()
-        run = nil
-        phase = .idle
+    func clearFailure() {
+        if case .failed = phase { phase = .idle }
     }
 
     // MARK: Sending to the developer
 
     /// Sends the last note's audio, transcript and debrief to the developer's lane, encrypted to the
     /// developer's key. Only ever called from the button that says so.
-    func shareWithDeveloper(lane: DeveloperLane) async {
-        guard let url = lastAudio, let run else { return }
+    func share(noteId: String, lane: DeveloperLane) async {
+        guard let note = store.note(noteId), let url = store.audioURL(for: noteId) else { return }
         if case .sending = sharing { return }
+        sharingNoteId = noteId
         sharing = .sending(0, 0)
         do {
             let audio = try Data(contentsOf: url)
-            let noteId = UUID().uuidString.lowercased()
-            let messages = try DeveloperLane.messages(audio: audio, audioName: url.lastPathComponent, run: run,
+            let messages = try DeveloperLane.messages(audio: audio, audioName: url.lastPathComponent, run: note.run,
                                                       noteId: noteId, app: AppInfo.versionLine(), at: Date())
             try await lane.send(messages) { done, total in
                 Task { @MainActor [weak self] in self?.sharing = .sending(done, total) }
@@ -250,5 +338,10 @@ final class DebriefSession {
         } catch {
             sharing = .failed(error.localizedDescription)
         }
+    }
+
+    /// The sending state as it applies to one note.
+    func sharing(for noteId: String) -> Sharing {
+        noteId == sharingNoteId ? sharing : .idle
     }
 }

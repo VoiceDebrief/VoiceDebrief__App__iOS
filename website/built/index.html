@@ -22,8 +22,9 @@
   <a class="brand" href="../index.html">Voice<em>Debrief</em> <span>iOS</span></a>
   <span class="beta" title="In development: there is nothing to install yet">IN DEVELOPMENT</span>
   <a class="parent" href="https://voicedebrief.ai" title="A VoiceDebrief product">&#8599; part of <b>voicedebrief.ai</b></a>
-  <a class="ver" href="../versions/index.html" title="Release history">v0.1.6</a>
+  <a class="ver" href="../versions/index.html" title="Release history">v0.1.7</a>
   <a class="nl here" href="../built/index.html">Built</a>
+  <a class="nl" href="../design/index.html">Design</a>
   <a class="nl" href="../plan/index.html">Plan</a>
   <a class="nl" href="../develop/index.html">Build</a>
   <a class="gh" href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">&#9733; GitHub</a>
@@ -39,6 +40,9 @@
 <thead><tr><th>What</th><th>Where</th><th>How it is tested</th></tr></thead>
 <tbody>
 <tr><td>The app skeleton <span class="chip chip-built">built</span></td><td><code>Apps/VoiceDebrief/</code>: a universal iPhone and iPad target, iOS 26.0, SwiftUI, bundle <code>ai.voicedebrief.app</code></td><td>Unit tests in <code>Apps/VoiceDebrief/Tests/</code>, run by CI on an iPhone and an iPad simulator</td></tr>
+<tr><td>Capture without loss <span class="chip chip-unverified">unverified</span></td><td><code>Engine/NoteStore.swift</code>, <code>VoiceRecorder.swift</code>, <code>Model/WAVRepair.swift</code>, <code>Engine/AudioCompressor.swift</code>: a note is written to the library when recording starts; the recording goes straight into the note's folder as 16 kHz WAV; a recording that was never closed has its header repaired when the library next opens; an interruption (a call, another app) ends the recording and keeps it; the WAV is replaced by a small <code>.m4a</code> only after the note is finished and the copy reads back at the same length</td><td>Unit tests: the note exists before the audio, a cut-off WAV is repaired on reopen, the repair's arithmetic, the compressed copy taking the recording's place. Not yet run on a device; the crash case itself has not been tried</td></tr>
+<tr><td>Library on the device <span class="chip chip-unverified">unverified</span></td><td><code>UI/LibraryView.swift</code>, <code>NoteDetailView.swift</code>: notes by day, newest first; a note reopened, run again in the language chosen now, or deleted from the device</td><td>Unit tests: the store survives a reopen, titles, states and grouping. Not yet run on a device</td></tr>
+<tr><td>The shell <span class="chip chip-unverified">unverified</span></td><td><code>UI/RootView.swift</code>, <code>RecordView.swift</code>, <code>SettingsView.swift</code>: four tabs that become a sidebar on wide screens; one large record control pinned at the bottom; stopping opens the note, which fills in; diagnostics, the lane and the engine's log under Settings</td><td>Compiles. Not yet seen on a device</td></tr>
 <tr><td>Record or open a voice note <span class="chip chip-unverified">unverified</span></td><td><code>Engine/VoiceRecorder.swift</code>, <code>DebriefView</code>: record to a temporary <code>.m4a</code>, or choose an audio file. <code>.m4a</code>, <code>.mp3</code> and <code>.wav</code>; not WhatsApp's Ogg Opus</td><td>Recording worked in the same first run on a Mac. Choosing a file has not been tried</td></tr>
 <tr><td>Transcript on the device <span class="chip chip-unverified">unverified</span></td><td><code>Engine/SpeechFileTranscriber.swift</code>: <code>SpeechAnalyzer</code> with a <code>SpeechTranscriber</code>, the model downloaded on first use, one line per phrase with its time. The language is chosen before the run</td><td>First real run, 13 November 2026, build 0.1.1 (5) on an Apple silicon Mac: a 22.6-second English note recorded in the app was transcribed in 0.6 seconds, two lines, accurate bar small slips. One note, one language, one device: not yet a judgement</td></tr>
 <tr><td>Debrief on the device <span class="chip chip-unverified">unverified</span></td><td><code>Engine/OnDeviceModel.swift</code>, <code>DebriefSession</code>: Apple's Foundation Models, the three-section prompt from voicedebrief.ai, a long note read in parts sized from the model's reported context and merged. A refusal or a missing model leaves the transcript standing</td><td>The chunking, prompts and format check have unit tests. The model's output has none. On a Mac with Apple Intelligence switched off the app said so and kept the transcript, as designed. First debrief, 13 November 2026, build 0.1.1 (5) on an iPhone: a short English note came back with the three headings and nothing invented, though it turned &quot;let's see if we recorded fine&quot; into an action. A second, one-line note on a Mac showed the model's habits: quotation marks copied from the prompt, a renamed heading (which the app flagged), the note repeated back as a key point. The prompt was changed for 0.1.2 and notes under 25 words are no longer summarised. Long notes and Portuguese are untried</td></tr>
@@ -63,7 +67,10 @@
 <tbody>
 <tr><td>Receiving a voice note from the share sheet (WhatsApp)</td><td><span class="chip chip-proposed">proposed</span></td></tr>
 <tr><td>Decoding WhatsApp's Ogg Opus</td><td><span class="chip chip-proposed">proposed</span></td></tr>
-<tr><td>A library: listing and reopening saved debriefs in the app</td><td><span class="chip chip-proposed">proposed</span></td></tr>
+<tr><td>Recording with the screen locked or the app in the background: the audio background mode is declared</td><td><span class="chip chip-unverified">unverified</span>: never tried</td></tr>
+<tr><td>Playing a note's audio; tapping a transcript line to hear it</td><td><span class="chip chip-proposed">proposed</span></td></tr>
+<tr><td>Several lanes with names; saved and sent states on a note; saving to a vault automatically</td><td><span class="chip chip-proposed">proposed</span></td></tr>
+<tr><td>Apple's larger model on Private Cloud Compute, as an option</td><td><span class="chip chip-proposed">proposed</span>: needs the entitlement from Apple and the iOS 27 SDK in CI</td></tr>
 <tr><td>Translation, classification, citations of time in the debrief</td><td><span class="chip chip-proposed">proposed</span></td></tr>
 <tr><td>The passkey ceremony, the account, the recovery code</td><td><span class="chip chip-proposed">proposed</span></td></tr>
 <tr><td>Creating an account, adding a door, merge, audio over 3.8 MB in a vault</td><td><span class="chip chip-proposed">proposed</span></td></tr>
@@ -90,7 +97,7 @@
     <div class="brandline">Voice<em>Debrief</em> <span>iOS</span></div>
     <p>The VoiceDebrief transcript and debrief as a native iPhone and iPad app, on Apple's own models, with the results in a vault you own. In development: there is nothing to install yet. Content CC BY 4.0; code Apache 2.0.</p>
     <p class="partnote">This site is static and has no analytics.</p>
-    <p class="verline">site v0.1.6 · <a href="index.md">this page as markdown</a> · <a href="../llms.txt">llms.txt</a></p>
+    <p class="verline">site v0.1.7 · <a href="index.md">this page as markdown</a> · <a href="../llms.txt">llms.txt</a></p>
   </div>
   <div>
     <h4>The app</h4>

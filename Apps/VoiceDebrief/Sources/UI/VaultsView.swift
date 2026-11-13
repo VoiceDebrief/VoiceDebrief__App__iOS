@@ -307,7 +307,8 @@ struct TrafficView: View {
 
 /// After a run: save this debrief into one of the vaults, as one signed commit.
 struct SaveToVaultSection: View {
-    let session: DebriefSession
+    let note: Note
+    let audioURL: URL?
     let book: VaultBook
     @AppStorage("vd.saveVault") private var chosen = ""
     @State private var saving = false
@@ -337,7 +338,7 @@ struct SaveToVaultSection: View {
                     Button {
                         Task { await save() }
                     } label: {
-                        Label("Save this debrief to the vault", systemImage: "lock.doc")
+                        Label("Save this note to the vault", systemImage: "lock.doc")
                     }
                 }
                 if let result {
@@ -348,9 +349,9 @@ struct SaveToVaultSection: View {
                 }
             }
         } header: {
-            Text("Keep it")
+            Text("Save to vault")
         } footer: {
-            Text("The debrief, the transcript, the run and the audio are encrypted on this device and written to your vault as one signed commit. The server stores what it cannot read.")
+            Text("The note is already kept on this device. Saving also writes it, encrypted, to your vault as one signed commit.")
         }
         .onAppear {
             if !writable.contains(where: { $0.id == chosen }) { chosen = writable.first?.id ?? "" }
@@ -358,13 +359,13 @@ struct SaveToVaultSection: View {
     }
 
     private func save() async {
-        guard let run = session.run, let vault = writable.first(where: { $0.id == chosen }) ?? writable.first else { return }
+        guard let vault = writable.first(where: { $0.id == chosen }) ?? writable.first else { return }
         saving = true
         result = nil
         problem = nil
         defer { saving = false }
         do {
-            result = try await book.save(run: run, audioURL: session.lastAudioURL, to: vault)
+            result = try await book.save(run: note.run, audioURL: audioURL, to: vault)
         } catch {
             problem = VaultBook.describe(error)
         }
