@@ -18,12 +18,20 @@
 			remoteGlobalIDString = C3ADE1DD755CC2A36A7F04BC;
 			remoteInfo = VoiceDebrief;
 		};
+		7A16000000000000000000A1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 56A7B990F213D3209DD50473 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C3ADE1DD755CC2A36A7F04BC;
+			remoteInfo = VoiceDebrief;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		610642B90E8AA3738B598607 /* VoiceDebrief.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VoiceDebrief.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CB005559FA522744F6E73BB3 /* VoiceDebriefTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VoiceDebriefTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9D1DE9D46DD4153EEFC52165 /* VoiceDebrief.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = VoiceDebrief.xcconfig; sourceTree = "<group>"; };
+		7A16000000000000000000A2 /* VoiceDebriefUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VoiceDebriefUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -40,6 +48,11 @@
 		60161581E5E9A6F1A823F59C /* Tests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Tests;
+			sourceTree = "<group>";
+		};
+		7A16000000000000000000A3 /* UITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = UITests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -60,6 +73,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		7A16000000000000000000A4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -70,6 +90,7 @@
 				B3FCC7F3A9642629AC44C670 /* Sources */,
 				316130A2C9EAB5ACBDCE9ECB /* Resources */,
 				60161581E5E9A6F1A823F59C /* Tests */,
+				7A16000000000000000000A3 /* UITests */,
 				BA0D98B62092BE1F80CD54D3 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -79,6 +100,7 @@
 			children = (
 				610642B90E8AA3738B598607 /* VoiceDebrief.app */,
 				CB005559FA522744F6E73BB3 /* VoiceDebriefTests.xctest */,
+				7A16000000000000000000A2 /* VoiceDebriefUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -133,6 +155,29 @@
 			productReference = CB005559FA522744F6E73BB3;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		7A16000000000000000000A5 /* VoiceDebriefUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7A16000000000000000000AB /* Build configuration list for PBXNativeTarget "VoiceDebriefUITests" */;
+			buildPhases = (
+				7A16000000000000000000A7 /* Sources */,
+				7A16000000000000000000A4 /* Frameworks */,
+				7A16000000000000000000A6 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				7A16000000000000000000A8 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				7A16000000000000000000A3 /* UITests */,
+			);
+			name = VoiceDebriefUITests;
+			packageProductDependencies = (
+			);
+			productName = VoiceDebriefUITests;
+			productReference = 7A16000000000000000000A2 /* VoiceDebriefUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -147,6 +192,10 @@
 						CreatedOnToolsVersion = 26.0;
 					};
 					AFA9D4AB916D9FF7752B9226 = {
+						CreatedOnToolsVersion = 26.0;
+						TestTargetID = C3ADE1DD755CC2A36A7F04BC;
+					};
+					7A16000000000000000000A5 = {
 						CreatedOnToolsVersion = 26.0;
 						TestTargetID = C3ADE1DD755CC2A36A7F04BC;
 					};
@@ -172,6 +221,7 @@
 			targets = (
 				C3ADE1DD755CC2A36A7F04BC /* VoiceDebrief */,
 				AFA9D4AB916D9FF7752B9226 /* VoiceDebriefTests */,
+				7A16000000000000000000A5 /* VoiceDebriefUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -185,6 +235,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		4526E75E60988521F7D9372C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7A16000000000000000000A6 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -208,6 +265,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		7A16000000000000000000A7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -215,6 +279,11 @@
 			isa = PBXTargetDependency;
 			target = C3ADE1DD755CC2A36A7F04BC /* VoiceDebrief */;
 			targetProxy = EB934E59EBA3125C4BA11FCB /* PBXContainerItemProxy */;
+		};
+		7A16000000000000000000A8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C3ADE1DD755CC2A36A7F04BC /* VoiceDebrief */;
+			targetProxy = 7A16000000000000000000A1 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -347,6 +416,34 @@
 			};
 			name = Release;
 		};
+		7A16000000000000000000A9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9D1DE9D46DD4153EEFC52165 /* VoiceDebrief.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = ai.voicedebrief.app.uitests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = VoiceDebrief;
+			};
+			name = Debug;
+		};
+		7A16000000000000000000AA /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9D1DE9D46DD4153EEFC52165 /* VoiceDebrief.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = ai.voicedebrief.app.uitests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = VoiceDebrief;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -373,6 +470,15 @@
 			buildConfigurations = (
 				E1D8DF6CDC9CACC4F41BBC2D /* Debug */,
 				E9B340141CEF9D151D455C4C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7A16000000000000000000AB /* Build configuration list for PBXNativeTarget "VoiceDebriefUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7A16000000000000000000A9 /* Debug */,
+				7A16000000000000000000AA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -6,7 +6,12 @@ import Observation
 @MainActor
 @Observable
 final class GlossaryStore {
-    static let shared = GlossaryStore()
+    // Seam for the screenshots (issue 016, work/screens): a launch with -VDSampleData (debug builds
+    // only) keeps this in the sample's temporary folder, never in the real file.
+    static let shared: GlossaryStore = {
+        if let file = LaunchOptions.sampleFile("glossary.json") { return GlossaryStore(file: file) }
+        return GlossaryStore()
+    }()
 
     let file: URL
     private(set) var terms: [GlossaryTerm] = []

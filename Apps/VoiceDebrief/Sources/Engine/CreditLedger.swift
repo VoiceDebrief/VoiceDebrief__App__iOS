@@ -10,7 +10,12 @@ import Observation
 @MainActor
 @Observable
 final class CreditLedger {
-    static let shared = CreditLedger()
+    // Seam for the screenshots (issue 016, work/screens): a launch with -VDSampleData (debug builds
+    // only) keeps this in the sample's temporary folder, never in the real file.
+    static let shared: CreditLedger = {
+        if let file = LaunchOptions.sampleFile("credit-ledger.json") { return CreditLedger(file: file) }
+        return CreditLedger()
+    }()
 
     static var defaultFile: URL {
         FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]

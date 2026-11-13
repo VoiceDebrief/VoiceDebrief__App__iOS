@@ -6,7 +6,12 @@ import Observation
 @MainActor
 @Observable
 final class RecipientStore {
-    static let shared = RecipientStore()
+    // Seam for the screenshots (issue 016, work/screens): a launch with -VDSampleData (debug builds
+    // only) keeps this in the sample's temporary folder, never in the real file.
+    static let shared: RecipientStore = {
+        if let file = LaunchOptions.sampleFile("recipients.json") { return RecipientStore(file: file) }
+        return RecipientStore()
+    }()
     static let builtInName = "The developer"
 
     let file: URL

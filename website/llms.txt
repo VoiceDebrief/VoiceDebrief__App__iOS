@@ -34,7 +34,14 @@ Every page has a markdown twin: replace index.html with index.md.
   three jobs (capture without loss first), the decisions, the screens, three builds, open questions.
 - https://ios.app.voicedebrief.ai/develop/index.html : repository layout, what CI does (it is
   the compiler: Swift is not built on Linux), how the site is built, how a release is made.
+  Also how CI photographs every screen from invented sample data (screens.yml), and how an agent
+  in a Linux container downloads and looks at the pictures.
 - https://ios.app.voicedebrief.ai/versions/index.html : release history.
+- https://ios.app.voicedebrief.ai/reviews/index.html : reviews of the screens from pictures taken in
+  CI: what a round is, and the list of rounds.
+- https://ios.app.voicedebrief.ai/reviews/round-1/index.html : round 1 (13 November 2026): what is
+  plainly wrong, four synthetic users (a driver, a careful reader of privacy, a developer, someone
+  who lost a recording), 21 findings with their owners, issues 029 to 038.
 - https://ios.app.voicedebrief.ai/identity/return/index.html : not documentation. The page pki.sgit.ai
   sends a person back to after they vouch for the app on a device; it says how to hand the answer in
   the address to the app. No script: the answer stays in the address.

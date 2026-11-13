@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Reviews of the VoiceDebrief iOS screens</title>
+<meta name="description" content="Rounds of reading pictures of every screen: what is plainly wrong, what synthetic users expected and found, and the status of each finding.">
+<link rel="canonical" href="https://ios.app.voicedebrief.ai/reviews/index.html">
+<meta property="og:url" content="https://ios.app.voicedebrief.ai/reviews/index.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="VoiceDebrief for iOS">
+<meta property="og:title" content="Reviews of the VoiceDebrief iOS screens">
+<meta property="og:description" content="Rounds of reading pictures of every screen: what is plainly wrong, what synthetic users expected and found, and the status of each finding.">
+<link rel="alternate" type="text/markdown" href="index.md" title="This page as markdown">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/vd-tokens.css">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+
+<nav class="site"><div class="row">
+  <a class="brand" href="../index.html">Voice<em>Debrief</em> <span>iOS</span></a>
+  <span class="beta" title="In development: there is nothing to install yet">IN DEVELOPMENT</span>
+  <a class="parent" href="https://voicedebrief.ai" title="A VoiceDebrief product">&#8599; part of <b>voicedebrief.ai</b></a>
+  <a class="ver" href="../versions/index.html" title="Release history">dev</a>
+  <a class="nl" href="../built/index.html">Built</a>
+  <a class="nl" href="../architecture/index.html">How it works</a>
+  <a class="nl" href="../design/index.html">Design</a>
+  <a class="nl" href="../plan/index.html">Plan</a>
+  <a class="nl" href="../articles/index.html">Articles</a>
+  <a class="nl" href="../develop/index.html">Build</a>
+  <a class="gh" href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">&#9733; GitHub</a>
+</div></nav>
+
+<main class="doc">
+<div class="crumb"><a href="../index.html">VoiceDebrief iOS</a> / reviews</div>
+<h1 id="reviews">Reviews</h1>
+<p>Rounds of looking at the app as it is, from pictures. The app is written by agents that cannot run it, so <a href="../develop/index.html">CI photographs every screen</a> from invented sample data, and each round here is somebody reading those pictures: first the agent that made them, then a panel of <a href="../articles/synthetic-users/index.html">synthetic users</a>, each with a purpose, a level of knowledge and only the screens they would see.</p>
+<p>A finding is where a user's expectation and the next picture disagree, or where a user stopped. Each finding names the screen, who found it, the session that owns that screen, and a status:</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Status</th><th>Meaning</th></tr></thead>
+<tbody>
+<tr><td>open</td><td>Written down, with an issue under <code>issues/open/</code> if it is worth fixing</td></tr>
+<tr><td>fixed</td><td>Changed in the app, and seen to be changed in a later round's pictures</td></tr>
+<tr><td>not a fault</td><td>An artefact of how the pictures are made, or a decision that stands. It says which</td></tr>
+</tbody></table></div>
+<p>A synthetic user reads a picture. It cannot feel a control that is too small, hear nothing, or drive a car, and it has been wrong about what a tap would do. The owner on a device remains the test that counts; a round is a cheap way to find what to look at.</p>
+<h2 id="rounds">Rounds</h2>
+<div class="tablewrap"><table>
+<thead><tr><th>Round</th><th>Date</th><th>Pictures</th><th>Findings</th></tr></thead>
+<tbody>
+<tr><td><a href="round-1/index.html">Round 1</a></td><td>13 November 2026</td><td>28 pictures per set, iPhone and iPad, light and dark, at commit <code>fb0c548</code> on <code>work/screens</code></td><td>21, of which 15 open and 6 not a fault; ten issues opened (029 to 038)</td></tr>
+</tbody></table></div>
+</main>
+
+<footer class="site"><div class="cols">
+  <div>
+    <div class="brandline">Voice<em>Debrief</em> <span>iOS</span></div>
+    <p>The VoiceDebrief transcript and debrief as a native iPhone and iPad app, on Apple's own models, with the results in a vault you own. In development: there is nothing to install yet. Content CC BY 4.0; code Apache 2.0.</p>
+    <p class="partnote">This site is static and has no analytics.</p>
+    <p class="verline">site dev · <a href="index.md">this page as markdown</a> · <a href="../llms.txt">llms.txt</a></p>
+  </div>
+  <div>
+    <h4>The app</h4>
+    <a href="../built/index.html">What is built</a>
+    <a href="../plan/index.html">The plan</a>
+    <a href="../develop/index.html">Build and test</a>
+    <a href="../versions/index.html">Release history</a>
+    <a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">GitHub</a>
+  </div>
+  <div>
+    <h4>VoiceDebrief</h4>
+    <a href="https://voicedebrief.ai">voicedebrief.ai</a>
+    <a href="https://meetscribe.chrome-extension.voicedebrief.ai">MeetScribe for Google Meet</a>
+  </div>
+  <div>
+    <h4>Built on</h4>
+    <a href="https://sgit.ai">sgit.ai</a>
+    <a href="https://pki.sgit.ai">pki.sgit.ai</a>
+    <a href="https://sgit.ai/security/index.html">The vault security model</a>
+  </div>
+</div></footer>
+</body>
+</html>

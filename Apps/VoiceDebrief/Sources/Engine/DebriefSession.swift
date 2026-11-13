@@ -404,3 +404,18 @@ final class DebriefSession {
         noteId == sharingNoteId ? sharing : .idle
     }
 }
+
+#if DEBUG
+// A seam for the screenshots (issue 016, owned by the work/screens session). The states below are
+// private(set), so sample values have to be set from this file. Called only by `SampleWorld`, which
+// exists only when the app is launched with -VDSampleData; not compiled into a release build.
+extension DebriefSession {
+    func showSample(phase: Phase, noteId: String? = nil, liveSettled: String = "", liveVolatile: String = "", levels: [Double] = []) {
+        self.phase = phase
+        self.currentNoteId = noteId
+        self.liveSettled = liveSettled
+        self.liveVolatile = liveVolatile
+        self.levels = levels
+    }
+}
+#endif

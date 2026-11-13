@@ -5,11 +5,11 @@ How this repository works. The short version: **CI is the compiler.** Most of th
 ## Layout
 
 ```
-Apps/VoiceDebrief/            the app: a hand-written Xcode project, sources, resources, tests
+Apps/VoiceDebrief/            the app: a hand-written Xcode project, sources, resources, tests, UI tests
 Packages/SGitVault/           the vault engine (copied; see its SOURCE.md)
 Config/                       Local.xcconfig.example, for building on your own device
-.github/workflows/            ios.yml, ios-vault.yml, pki-interop.yml, site.yml
-.github/scripts/              select Xcode, pick a simulator, copy errors into the job summary
+.github/workflows/            ios.yml, ios-vault.yml, pki-interop.yml, screens.yml, site.yml
+.github/scripts/              select Xcode, pick a simulator, copy errors into the job summary, export screenshots
 website/                      this site: markdown sources, the builder and the gate
 issues/                       open and done work, one file each
 version                       the version, one line, written by CI only
@@ -32,11 +32,52 @@ cd Packages/SGitVault && swift test          # the vault engine, on the Mac itse
 | `ios.yml` | A push to `dev` or to a `work/` branch, or a pull request, that touches `Apps/`, `Packages/` or the workflow. Only `dev` uploads to TestFlight | One Mac job: the vault engine's tests, a simulator build, a Release device build (unsigned), then the app's unit tests on an iPhone and an iPad simulator |
 | `ios-vault.yml` | A change to the vault write path, every Monday, or by hand | Swift writes vaults on a Mac; `sgit-ai` on Linux clones them, verifies every signature and compares every file |
 | `pki-interop.yml` | A change to the app's PKI files or `scripts/pki-interop/`, every Monday, or by hand | `sgit pki` and pki.sgit.ai's `keys.js` make keys, signatures, envelopes, a statement and a sign-in on Linux; the app's PKI files, compiled as a tool on a Mac, read them and make their own; sgit and `keys.js` read those |
+| `screens.yml` | By hand, or a push to `dev` or a `work/` branch that touches the screens | A screenshot of every screen on an iPhone and an iPad simulator, light and dark, from invented sample data: see below |
 | `site.yml` | Every push and pull request | The gate, then (on `dev`) the next version, its tag, and the site |
 
 Builds and tests are unsigned. The last step of `ios.yml` uploads to TestFlight on a green push to `dev`: `scripts/release/testflight.sh` archives unsigned, signs the app with its entitlements, and exports with automatic signing through the App Store Connect API key. It needs the secrets `ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_KEY_P8_BASE64` and the variable `APPLE_TEAM_ID`, and skips itself while any is missing.
 
 **Reading a failure without a Mac.** Each build and test step runs through `.github/scripts/run-and-summarize.sh`, which copies compiler errors and failed tests into the job summary and repeats them as the last lines of the step, so they can be read through the Actions API. Full logs are kept as the `ios-logs` artifact.
+
+## Seeing the screens
+
+Nobody who writes this app from a Linux container can run it, so CI takes a picture of every screen. `screens.yml` runs by hand, and on a push to `dev` or a `work/` branch that touches the app's `UI/` or `App/` sources, the UI tests or the project file.
+
+**How a picture is made.** `Apps/VoiceDebrief/UITests/ScreensTests.swift` has one test per picture. Each launches the app with two launch arguments, read by `Sources/App/LaunchOptions.swift` in debug builds only:
+
+| Argument | What it does |
+|---|---|
+| `-VDSampleData full` | The app is given invented notes in a temporary folder (one finished, one transcript only, one interrupted, and where the screen needs it one being worked on or recorded), a vault book in memory, and one invented vault that the real engine writes into the same temporary folder. Never the real library or Keychain. The recipients, the glossary and the credit ledger keep their files in the same temporary folder. Not replaced: settings in UserDefaults (the language, the vault chosen for saving) |
+| `-VDSampleData empty` | The same, with nothing in them: the empty states |
+| `-VDScreen <id>` | Opens that screen directly. Ignored without `-VDSampleData` |
+
+In a sample launch the network is off: every request fails as if the device were offline. The sample vault is made on the device by the app's own vault book, with one invented server beside it that is never reached. Every invented note says in its own words that it is invented. A simulator has no speech model, no Apple Intelligence, no microphone and no passkeys, so a recording in progress, a transcript and a debrief are sample values, not results; the tests also pass `-vd.localeId en-GB`, because a simulator's speech model reports no language. None of this is compiled into a release build.
+
+**What a run leaves.** One artifact, `screens-<commit sha>`, kept 30 days:
+
+```
+iphone-light-<id>.png   iphone-dark-<id>.png     one iPhone, portrait
+ipad-light-<id>.png     ipad-dark-<id>.png       one iPad, landscape
+contact-<device>-<appearance>.png                every screen of one set in a single picture
+index.md                                         the table that is also the job summary
+```
+
+The longest side is 1600 px. The ids: `record`, `record-empty`, `record.recording`, `record.working`, `library`, `library-empty`, `note.finished`, `note.transcript`, `note.interrupted`, `note.working`, `vaults`, `vaults-empty`, `vault.detail`, `settings`, `recipients`, `words`, `credit`, `identity`, `lab`, `lab.prompt`, `diagnostics`, `traffic`, `about`; and six long screens again, scrolled to their end: `note.finished-end`, `vaults-end`, `vault.detail-end`, `settings-end`, `diagnostics-end`, `about-end`.
+
+**Adding a screen.** Add a case to `LaunchScreen`, show it in `LaunchedScreen` if it is reached by a tap, add a test method and its id to `ScreensTests.shots`, and add the id to `SHOTS` in `screens.yml`. The run fails if a picture is missing.
+
+**Looking at them from a Linux container.** With the GitHub Actions tools an agent session has (the GitHub MCP server):
+
+1. `actions_list` with `list_workflow_runs` and `screens.yml` lists the runs; take the newest successful one for the commit or branch.
+2. `actions_list` with `list_workflow_run_artifacts` and that run's id lists its artifacts; take the id of `screens-<sha>` (about 26 MB).
+3. `actions_get` with `download_workflow_run_artifact` and that artifact id returns a `download_url` for a zip. The address is on GitHub's blob store (`*.blob.core.windows.net`), needs no token, and expires within minutes.
+4. `curl -sSL -o screens.zip '<download_url>'`, unzip into an empty folder, and open the PNGs with the tool that reads images. Start with the four `contact-*.png` files, then open a single screen at full size where a detail matters.
+
+Where the `gh` command is set up, one line does steps 3 and 4: `gh api repos/VoiceDebrief/VoiceDebrief__App__iOS/actions/artifacts/<artifact id>/zip > screens.zip`.
+
+Both ways were followed from a Linux container on 13 November 2026 (`work/screens`: 68 pictures from the first run, 100 from the fourth). A person can download the same artifact from the run's page on GitHub.
+
+**What the pictures are for.** Besides letting a session see its own work, they are read in rounds by synthetic users: see [Reviews](../reviews/index.md).
 
 ## What CI cannot do
 
