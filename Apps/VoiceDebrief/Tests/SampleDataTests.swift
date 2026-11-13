@@ -52,7 +52,7 @@ struct SampleDataTests {
         #expect(world.store.root != NoteStore.defaultRoot)
         let states = world.store.notes.map(\.stateLine)
         // Newest first: being written, finished, transcript only, interrupted.
-        #expect(states == ["Not finished", "On this device", "Transcript only", "Not finished"])
+        #expect(states == ["Interrupted: open it to run it again", "On this device", "Too short to summarise", "Interrupted: open it to run it again"])
         let working = try #require(world.noteIds[.working])
         #expect(world.session.workingText(for: working) == "Writing the debrief")
         let interrupted = try #require(world.noteIds[.interrupted])

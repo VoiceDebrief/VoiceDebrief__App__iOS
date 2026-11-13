@@ -40,7 +40,7 @@ struct SettingsView: View {
                 } header: {
                     Text("Library")
                 } footer: {
-                    Text("Every recording is kept on this device the moment it stops, with its transcript and debrief. With the switch on, a finished note is also written, encrypted, into the vault as one signed commit. Sending to a recipient happens only when you ask.")
+                    Text("Every recording is kept on this device as you speak, with its transcript and debrief. With the switch on, a finished note is also written, encrypted, into the vault as one signed commit. Sending to a recipient happens only when you ask. A note that was interrupted is saved once it has been run again.")
                 }
 
                 Section {

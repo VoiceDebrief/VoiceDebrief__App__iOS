@@ -1,5 +1,7 @@
 # 036: States that say what to do next
 
+**Built (untried on a device): row states say what to do or why; an untranscribed note is "Voice note, not yet transcribed"; a cut title ends with an ellipsis; Recent says the day; Settings says "as you speak" and that an interrupted note is saved once run again; the promise is on the record screen before recording; the language is named; "1 line". Not done: Diagnostics' "Machine" line (check what a device shows).**
+
 **Status:** open. From review round 1 (13 November 2026, `website/reviews/round-1/index.md`). **Owner:** the main session (`NoteRow`, `RecordView`, `SettingsView`, `DiagnosticsView`).
 
 Finding 8, with 13 and 14. Screens `record`, `library`, `settings`, `diagnostics`, note details.

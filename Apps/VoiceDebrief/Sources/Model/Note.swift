@@ -25,7 +25,7 @@ struct Note: Codable, Identifiable, Equatable, Sendable {
             let words = all.prefix(12).joined(separator: " ")
             if !words.isEmpty { return all.count > 12 ? words + "…" : words }
         }
-        return "Recording"
+        return processing ? "Voice note, not yet transcribed" : "Voice note with no words found"
     }
 
     /// The line under "In one sentence", if the debrief has one.
@@ -42,9 +42,14 @@ struct Note: Codable, Identifiable, Equatable, Sendable {
 
     /// "On this device", or the plain reason the note is not finished.
     var stateLine: String {
-        if processing { return "Not finished" }
-        if run.transcript == nil { return "No transcript" }
-        if run.debrief == nil { return "Transcript only" }
+        if processing { return "Interrupted: open it to run it again" }
+        if run.transcript == nil || run.transcript?.isEmpty == true { return "No words found" }
+        if run.debrief == nil {
+            let why = run.steps.last(where: { $0.name == "Debrief" })?.note ?? ""
+            if why.hasPrefix("Too short") { return "Too short to summarise" }
+            if !why.isEmpty { return "Transcript only: no debrief" }
+            return "Transcript only"
+        }
         return "On this device"
     }
 }
