@@ -46,7 +46,7 @@ Nobody who writes this app from a Linux container can run it, so CI takes a pict
 
 | Argument | What it does |
 |---|---|
-| `-VDSampleData full` | The app is given invented notes in a temporary folder (one finished, one transcript only, one interrupted, and where the screen needs it one being worked on or recorded), a vault book in memory, and one invented vault that the real engine writes into the same temporary folder. Never the real library or Keychain |
+| `-VDSampleData full` | The app is given invented notes in a temporary folder (one finished, one transcript only, one interrupted, and where the screen needs it one being worked on or recorded), a vault book in memory, and one invented vault that the real engine writes into the same temporary folder. Never the real library or Keychain. The recipients and the glossary are not replaced: they are the app's own stores, empty on a simulator |
 | `-VDSampleData empty` | The same, with nothing in them: the empty states |
 | `-VDScreen <id>` | Opens that screen directly. Ignored without `-VDSampleData` |
 
@@ -61,7 +61,7 @@ contact-<device>-<appearance>.png                every screen of one set in a si
 index.md                                         the table that is also the job summary
 ```
 
-The longest side is 1600 px. The ids: `record`, `record-empty`, `record.recording`, `record.working`, `library`, `library-empty`, `note.finished`, `note.transcript`, `note.interrupted`, `note.working`, `vaults`, `vaults-empty`, `vault.detail`, `settings`, `diagnostics`, `traffic`, `about`; and five long screens again, scrolled to their end: `note.finished-end`, `vaults-end`, `vault.detail-end`, `diagnostics-end`, `about-end`.
+The longest side is 1600 px. The ids: `record`, `record-empty`, `record.recording`, `record.working`, `library`, `library-empty`, `note.finished`, `note.transcript`, `note.interrupted`, `note.working`, `vaults`, `vaults-empty`, `vault.detail`, `settings`, `recipients`, `words`, `diagnostics`, `traffic`, `about`; and six long screens again, scrolled to their end: `note.finished-end`, `vaults-end`, `vault.detail-end`, `settings-end`, `diagnostics-end`, `about-end`.
 
 **Adding a screen.** Add a case to `LaunchScreen`, show it in `LaunchedScreen` if it is reached by a tap, add a test method and its id to `ScreensTests.shots`, and add the id to `SHOTS` in `screens.yml`. The run fails if a picture is missing.
 

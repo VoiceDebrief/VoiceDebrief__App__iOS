@@ -60,6 +60,8 @@ enum LaunchScreen: String, CaseIterable, Sendable {
     case vaults
     case vaultDetail = "vault.detail"
     case settings
+    case recipients
+    case words
     case diagnostics
     case traffic
     case about
@@ -69,7 +71,7 @@ enum LaunchScreen: String, CaseIterable, Sendable {
         case .record, .recordRecording, .recordWorking: return .record
         case .library, .noteFinished, .noteTranscript, .noteInterrupted, .noteWorking: return .library
         case .vaults, .vaultDetail: return .vaults
-        case .settings, .diagnostics, .traffic, .about: return .settings
+        case .settings, .recipients, .words, .diagnostics, .traffic, .about: return .settings
         }
     }
 

@@ -8,6 +8,8 @@ import SwiftUI
 /// `VaultBook` over a `MemoryStore`, and, in the full set, one invented vault that is a real sgit
 /// vault written to the same temporary folder. The network is switched off for the whole launch
 /// (`SampleNetwork`): reads of the sample vault are answered from the folder, everything else fails.
+/// Not replaced: the recipients and the glossary, which the app keeps in stores of its own
+/// (`RecipientStore.shared`, `GlossaryStore.shared`); on a simulator they are empty.
 /// A new launch starts again from nothing. Not compiled into a release build.
 @MainActor
 final class SampleWorld {
@@ -221,6 +223,10 @@ struct LaunchedScreen: View {
             } else {
                 ContentUnavailableView("The empty sample set has no vault", systemImage: "lock.shield")
             }
+        case .recipients:
+            RecipientsView()
+        case .words:
+            GlossaryView()
         case .diagnostics:
             DiagnosticsView(session: sample.session)
         case .traffic:
