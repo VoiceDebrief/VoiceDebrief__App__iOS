@@ -148,6 +148,7 @@ struct RecipientDetailView: View {
                 Section {
                     Button("Remove", role: .destructive) {
                         recipients.remove(recipient)
+                        CreditLedger.shared.charge(.removeRecipient)
                         dismiss()
                     }
                 }

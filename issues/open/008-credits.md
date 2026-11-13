@@ -24,7 +24,8 @@ nothing blocked, a charge can be declined with a reason.
 
 ## The owner's decisions
 
-1. The prices, and what else should have one (looking inside a vault, reading, deleting are not charged).
+1. The prices. Reading and deleting are charged at 1p (the owner's word); listing a vault, discarding a
+   recording in progress and the settings are not.
 2. The starting credit (£5.00 now).
 3. What happens below zero (nothing now).
 4. The top-up amounts and product ids (one pack, `ai.voicedebrief.app.credit.500`, £5.00 now).

@@ -18,6 +18,7 @@ struct LibraryView: View {
                         .onDelete { offsets in
                             for index in offsets where session.workingText(for: group.notes[index].id) == nil {
                                 session.store.delete(group.notes[index].id)
+                                CreditLedger.shared.charge(.deleteNote, noteId: group.notes[index].id)
                             }
                         }
                     }

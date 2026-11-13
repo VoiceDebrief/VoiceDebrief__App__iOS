@@ -21,6 +21,7 @@ final class CreditLedger {
     private(set) var book: CreditBook
     /// Set if the ledger could not be read or written, in words for the credit screen.
     private(set) var problem: String?
+    @ObservationIgnored private var chargedThisSession: Set<String> = []
 
     init(file: URL = CreditLedger.defaultFile, now: Date = Date()) {
         self.file = file
@@ -51,6 +52,15 @@ final class CreditLedger {
         let cost = PriceList.cost(action, quantity: quantity)
         let text = PriceList.words(action, quantity: quantity)
         if book.charge(feature: action.rawValue, text: text, cost: cost, quantity: quantity, noteId: noteId) != nil { write() }
+    }
+
+    /// Charges for an action on a note at most once while the app is open: reading the same note
+    /// again in the same session is not a second charge (newsroom: once per page per session).
+    func chargeOnce(_ action: CreditAction, noteId: String) {
+        let key = action.rawValue + ":" + noteId
+        guard !chargedThisSession.contains(key) else { return }
+        chargedThisSession.insert(key)
+        charge(action, noteId: noteId)
     }
 
     /// True if the credit was added; false if this payment reference was already credited.

@@ -16,6 +16,13 @@ enum CreditAction: String, CaseIterable, Sendable {
     case pushVault
     case pullVault
     case addServer
+    case readNote
+    case readVaultFile
+    case deleteNote
+    case removeVault
+    case removeServer
+    case removeRecipient
+    case removeWord
 }
 
 /// One line of the price list.
@@ -69,6 +76,13 @@ enum PriceList {
         Price(action: .pushVault, title: "Pushing a vault to a server", unit: .each, micro: 1 * Credit.perPenny),
         Price(action: .pullVault, title: "Pulling a vault from a server", unit: .each, micro: 1 * Credit.perPenny),
         Price(action: .addServer, title: "Adding a server", unit: .each, micro: 1 * Credit.perPenny),
+        Price(action: .readNote, title: "Opening a note to read it", unit: .each, micro: 1 * Credit.perPenny),
+        Price(action: .readVaultFile, title: "Opening a file in a vault", unit: .each, micro: 1 * Credit.perPenny),
+        Price(action: .deleteNote, title: "Deleting a note", unit: .each, micro: 1 * Credit.perPenny),
+        Price(action: .removeVault, title: "Forgetting a vault", unit: .each, micro: 1 * Credit.perPenny),
+        Price(action: .removeServer, title: "Removing a server", unit: .each, micro: 1 * Credit.perPenny),
+        Price(action: .removeRecipient, title: "Removing a recipient", unit: .each, micro: 1 * Credit.perPenny),
+        Price(action: .removeWord, title: "Removing one of your words", unit: .each, micro: 1 * Credit.perPenny),
     ]
 
     static func price(of action: CreditAction) -> Price? {
@@ -111,6 +125,13 @@ enum PriceList {
         case .pushVault: return "Pushed a vault to a server"
         case .pullVault: return "Pulled a vault from a server"
         case .addServer: return "Added a server"
+        case .readNote: return "Opened a note to read it"
+        case .readVaultFile: return "Opened a file in a vault"
+        case .deleteNote: return "Deleted a note"
+        case .removeVault: return "Forgot a vault"
+        case .removeServer: return "Removed a server"
+        case .removeRecipient: return "Removed a recipient"
+        case .removeWord: return "Removed one of your words"
         }
     }
 }

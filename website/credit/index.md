@@ -37,12 +37,19 @@ The owner's word, 13 November 2026: "Just about everything in the app should cos
 | Pushing a vault to a server | 1p, when something was sent | `pushVault` |
 | Pulling a vault from a server | 1p, when something was fetched | `pullVault` |
 | Adding a server | 1p | `addServer` |
+| Opening a note to read it | 1p, once for each note while the app is open | `readNote` |
+| Opening a file in a vault | 1p | `readVaultFile` |
+| Deleting a note | 1p | `deleteNote` |
+| Forgetting a vault | 1p | `removeVault` |
+| Removing a server, a recipient or one of your words | 1p each | `removeServer`, `removeRecipient`, `removeWord` |
 
 The 10p and the 1p a file are the owner's examples. The transcript's figure is the plan's "a few pence per minute", the debrief's is what newsroom charges for an article read to the end, and the rest are 1p. At these figures a 76-second note costs 6p to transcribe and 5p to debrief.
 
 The owner accepted these figures for now on 13 November 2026, and said that a note which saves itself when it is finished is charged like any other save, and that push and pull are charged. A push or a pull that finds nothing to move costs nothing. Bundling several of these into one price is an idea for later.
 
-Not charged yet, because nothing has been decided: looking inside a vault, reading a note, deleting, diagnostics.
+The owner then said that reading and deleting are charged too. What was chosen: the deliberate act is charged, not a screen being drawn. A finished note opened from the library or the record screen is charged once while the app is open, as newsroom charges a page once in a session; the note that opens itself the moment a recording stops is not. A file opened inside a vault is charged each time. Deleting a note, forgetting a vault and removing a server, a recipient or a word are charged when they have happened.
+
+Not charged: recording, discarding a recording that is still being made, listing a vault's contents, the settings, diagnostics and the credit screen itself.
 
 ## A profit and loss for every feature
 

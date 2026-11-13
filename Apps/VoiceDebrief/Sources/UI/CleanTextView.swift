@@ -192,7 +192,10 @@ struct GlossaryView: View {
                     }
                 }
                 .onDelete { offsets in
-                    for term in offsets.map({ glossary.terms[$0] }) { glossary.remove(term) }
+                    for term in offsets.map({ glossary.terms[$0] }) {
+                        glossary.remove(term)
+                        CreditLedger.shared.charge(.removeWord)
+                    }
                 }
             }
         }

@@ -69,10 +69,16 @@
 <tr><td>Pushing a vault to a server</td><td>1p, when something was sent</td><td><code>pushVault</code></td></tr>
 <tr><td>Pulling a vault from a server</td><td>1p, when something was fetched</td><td><code>pullVault</code></td></tr>
 <tr><td>Adding a server</td><td>1p</td><td><code>addServer</code></td></tr>
+<tr><td>Opening a note to read it</td><td>1p, once for each note while the app is open</td><td><code>readNote</code></td></tr>
+<tr><td>Opening a file in a vault</td><td>1p</td><td><code>readVaultFile</code></td></tr>
+<tr><td>Deleting a note</td><td>1p</td><td><code>deleteNote</code></td></tr>
+<tr><td>Forgetting a vault</td><td>1p</td><td><code>removeVault</code></td></tr>
+<tr><td>Removing a server, a recipient or one of your words</td><td>1p each</td><td><code>removeServer</code>, <code>removeRecipient</code>, <code>removeWord</code></td></tr>
 </tbody></table></div>
 <p>The 10p and the 1p a file are the owner's examples. The transcript's figure is the plan's &quot;a few pence per minute&quot;, the debrief's is what newsroom charges for an article read to the end, and the rest are 1p. At these figures a 76-second note costs 6p to transcribe and 5p to debrief.</p>
 <p>The owner accepted these figures for now on 13 November 2026, and said that a note which saves itself when it is finished is charged like any other save, and that push and pull are charged. A push or a pull that finds nothing to move costs nothing. Bundling several of these into one price is an idea for later.</p>
-<p>Not charged yet, because nothing has been decided: looking inside a vault, reading a note, deleting, diagnostics.</p>
+<p>The owner then said that reading and deleting are charged too. What was chosen: the deliberate act is charged, not a screen being drawn. A finished note opened from the library or the record screen is charged once while the app is open, as newsroom charges a page once in a session; the note that opens itself the moment a recording stops is not. A file opened inside a vault is charged each time. Deleting a note, forgetting a vault and removing a server, a recipient or a word are charged when they have happened.</p>
+<p>Not charged: recording, discarding a recording that is still being made, listing a vault's contents, the settings, diagnostics and the credit screen itself.</p>
 <h2 id="a-profit-and-loss-for-every-feature">A profit and loss for every feature</h2>
 <p>The owner's reason for charging for everything: &quot;it provides us a way to understand which features are valuable ... we should actually have a P&amp;L, literally, for every feature that we develop.&quot;</p>
 <p><strong>Built: the takings, on one device.</strong> Every charge carries the key of its feature, a short fixed string that is never display text and is never renamed. The credit screen has &quot;Takings by feature&quot;: for each feature, how many times it was charged, how much, how many charges were declined and what was given back, and what is left, over all time, 7 days or 30. Declining is part of the signal: a feature people use and then decline is a feature they do not value at its price.</p>

@@ -240,6 +240,20 @@ struct CreditTests {
     }
     """
 
+    @Test @MainActor func readingANoteIsChargedOnceInASession() {
+        let file = Self.temporaryFile()
+        let ledger = CreditLedger(file: file, now: Self.start)
+        ledger.chargeOnce(.readNote, noteId: "n1")
+        ledger.chargeOnce(.readNote, noteId: "n1")
+        ledger.chargeOnce(.readNote, noteId: "n2")
+        #expect(ledger.balance == Credit.startingCredit - 20_000)
+        #expect(ledger.book.byFeature().first?.uses == 2)
+        // The app opened again is a new session: the same note read again is charged.
+        let again = CreditLedger(file: file)
+        again.chargeOnce(.readNote, noteId: "n1")
+        #expect(again.balance == Credit.startingCredit - 30_000)
+    }
+
     @Test @MainActor func aLedgerInItsFirstFormStillOpens() throws {
         let file = Self.temporaryFile()
         try Data(Self.firstForm.utf8).write(to: file)

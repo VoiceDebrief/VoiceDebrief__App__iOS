@@ -75,10 +75,18 @@ struct NoteDetailView: View {
             }
             .safeAreaInset(edge: .bottom) { SendBar(noteId: noteId, session: session) }
             .navigationTitle("Note")
+            .task(id: noteId) {
+                // Opening a finished note to read it is charged, once in a session. A note that opens
+                // itself while it is still being made is not.
+                if !note.processing, session.workingText(for: noteId) == nil {
+                    CreditLedger.shared.chargeOnce(.readNote, noteId: noteId)
+                }
+            }
             .navigationBarTitleDisplayMode(.inline)
             .confirmationDialog("Delete this note from this device?", isPresented: $confirmingDelete, titleVisibility: .visible) {
                 Button("Delete the note and its recording", role: .destructive) {
                     session.store.delete(noteId)
+                    CreditLedger.shared.charge(.deleteNote, noteId: noteId)
                     dismiss()
                 }
                 Button("Cancel", role: .cancel) {}

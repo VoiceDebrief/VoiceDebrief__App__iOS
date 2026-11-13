@@ -204,7 +204,10 @@ struct RemoteDetailView: View {
             Section {
                 Button("Remove this server", role: .destructive) {
                     book.removeRemote(remote)
-                    if book.remote(remote.id) == nil { dismiss() }
+                    if book.remote(remote.id) == nil {
+                        CreditLedger.shared.charge(.removeServer)
+                        dismiss()
+                    }
                 }
             } footer: {
                 Text("Vaults kept on this device stay, with no server. A vault that exists only on this server must be copied to this device, or forgotten, first.")
@@ -345,6 +348,7 @@ struct VaultDetailView: View {
                     .confirmationDialog("Forget this vault?", isPresented: $confirmForget, titleVisibility: .visible) {
                         Button(now.onDevice ? "Forget it and delete this device's copy" : "Forget it", role: .destructive) {
                             book.remove(vault)
+                            CreditLedger.shared.charge(.removeVault)
                             dismiss()
                         }
                     } message: {
@@ -425,6 +429,7 @@ struct VaultFileView: View {
         .task {
             do {
                 let data = try await book.data(of: file.path, in: vault)
+                CreditLedger.shared.charge(.readVaultFile)
                 if let decoded = String(data: data, encoding: .utf8) {
                     text = decoded
                 } else {
