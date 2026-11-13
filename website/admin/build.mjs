@@ -10,7 +10,9 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT    = join(dirname(fileURLToPath(import.meta.url)), '..');           // website/
 const CHECK   = process.argv.includes('--check');
-const VERSION = readFileSync(join(ROOT, '..', 'version'), 'utf8').trim();      // the repository's version file
+// CI owns the version: it is stamped in when the site is deployed (SITE_VERSION). The pages committed
+// to the repository carry a placeholder, so that a version change never makes them out of date.
+const VERSION = process.env.SITE_VERSION || 'dev';
 const REPO    = 'https://github.com/VoiceDebrief/VoiceDebrief__App__iOS';
 const SITE    = 'https://' + readFileSync(join(ROOT, 'CNAME'), 'utf8').trim();   // the CNAME file owns the domain
 const pageUrl = (p) => `${SITE}/${p.path ? p.path + '/' : ''}index.html`;
@@ -22,6 +24,8 @@ const PAGES = [
     description: 'The reality file: what exists in the repository today, how it is tested, and what is not built yet. If it is not listed here, it does not exist.' },
   { path: 'architecture', nav: 'How it works', title: 'How VoiceDebrief for iOS works: the architecture in four drawings',
     description: 'The parts of the app, the life of a recording, a vault from the inside, lanes, the four keys and two devices, with what is seen working, what is unconfirmed and what is decided but not built.' },
+  { path: 'conductors', nav: null, title: 'Receiving VoiceDebrief notes: how to become a recipient',
+    description: 'For a person or an agent session that wants to receive voice notes from the app: make an inbox (a key pair, a vault, a lane), hand out its QR code or link, and open what arrives.' },
   { path: 'design',   nav: 'Design',   title: 'The VoiceDebrief iOS design: a recorder that does not lose things',
     description: 'What the app should look like and how it should behave: the three jobs, the decisions, the screens and three builds, agreed between a product agent and a design agent.' },
   { path: 'plan',     nav: 'Plan',     title: 'The VoiceDebrief iOS plan',
