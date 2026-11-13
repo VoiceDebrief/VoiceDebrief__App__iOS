@@ -13,7 +13,7 @@ This page explains; it does not certify. The record of what exists is [What is b
 1. The app records to a file inside a note that already exists, so a recording cannot be lost by anything that happens later.
 2. Apple's speech model turns the file into timed text, and Apple's language model turns the text into a debrief. Both run on the device. No audio and no words go to a server for this.
 3. The note is kept as plain files in the app's own storage. That is the library.
-4. If you choose, the note is also written to a vault: every file encrypted on the device, one signed commit, pushed to a server that holds bytes it cannot read.
+4. Unless you switch it off, the finished note is also written to a vault: every file encrypted on the device, one signed commit, pushed to a server that holds bytes it cannot read.
 5. If you choose, and each time you are asked, the note is sealed to somebody's public key and dropped into a lane, which is a write-only inbox.
 6. Keys decide everything. A vault key opens a vault. A device key says which device wrote a commit. A person's key pair says who they are, and vouches for their devices.
 
@@ -63,7 +63,7 @@ The order of these steps is the design. A recording is the one thing that cannot
 4. **Transcript.** `SpeechFileTranscriber` gives the whole file to `SpeechAnalyzer`. The model for the chosen language is downloaded the first time. The result is a list of lines with times, written into the note.
 5. **Debrief.** If the transcript has fewer than 25 words there is nothing to summarise and the app says so. Otherwise `DebriefPrompt` builds one prompt and `OnDeviceModel.respond(to:)` asks it once. If the note is longer than the model's context (4,096 tokens on the devices tried), `Chunker` splits it, each part is summarised, and the parts are merged with one more call. The answer is checked for its three headings; an answer in the wrong shape is kept and flagged, not hidden.
 6. **Compress.** This happens after the note is finished, never while recording. `AudioCompressor` writes an AAC `.m4a` beside the WAV, reads it back, and replaces the WAV only if the copy has the same length. A 16-second note is about 190 KB.
-7. **Save to a vault**, by choice. Section 3 below.
+7. **Save to a vault.** When the note is finished and its audio compressed, it is saved into the vault chosen in Settings, unless that is switched off or there is no vault yet. A save that fails is written on the note and loses nothing. Section 3 below.
 8. **Send to a lane**, by choice, asked every time. Section 4 below.
 
 ### When something fails

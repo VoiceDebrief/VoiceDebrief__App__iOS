@@ -34,6 +34,16 @@ struct NoteDetailView: View {
                         Label("Kept on this device", systemImage: "lock.fill")
                             .font(.footnote)
                             .foregroundStyle(.secondary)
+                        if let last = note.saves?.last {
+                            Label("Saved to the vault \(last.vaultName), \(last.at.formatted(date: .omitted, time: .shortened))", systemImage: "lock.doc.fill")
+                                .font(.footnote)
+                                .foregroundStyle(.green)
+                        }
+                        if let why = note.saveProblem {
+                            Label("Not saved to a vault: \(why)", systemImage: "exclamationmark.triangle.fill")
+                                .font(.footnote)
+                                .foregroundStyle(.orange)
+                        }
                     }
                     if let problem = session.store.problem {
                         Label(problem, systemImage: "exclamationmark.triangle.fill").foregroundStyle(.red).font(.callout)
