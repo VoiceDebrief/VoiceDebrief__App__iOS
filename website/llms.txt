@@ -25,6 +25,20 @@ Every page has a markdown twin: replace index.html with index.md.
 - https://ios.app.voicedebrief.ai/versions/index.html : release history.
 - https://ios.app.voicedebrief.ai/index.html : the home page.
 
+## Articles (ideas, positions and briefs; intention, not fact)
+
+- https://ios.app.voicedebrief.ai/articles/index.html : the list.
+- https://ios.app.voicedebrief.ai/articles/the-lab/index.html : the app as a laboratory; experiments L01 to L10.
+- https://ios.app.voicedebrief.ai/articles/two-decision-engines/index.html : the code owns the states; the
+  model is asked one question at a time through function calls, with no long history.
+- https://ios.app.voicedebrief.ai/articles/a-harness-inside-the-app/index.html : the doors of SHarness (network,
+  files, vault, keys, model, run) inside the app, and drawing what passes through them.
+- https://ios.app.voicedebrief.ai/articles/the-vault-is-a-version-controlled-store/index.html : vaults are
+  local first and need no token; a server is a remote; several vaults and lanes; vault apps; graphs.
+- https://ios.app.voicedebrief.ai/articles/voice-everywhere/index.html : never lose a recording; voice from
+  every screen.
+- https://ios.app.voicedebrief.ai/articles/synthetic-users/index.html : invented users walking screenshots.
+
 ## Facts worth knowing before you work on it
 
 - Source: https://github.com/VoiceDebrief/VoiceDebrief__App__iOS (default branch dev, which

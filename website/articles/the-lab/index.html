@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The lab: finding out what the Apple platform can do</title>
+<meta name="description" content="A brief: use the app as a laboratory for on-device models, tool calls, vaults and interfaces, before deciding what the product is. Ten experiments.">
+<link rel="canonical" href="https://ios.app.voicedebrief.ai/articles/the-lab/index.html">
+<meta property="og:url" content="https://ios.app.voicedebrief.ai/articles/the-lab/index.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="VoiceDebrief for iOS">
+<meta property="og:title" content="The lab: finding out what the Apple platform can do">
+<meta property="og:description" content="A brief: use the app as a laboratory for on-device models, tool calls, vaults and interfaces, before deciding what the product is. Ten experiments.">
+<link rel="alternate" type="text/markdown" href="index.md" title="This page as markdown">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/vd-tokens.css">
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+
+<nav class="site"><div class="row">
+  <a class="brand" href="../../index.html">Voice<em>Debrief</em> <span>iOS</span></a>
+  <span class="beta" title="In development: there is nothing to install yet">IN DEVELOPMENT</span>
+  <a class="parent" href="https://voicedebrief.ai" title="A VoiceDebrief product">&#8599; part of <b>voicedebrief.ai</b></a>
+  <a class="ver" href="../../versions/index.html" title="Release history">v0.1.7</a>
+  <a class="nl" href="../../built/index.html">Built</a>
+  <a class="nl" href="../../design/index.html">Design</a>
+  <a class="nl" href="../../plan/index.html">Plan</a>
+  <a class="nl here" href="../../articles/index.html">Articles</a>
+  <a class="nl" href="../../develop/index.html">Build</a>
+  <a class="gh" href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">&#9733; GitHub</a>
+</div></nav>
+
+<main class="doc">
+<div class="crumb"><a href="../../index.html">VoiceDebrief iOS</a> / articles / the-lab</div>
+<h1 id="the-lab">The lab</h1>
+<p><em>A brief. From the owner's voice memo of 13 November 2026, written up by the agent. Nothing here is built unless <a href="../../built/index.html">what is built</a> says so.</em></p>
+<h2 id="the-idea">The idea</h2>
+<p>VoiceDebrief for iOS started as one job: a voice note in, a transcript and a debrief out. In a day it gained on-device speech, an on-device model, vaults, signed commits and encrypted lanes, and it runs as one app on a phone, a tablet and a laptop, delivered by TestFlight. That combination is rarer than the product it was built for.</p>
+<p>So for now the app is also a laboratory. The product that ships will be smaller and more focused. The lab exists to get the primitives and the key workflows right, and to find out what is possible, before deciding what that product is.</p>
+<p>Because nothing here is being submitted to the App Store yet, the lab can ask for any capability Apple offers.</p>
+<h2 id="what-it-should-explore">What it should explore</h2>
+<div class="tablewrap"><table>
+<thead><tr><th></th><th>Experiment</th><th>Question</th></tr></thead>
+<tbody>
+<tr><td>L01</td><td>One prompt, tools on and off</td><td>What does the on-device model do with a single tightly scoped prompt and a chosen set of tools? How reliable are its tool calls?</td></tr>
+<tr><td>L02</td><td>The model drives the screen</td><td>Can the model choose what the interface shows next, through function calls, from a state the code hands it?</td></tr>
+<tr><td>L03</td><td>The model edits a page</td><td>Can it write or change an HTML or JSON page in a vault that the app then renders?</td></tr>
+<tr><td>L04</td><td>Apple's larger model</td><td>The same prompts on Private Cloud Compute: what does 32,768 tokens and reasoning buy?</td></tr>
+<tr><td>L05</td><td>Another provider through the same framework</td><td>iOS 27 lets a session run on other models, Claude among them. What changes, and what does it cost in privacy?</td></tr>
+<tr><td>L06</td><td>Images</td><td>What can Image Playground and image input do for a note: a cover, a photographed whiteboard?</td></tr>
+<tr><td>L07</td><td>A file system for the model</td><td>A virtual file system over a vault, with access granted folder by folder</td></tr>
+<tr><td>L08</td><td>Graphs from notes</td><td>Semantic graphs from transcripts, linked across notes and vaults</td></tr>
+<tr><td>L09</td><td>Code inside the app</td><td>Can anything like a script run natively and safely on the device?</td></tr>
+<tr><td>L10</td><td>Many ways to show the same thing</td><td>Several interfaces for one workflow, compared on the three devices</td></tr>
+</tbody></table></div>
+<p>Each experiment is a screen in a Lab section of the app, with what was asked, what came back, how long it took and what it cost shown plainly. An experiment that fails is a result.</p>
+<h2 id="rules">Rules</h2>
+<ul>
+<li>An experiment says what it is. Nothing in the lab is presented as a finished feature.</li>
+<li>Everything the model is given and everything it returns can be seen. See <a href="../two-decision-engines/index.html">Two decision engines</a>.</li>
+<li>What works is rebuilt properly, and probably moved out into its own app or package. The lab is where it is found, not where it lives.</li>
+</ul>
+</main>
+
+<footer class="site"><div class="cols">
+  <div>
+    <div class="brandline">Voice<em>Debrief</em> <span>iOS</span></div>
+    <p>The VoiceDebrief transcript and debrief as a native iPhone and iPad app, on Apple's own models, with the results in a vault you own. In development: there is nothing to install yet. Content CC BY 4.0; code Apache 2.0.</p>
+    <p class="partnote">This site is static and has no analytics.</p>
+    <p class="verline">site v0.1.7 · <a href="index.md">this page as markdown</a> · <a href="../../llms.txt">llms.txt</a></p>
+  </div>
+  <div>
+    <h4>The app</h4>
+    <a href="../../built/index.html">What is built</a>
+    <a href="../../plan/index.html">The plan</a>
+    <a href="../../develop/index.html">Build and test</a>
+    <a href="../../versions/index.html">Release history</a>
+    <a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">GitHub</a>
+  </div>
+  <div>
+    <h4>VoiceDebrief</h4>
+    <a href="https://voicedebrief.ai">voicedebrief.ai</a>
+    <a href="https://meetscribe.chrome-extension.voicedebrief.ai">MeetScribe for Google Meet</a>
+  </div>
+  <div>
+    <h4>Built on</h4>
+    <a href="https://sgit.ai">sgit.ai</a>
+    <a href="https://pki.sgit.ai">pki.sgit.ai</a>
+    <a href="https://sgit.ai/security/index.html">The vault security model</a>
+  </div>
+</div></footer>
+</body>
+</html>

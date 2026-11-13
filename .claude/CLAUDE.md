@@ -47,9 +47,16 @@ passkey. The plan is `website/plan/index.md`. Load-bearing decisions, not to be 
 - **Tests**: Swift Testing in the app, XCTest in `SGitVault` (as it came). No invented model or
   server responses: replay recorded real ones.
 
+## Where the project is going (read `website/articles/` before proposing anything large)
+
+For now the app is also a laboratory: the product that ships will be smaller. Standing positions:
+the code owns the states and a model is asked one question at a time, through function calls, with no
+long history; what a model may touch goes through separate doors (after sharness.ai) and is shown;
+a vault is local first and a server is a remote; never lose a recording.
+
 ## Session start
 
 1. This file.
 2. `website/built/index.md` (what exists).
 3. `issues/open/` (what is next).
-4. `website/plan/index.md` for the part you are working on.
+4. `website/design/index.md` and `website/articles/` for where it is going; `website/plan/index.md` for the original plan.
