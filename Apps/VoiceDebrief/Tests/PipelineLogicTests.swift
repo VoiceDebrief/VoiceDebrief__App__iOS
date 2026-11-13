@@ -109,6 +109,25 @@ struct DebriefPromptTests {
         for heading in DebriefPrompt.sections { #expect(prompt.contains(heading)) }
     }
 
+    @Test func thePromptHasNoQuotationMarksToCopy() {
+        // The first runs came back with bullets in quotation marks, copied from the prompt's own examples.
+        let voice = DebriefPrompt.voice(forLocale: "en-GB")
+        let shell = DebriefPrompt.debrief(transcript: "", voice: voice)
+        #expect(!shell.contains("\""))
+        #expect(!DebriefPrompt.merge(notes: "", voice: voice).contains("\""))
+        #expect(!DebriefPrompt.notes(section: 1, of: 2, transcript: "", voice: voice).contains("\""))
+    }
+
+    @Test func wordsAreCountedAcrossLines() {
+        let lines = [
+            TranscriptLine(startMs: 0, endMs: 1, text: "Okay, let's see if it works."),
+            TranscriptLine(startMs: 1, endMs: 2, text: "  Two   words "),
+        ]
+        #expect(DebriefPrompt.wordCount(lines) == 8)
+        #expect(DebriefPrompt.wordCount([]) == 0)
+        #expect(DebriefPrompt.minimumWords > 8)
+    }
+
     @Test func theSectionPromptSaysWhichPartItIs() {
         let prompt = DebriefPrompt.notes(section: 2, of: 3, transcript: "[05:00] x", voice: DebriefPrompt.voice(forLocale: "en-GB"))
         #expect(prompt.contains("part 2 of 3"))

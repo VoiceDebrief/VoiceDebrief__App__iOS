@@ -100,6 +100,14 @@ final class DebriefSession {
         started = Date()
         current.steps.append(StepRecord(name: "Debrief", outcome: .running, seconds: 0, note: ""))
         run = current
+        let words = DebriefPrompt.wordCount(transcript.lines)
+        if words < DebriefPrompt.minimumWords {
+            finish(&current, outcome: .degraded, since: started,
+                   note: "Too short to summarise (\(words) words): the transcript is the whole note.")
+            run = current
+            phase = .done
+            return
+        }
         guard let contextSize = OnDeviceModel.contextSize else {
             finish(&current, outcome: .degraded, since: started, note: OnDeviceModel.status.text)
             run = current

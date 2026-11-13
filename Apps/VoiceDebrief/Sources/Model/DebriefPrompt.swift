@@ -30,25 +30,48 @@ enum DebriefPrompt {
 
     static let sections = ["## Key points", "## Actions", "## In one sentence"]
 
-    /// The whole debrief from a transcript that fits in one request.
-    static func debrief(transcript: String, voice: Voice) -> String {
-        """
-        Write a summary of the voice note transcript below, in markdown.
+    /// A note with fewer words than this is not sent to the model: there is nothing to summarise, and
+    /// a small model asked anyway repeats the note back or invents something (first runs, 13 Nov 2026).
+    static let minimumWords = 25
 
-        Structure it exactly as:
+    static func wordCount(_ lines: [TranscriptLine]) -> Int {
+        lines.reduce(0) { $0 + $1.text.split(whereSeparator: { $0.isWhitespace }).count }
+    }
 
+    /// The shape the model fills in. No quotation marks anywhere: a small model copies them into its answer.
+    private static let shape = """
         ## Key points
-        3 to 6 bullet points with what the speaker actually said: concrete facts, decisions, numbers and names.
+        - one bullet for each thing the speaker said that matters: facts, decisions, numbers, names
 
         ## Actions
-        Any tasks, follow-ups or requests mentioned, each as "- [who] what". If there are none, write "- none mentioned".
+        - one bullet for each task or follow-up, starting with who does it in square brackets
 
         ## In one sentence
         One plain sentence a busy person could read instead of listening to the note.
+        """
 
-        Rules: use only what is in the transcript. Do not invent or embellish. Keep names, numbers and technical terms exactly as spoken.
-        Write the whole summary in \(voice.language), including what follows each heading. Keep the three headings exactly as written above.
-        Tone: \(voice.tone)
+    private static func rules(_ voice: Voice, source: String) -> String {
+        """
+        Rules:
+        - Keep the three heading lines exactly as they are above, in that order: ## Key points, ## Actions, ## In one sentence.
+        - Use only what is in the \(source). Do not invent or embellish. Do not copy a whole line as a bullet: say what it means.
+        - Write between 1 and 6 key points. A short note has few.
+        - The speaker is the person who recorded the note. Write their own tasks as [me]. Use a name only when the speaker names someone.
+        - An action is something somebody has to do later. A passing remark or a hope is not an action. If there are no actions, the only bullet under Actions is: - none mentioned
+        - Do not put quotation marks around bullets. Ignore filler words such as um and uh.
+        - Keep names, numbers and technical terms exactly as spoken.
+        - Write everything under the headings in \(voice.language). Tone: \(voice.tone)
+        """
+    }
+
+    /// The whole debrief from a transcript that fits in one request.
+    static func debrief(transcript: String, voice: Voice) -> String {
+        """
+        Summarise the voice note transcript at the end, in markdown, in exactly this shape:
+
+        \(shape)
+
+        \(rules(voice, source: "transcript"))
 
         Transcript (each line starts with its time):
         \(transcript)
@@ -60,10 +83,10 @@ enum DebriefPrompt {
         """
         This is part \(section) of \(total) of a voice note transcript. List what the speaker said in this part.
 
-        Write up to 6 bullet points, each starting with "- ": concrete facts, decisions, numbers and names.
-        Then list any tasks, follow-ups or requests, each as "- ACTION [who] what". If there are none, list none.
+        Write up to 6 bullets, each starting with a hyphen: facts, decisions, numbers and names.
+        Then one bullet for each task or follow-up, each starting with a hyphen and the word ACTION, then who does it in square brackets. The speaker's own tasks are [me].
 
-        Rules: use only what is in this part. Do not invent or embellish. Write in \(voice.language).
+        Rules: use only what is in this part. Do not invent or embellish. A passing remark is not an action. No quotation marks. Write in \(voice.language).
 
         Transcript part \(section) (each line starts with its time):
         \(transcript)
@@ -73,22 +96,12 @@ enum DebriefPrompt {
     /// The debrief from the notes on every section.
     static func merge(notes: String, voice: Voice) -> String {
         """
-        Below are notes on each part of one voice note, in order. Write one summary of the whole note, in markdown.
+        Below are notes on each part of one voice note, in order. Write one summary of the whole note, in markdown, in exactly this shape:
 
-        Structure it exactly as:
+        \(shape)
 
-        ## Key points
-        3 to 6 bullet points with the most important things the speaker said: concrete facts, decisions, numbers and names.
-
-        ## Actions
-        Every line marked ACTION in the notes, each as "- [who] what". If there are none, write "- none mentioned".
-
-        ## In one sentence
-        One plain sentence a busy person could read instead of listening to the note.
-
-        Rules: use only what is in the notes. Do not invent or embellish. Keep names and numbers exactly as written.
-        Write the whole summary in \(voice.language). Keep the three headings exactly as written above.
-        Tone: \(voice.tone)
+        \(rules(voice, source: "notes"))
+        - Every line marked ACTION in the notes is an action.
 
         Notes:
         \(notes)
