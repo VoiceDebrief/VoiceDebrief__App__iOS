@@ -1,6 +1,6 @@
 name: sgit app
 
-# The sgit app (Apps/SGit) has its own project, its own version file and this workflow, so that it
+# The sgit app (Apps/SGit) has its own project and this workflow, so that it
 # does not contend with the VoiceDebrief app's. It will move to a repository of its own.
 #
 #   sgit-writes        Linux: sgit-ai writes a vault holding files over 4 MB (issue 023)
@@ -65,9 +65,22 @@ jobs:
       - name: Select Xcode
         run: .github/scripts/select-xcode.sh
 
-      - name: Version from the app's version file
+      - name: Version, which CI owns (on dev, the tag this push was given)
         run: |
-          v=$(tr -d ' \n' < Apps/SGit/version); v=${v#v}
+          # One repository, one version: the same step as ios.yml. site.yml tags every push to dev; the
+          # app's version is that tag, or the latest tag plus one if it has not been written yet.
+          v=$(tr -d ' \n' < version)
+          if [ "$GITHUB_REF" = "refs/heads/dev" ]; then
+            git fetch --quiet --tags --depth=200 origin dev || true
+            tag=$(git tag --contains "$GITHUB_SHA" 2>/dev/null | sort -V | head -1)
+            if [ -z "$tag" ]; then
+              latest=$(git tag --list 'v[0-9]*' | sort -V | tail -1)
+              IFS=. read -r a b c <<< "${latest#v}"
+              tag="v$a.$b.$((c + 1))"
+            fi
+            v=$tag
+          fi
+          v=${v#v}
           echo "MARKETING_VERSION=$v" >> "$GITHUB_ENV"
           echo "BUILD_NUMBER=$GITHUB_RUN_NUMBER" >> "$GITHUB_ENV"
           echo "**sgit app version:** \`$v ($GITHUB_RUN_NUMBER)\`" >> "$GITHUB_STEP_SUMMARY"

@@ -2,7 +2,7 @@ import Foundation
 
 /// What the app can say about itself.
 enum AppInfo {
-    /// "0.1.0 (12)" from the bundle; CI sets the values from `Apps/SGit/version` and the run number.
+    /// "0.1.0 (12)" from the bundle; CI sets the values: the repository's version and the run number.
     static func versionLine(info: [String: Any]? = Bundle.main.infoDictionary) -> String {
         let version = info?["CFBundleShortVersionString"] as? String ?? "0.0.0"
         let build = info?["CFBundleVersion"] as? String ?? "0"
