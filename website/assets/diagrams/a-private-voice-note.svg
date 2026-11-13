@@ -1,0 +1,133 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 930" width="1080" height="930" role="img" aria-labelledby="t d">
+<title id="t">A private voice note, from a patient to a clinician</title>
+<desc id="d">On the patient’s device: speech is recorded, transcribed and summarised by Apple’s models without leaving the device, then encrypted into a vault. A clinician’s QR code gives the patient the clinician’s public key and inbox; a note sealed to that key crosses a server that cannot read it and is opened on the clinician’s device.</desc>
+<style>
+  .bg{fill:#F8FAFC} .box{fill:#FFFFFF;stroke:#C9D5E0;stroke-width:1.2} .zone{fill:none;stroke:#9FB2C4;stroke-width:1.2;stroke-dasharray:2 4}
+  .live{stroke:#0E9E72;stroke-width:2} .test{stroke:#8A6A18;stroke-width:1.6} .plan{stroke:#6B7F94;stroke-width:1.4;stroke-dasharray:6 5}
+  .t{font:600 14px -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;fill:#0B1B2B}
+  .s{font:400 12px -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;fill:#45596E}
+  .z{font:600 12px -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;fill:#6B7F94;letter-spacing:.06em}
+  .h{font:700 17px -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;fill:#0B1B2B}
+  .l{font:400 11.5px -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;fill:#45596E}
+  .a{fill:none;stroke:#45596E;stroke-width:1.5} .a.live{stroke:#0E9E72;stroke-width:2} .a.plan{stroke:#6B7F94;stroke-dasharray:6 5}
+  .hd{fill:#45596E} .hd.live{fill:#0E9E72} .hd.plan{fill:#6B7F94} .n{fill:#0E9E72} .nt{font:700 12px -apple-system,Helvetica,Arial,sans-serif;fill:#FFFFFF}
+  .lb{fill:#F8FAFC}
+  @media (prefers-color-scheme: dark){
+    .bg{fill:#08131F} .box{fill:#0E1E2E;stroke:#2B3F53} .zone{stroke:#48607A} .live{stroke:#12C08A} .test{stroke:#F0B429} .plan{stroke:#8CA2B8}
+    .t,.h{fill:#F2F6FA} .s,.l{fill:#A8BBCE} .z{fill:#8CA2B8} .a{stroke:#A8BBCE} .a.live{stroke:#12C08A} .a.plan{stroke:#8CA2B8}
+    .hd{fill:#A8BBCE} .hd.live{fill:#12C08A} .hd.plan{fill:#8CA2B8} .n{fill:#12C08A} .nt{fill:#04231A} .lb{fill:#08131F}
+  }
+</style>
+<rect class="bg" width="1080" height="930" rx="14"/>
+<text class="h" x="24" y="34">A private voice note, from a patient to a clinician</text>
+<rect class="zone" x="20" y="52" width="1040" height="250" rx="14"/>
+<text class="z" x="34" y="72">THE PATIENT’S IPHONE OR IPAD: NOTHING HERE NEEDS THE INTERNET</text>
+<rect class="box live" x="40" y="86" width="232" height="96" rx="10"/>
+<text class="t" x="52" y="108"></text>
+<circle class="n" cx="62" cy="110" r="11"/><text class="nt" x="62" y="114" text-anchor="middle">1</text>
+<text class="t" x="82" y="115" text-anchor="start">Speak</text>
+<text class="s" x="54" y="138" text-anchor="start">A voice note, kept on</text>
+<text class="s" x="54" y="153" text-anchor="start">the device from the</text>
+<text class="s" x="54" y="168" text-anchor="start">first second</text>
+<rect class="box live" x="296" y="86" width="232" height="96" rx="10"/>
+<text class="t" x="308" y="108"></text>
+<circle class="n" cx="318" cy="110" r="11"/><text class="nt" x="318" y="114" text-anchor="middle">2</text>
+<text class="t" x="338" y="115" text-anchor="start">Words</text>
+<text class="s" x="310" y="138" text-anchor="start">Apple’s speech model,</text>
+<text class="s" x="310" y="153" text-anchor="start">on the device, turns</text>
+<text class="s" x="310" y="168" text-anchor="start">sound into text</text>
+<rect class="box live" x="552" y="86" width="232" height="96" rx="10"/>
+<text class="t" x="564" y="108"></text>
+<circle class="n" cx="574" cy="110" r="11"/><text class="nt" x="574" y="114" text-anchor="middle">3</text>
+<text class="t" x="594" y="115" text-anchor="start">Summary</text>
+<text class="s" x="566" y="138" text-anchor="start">Apple’s language model,</text>
+<text class="s" x="566" y="153" text-anchor="start">on the device, writes</text>
+<text class="s" x="566" y="168" text-anchor="start">a short debrief</text>
+<rect class="box live" x="808" y="86" width="232" height="96" rx="10"/>
+<text class="t" x="820" y="108"></text>
+<circle class="n" cx="830" cy="110" r="11"/><text class="nt" x="830" y="114" text-anchor="middle">4</text>
+<text class="t" x="850" y="115" text-anchor="start">Vault</text>
+<text class="s" x="822" y="138" text-anchor="start">Every file encrypted on</text>
+<text class="s" x="822" y="153" text-anchor="start">the device, signed, and</text>
+<text class="s" x="822" y="168" text-anchor="start">kept under the patient’s key</text>
+<path class="a live" d="M272 134 L296 134"/>
+<polygon class="hd live" points="296.0,134.0 287.8,137.7 287.8,130.3"/>
+<path class="a live" d="M528 134 L552 134"/>
+<polygon class="hd live" points="552.0,134.0 543.8,137.7 543.8,130.3"/>
+<path class="a live" d="M784 134 L808 134"/>
+<polygon class="hd live" points="808.0,134.0 799.8,137.7 799.8,130.3"/>
+<rect class="box live" x="40" y="204" width="488" height="78" rx="10"/>
+<text class="t" x="52" y="226">No account with us</text>
+<text class="s" x="52" y="244">The app is installed with an Apple ID, which the developer never sees.</text>
+<text class="s" x="52" y="260">There is no sign-up, no password and no server of ours.</text>
+<rect class="box plan" x="552" y="204" width="488" height="78" rx="10"/>
+<text class="t" x="564" y="226">The key to the vault</text>
+<text class="s" x="564" y="244">Today: kept in the device’s Keychain. Designed: made from a passkey,</text>
+<text class="s" x="564" y="260">which Face ID unlocks and Apple carries between your own devices.</text>
+<rect class="zone" x="20" y="326" width="1040" height="214" rx="14"/>
+<text class="z" x="34" y="346">BETWEEN THEM: ONLY WHAT NEITHER A SERVER NOR A STRANGER CAN READ</text>
+<rect class="box test" x="40" y="362" width="300" height="88" rx="10"/>
+<text class="t" x="52" y="384">The clinician’s QR code</text>
+<text class="s" x="52" y="402">Their public key and the address of</text>
+<text class="s" x="52" y="418">their inbox. Safe to show: it can be</text>
+<text class="s" x="52" y="434">written to, never read with</text>
+<rect class="box live" x="390" y="362" width="300" height="88" rx="10"/>
+<text class="t" x="402" y="384">A sealed note</text>
+<text class="s" x="402" y="402">The audio, the words and the summary,</text>
+<text class="s" x="402" y="418">encrypted on the patient’s device to</text>
+<text class="s" x="402" y="434">the clinician’s public key</text>
+<rect class="box live" x="740" y="362" width="300" height="88" rx="10"/>
+<text class="t" x="752" y="384">A vault server</text>
+<text class="s" x="752" y="402">Holds encrypted files under names it</text>
+<text class="s" x="752" y="418">cannot interpret. Sees sizes and</text>
+<text class="s" x="752" y="434">times. Cannot open anything</text>
+<text class="s" x="40" y="478" text-anchor="start">The patient scans the code once. From then on, a note has a button with the clinician’s name on it.</text>
+<text class="s" x="40" y="496" text-anchor="start">The way back (the clinician writing to the patient, or being given a vault) uses the patient’s own code: designed, not built.</text>
+<text class="s" x="40" y="514" text-anchor="start">Who the clinician really is: a public register of keys (pki.sgit.ai) can vouch for them: designed, not built.</text>
+<path class="a " d="M340 406 L390 406"/>
+<polygon class="hd " points="390.0,406.0 381.8,409.7 381.8,402.3"/>
+<path class="a live" d="M690 406 L740 406"/>
+<polygon class="hd live" points="740.0,406.0 731.8,409.7 731.8,402.3"/>
+<rect class="zone" x="20" y="564" width="1040" height="150" rx="14"/>
+<text class="z" x="34" y="584">THE CLINICIAN’S DEVICE</text>
+<rect class="box live" x="40" y="598" width="300" height="96" rx="10"/>
+<text class="t" x="52" y="620">An inbox</text>
+<text class="s" x="52" y="638">Notes arrive sealed. Nobody else</text>
+<text class="s" x="52" y="654">holding the link can read them,</text>
+<text class="s" x="52" y="670">including the sender afterwards</text>
+<rect class="box live" x="390" y="598" width="300" height="96" rx="10"/>
+<text class="t" x="402" y="620">Opened with a private key</text>
+<text class="s" x="402" y="638">The key never leaves the clinician’s</text>
+<text class="s" x="402" y="654">device. Each file is checked against</text>
+<text class="s" x="402" y="670">the hash sent with it</text>
+<rect class="box plan" x="740" y="598" width="300" height="96" rx="10"/>
+<text class="t" x="752" y="620">The clinician’s own vault</text>
+<text class="s" x="752" y="638">The same design from the other side:</text>
+<text class="s" x="752" y="654">a different app for clinicians, the</text>
+<text class="s" x="752" y="670">same keys and vaults underneath</text>
+<path class="a live" d="M340 646 L390 646"/>
+<polygon class="hd live" points="390.0,646.0 381.8,649.7 381.8,642.3"/>
+<path class="a plan" d="M690 646 L740 646"/>
+<polygon class="hd plan" points="740.0,646.0 731.8,649.7 731.8,642.3"/>
+<path class="a live" d="M890 450 L890 530 L190 530 L190 598"/>
+<polygon class="hd live" points="190.0,598.0 186.3,589.8 193.7,589.8"/>
+<text class="t" x="40" y="746" text-anchor="start">What this does not do by itself</text>
+<rect class="box plan" x="40" y="758" width="320" height="94" rx="10"/>
+<text class="t" x="52" y="780" text-anchor="start">It is not “GDPR compliant” automatically</text>
+<text class="s" x="52" y="800" text-anchor="start">Keeping data on the device and encrypting it</text>
+<text class="s" x="52" y="815" text-anchor="start">removes a great deal of risk. The duties of</text>
+<text class="s" x="52" y="830" text-anchor="start">whoever runs a service with it remain.</text>
+<rect class="box plan" x="380" y="758" width="320" height="94" rx="10"/>
+<text class="t" x="392" y="780" text-anchor="start">A model can mishear and invent</text>
+<text class="s" x="392" y="800" text-anchor="start">The audio and the transcript are the record.</text>
+<text class="s" x="392" y="815" text-anchor="start">The summary is a convenience and must never</text>
+<text class="s" x="392" y="830" text-anchor="start">be treated as a clinical note unchecked.</text>
+<rect class="box plan" x="720" y="758" width="320" height="94" rx="10"/>
+<text class="t" x="732" y="780" text-anchor="start">A key is not yet a person</text>
+<text class="s" x="732" y="800" text-anchor="start">A QR code proves which key you scanned, not</text>
+<text class="s" x="732" y="815" text-anchor="start">whose it is. In a clinic that link has to be</text>
+<text class="s" x="732" y="830" text-anchor="start">made properly, once, by someone accountable.</text>
+<rect class="box live" x="40" y="884" width="26" height="16" rx="4"/><text class="l" x="74" y="896">Seen working on the owner’s devices</text>
+<rect class="box test" x="330" y="884" width="26" height="16" rx="4"/><text class="l" x="364" y="896">In the build, not yet confirmed</text>
+<rect class="box plan" x="620" y="884" width="26" height="16" rx="4"/><text class="l" x="654" y="896">Decided, not built</text>
+</svg>
