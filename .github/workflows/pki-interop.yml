@@ -1,0 +1,140 @@
+name: PKI interop
+
+# Swift writes keys, signatures, envelopes and statements; sgit and pki.sgit.ai's own code read them. And the
+# reverse. Nothing else can vouch for these formats: Swift cannot be compiled where the app is written, and the
+# formats are defined by what sgit (Python) and keys.js (WebCrypto) accept.
+#
+#   others-make    Linux: `sgit pki` (sgit-ai 0.27) makes a key store, a bundle, a signature and envelopes;
+#                  pki.sgit.ai's keys.js, message.js and delegation.js (lib v0.2.28, fetched and checked against
+#                  pinned hashes) make an identity, a k1 code, a statement, an envelope and a sign-in
+#   swift          macOS: the app's own PKI source files, compiled as a command-line tool, read all of that and
+#                  then make their own; the two committed fixtures the app's unit tests use are read too
+#   others-read    Linux: sgit and keys.js read what Swift made; and both still read the committed fixtures
+#
+# Every key in a run is made for the run and protects nothing.
+on:
+  push:
+    branches: [dev, 'work/**']
+    paths:
+      - 'Apps/VoiceDebrief/Sources/Engine/PKI*.swift'
+      - 'Apps/VoiceDebrief/Sources/Engine/LaneCrypto.swift'
+      - 'Apps/VoiceDebrief/Sources/Model/PKI*.swift'
+      - 'Apps/VoiceDebrief/Sources/Model/IdentityVouch.swift'
+      - 'Apps/VoiceDebrief/Tests/PKIFixtureChecks.swift'
+      - 'Apps/VoiceDebrief/Tests/PKIFixtures/**'
+      - 'scripts/pki-interop/**'
+      - '.github/workflows/pki-interop.yml'
+  schedule:
+    - cron: '41 5 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pki-interop-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  others-make:
+    name: sgit and keys.js make
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: pip install sgit-ai==0.27.0
+      - name: pki.sgit.ai's modules, at a pinned version
+        run: scripts/pki-interop/fetch_pki_lib.sh "$RUNNER_TEMP/lib"
+      - name: sgit makes
+        run: python3 scripts/pki-interop/sgit_make.py "$RUNNER_TEMP/made/sgit-home" "$RUNNER_TEMP/made/sgit-made.json" | tee -a "$GITHUB_STEP_SUMMARY"
+      - name: keys.js makes
+        run: node scripts/pki-interop/keysjs_make.mjs "$RUNNER_TEMP/lib" "$RUNNER_TEMP/made/keysjs-made.json" | tee -a "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: made-by-sgit-and-keysjs
+          path: ${{ runner.temp }}/made/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 3
+
+  swift:
+    name: Swift reads theirs and makes its own
+    needs: others-make
+    runs-on: macos-26
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Select Xcode
+        run: .github/scripts/select-xcode.sh
+      - uses: actions/download-artifact@v4
+        with:
+          name: made-by-sgit-and-keysjs
+          path: ${{ runner.temp }}/made
+      - name: Compile the app's PKI files as a tool
+        run: |
+          set -o pipefail
+          scripts/pki-interop/build.sh "$RUNNER_TEMP/pki-interop" 2>&1 | tee "$RUNNER_TEMP/build.log" || {
+            { echo "### ❌ The PKI files did not compile"; echo '```'; grep -E "error|warning: var|cannot" "$RUNNER_TEMP/build.log" | head -60; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+            exit 1; }
+      - name: Swift reads what sgit and keys.js made in this run
+        run: |
+          set -o pipefail
+          "$RUNNER_TEMP/pki-interop" read "$RUNNER_TEMP/made/sgit-made.json" "$RUNNER_TEMP/made/keysjs-made.json" 2>&1 | tee -a "$GITHUB_STEP_SUMMARY"
+      - name: Swift reads the committed fixtures (the ones the app's unit tests use)
+        run: |
+          set -o pipefail
+          f=Apps/VoiceDebrief/Tests/PKIFixtures
+          if [ -f "$f/pki-fixture-sgit.json" ]; then
+            "$RUNNER_TEMP/pki-interop" read "$f/pki-fixture-sgit.json" "$f/pki-fixture-keysjs.json" 2>&1 | sed 's/^- /- committed fixture, /' | tee -a "$GITHUB_STEP_SUMMARY"
+          else
+            echo "- no committed fixtures yet" | tee -a "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Swift makes
+        run: |
+          set -o pipefail
+          "$RUNNER_TEMP/pki-interop" make "$RUNNER_TEMP/swift-made" "$RUNNER_TEMP/made/sgit-made.json" "$RUNNER_TEMP/made/keysjs-made.json" 2>&1 | tee -a "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: made-by-swift
+          path: ${{ runner.temp }}/swift-made/
+          if-no-files-found: error
+          retention-days: 3
+
+  others-read:
+    name: sgit and keys.js read what Swift made
+    needs: [others-make, swift]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: pip install sgit-ai==0.27.0
+      - name: pki.sgit.ai's modules, at a pinned version
+        run: scripts/pki-interop/fetch_pki_lib.sh "$RUNNER_TEMP/lib"
+      - uses: actions/download-artifact@v4
+        with:
+          name: made-by-sgit-and-keysjs
+          path: ${{ runner.temp }}/made
+      - uses: actions/download-artifact@v4
+        with:
+          name: made-by-swift
+          path: ${{ runner.temp }}/swift-made
+      - name: sgit reads Swift
+        run: |
+          set -o pipefail
+          python3 scripts/pki-interop/sgit_reads_swift.py "$RUNNER_TEMP/swift-made" "$RUNNER_TEMP/made/sgit-home" "$RUNNER_TEMP/made/sgit-made.json" 2>&1 | tee -a "$GITHUB_STEP_SUMMARY"
+      - name: keys.js reads Swift
+        run: |
+          set -o pipefail
+          node scripts/pki-interop/keysjs_reads_swift.mjs "$RUNNER_TEMP/lib" "$RUNNER_TEMP/swift-made" "$RUNNER_TEMP/made/keysjs-made.json" 2>&1 | tee -a "$GITHUB_STEP_SUMMARY"
