@@ -47,8 +47,10 @@ final class CreditLedger {
 
     /// Charges for something the app has just done. Never refuses and never throws: the balance may
     /// go below zero, and the work has already happened.
-    func charge(_ action: CreditAction, quantity: Double = 1, noteId: String?) {
-        if book.charge(action, quantity: quantity, noteId: noteId) != nil { write() }
+    func charge(_ action: CreditAction, quantity: Double = 1, noteId: String? = nil) {
+        let cost = PriceList.cost(action, quantity: quantity)
+        let text = PriceList.words(action, quantity: quantity)
+        if book.charge(feature: action.rawValue, text: text, cost: cost, quantity: quantity, noteId: noteId) != nil { write() }
     }
 
     /// True if the credit was added; false if this payment reference was already credited.

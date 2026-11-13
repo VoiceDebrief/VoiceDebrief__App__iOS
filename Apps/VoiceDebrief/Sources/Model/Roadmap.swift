@@ -58,7 +58,7 @@ enum Roadmap {
               status: .testing),
         Stage(id: "credit",
               title: "Credit that counts down",
-              detail: "A balance charged per transcript, debrief and clean passage, kept on this device, allowed below zero. The top-up is simulated: no money is taken. Paying through the App Store is not built.",
+              detail: "A balance charged a little for just about everything you do, kept on this device, allowed below zero. The top-up is simulated: no money is taken. Paying through the App Store is not built.",
               status: .testing),
         Stage(id: "account",
               title: "Your account, opened by a passkey",

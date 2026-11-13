@@ -179,7 +179,9 @@ final class DebriefSession {
             phase = .failed("That file could not be opened.")
             return nil
         }
-        return begin(audioAt: copy, source: picked.lastPathComponent, localeId: localeId)
+        let id = begin(audioAt: copy, source: picked.lastPathComponent, localeId: localeId)
+        if id != nil { CreditLedger.shared.charge(.importFile, noteId: id) }
+        return id
     }
 
     /// Keeps the audio as a new note, then processes it without making the caller wait.
@@ -349,6 +351,7 @@ final class DebriefSession {
                 Task { @MainActor [weak self] in self?.sharing = .sending(done, total) }
             }
             sharing = .sent(messages.count)
+            CreditLedger.shared.charge(.send, noteId: noteId)
         } catch {
             sharing = .failed(error.localizedDescription)
         }

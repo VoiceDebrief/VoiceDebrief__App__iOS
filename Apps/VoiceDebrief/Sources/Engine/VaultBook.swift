@@ -119,6 +119,7 @@ final class VaultBook {
             vaults.append(SavedVault(id: created.key.vaultId, name: label.isEmpty ? "Vault \(created.key.vaultId)" : label,
                                      keyText: created.keyText, addedAt: Date(), createdHere: true))
             persist()
+            CreditLedger.shared.charge(.createVault)
             log.record(VaultTrafficEvent(kind: .verify, path: "create", detail: "created vault \(created.key.vaultId): empty tree, one signed commit, branch current, branch index", vaultId: created.key.vaultId))
         } catch {
             problem = "The vault was not created: \(Self.describe(error))"
@@ -143,6 +144,7 @@ final class VaultBook {
             vaults.append(SavedVault(id: key.vaultId, name: label.isEmpty ? "Vault \(key.vaultId)" : label,
                                      keyText: text, addedAt: Date(), createdHere: false))
             persist()
+            CreditLedger.shared.charge(.addVault)
         } catch {
             problem = "The vault was not added: \(Self.describe(error))"
         }
@@ -236,6 +238,7 @@ final class VaultBook {
         let handle = try await open(vault)
         let result = try await handle.commit(changes, message: "Debrief \(id)", branch: "current", signer: try commitSigner(),
                                            writeKey: writeKey, accessToken: token, writer: HTTPVaultTransport(server: server))
+        CreditLedger.shared.charge(.saveToVault, quantity: Double(files.count))
         let bytes = result.bytesUploaded.vaultByteString
         return "Saved \(files.count) files in one signed commit (\(result.objectsUploaded) objects, \(bytes))." + note
     }

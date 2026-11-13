@@ -26,12 +26,11 @@ struct CreditTests {
         #expect(Credit.price(1_200_000) == "£1.20")
     }
 
-    @Test func aTranscriptIsChargedByTheSecond() {
-        // 3p a minute is 500 micro-credits a second, and a started second is a whole one.
+    @Test func aTranscriptIsChargedByTheStartedMinute() {
         #expect(PriceList.cost(.transcript, quantity: 60) == 30_000)
-        #expect(PriceList.cost(.transcript, quantity: 76) == 38_000)
-        #expect(PriceList.cost(.transcript, quantity: 0.2) == 500)
-        #expect(PriceList.cost(.transcript, quantity: 404) == 202_000)
+        #expect(PriceList.cost(.transcript, quantity: 76) == 60_000)
+        #expect(PriceList.cost(.transcript, quantity: 0.2) == 30_000)
+        #expect(PriceList.cost(.transcript, quantity: 404) == 210_000)
         #expect(PriceList.cost(.transcript, quantity: 0) == 0)
         #expect(PriceList.cost(.transcript, quantity: -3) == 0)
         #expect(PriceList.cost(.transcript, quantity: .nan) == 0)
@@ -40,20 +39,34 @@ struct CreditTests {
     @Test func theOtherPricesAreByTheThing() {
         #expect(PriceList.cost(.debrief, quantity: 1) == 50_000)
         #expect(PriceList.cost(.cleanPassage, quantity: 1) == 10_000)
-        #expect(PriceList.cost(.cleanPassage, quantity: 4) == 40_000)
-        // Listed and not charged: whatever the figure, the cost is nothing.
-        #expect(PriceList.cost(.saveToVault, quantity: 1) == 0)
-        #expect(PriceList.cost(.send, quantity: 1) == 0)
-        let notYet = [Price(action: .send, title: "Sending", unit: .each, micro: 10_000, charged: false)]
-        #expect(PriceList.cost(.send, quantity: 1, prices: notYet) == 0)
+        #expect(PriceList.cost(.createVault, quantity: 1) == 100_000)
+        #expect(PriceList.cost(.saveToVault, quantity: 4) == 40_000)
+        #expect(PriceList.cost(.send, quantity: 1) == 10_000)
+        #expect(PriceList.words(.saveToVault, quantity: 4) == "Saved to a vault, 4 files")
+        #expect(PriceList.words(.transcript, quantity: 76) == "Transcript, 1 min 16 s of audio")
     }
 
-    @Test func everyActionHasOnePriceAndTheListSaysItIsAPlaceholder() {
+    @Test func everythingHasAPriceInWholePenceAndTheListSaysItIsAPlaceholder() {
         #expect(PriceList.all.map(\.action) == CreditAction.allCases)
         #expect(PriceList.arePlaceholders)
-        #expect(PriceList.price(of: .transcript)?.words == "3p a minute of audio, by the second")
-        #expect(PriceList.price(of: .debrief)?.words == "5p each")
-        #expect(PriceList.price(of: .send)?.words == "free")
+        // The owner's word: just about everything costs a little, in steps of one penny for now.
+        for price in PriceList.all {
+            #expect(price.micro > 0, "\(price.title) is free")
+            #expect(price.micro % Credit.perPenny == 0, "\(price.title) is not a whole number of pence")
+        }
+        #expect(PriceList.price(of: .transcript)?.words == "3p a minute of audio")
+        #expect(PriceList.price(of: .createVault)?.words == "10p each")
+        #expect(PriceList.price(of: .saveToVault)?.words == "1p a file")
+        #expect(PriceList.title(ofFeature: "debrief") == "A debrief")
+        #expect(PriceList.title(ofFeature: "something-from-a-later-build") == "something-from-a-later-build")
+    }
+
+    /// Charges a book as the ledger does: the price list says the cost and the words.
+    @discardableResult
+    private static func charge(_ book: inout CreditBook, _ action: CreditAction, _ quantity: Double = 1,
+                               noteId: String? = "n1", at: Date = Date()) -> CreditEntry? {
+        book.charge(feature: action.rawValue, text: PriceList.words(action, quantity: quantity),
+                    cost: PriceList.cost(action, quantity: quantity), quantity: quantity, noteId: noteId, at: at)
     }
 
     // MARK: The ledger's arithmetic
@@ -70,34 +83,35 @@ struct CreditTests {
 
     @Test func chargesCountDownAndEachEntryKeepsTheBalanceAfterIt() throws {
         var book = CreditBook(device: "d1", at: Self.start)
-        let made1 = book.charge(.transcript, quantity: 76, noteId: "n1", at: Self.start + 10)
+        let made1 = Self.charge(&book, .transcript, 76, noteId: "n1", at: Self.start + 10)
         let transcript = try #require(made1)
-        let made2 = book.charge(.debrief, quantity: 1, noteId: "n1", at: Self.start + 20)
+        let made2 = Self.charge(&book, .debrief, 1, noteId: "n1", at: Self.start + 20)
         let debrief = try #require(made2)
-        #expect(transcript.amount == -38_000)
-        #expect(transcript.balance == 4_962_000)
+        #expect(transcript.amount == -60_000)
+        #expect(transcript.balance == 4_940_000)
         #expect(transcript.text == "Transcript, 1 min 16 s of audio")
         #expect(transcript.noteId == "n1")
         #expect(transcript.quantity == 76)
-        #expect(debrief.balance == 4_912_000)
-        #expect(book.balance == 4_912_000)
-        #expect(book.spent == 88_000)
+        #expect(transcript.action == "transcript")
+        #expect(debrief.balance == 4_890_000)
+        #expect(book.balance == 4_890_000)
+        #expect(book.spent == 110_000)
         #expect(book.entries.map(\.kind) == [.start, .charge, .charge])
         #expect(book.addsUp)
         // Something that costs nothing writes nothing.
-        let made9 = book.charge(.send, quantity: 1, noteId: "n1")
+        let made9 = book.charge(feature: "gift", text: "Something free", cost: 0)
         #expect(made9 == nil)
-        let made10 = book.charge(.transcript, quantity: 0, noteId: "n1")
+        let made10 = Self.charge(&book, .transcript, 0, noteId: "n1")
         #expect(made10 == nil)
         #expect(book.entries.count == 3)
     }
 
     @Test func theBalanceGoesBelowZeroAndNothingIsRefused() throws {
         var book = CreditBook(device: "d1", startingCredit: 40_000, at: Self.start)
-        let made3 = book.charge(.debrief, quantity: 1, noteId: "n1")
+        let made3 = Self.charge(&book, .debrief, 1, noteId: "n1")
         let first = try #require(made3)
         #expect(first.balance == -10_000)
-        let made4 = book.charge(.transcript, quantity: 3_600, noteId: "n2")
+        let made4 = Self.charge(&book, .transcript, 3_600, noteId: "n2")
         let second = try #require(made4)
         #expect(second.balance == -1_810_000)
         #expect(book.balance == -1_810_000)
@@ -107,7 +121,7 @@ struct CreditTests {
 
     @Test func aTopUpIsAddedOncePerReference() throws {
         var book = CreditBook(device: "d1", startingCredit: 0, at: Self.start)
-        book.charge(.debrief, quantity: 1, noteId: "n1")
+        Self.charge(&book, .debrief, 1, noteId: "n1")
         let made5 = book.topUp(5_000_000, ref: "simulated-1", source: "simulated")
         let topUp = try #require(made5)
         #expect(topUp.kind == .topUp)
@@ -132,7 +146,7 @@ struct CreditTests {
 
     @Test func aDeclinedChargeIsGivenBackOnceAndStaysInTheLedger() throws {
         var book = CreditBook(device: "d1", at: Self.start)
-        let made7 = book.charge(.debrief, quantity: 1, noteId: "n1")
+        let made7 = Self.charge(&book, .debrief, 1, noteId: "n1")
         let charge = try #require(made7)
         let made8 = book.decline(charge.id, reason: "The result was not usable")
         let refund = try #require(made8)
@@ -155,6 +169,32 @@ struct CreditTests {
         #expect(book.addsUp)
     }
 
+    @Test func theTakingsAreAddedUpByFeature() throws {
+        var book = CreditBook(device: "d1", at: Self.start)
+        Self.charge(&book, .transcript, 76, at: Self.start + 10)
+        Self.charge(&book, .transcript, 30, noteId: "n2", at: Self.start + 100)
+        let made = Self.charge(&book, .debrief, at: Self.start + 110)
+        let debrief = try #require(made)
+        Self.charge(&book, .debrief, noteId: "n2", at: Self.start + 120)
+        Self.charge(&book, .createVault, noteId: nil, at: Self.start + 200)
+        book.decline(debrief.id, reason: "The result was not usable", at: Self.start + 300)
+        book.topUp(5_000_000, ref: "simulated-1", source: "simulated", at: Self.start + 400)
+
+        let lines = book.byFeature()
+        #expect(lines.map(\.feature) == ["createVault", "transcript", "debrief"])
+        #expect(lines[0] == FeatureLine(feature: "createVault", uses: 1, charged: 100_000, declined: 0, givenBack: 0))
+        #expect(lines[1] == FeatureLine(feature: "transcript", uses: 2, charged: 90_000, declined: 0, givenBack: 0))
+        #expect(lines[2] == FeatureLine(feature: "debrief", uses: 2, charged: 100_000, declined: 1, givenBack: 50_000))
+        #expect(lines[2].net == 50_000)
+        // The takings are what was spent: a top-up and the starting credit are not in them.
+        #expect(lines.reduce(0) { $0 + $1.net } == book.spent)
+        // A period leaves out what is older; a refund counts in the period it was given.
+        let later = book.byFeature(since: Self.start + 150)
+        #expect(later.map(\.feature) == ["createVault", "debrief"])
+        #expect(later[1] == FeatureLine(feature: "debrief", uses: 0, charged: 0, declined: 1, givenBack: 50_000))
+        #expect(book.byFeature(since: Self.start + 1_000).isEmpty)
+    }
+
     // MARK: The file
 
     @Test @MainActor func aLedgerReopensAsItWasLeft() throws {
@@ -166,9 +206,9 @@ struct CreditTests {
         ledger.charge(.cleanPassage, noteId: "n1")
         #expect(ledger.topUp(PaymentReceipt(ref: "simulated-a", credit: 5_000_000, source: "simulated")))
         #expect(!ledger.topUp(PaymentReceipt(ref: "simulated-a", credit: 5_000_000, source: "simulated")))
-        let charge = try #require(ledger.newestFirst.first { $0.action == .cleanPassage })
+        let charge = try #require(ledger.newestFirst.first { $0.action == "cleanPassage" })
         ledger.decline(charge, reason: "It was a test")
-        #expect(ledger.balance == 5_000_000 - 38_000 - 50_000 + 5_000_000)
+        #expect(ledger.balance == 5_000_000 - 60_000 - 50_000 + 5_000_000)
         #expect(ledger.newestFirst.first?.kind == .refund)
 
         let again = CreditLedger(file: file)
@@ -209,7 +249,7 @@ struct CreditTests {
         #expect(ledger.book.entries.count == 3)
         #expect(ledger.balance == 9_962_000)
         #expect(ledger.book.addsUp)
-        #expect(ledger.book.entries[1].action == .transcript)
+        #expect(ledger.book.entries[1].action == "transcript")
         ledger.charge(.debrief, noteId: "n2")
         #expect(CreditLedger(file: file).balance == 9_912_000)
         // The reference of the earlier top-up is still known.

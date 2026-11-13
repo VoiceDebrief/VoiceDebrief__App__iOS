@@ -97,6 +97,7 @@ struct RecipientsView: View {
     private func take(_ text: String, from what: String) {
         if recipients.add(name: name.trimmingCharacters(in: .whitespacesAndNewlines), text: text) {
             message = "Added."
+            CreditLedger.shared.charge(.addRecipient)
             name = ""
             link = ""
         } else if text.contains(DeveloperLane.builtInLink) {

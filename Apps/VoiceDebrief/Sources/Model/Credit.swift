@@ -4,8 +4,11 @@ import Foundation
 /// app is used, may go below zero, and is topped up by paying. Nothing is ever blocked by it.
 ///
 /// The unit is the micro-credit: one millionth of a pound, always a whole number, so that a charge
-/// by the second of audio has no rounding. Newsroom counts in pence and tenths of a penny; the app
-/// needs a smaller unit because a second of audio costs less than a tenth of a penny.
+/// can be as small as it needs to be without rounding. Newsroom counts in pence and tenths of a penny.
+/// The price list is in whole pence for now; the unit leaves room below that.
+///
+/// Nothing in this file knows what the app is: features are named by a key (a short stable string),
+/// so the same ledger can serve another app, and figures from many devices can be added up by key.
 enum Credit {
     static let perPound = 1_000_000
     static let perPenny = 10_000
@@ -34,91 +37,6 @@ enum Credit {
     }
 }
 
-/// What the app charges for.
-enum CreditAction: String, Codable, CaseIterable, Sendable {
-    case transcript
-    case debrief
-    case cleanPassage
-    case saveToVault
-    case send
-}
-
-/// One line of the price list.
-struct Price: Identifiable, Equatable, Sendable {
-    enum Unit: Equatable, Sendable {
-        /// Charged by the second, at this much a minute.
-        case minuteOfAudio
-        case each
-    }
-
-    let action: CreditAction
-    let title: String
-    let unit: Unit
-    /// Micro-credits for one minute of audio, or for one of the thing.
-    let micro: Int
-    /// False while the app does not yet charge for this, whatever the figure says.
-    let charged: Bool
-
-    var id: String { action.rawValue }
-
-    /// "3p a minute of audio, by the second" or "5p each" or "free".
-    var words: String {
-        guard micro > 0 else { return "free" }
-        switch unit {
-        case .minuteOfAudio: return "\(Credit.price(micro)) a minute of audio, by the second"
-        case .each: return "\(Credit.price(micro)) each"
-        }
-    }
-}
-
-/// Every price, in one place. EVERY FIGURE HERE IS A PLACEHOLDER: the owner has not set the app's
-/// prices. The transcript's is the plan's "a few pence per minute"; the debrief's is what newsroom
-/// charges for an article read to the end (5p); a clean passage is newsroom's price for a page (1p).
-enum PriceList {
-    /// Shown on the credit screen beside the prices for as long as it is true.
-    static let arePlaceholders = true
-
-    static let all: [Price] = [
-        Price(action: .transcript, title: "A transcript", unit: .minuteOfAudio, micro: 3 * Credit.perPenny, charged: true),
-        Price(action: .debrief, title: "A debrief", unit: .each, micro: 5 * Credit.perPenny, charged: true),
-        Price(action: .cleanPassage, title: "A clean text, by the passage", unit: .each, micro: 1 * Credit.perPenny, charged: true),
-        Price(action: .saveToVault, title: "Saving a note to a vault", unit: .each, micro: 0, charged: false),
-        Price(action: .send, title: "Sending a note to a recipient", unit: .each, micro: 0, charged: false),
-    ]
-
-    static func price(of action: CreditAction) -> Price? {
-        all.first { $0.action == action }
-    }
-
-    /// What `quantity` of an action costs: seconds of audio for a transcript, a count for the rest.
-    /// A started second of audio is a whole second, and a part of a micro-credit is rounded to the nearest.
-    static func cost(_ action: CreditAction, quantity: Double, prices: [Price] = all) -> Int {
-        guard let price = prices.first(where: { $0.action == action }), price.charged, price.micro > 0,
-              quantity > 0, quantity.isFinite else { return 0 }
-        switch price.unit {
-        case .minuteOfAudio:
-            let seconds = Int(quantity.rounded(.up))
-            return (price.micro * seconds + 30) / 60
-        case .each:
-            return price.micro * Int(quantity.rounded())
-        }
-    }
-
-    /// What a ledger entry says was done.
-    static func words(_ action: CreditAction, quantity: Double) -> String {
-        switch action {
-        case .transcript:
-            let seconds = Int(max(0, quantity).rounded(.up))
-            let length = seconds < 60 ? "\(seconds) s" : "\(seconds / 60) min \(seconds % 60) s"
-            return "Transcript, \(length) of audio"
-        case .debrief: return "Debrief"
-        case .cleanPassage: return "Clean text, one passage"
-        case .saveToVault: return "Saved to a vault"
-        case .send: return "Sent to a recipient"
-        }
-    }
-}
-
 /// One line of the ledger. Entries are only ever added: a charge that is declined stays, and a
 /// refund is written after it.
 struct CreditEntry: Codable, Equatable, Identifiable, Sendable {
@@ -138,7 +56,8 @@ struct CreditEntry: Codable, Equatable, Identifiable, Sendable {
     let amount: Int
     /// The balance on this device after this entry.
     let balance: Int
-    var action: CreditAction?
+    /// The feature this entry belongs to: a stable key such as "transcript", never display text.
+    var action: String?
     var noteId: String?
     /// Seconds of audio for a transcript, a count for the rest.
     var quantity: Double?
@@ -197,12 +116,11 @@ struct CreditBook: Codable, Equatable, Sendable {
 
     /// Charges for something that was done. Returns nil, and writes nothing, if it costs nothing.
     @discardableResult
-    mutating func charge(_ action: CreditAction, quantity: Double, noteId: String?, at: Date = Date(),
-                         prices: [Price] = PriceList.all) -> CreditEntry? {
-        let cost = PriceList.cost(action, quantity: quantity, prices: prices)
+    mutating func charge(feature: String, text: String, cost: Int, quantity: Double = 1, noteId: String? = nil,
+                         at: Date = Date()) -> CreditEntry? {
         guard cost > 0 else { return nil }
-        return add(.charge, text: PriceList.words(action, quantity: quantity), amount: -cost, at: at) {
-            $0.action = action
+        return add(.charge, text: text, amount: -cost, at: at) {
+            $0.action = feature
             $0.noteId = noteId
             $0.quantity = quantity
         }
@@ -235,6 +153,25 @@ struct CreditBook: Codable, Equatable, Sendable {
         }
     }
 
+    /// The takings by feature: how often each was used, what was charged, what was declined and given
+    /// back, and what is left. Most taken first. `since` leaves out anything older.
+    func byFeature(since: Date? = nil) -> [FeatureLine] {
+        var lines: [String: FeatureLine] = [:]
+        for entry in entries where entry.kind == .charge || entry.kind == .refund {
+            guard let key = entry.action, since.map({ entry.at >= $0 }) ?? true else { continue }
+            var line = lines[key] ?? FeatureLine(feature: key, uses: 0, charged: 0, declined: 0, givenBack: 0)
+            if entry.kind == .charge {
+                line.uses += 1
+                line.charged += -entry.amount
+            } else {
+                line.declined += 1
+                line.givenBack += entry.amount
+            }
+            lines[key] = line
+        }
+        return lines.values.sorted { ($0.net, $1.feature) > ($1.net, $0.feature) }
+    }
+
     @discardableResult
     private mutating func add(_ kind: CreditEntry.Kind, text: String, amount: Int, at: Date,
                               _ fill: (inout CreditEntry) -> Void = { _ in }) -> CreditEntry {
@@ -258,4 +195,18 @@ struct CreditBook: Codable, Equatable, Sendable {
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
         return try encoder.encode(self)
     }
+}
+
+/// One feature's line in the takings: the revenue side of a profit and loss, on this device.
+struct FeatureLine: Equatable, Identifiable, Sendable {
+    let feature: String
+    /// Times it was charged for.
+    var uses: Int
+    var charged: Int
+    /// Charges the user declined, and what they were given back.
+    var declined: Int
+    var givenBack: Int
+
+    var id: String { feature }
+    var net: Int { charged - givenBack }
 }

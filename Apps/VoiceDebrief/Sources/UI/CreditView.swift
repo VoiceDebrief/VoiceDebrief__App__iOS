@@ -46,6 +46,11 @@ struct CreditView: View {
         List {
             balance
             topUp
+            Section {
+                NavigationLink("Takings by feature") { TakingsView() }
+            } footer: {
+                Text("What each feature has been used for and charged, on this device.")
+            }
             entries
             prices
             Section {
@@ -183,7 +188,7 @@ struct CreditView: View {
             Text("Prices")
         } footer: {
             Text((PriceList.arePlaceholders ? "Placeholder prices: these have not been set yet and will change. " : "")
-                 + "A step that fails costs nothing. Running a note again is charged again. Recording is never charged and never stopped.")
+                 + "Something that fails costs nothing. Running a note again is charged again. Recording is never charged and never stopped.")
         }
     }
 
@@ -239,5 +244,55 @@ private struct EntryRow: View {
         if let reason = entry.reason { parts.append(reason) }
         if declined { parts.append("declined") }
         return parts.joined(separator: " · ")
+    }
+}
+
+/// The ledger by feature: the revenue side of a profit and loss, for this device only.
+struct TakingsView: View {
+    private let ledger = CreditLedger.shared
+    @State private var days = 0
+
+    private var lines: [FeatureLine] {
+        ledger.book.byFeature(since: days == 0 ? nil : Date().addingTimeInterval(-Double(days) * 86_400))
+    }
+
+    var body: some View {
+        List {
+            Section {
+                Picker("Period", selection: $days) {
+                    Text("All").tag(0)
+                    Text("7 days").tag(7)
+                    Text("30 days").tag(30)
+                }
+                .pickerStyle(.segmented)
+            }
+            Section {
+                ForEach(lines) { line in
+                    VStack(alignment: .leading, spacing: 2) {
+                        LabeledContent(PriceList.title(ofFeature: line.feature), value: Credit.money(line.net))
+                        Text(detail(line))
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    .accessibilityElement(children: .combine)
+                }
+                if lines.isEmpty {
+                    Text("Nothing has been charged in this period.").foregroundStyle(.secondary)
+                } else {
+                    LabeledContent("Total", value: Credit.money(lines.reduce(0) { $0 + $1.net }))
+                        .fontWeight(.semibold)
+                }
+            } footer: {
+                Text("Takings only, and only this device's. What each feature costs to provide, and the same figures across everybody who uses the app, are not built. Top-ups in this build are simulated, so none of this is money.")
+            }
+        }
+        .navigationTitle("Takings by feature")
+        .navigationBarTitleDisplayMode(.inline)
+    }
+
+    private func detail(_ line: FeatureLine) -> String {
+        var text = "\(line.uses) charged, \(Credit.money(line.charged))"
+        if line.declined > 0 { text += " · \(line.declined) declined, \(Credit.money(line.givenBack)) given back" }
+        return text
     }
 }
