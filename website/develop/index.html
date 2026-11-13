@@ -22,7 +22,7 @@
   <a class="brand" href="../index.html">Voice<em>Debrief</em> <span>iOS</span></a>
   <span class="beta" title="In development: there is nothing to install yet">IN DEVELOPMENT</span>
   <a class="parent" href="https://voicedebrief.ai" title="A VoiceDebrief product">&#8599; part of <b>voicedebrief.ai</b></a>
-  <a class="ver" href="../versions/index.html" title="Release history">v0.1.8</a>
+  <a class="ver" href="../versions/index.html" title="Release history">v0.1.9</a>
   <a class="nl" href="../built/index.html">Built</a>
   <a class="nl" href="../architecture/index.html">How it works</a>
   <a class="nl" href="../design/index.html">Design</a>
@@ -40,7 +40,7 @@
 <pre><code>Apps/VoiceDebrief/            the app: a hand-written Xcode project, sources, resources, tests
 Packages/SGitVault/           the vault engine (copied; see its SOURCE.md)
 Config/                       Local.xcconfig.example, for building on your own device
-.github/workflows/            ios.yml, ios-vault.yml, site.yml
+.github/workflows/            ios.yml, ios-vault.yml, pki-interop.yml, site.yml
 .github/scripts/              select Xcode, pick a simulator, copy errors into the job summary
 website/                      this site: markdown sources, the builder and the gate
 issues/                       open and done work, one file each
@@ -55,6 +55,7 @@ version                       the version, one line</code></pre>
 <tbody>
 <tr><td><code>ios.yml</code></td><td>A push to <code>dev</code> or to a <code>work/</code> branch, or a pull request, that touches <code>Apps/</code>, <code>Packages/</code> or the workflow. Only <code>dev</code> uploads to TestFlight</td><td>One Mac job: the vault engine's tests, a simulator build, a Release device build (unsigned), then the app's unit tests on an iPhone and an iPad simulator</td></tr>
 <tr><td><code>ios-vault.yml</code></td><td>A change to the vault write path, every Monday, or by hand</td><td>Swift writes vaults on a Mac; <code>sgit-ai</code> on Linux clones them, verifies every signature and compares every file</td></tr>
+<tr><td><code>pki-interop.yml</code></td><td>A change to the app's PKI files or <code>scripts/pki-interop/</code>, every Monday, or by hand</td><td><code>sgit pki</code> and pki.sgit.ai's <code>keys.js</code> make keys, signatures, envelopes, a statement and a sign-in on Linux; the app's PKI files, compiled as a tool on a Mac, read them and make their own; sgit and <code>keys.js</code> read those</td></tr>
 <tr><td><code>site.yml</code></td><td>Every push and pull request</td><td>The gate, then (on <code>dev</code>) the release tag and the site</td></tr>
 </tbody></table></div>
 <p>Builds and tests are unsigned. The last step of <code>ios.yml</code> uploads to TestFlight on a green push to <code>dev</code>: <code>scripts/release/testflight.sh</code> archives unsigned, signs the app with its entitlements, and exports with automatic signing through the App Store Connect API key. It needs the secrets <code>ASC_KEY_ID</code>, <code>ASC_ISSUER_ID</code>, <code>ASC_KEY_P8_BASE64</code> and the variable <code>APPLE_TEAM_ID</code>, and skips itself while any is missing.</p>
@@ -86,7 +87,7 @@ node website/admin/validate.mjs     # the gate CI runs</code></pre>
     <div class="brandline">Voice<em>Debrief</em> <span>iOS</span></div>
     <p>The VoiceDebrief transcript and debrief as a native iPhone and iPad app, on Apple's own models, with the results in a vault you own. In development: there is nothing to install yet. Content CC BY 4.0; code Apache 2.0.</p>
     <p class="partnote">This site is static and has no analytics.</p>
-    <p class="verline">site v0.1.8 · <a href="index.md">this page as markdown</a> · <a href="../llms.txt">llms.txt</a></p>
+    <p class="verline">site v0.1.9 · <a href="index.md">this page as markdown</a> · <a href="../llms.txt">llms.txt</a></p>
   </div>
   <div>
     <h4>The app</h4>
