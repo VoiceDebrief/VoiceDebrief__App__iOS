@@ -25,6 +25,12 @@ struct SettingsView: View {
                     Text("Every recording is kept on this device the moment it stops, with its transcript and debrief. Saving to a vault and sending to a lane happen only when you ask.")
                 }
 
+                Section {
+                    NavigationLink("Identity") { IdentityView(vaults: book) }
+                } footer: {
+                    Text("Your key pair, this device's key, and what links them.")
+                }
+
                 Section("Advanced") {
                     NavigationLink("Diagnostics and lane") { DiagnosticsView(session: session) }
                     NavigationLink("Every step the vault engine took") { TrafficView(log: book.log) }

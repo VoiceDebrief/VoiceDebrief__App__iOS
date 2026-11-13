@@ -36,7 +36,7 @@ do {
             try Data(text.utf8).write(to: url)
         }
         let sgit = try PKIBundle(json: try PKIJSON(parsing: Data(try PKIFixtureChecks.field(fixture(arguments[2]), "bundle").utf8)))
-        let keysjs = try PKIFixtureChecks.identity(try PKIFixtureChecks.field(fixture(arguments[3]), "identity")).bundle
+        let keysjs = try PKIFixtureChecks.bundle(try PKIFixtureChecks.field(fixture(arguments[3]), "identity"))
 
         let started = Date()
         let me = try PKI.generate(label: "Swift interop (throwaway) “é 日本”")
