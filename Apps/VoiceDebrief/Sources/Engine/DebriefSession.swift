@@ -24,6 +24,8 @@ final class DebriefSession {
     }
 
     let store: NoteStore
+    /// Called once a note is finished and its audio is in its final form: the moment to save it elsewhere.
+    var onNoteReady: ((String) -> Void)?
     private(set) var phase: Phase = .idle
     /// The note being processed now, or the last one that was.
     private(set) var currentNoteId: String?
@@ -303,13 +305,17 @@ final class DebriefSession {
 
     /// Once a note is finished, its WAV recording is replaced by a small .m4a. The WAV stays if that fails.
     private func compressAudio(of noteId: String) {
-        guard let wav = store.audioURL(for: noteId), wav.pathExtension.lowercased() == "wav" else { return }
+        guard let wav = store.audioURL(for: noteId), wav.pathExtension.lowercased() == "wav" else {
+            onNoteReady?(noteId)
+            return
+        }
         let m4a = store.folderURL(for: noteId).appending(path: "audio.m4a")
         Task {
             let done = await Task.detached(priority: .utility) { () -> Bool in
                 (try? AudioCompressor.compress(wav: wav, to: m4a)) != nil
             }.value
             if done, !isBusyWith(noteId) { store.replaceAudio(noteId, with: "audio.m4a") }
+            onNoteReady?(noteId)
         }
     }
 

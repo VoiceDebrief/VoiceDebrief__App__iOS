@@ -13,7 +13,6 @@ One file per piece of work: `open/NNN-slug.md`, moved to `done/` when it is done
 | 008 | Credit and top-up (first version in test, simulated payment) | the owner: prices, products in App Store Connect |
 | 009 | Read WhatsApp's Ogg Opus | |
 | 010 | Judge Apple's models on real notes | the owner, on a device |
-| 011 | Vaults local first; servers as remotes | |
 | 012 | The lab: one prompt, tools on and off | |
 | 013 | Doors: a harness inside the app | |
 | 014 | Several vaults and lanes, by name | |

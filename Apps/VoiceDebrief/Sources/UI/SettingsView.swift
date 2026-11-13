@@ -5,6 +5,8 @@ struct SettingsView: View {
     let session: DebriefSession
     let book: VaultBook
     @AppStorage("vd.localeId") private var localeId = ""
+    @AppStorage(AutoSave.switchKey) private var autoSave = true
+    @AppStorage(AutoSave.vaultKey) private var saveVault = ""
 
     var body: some View {
         NavigationStack {
@@ -19,10 +21,26 @@ struct SettingsView: View {
 
                 Section {
                     LabeledContent("Notes on this device", value: "\(session.store.notes.count)")
+                    Toggle("Save each finished note to a vault", isOn: $autoSave)
+                    if autoSave {
+                        let writable = book.vaults.filter(\.canWrite)
+                        if writable.isEmpty {
+                            Text("There is no vault to save into yet. Create one on the Vaults tab.")
+                                .font(.footnote)
+                                .foregroundStyle(.secondary)
+                        } else {
+                            Picker("Vault", selection: $saveVault) {
+                                Text("The first one").tag("")
+                                ForEach(writable) { vault in
+                                    Text(vault.name).tag(vault.id)
+                                }
+                            }
+                        }
+                    }
                 } header: {
                     Text("Library")
                 } footer: {
-                    Text("Every recording is kept on this device the moment it stops, with its transcript and debrief. Saving to a vault and sending to a lane happen only when you ask.")
+                    Text("Every recording is kept on this device the moment it stops, with its transcript and debrief. With the switch on, a finished note is also written, encrypted, into the vault as one signed commit. Sending to a recipient happens only when you ask.")
                 }
 
                 Section {
