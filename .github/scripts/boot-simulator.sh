@@ -8,7 +8,12 @@ set -uo pipefail
 u=${1:?udid}
 xcrun simctl boot "$u" 2>/dev/null || true
 ( xcrun simctl bootstatus "$u" -b >/dev/null 2>&1 ) & p=$!
-for _ in $(seq 1 60); do kill -0 "$p" 2>/dev/null || break; sleep 5; done
+echo "booting simulator $u (a first boot on a fresh runner takes several minutes)"
+for i in $(seq 1 60); do
+  kill -0 "$p" 2>/dev/null || break
+  sleep 5
+  if [ $((i % 6)) -eq 0 ]; then echo "  still booting: $((i * 5)) s"; fi
+done
 if kill -0 "$p" 2>/dev/null; then echo "still booting after five minutes: carrying on"; kill "$p" 2>/dev/null || true; fi
 xcrun simctl list devices | grep "$u" || true
 exit 0
