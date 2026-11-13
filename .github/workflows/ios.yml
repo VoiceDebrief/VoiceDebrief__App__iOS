@@ -57,7 +57,7 @@ jobs:
       - name: Select Xcode
         run: .github/scripts/select-xcode.sh
 
-      - name: Version (CI owns it: on dev, the tag this push was given)
+      - name: Version, which CI owns (on dev, the tag this push was given)
         run: |
           # site.yml tags every push to dev on a commit placed on top of it. The app's version is that
           # tag; if it has not been written yet, it is the latest tag plus one, which is what it will be.
