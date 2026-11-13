@@ -8,7 +8,7 @@ Run 4 of `ios.yml` uploaded 0.1.0 (4) on 13 November 2026 and App Store Connect 
 
 Still to do:
 
-- the owner confirms the build installs from TestFlight on an iPhone, an iPad and (as an iPad app) an Apple
-  silicon Mac; then this issue moves to `done/`;
+- confirmed on an iPhone (13 November 2026); an iPad and an Apple silicon Mac (as an iPad app) are still to
+  confirm, then this issue moves to `done/`;
 - later, when the app gains capabilities (Associated Domains, App Groups) and extensions: enable them on
   the app id and sign each extension with its own entitlements.
