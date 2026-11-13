@@ -333,10 +333,10 @@ struct VaultBookTests {
         #expect(try await second.book.contents(of: copy).head.signature.isVerified)
     }
 
-    // MARK: Vaults from v0.1.5 to v0.1.7
+    // MARK: Vaults from v0.1.5 to v0.1.8
 
     @Test func aVaultFromAnEarlierVersionKeepsWorkingOnItsServer() async throws {
-        // What v0.1.7 left: a vault that exists only on the server, its key and one token in the Keychain.
+        // What v0.1.8 left: a vault that exists only on the server, its key and one token in the Keychain.
         let server = Device.folder("server")
         let signer = SoftwareCommitSigner()
         let created = try await VaultCreate.create(signer: signer, accessToken: nil,

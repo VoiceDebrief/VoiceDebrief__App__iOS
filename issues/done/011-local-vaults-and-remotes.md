@@ -14,7 +14,7 @@ The Vaults tab asked for an access token before creating a vault. Creating a vau
   needed and writes nothing.
 - Each vault says where it is: on this device only, not yet pushed, pushed (when), ahead of the server, or
   push failed with the reason.
-- Vaults from v0.1.5 to v0.1.7 stay attached to `dev.send.sgraph.ai` and work as before; "Keep a copy on this
+- Vaults from v0.1.5 to v0.1.8 stay attached to `dev.send.sgraph.ai` and work as before; "Keep a copy on this
   device" brings one down.
 - `ios-vault.yml` has `sgit` clone a vault that was created in one folder and pushed to another.
 

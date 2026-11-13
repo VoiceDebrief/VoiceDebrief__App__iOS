@@ -21,7 +21,7 @@ struct SavedVault: Codable, Identifiable, Hashable, Sendable {
     var addedAt: Date
     var createdHere: Bool
     /// The vault's objects are in a folder on this device, so it opens and takes commits with no network.
-    /// False for a vault that is only read from and written to its server (as every vault was up to v0.1.7).
+    /// False for a vault that is only read from and written to its server (as every vault was up to v0.1.8).
     var onDevice = false
     /// The server this vault is pushed to and pulled from. Nil: it lives on this device only.
     var remoteId: String?
@@ -37,7 +37,7 @@ struct SavedVault: Codable, Identifiable, Hashable, Sendable {
 }
 
 extension SavedVault {
-    /// Vaults saved by v0.1.5 to v0.1.7 have only the first five members.
+    /// Vaults saved by v0.1.5 to v0.1.8 have only the first five members.
     init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         id = try c.decode(String.self, forKey: .id)
@@ -130,7 +130,7 @@ final class VaultBook {
         remotesWithToken = Set(remotes.map(\.id).filter { token(for: $0) != nil })
     }
 
-    /// v0.1.5 to v0.1.7 assumed one server and kept one token. What they left becomes a named server, and
+    /// v0.1.5 to v0.1.8 assumed one server and kept one token. What they left becomes a named server, and
     /// every vault they knew (all of which exist only on that server) stays attached to it.
     private func adoptEarlierVersions() {
         let earlierToken = store.get("access-token")

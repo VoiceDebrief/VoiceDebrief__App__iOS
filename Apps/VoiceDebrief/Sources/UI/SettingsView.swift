@@ -25,6 +25,14 @@ struct SettingsView: View {
                     Text("Every recording is kept on this device the moment it stops, with its transcript and debrief. Saving to a vault and sending to a lane happen only when you ask.")
                 }
 
+                Section {
+                    NavigationLink("Your words") { GlossaryView() }
+                } header: {
+                    Text("Experiments")
+                } footer: {
+                    Text("Words and names you use, for the clean text a note can be rewritten into.")
+                }
+
                 Section("Advanced") {
                     NavigationLink("Diagnostics and lane") { DiagnosticsView(session: session) }
                     NavigationLink("Every step the vault engine took") { TrafficView(log: book.log) }
