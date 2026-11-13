@@ -32,6 +32,12 @@ struct SettingsView: View {
                 }
 
                 Section {
+                    NavigationLink("Recipients") { RecipientsView() }
+                } footer: {
+                    Text("People, devices and agent sessions a note can be sent to. Add one by scanning its QR code.")
+                }
+
+                Section {
                     NavigationLink("Your words") { GlossaryView() }
                 } header: {
                     Text("Experiments")
