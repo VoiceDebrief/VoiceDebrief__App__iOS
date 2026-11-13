@@ -8,5 +8,11 @@ The control that ends a recording is green and says what happens: finish, proces
 only for throwing a recording away: placed away from the thumb, and taking two presses (or a held press) so it
 cannot be done by accident.
 
+## State, 13 November 2026
+
+Built (untried on a device): the control that ends a recording is green with a tick and says the note is kept;
+Discard is a small red word at the top of the screen, away from the thumb, and asks before deleting.
+Not built: saving to the vault on finish, which waits for a default vault (011).
+
 Needs: a default vault (011, 014); a queue for saves made with no network; audio over 3.8 MB (006): the
 owner's 6 min 44 s note was 1.7 MB, so the limit is about a quarter of an hour.
