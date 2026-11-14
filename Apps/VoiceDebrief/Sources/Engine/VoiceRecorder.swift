@@ -21,11 +21,16 @@ final class VoiceRecorder {
 
     var isRecording: Bool { recorder?.isRecording ?? false }
 
+    /// True from the moment a voice note starts recording until it stops, for anything else that would
+    /// take the audio session (playback, the Lab): changing it during a recording leaves a file of silence.
+    static private(set) var noteRecording = false
+
     func start(writingTo file: URL) async throws {
         guard await AVAudioApplication.requestRecordPermission() else { throw RecorderError.denied }
         let session = AVAudioSession.sharedInstance()
         try session.setCategory(.record, mode: .default)
         try session.setActive(true)
+        Self.noteRecording = true
         let settings: [String: Any] = [
             AVFormatIDKey: Int(kAudioFormatLinearPCM),
             AVSampleRateKey: 16_000,
@@ -63,6 +68,7 @@ final class VoiceRecorder {
     func stop() {
         recorder?.stop()
         recorder = nil
+        Self.noteRecording = false
         try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
     }
 }
