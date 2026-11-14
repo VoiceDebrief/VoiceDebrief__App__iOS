@@ -120,7 +120,8 @@ struct RootView: View {
             // Lab L02 may open a section by voice (issue 047): the names are the tabs' own.
             LabActionHost.shared.sectionNames = RootTab.allCases.map(\.rawValue)
             LabActionHost.shared.openSection = { name in
-                guard let found = RootTab(rawValue: name) else { return false }
+                // Only the parts the Lab is told of: More is the iPhone's list, not a part of its own.
+                guard let found = RootTab(rawValue: name), found != .more else { return false }
                 tab = found
                 return true
             }
