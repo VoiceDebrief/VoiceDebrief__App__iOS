@@ -217,6 +217,22 @@ enum VaultNaming {
         return AppInfo.webVault + "#" + body
     }
 
+    /// The heading a day of history sits under.
+    static func day(_ date: Date, now: Date = Date(), calendar: Calendar = .current) -> String {
+        if calendar.isDate(date, inSameDayAs: now) { return "Today" }
+        if let yesterday = calendar.date(byAdding: .day, value: -1, to: now), calendar.isDate(date, inSameDayAs: yesterday) {
+            return "Yesterday"
+        }
+        return date.formatted(date: .complete, time: .omitted)
+    }
+
+    /// Who made a commit, as far as a vault can say: this device, or another one known only by its key.
+    static func signer(keyId: String?, deviceKeyId: String?) -> String {
+        guard let keyId, !keyId.isEmpty else { return "Nobody signed it" }
+        if keyId == deviceKeyId { return "This device" }
+        return "Another device (key \(keyId.suffix(8)))"
+    }
+
     /// "a1b2 c3d4 e5f6 0718": a fingerprint in groups of four.
     static func grouped(_ fingerprint: String) -> String {
         var out = ""

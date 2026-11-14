@@ -12,20 +12,25 @@ struct HistoryView: View {
             if history.isEmpty {
                 Text("No history has been read yet.").foregroundStyle(.secondary)
             }
-            ForEach(history) { commit in
+            let days = Dictionary(grouping: history) { Calendar.current.startOfDay(for: $0.timestamp) }
+            ForEach(days.keys.sorted(by: >), id: \.self) { day in
+              Section(VaultNaming.day(day)) {
+               ForEach(days[day] ?? []) { commit in
                 NavigationLink {
                     CommitView(shelf: shelf, vault: vault, commit: commit)
                 } label: {
                     VStack(alignment: .leading, spacing: 3) {
                         Text(commit.message.isEmpty ? "(no message)" : commit.message).lineLimit(2)
-                        Text("\(commit.timestamp.formatted(date: .abbreviated, time: .shortened)) · \(String(commit.commitId.suffix(12)))")
-                            .font(.footnote.monospaced())
+                        Text("\(commit.timestamp.formatted(date: .omitted, time: .shortened)) · \(VaultNaming.signer(keyId: commit.authorKeyId, deviceKeyId: shelf.deviceKeyId))")
+                            .font(.footnote)
                             .foregroundStyle(.secondary)
                         Label(Self.words(commit.signature), systemImage: commit.signature.isVerified ? "checkmark.seal" : "seal")
                             .font(.footnote)
                             .foregroundStyle(commit.signature.isVerified ? Color.secondary : Color.orange)
                     }
                 }
+               }
+              }
             }
             if history.count >= 50 {
                 Text("The 50 most recent commits are shown.").font(.footnote).foregroundStyle(.secondary)

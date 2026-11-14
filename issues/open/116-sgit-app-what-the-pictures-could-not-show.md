@@ -16,7 +16,7 @@ Round 1 read twelve screens, each at rest. Not pictured, and each was a place a 
 
 A second round should follow the fixes for issues 110 to 115, with the same three users and tasks.
 
-**Written (14 November 2026):** four more pictures, 17 in all: the Create sheet with no access key
+**Done (14 November 2026, green in CI on `50c8629` and looked at):** four more pictures, 17 in all: the Create sheet with no access key
 (`create-nokey`), a vault on this device only (`vault.local`), files taken in and waiting to be sent
 (`vault.adding-adding`), the vault key shown with its copy button, link, QR code and command (`share.key`).
 

@@ -181,6 +181,9 @@ final class VaultShelf {
         return made
     }
 
+    /// The id this device's commits carry as their author.
+    var deviceKeyId: String? { (try? commitSigner())?.keyId }
+
     /// This device's signing key, as the history shows a signer: its fingerprint.
     var deviceFingerprint: String? {
         guard let signer = try? commitSigner() else { return nil }

@@ -13,7 +13,7 @@ To do: select several, or "Save this folder to Files", with the size and a count
 added" where that is true; on the share sheet, the exact line to paste on a computer; for the Mac, the app
 itself is the answer once it runs there (the design says iPhone, iPad and Mac).
 
-**Written (14 November 2026; done when CI is green and somebody has saved a folder on a device):** the three dots
+**Compiles and its tests pass (14 November 2026, `50c8629`); done when somebody has saved a folder on a device:** the three dots
 on any folder offer "Save these N files to Files" with the size; the app fetches each, lays them out as in the
 vault and hands the folder to the Files app. The file screen says Open and Share hand over the original, byte for
 byte. Beside the shown vault key, the line to paste on a computer (`pip install sgit-ai && sgit clone`), with a
