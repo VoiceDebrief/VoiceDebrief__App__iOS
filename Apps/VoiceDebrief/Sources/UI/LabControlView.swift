@@ -60,7 +60,7 @@ struct LabControlView: View {
             } header: {
                 Text("Actions")
             } footer: {
-                Text("Two actions are carried out once confirmed, the two that are safe to undo: opening a section, and finding a note, which only reads. The others are recorded and nothing else happens: nothing is recorded, sent or saved.")
+                Text("Three actions are carried out once confirmed: opening a section, finding a note (which only reads), and starting a recording for someone. The others are recorded and nothing else happens.")
             }
 
             Section {
@@ -92,7 +92,7 @@ struct LabControlView: View {
             }
 
             Section {
-                ForEach(LabAction.allCases) { action in
+                ForEach(LabAction.allCases.filter { !$0.alwaysAsks }) { action in
                     Toggle(action.title, isOn: Binding(
                         get: { centre.automatic.contains(action.rawValue) },
                         set: { centre.setAutomatic(action.rawValue, $0) }))
@@ -100,7 +100,7 @@ struct LabControlView: View {
             } header: {
                 Text("Without asking")
             } footer: {
-                Text("An action switched on here goes ahead as soon as it is proposed. Everything else waits for you. Opening a section leaves this screen, which stops the listening.")
+                Text("An action switched on here goes ahead as soon as it is proposed. Everything else waits for you. Recording a note for someone always waits: the note is sent to them when it is finished. Opening a section leaves this screen, which stops the listening.")
             }
 
             Section {
@@ -198,6 +198,11 @@ struct LabControlCard: View {
                 Label(outcome.words, systemImage: outcome.carriedOut ? "checkmark.circle" : "circle.dashed")
                     .font(.footnote)
                     .foregroundStyle(outcome.carriedOut ? Color.primary : Color.secondary)
+            }
+            if entry.state == .waiting, entry.proposal?.action == LabAction.recordTo.rawValue {
+                Text("Do it starts a recording for this person. The note is sent to them when you finish it.")
+                    .font(.footnote)
+                    .foregroundStyle(.orange)
             }
             if entry.state == .waiting {
                 HStack(spacing: 16) {

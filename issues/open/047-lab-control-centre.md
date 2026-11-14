@@ -32,3 +32,11 @@ kept on the device; a tally and a JSON log. Compiled and unit tested; never run 
 The owner runs the test sentences on an iPhone, an iPad and a Mac and sends back the log. If the model
 proposes the right action often enough and fast enough, wire the actions that are safe to undo first. If it
 does not, the phrases are the engine and the model is not asked.
+
+## Third action: record a note for someone (14 November 2026)
+
+`recordTo`, through `LabActionHost.startRecording`, set by the session that owns recording. Agreed with the
+parent session: it is not safe to undo, because a note recorded for a person is sent when it is finished and
+a spoken finish needs no tap. So it always waits for Do it, has no switch under "Without asking", and the
+card names what the app resolved. The app's side matches the name exactly, ignoring case, and refuses
+anything else with the names that exist. The Lab stops its own listening before the recording starts.
