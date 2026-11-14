@@ -109,7 +109,7 @@ final class GameVoicePlayer {
     }
 
     private func run(_ game: GameController, localeId: String) async {
-        if !game.listening && !VoiceRecorder.noteRecording {
+        if !game.listening && !GameController.noteRecording {
             // Heard or not, the speech must come out of the speaker.
             try? AVAudioSession.sharedInstance().setCategory(.playAndRecord, mode: .default, options: [.defaultToSpeaker])
             try? AVAudioSession.sharedInstance().setActive(true)

@@ -511,3 +511,26 @@ struct LabControlRecordToTests {
         #expect(centre.entries[0].outcome?.carriedOut == true)
     }
 }
+
+@Suite("Lab L02: listening keeps out of a recording's way")
+@MainActor
+struct LabControlListeningTests {
+    @Test func itDoesNotListenWhileANoteIsBeingRecorded() async {
+        let host = LabActionHost()
+        host.isRecording = { true }
+        let centre = LabControlActionTests.centre(host: host)
+        await centre.startListening(localeId: "en-GB")
+        #expect(!centre.listening)
+        #expect(centre.problem == "A note is being recorded. The Lab does not listen at the same time.")
+    }
+
+    @Test func withNoLanguageChosenItSaysSoAndDoesNotListen() async {
+        let centre = LabControlActionTests.centre(host: LabActionHost())
+        await centre.startListening(localeId: "")
+        #expect(!centre.listening)
+        #expect(centre.problem == "Choose the language spoken in Settings first.")
+        // A stop with nothing to stop is harmless and adds nothing to the log.
+        await centre.stopListening()
+        #expect(centre.entries.isEmpty)
+    }
+}

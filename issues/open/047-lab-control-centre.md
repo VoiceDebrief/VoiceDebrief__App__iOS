@@ -40,3 +40,14 @@ parent session: it is not safe to undo, because a note recorded for a person is 
 a spoken finish needs no tap. So it always waits for Do it, has no switch under "Without asking", and the
 card names what the app resolved. The app's side matches the name exactly, ignoring case, and refuses
 anything else with the names that exist. The Lab stops its own listening before the recording starts.
+
+## Listening and a recording's microphone (14 November 2026)
+
+Three notes from build 0.1.72 arrived as digital silence. Reading L02's Listen for a cause found two ways it
+could have done it: it switched the shared audio session off when it stopped, after an await, which could
+land on a recording that had begun in the meantime or was running when Listen was pressed; and a Listen
+waiting on the microphone permission could start after the screen was left. Both are closed: the Lab never
+switches the session off, refuses to listen while `LabActionHost.isRecording` says a note is being recorded,
+abandons a start overtaken by a stop, and stops when the app goes to the background. **Not proven to be the
+cause**: nobody has reproduced the silence, and the same pattern (an audio session switched off after an
+await) should be looked for wherever else the app stops listening or playing.

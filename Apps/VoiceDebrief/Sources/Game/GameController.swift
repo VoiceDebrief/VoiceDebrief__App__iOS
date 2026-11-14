@@ -328,6 +328,10 @@ final class GameController {
     /// Goes up on every stop, so that a start still waiting (for permission, or for the speech model)
     /// when it was stopped gives up instead of taking the microphone afterwards.
     private var listenGeneration = 0
+
+    /// Whether a voice note is being recorded: as the owner of recording says through the Lab's host,
+    /// or, where it has not said, the recorder's own flag.
+    static var noteRecording: Bool { LabActionHost.shared.isRecording?() ?? VoiceRecorder.noteRecording }
     private var starting = false
 
     /// Why listening cannot start now, or nil. A voice note being recorded owns the microphone.
@@ -340,7 +344,7 @@ final class GameController {
     func startListening(localeId: String) async {
         guard !listening, !starting else { return }
         problem = nil
-        if let why = Self.refusal(localeId: localeId, noteRecording: VoiceRecorder.noteRecording) {
+        if let why = Self.refusal(localeId: localeId, noteRecording: Self.noteRecording) {
             problem = why
             return
         }
@@ -352,7 +356,7 @@ final class GameController {
             return
         }
         // Stopped while asking, or a recording began meanwhile: give up.
-        guard mine == listenGeneration, !VoiceRecorder.noteRecording else { return }
+        guard mine == listenGeneration, !Self.noteRecording else { return }
         do {
             let session = AVAudioSession.sharedInstance()
             // Play and record, out of the speaker, so the voice player can be heard by the microphone.
