@@ -33,6 +33,7 @@ struct VaultView: View {
     @State private var dropping = false
     @State private var exporting: FolderExport?
     @State private var inWebVault = false
+    @State private var askingModel = false
 
     private var contents: VaultContents? { shelf.contents[vault.id] }
     private var onDevice: Bool { shelf.current(vault).onDevice }
@@ -78,6 +79,10 @@ struct VaultView: View {
                             UsageLog.shared.action("web-vault.open")
                             inWebVault = true
                         }
+                    }
+                    Button("Ask this vault (experiment)", systemImage: "sparkles") {
+                        UsageLog.shared.action("ask.open")
+                        askingModel = true
                     }
                     Button("History", systemImage: "clock.arrow.circlepath") {
                         UsageLog.shared.action("history.open")
@@ -128,6 +133,9 @@ struct VaultView: View {
         .navigationDestination(item: $opened) { route in
             VaultView(shelf: shelf, outbox: outbox, vault: route.vault, folder: route.folder)
                 .tracked("vault.folder")
+        }
+        .navigationDestination(isPresented: $askingModel) {
+            AskVaultView(shelf: shelf, vault: vault).tracked("ask")
         }
         .navigationDestination(isPresented: $showingHistory) {
             HistoryView(shelf: shelf, vault: vault)

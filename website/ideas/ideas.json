@@ -29,9 +29,9 @@
  ],
  "counts": {
   "seen-working": 27,
-  "built-untried": 64,
+  "built-untried": 65,
   "in-progress": 33,
-  "proposed": 38,
+  "proposed": 39,
   "parked": 6
  },
  "ideas": [
@@ -1446,6 +1446,33 @@
    "versions": [],
    "features": [],
    "url": "https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/118-sgit-app-the-web-vault-inside-the-app.md",
+   "source": "The owner"
+  },
+  {
+   "id": "issue-119",
+   "kind": "issue",
+   "number": "119",
+   "app": "SGit Vaults",
+   "title": "sgit app: Apple Intelligence, a first experiment",
+   "status": "proposed",
+   "why": "Open, with nothing built yet: \"Status: open. Owner: the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB).\"",
+   "summary": "The owner, 14 November 2026: \"start thinking about how can we add Apple Intelligence to this app to make a lot of these things more straightforward ... let's start experimenting\".",
+   "detail": [
+    "The owner, 14 November 2026: \"start thinking about how can we add Apple Intelligence to this app to make a lot of these things more straightforward ... let's start experimenting\".",
+    "Written (14 November 2026, not yet compiled): Ask this vault, after VoiceDebrief's Lab. One question, a fresh session, four read-only tools over a copy of the listing and history, every call shown. See the reality file.",
+    "To learn from the owner's first tries on a device: does the model call a tool before answering; are the answers right; how long does it take; what did he want to ask that the tools could not answer.",
+    "Next experiments, in the order they look useful (none started):",
+    "1. A commit message from what changed (\"12 photographs of the stage and one video\"), offered, never applied unasked. One question, no tools. 2. Names for a selection being added: a folder suggestion from the files' names and dates. 3. Find by meaning: \"the photos from the dinner\" across vaults. Needs captions, which needs the Vision framework on the device at the time a picture is added; a larger piece of work. 4. A spoken question: the voice button (issue 120, with the people session's inbox) feeding this screen. 5. The standing position holds for all of them: the code owns the states, the model is asked one question at a time through function calls, and what it may touch is shown."
+   ],
+   "statusLine": "Status: open. Owner: the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB).",
+   "owner": "the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB)",
+   "places": [
+    "SGit Vaults: a vault",
+    "SGit Vaults: History"
+   ],
+   "versions": [],
+   "features": [],
+   "url": "https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/119-sgit-app-apple-intelligence.md",
    "source": "The owner"
   },
   {
@@ -3647,6 +3674,27 @@
    "places": [
     "SGit Vaults: Share",
     "SGit Vaults: Settings"
+   ],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
+   "id": "sgit-feature-ask-this-vault-an-experiment",
+   "kind": "feature",
+   "app": "SGit Vaults",
+   "title": "Ask this vault, an experiment",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "Engine/VaultAsk.swift, UI/AskVaultView.swift, on a vault's three dots: one question to Apple's on-device model (Foundation Models), in a fresh session, which may call four tools that read a copy of the vault's listing and history (a summary, one folder, recent changes, files by name). Every call and what it returned is shown under the answer. The model is given names, sizes and commit messages...",
+   "detail": [
+    "Engine/VaultAsk.swift, UI/AskVaultView.swift, on a vault's three dots: one question to Apple's on-device model (Foundation Models), in a fresh session, which may call four tools that read a copy of the vault's listing and history (a summary, one folder, recent changes, files by name). Every call and what it returned is shown under the answer. The model is given names, sizes and commit messages, never a file's contents; it cannot change anything; nothing leaves the device",
+    "The tools have unit tests. The model has never been asked anything by this app: CI's simulators have no Apple Intelligence, and nobody has run it on a device. Whether its answers are any good is the experiment"
+   ],
+   "places": [
+    "SGit Vaults: a vault",
+    "SGit Vaults: History"
    ],
    "issues": [],
    "url": "https://ios.app.voicedebrief.ai/sgit-app/built/index.html",

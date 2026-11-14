@@ -5,9 +5,9 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | Status | Meaning | How many |
 |---|---|---|
 | Seen working | Built, and a run proved it: CI, a device or a server. | 27 |
-| Built, untried | In the app or the repository, but not yet proven by a run on a device. | 64 |
+| Built, untried | In the app or the repository, but not yet proven by a run on a device. | 65 |
 | In progress | Begun: part of it is built or a release has touched it. | 33 |
-| Proposed | Asked for or described; nothing of it is built. | 38 |
+| Proposed | Asked for or described; nothing of it is built. | 39 |
 | Parked | Waiting: on the owner, on Apple, or scheduled for later. | 6 |
 
 ## Seen working
@@ -108,6 +108,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | Saving a folder out | Feature | SGit Vaults | SGit Vaults: a vault; SGit Vaults: Share |   | [reality file](../sgit-app/built/index.md) |
 | The web Vault inside the app | Feature | SGit Vaults | SGit Vaults: a vault |   | [reality file](../sgit-app/built/index.md) |
 | Your activity | Feature | SGit Vaults | SGit Vaults: Share; SGit Vaults: Settings |   | [reality file](../sgit-app/built/index.md) |
+| Ask this vault, an experiment | Feature | SGit Vaults | SGit Vaults: a vault; SGit Vaults: History |   | [reality file](../sgit-app/built/index.md) |
 | Sharing a vault | Feature | SGit Vaults | SGit Vaults: Share |   | [reality file](../sgit-app/built/index.md) |
 | History | Feature | SGit Vaults | SGit Vaults: History |   | [reality file](../sgit-app/built/index.md) |
 
@@ -164,6 +165,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | A viewer for chat-archive results, as a separate app | Issue | SGit Vaults | SGit Vaults: Gallery |   | [106](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/106-chat-archive-viewer.md) |
 | sgit app: a record of every action, on every device | Issue | SGit Vaults | SGit Vaults: Share; SGit Vaults: Settings |   | [117](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/117-sgit-app-observability-across-devices.md) |
 | sgit app: the web Vault inside the app, and its features natively | Issue | SGit Vaults | SGit Vaults: a vault; SGit Vaults: Settings |   | [118](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/118-sgit-app-the-web-vault-inside-the-app.md) |
+| sgit app: Apple Intelligence, a first experiment | Issue | SGit Vaults | SGit Vaults: a vault; SGit Vaults: History |   | [119](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/119-sgit-app-apple-intelligence.md) |
 | A harness inside the app | Article | Both |   |   | [article](../articles/a-harness-inside-the-app/index.md) |
 | A private voice note, and what it would take to use it in a clinic | Article | Both |   |   | [article](../articles/a-private-voice-note-and-a-clinic/index.md) |
 | Synthetic users | Article | Both |   |   | [article](../articles/synthetic-users/index.md) |
