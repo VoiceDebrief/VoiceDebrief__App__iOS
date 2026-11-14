@@ -68,5 +68,4 @@ jobs:
           pip install -q pyjwt cryptography requests
           python3 .github/scripts/testflight_external.py --bundle "${{ steps.decide.outputs.bundle }}" \
             --build "${{ steps.decide.outputs.build }}" --notes "website/versions/${{ steps.decide.outputs.tag }}/index.md" \
-            ${{ github.event_name == 'workflow_dispatch' && '--queue-anyway' || '' }} \
             | tee -a "$GITHUB_STEP_SUMMARY"

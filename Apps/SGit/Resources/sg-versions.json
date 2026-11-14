@@ -7,7 +7,7 @@
    "version": "v0.1.95",
    "date": "14 November 2026",
    "notes": [
-    "External TestFlight: an automatic send now waits while another build of the app is already waiting for Apple's Beta App Review (the owner found five queued at once); a send by hand still goes."
+    "External TestFlight: the newest build replaces any still waiting for Apple's Beta App Review (the waiting one is expired), at the owner's direction; a build already in review is left to finish."
    ],
    "hasPage": true,
    "url": "https://ios.app.voicedebrief.ai/versions/v0.1.95/index.html",
