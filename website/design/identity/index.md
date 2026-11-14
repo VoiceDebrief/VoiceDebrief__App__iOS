@@ -39,6 +39,7 @@ VoiceDebrief's parts, in the order of the sidebar. The tab bar, the sidebar, the
 | ![Contacts](../../assets/art/vd-contacts.jpg) | Contacts | `person.2` | `#E5577E` | Who notes go to; add one by QR code |
 | ![Vaults](../../assets/art/vd-vaults.jpg) | Vaults | `lock.shield` | `#4F5BD5` | Encrypted copies that you own |
 | ![Agents](../../assets/art/vd-agents.jpg) | Agents | `person.3` | `#C94FD6` | Who is working for you; talk to them |
+| ![Play](../../assets/art/vd-play.jpg) | Play | `gamecontroller` | `#F28C28` | Games played by voice, on Apple's model |
 | ![Guide](../../assets/art/vd-guide.jpg) | Guide | `book` | `#2BA3D9` | What is new, every idea, how things work |
 | ![Identity](../../assets/art/vd-identity.jpg) | Identity | `person.badge.key` | `#8E5CF7` | Your keys and your devices |
 | ![Credit](../../assets/art/vd-credit.jpg) | Credit | `sterlingsign.circle` | `#D4A12A` | What each thing costs |
@@ -98,7 +99,7 @@ Every note, picture and message travels one of two ways, and says which with a `
 |---|---|---|
 | Direction | One way | Both ways |
 | How | Sealed on your device to their key and dropped in their inbox; you can add to it but not read it back; the server sees only ciphertext | Both of you hold the vault's key and read and write the same encrypted files |
-| Used for | Voice notes, pictures, messages to agents, handing over a vault's key | The Agents screen and Claude's replies; shared vaults with people are still to come |
+| Used for | Voice notes, pictures, messages to agents, handing over a vault's key | In VoiceDebrief, the Agents vault you share with Claude; in SGit Vaults, a vault shared with the people you choose (each person's key handed over by lane). Neither has yet been run on a device |
 | Colour and symbol | Green, `envelope.fill` | Indigo, `lock.shield.fill` |
 | Drawing | A sealed envelope travels one way into their inbox, with no way back | One vault between two faces, arrows both ways, files arriving from each side |
 

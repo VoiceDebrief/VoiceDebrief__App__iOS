@@ -87,5 +87,5 @@ extension RootTab: CaseIterable, Identifiable {
     }
 
     /// The section's drawing in the asset catalogue (drawn by tools/art).
-    var art: String { self == .play ? "VDArt-lab" : "VDArt-\(rawValue)" }   // Play has no drawing of its own yet
+    var art: String { "VDArt-\(rawValue)" }
 }
