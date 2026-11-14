@@ -2120,7 +2120,7 @@
    "source": "A position and a brief. From the owner's voice memos of 13 November 2026, written up by the agent. Decided by the owner the same day. None of it is built unless..."
   },
   {
-   "id": "design-sgit-app-secrets-a-team-with-no-admin-and-no-account",
+   "id": "design.sgit.app.secrets.a.team.with.no.admin.and.no.account",
    "kind": "design",
    "app": "SGit Vaults",
    "title": "A team with no admin and no account",
@@ -2136,7 +2136,7 @@
    "source": "A secrets manager made of people and vaults"
   },
   {
-   "id": "design-sgit-app-secrets-sharing-a-server-cannot-redirect",
+   "id": "design.sgit.app.secrets.sharing.a.server.cannot.redirect",
    "kind": "design",
    "app": "SGit Vaults",
    "title": "Sharing a server cannot redirect",
@@ -2152,7 +2152,7 @@
    "source": "A secrets manager made of people and vaults"
   },
   {
-   "id": "design-sgit-app-secrets-one-secret-for-one-agent",
+   "id": "design.sgit.app.secrets.one.secret.for.one.agent",
    "kind": "design",
    "app": "SGit Vaults",
    "title": "One secret for one agent",
@@ -2168,7 +2168,7 @@
    "source": "A secrets manager made of people and vaults"
   },
   {
-   "id": "design-sgit-app-secrets-signed-history-of-every-secret",
+   "id": "design.sgit.app.secrets.signed.history.of.every.secret",
    "kind": "design",
    "app": "SGit Vaults",
    "title": "Signed history of every secret",
@@ -2184,7 +2184,7 @@
    "source": "A secrets manager made of people and vaults"
   },
   {
-   "id": "design-sgit-app-secrets-ask-someone-outside-the-team-for-a-secret",
+   "id": "design.sgit.app.secrets.ask.someone.outside.the.team.for.a.secret",
    "kind": "design",
    "app": "SGit Vaults",
    "title": "Ask someone outside the team for a secret",
@@ -2200,7 +2200,7 @@
    "source": "A secrets manager made of people and vaults"
   },
   {
-   "id": "design-sgit-app-secrets-rotation-on-a-branch",
+   "id": "design.sgit.app.secrets.rotation.on.a.branch",
    "kind": "design",
    "app": "SGit Vaults",
    "title": "Rotation on a branch",
@@ -2216,7 +2216,7 @@
    "source": "A secrets manager made of people and vaults"
   },
   {
-   "id": "design-sgit-app-secrets-recovery-through-people-you-trust",
+   "id": "design.sgit.app.secrets.recovery.through.people.you.trust",
    "kind": "design",
    "app": "SGit Vaults",
    "title": "Recovery through people you trust",
@@ -2232,7 +2232,7 @@
    "source": "A secrets manager made of people and vaults"
   },
   {
-   "id": "design-sgit-app-secrets-leaving-someone-out-honestly",
+   "id": "design.sgit.app.secrets.leaving.someone.out.honestly",
    "kind": "design",
    "app": "SGit Vaults",
    "title": "Leaving someone out, honestly",
@@ -2248,7 +2248,7 @@
    "source": "A secrets manager made of people and vaults"
   },
   {
-   "id": "design-sgit-app-secrets-a-spotted-secret",
+   "id": "design.sgit.app.secrets.a.spotted.secret",
    "kind": "design",
    "app": "SGit Vaults",
    "title": "A spotted secret",
@@ -2264,7 +2264,7 @@
    "source": "A secrets manager made of people and vaults"
   },
   {
-   "id": "design-sgit-app-secrets-the-trust-map",
+   "id": "design.sgit.app.secrets.the.trust.map",
    "kind": "design",
    "app": "SGit Vaults",
    "title": "The trust map",
@@ -2280,7 +2280,7 @@
    "source": "A secrets manager made of people and vaults"
   },
   {
-   "id": "design-sgit-app-secrets-the-same-vaults-on-every-device",
+   "id": "design.sgit.app.secrets.the.same.vaults.on.every.device",
    "kind": "design",
    "app": "SGit Vaults",
    "title": "The same vaults on every device",
@@ -2296,7 +2296,7 @@
    "source": "A secrets manager made of people and vaults"
   },
   {
-   "id": "design-sgit-app-secrets-secrets-as-files-in-vaults",
+   "id": "design.sgit.app.secrets.secrets.as.files.in.vaults",
    "kind": "design",
    "app": "SGit Vaults",
    "title": "Secrets as files in vaults",
@@ -2312,7 +2312,7 @@
    "source": "A secrets manager made of people and vaults"
   },
   {
-   "id": "design-sgit-app-secrets-questions-for-the-owner-by-voice",
+   "id": "design.sgit.app.secrets.questions.for.the.owner.by.voice",
    "kind": "design",
    "app": "SGit Vaults",
    "title": "Questions for the owner, by voice",
@@ -2328,7 +2328,7 @@
    "source": "A secrets manager made of people and vaults"
   },
   {
-   "id": "feature-the-app-skeleton",
+   "id": "feature.the.app.skeleton",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "The app skeleton",
@@ -2348,7 +2348,7 @@
    "versions": []
   },
   {
-   "id": "feature-capture-without-loss",
+   "id": "feature.capture.without.loss",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "Capture without loss",
@@ -2368,7 +2368,7 @@
    "versions": []
   },
   {
-   "id": "feature-library-on-the-device",
+   "id": "feature.library.on.the.device",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "Library on the device",
@@ -2389,7 +2389,7 @@
    "versions": []
   },
   {
-   "id": "feature-the-shell",
+   "id": "feature.the.shell",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "The shell",
@@ -2411,7 +2411,7 @@
    "versions": []
   },
   {
-   "id": "feature-record-or-open-a-voice-note",
+   "id": "feature.record.or.open.a.voice.note",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "Record or open a voice note",
@@ -2429,7 +2429,7 @@
    "versions": []
   },
   {
-   "id": "feature-transcript-on-the-device",
+   "id": "feature.transcript.on.the.device",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "Transcript on the device",
@@ -2447,7 +2447,7 @@
    "versions": []
   },
   {
-   "id": "feature-debrief-on-the-device",
+   "id": "feature.debrief.on.the.device",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "Debrief on the device",
@@ -2465,7 +2465,7 @@
    "versions": []
   },
   {
-   "id": "feature-live-text-and-a-level-display-while-recording",
+   "id": "feature.live.text.and.a.level.display.while.recording",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "Live text and a level display while recording",
@@ -2485,7 +2485,7 @@
    "versions": []
   },
   {
-   "id": "feature-send-a-note-to-the-developer",
+   "id": "feature.send.a.note.to.the.developer",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "Send a note to the developer",
@@ -2503,7 +2503,7 @@
    "versions": []
   },
   {
-   "id": "feature-create-a-vault",
+   "id": "feature.create.a.vault",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "Create a vault",
@@ -2521,7 +2521,7 @@
    "versions": []
   },
   {
-   "id": "feature-vaults-on-the-device",
+   "id": "feature.vaults.on.the.device",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "Vaults on the device",
@@ -2542,7 +2542,7 @@
    "versions": []
   },
   {
-   "id": "feature-servers-as-remotes",
+   "id": "feature.servers.as.remotes",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "Servers as remotes",
@@ -2562,7 +2562,7 @@
    "versions": []
   },
   {
-   "id": "feature-push-and-pull",
+   "id": "feature.push.and.pull",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "Push and pull",
@@ -2582,7 +2582,7 @@
    "versions": []
   },
   {
-   "id": "feature-vaults-from-earlier-builds",
+   "id": "feature.vaults.from.earlier.builds",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "Vaults from earlier builds",
@@ -2602,7 +2602,7 @@
    "versions": []
   },
   {
-   "id": "feature-vault-keys-and-server-tokens-in-icloud-keychain",
+   "id": "feature.vault.keys.and.server.tokens.in.icloud.keychain",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "Vault keys and server tokens in iCloud Keychain",
@@ -2623,7 +2623,7 @@
    "versions": []
   },
   {
-   "id": "feature-save-a-debrief-to-a-vault",
+   "id": "feature.save.a.debrief.to.a.vault",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "Save a debrief to a vault",
@@ -2643,7 +2643,7 @@
    "versions": []
   },
   {
-   "id": "feature-record-while-a-note-is-written-up",
+   "id": "feature.record.while.a.note.is.written.up",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "Record while a note is written up",
@@ -2663,7 +2663,7 @@
    "versions": []
   },
   {
-   "id": "feature-play-a-recording",
+   "id": "feature.play.a.recording",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "Play a recording",
@@ -2683,7 +2683,7 @@
    "versions": []
   },
   {
-   "id": "feature-a-briefing-on-opening",
+   "id": "feature.a.briefing.on.opening",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "A briefing on opening",
@@ -2704,7 +2704,7 @@
    "versions": []
   },
   {
-   "id": "feature-the-guide-ideas-what-is-new-feature-guides",
+   "id": "feature.the.guide.ideas.what.is.new.feature.guides",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "The Guide: ideas, what is new, feature guides",
@@ -2712,7 +2712,7 @@
    "why": "The reality file, Built: unverified: written, not yet proven by a run.",
    "summary": "UI/Guide/GuideView.swift, IdeasView.swift, WhatsNewView.swift, FeatureGuideView.swift, Model/GuideData.swift; data from website/admin/ideas.mjs, bundled as vd-ideas.json and vd-versions.json: every idea and request (issues, articles, rows of both reality files) with its status (seen working, built untried, in progress, proposed, parked) decided by written rules and the sentence that decided it...",
    "detail": [
-    "UI/Guide/GuideView.swift, IdeasView.swift, WhatsNewView.swift, FeatureGuideView.swift, Model/GuideData.swift; data from website/admin/ideas.mjs, bundled as vd-ideas.json and vd-versions.json: every idea and request (issues, articles, rows of both reality files) with its status (seen working, built untried, in progress, proposed, parked) decided by written rules and the sentence that decided it, searchable and filtered by status and app, with where it is in the app and the versions that named it; What is new lists every version newest first and marks those since the person last looked. The same list is the site's ideas page. Ten feature guides (for VoiceDebrief: record, a note, the library, vaults, sending, the briefing, settings; for SGit Vaults: getting started, inside a vault, sharing), each a picture of the screen with numbered arrows and what each number is, written in...",
+    "UI/Guide/GuideView.swift, IdeasView.swift, WhatsNewView.swift, FeatureGuideView.swift, Model/GuideData.swift; data from website/admin/ideas.mjs, bundled as vd-ideas.json and vd-versions.json: every idea and request (issues, articles, rows of both reality files) with its status (seen working, built untried, in progress, proposed, parked) decided by written rules and the sentence that decided it, searchable and filtered by status and app, with where it is in the app and the versions that named it; What is new lists every version newest first and marks those since the person last looked. The same list is the site's ideas page. Eleven feature guides (for VoiceDebrief: record, a note, the library, vaults, sending, the briefing, settings; for SGit Vaults: getting started, inside a vault, sharing, secrets), each a picture of the screen with numbered arrows and what each number is, written in...",
     "Unit tests: the bundled data decodes, every status is known and explained, search, version order, since you last looked, every guide's pictures are in the app. The generator is checked by validate.mjs. Not reachable from the shell until it is given a place in the sidebar; not run on a device"
    ],
    "places": [
@@ -2725,7 +2725,7 @@
    "versions": []
   },
   {
-   "id": "feature-articles-to-read-in-the-app",
+   "id": "feature.articles.to.read.in.the.app",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "Articles to read in the app",
@@ -2743,7 +2743,7 @@
    "versions": []
   },
   {
-   "id": "feature-release-cards",
+   "id": "feature.release.cards",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "Release cards",
@@ -2761,7 +2761,7 @@
    "versions": []
   },
   {
-   "id": "feature-a-welcome-on-the-first-launch",
+   "id": "feature.a.welcome.on.the.first.launch",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "A welcome on the first launch",
@@ -2779,7 +2779,7 @@
    "versions": []
   },
   {
-   "id": "feature-where-the-work-happens",
+   "id": "feature.where.the.work.happens",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "Where the work happens",
@@ -2801,7 +2801,7 @@
    "versions": []
   },
   {
-   "id": "feature-finish-by-voice-or-by-a-button-off-the-screen",
+   "id": "feature.finish.by.voice.or.by.a.button.off.the.screen",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "Finish by voice or by a button off the screen",
@@ -2819,7 +2819,7 @@
    "versions": []
   },
   {
-   "id": "feature-talk-to-claude",
+   "id": "feature.talk.to.claude",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "Talk to Claude",
@@ -2837,7 +2837,7 @@
    "versions": []
   },
   {
-   "id": "feature-agents",
+   "id": "feature.agents",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "Agents",
@@ -2855,7 +2855,7 @@
    "versions": []
   },
   {
-   "id": "feature-every-section-in-plain-sight",
+   "id": "feature.every.section.in.plain.sight",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "Every section in plain sight",
@@ -2875,7 +2875,7 @@
    "versions": []
   },
   {
-   "id": "feature-your-activity",
+   "id": "feature.your.activity",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "Your activity",
@@ -2895,7 +2895,7 @@
    "versions": []
   },
   {
-   "id": "feature-a-note-s-journey-after-finish",
+   "id": "feature.a.note.s.journey.after.finish",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "A note's journey after Finish",
@@ -2913,7 +2913,7 @@
    "versions": []
   },
   {
-   "id": "feature-record-a-note-for-someone",
+   "id": "feature.record.a.note.for.someone",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "Record a note for someone",
@@ -2934,7 +2934,7 @@
    "versions": []
   },
   {
-   "id": "feature-a-send-that-is-not-lost",
+   "id": "feature.a.send.that.is.not.lost",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "A send that is not lost",
@@ -2956,7 +2956,7 @@
    "versions": []
   },
   {
-   "id": "feature-finish-and-send-in-one-press",
+   "id": "feature.finish.and.send.in.one.press",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "Finish and send in one press",
@@ -2977,7 +2977,7 @@
    "versions": []
   },
   {
-   "id": "feature-send-without-waiting",
+   "id": "feature.send.without.waiting",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "Send without waiting",
@@ -2999,7 +2999,7 @@
    "versions": []
   },
   {
-   "id": "feature-the-lab-experiment-l01-one-prompt-tools-on-and-off",
+   "id": "feature.the.lab.experiment.l01.one.prompt.tools.on.and.off",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "The Lab, experiment L01: one prompt, tools on and off",
@@ -3020,7 +3020,7 @@
    "versions": []
   },
   {
-   "id": "feature-the-model-door-first-slice",
+   "id": "feature.the.model.door.first.slice",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "The model door, first slice",
@@ -3040,7 +3040,7 @@
    "versions": []
   },
   {
-   "id": "feature-the-lab-experiment-l02-the-control-centre",
+   "id": "feature.the.lab.experiment.l02.the.control.centre",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "The Lab, experiment L02: the control centre",
@@ -3058,7 +3058,7 @@
    "versions": []
   },
   {
-   "id": "feature-recipients-added-by-qr-code",
+   "id": "feature.recipients.added.by.qr.code",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "Recipients, added by QR code",
@@ -3078,7 +3078,7 @@
    "versions": []
   },
   {
-   "id": "feature-the-people-layer-in-python-people-py",
+   "id": "feature.the.people.layer.in.python.people.py",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "The people layer in Python, people.py",
@@ -3096,7 +3096,7 @@
    "versions": []
   },
   {
-   "id": "feature-a-conductor-s-inbox",
+   "id": "feature.a.conductor.s.inbox",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "A conductor's inbox",
@@ -3116,7 +3116,7 @@
    "versions": []
   },
   {
-   "id": "feature-a-clean-text-with-questions",
+   "id": "feature.a.clean.text.with.questions",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "A clean text, with questions",
@@ -3139,7 +3139,7 @@
    "versions": []
   },
   {
-   "id": "feature-credit-that-counts-down-with-a-simulated-top-up",
+   "id": "feature.credit.that.counts.down.with.a.simulated.top.up",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "Credit that counts down, with a simulated top-up",
@@ -3160,7 +3160,7 @@
    "versions": []
   },
   {
-   "id": "feature-a-finished-note-saves-itself-to-a-vault",
+   "id": "feature.a.finished.note.saves.itself.to.a.vault",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "A finished note saves itself to a vault",
@@ -3182,7 +3182,7 @@
    "versions": []
   },
   {
-   "id": "feature-the-key-bundle-pkikit",
+   "id": "feature.the.key.bundle.pkikit",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "The key bundle, PKIKit",
@@ -3202,7 +3202,7 @@
    "versions": []
   },
   {
-   "id": "feature-the-people-layer-sgitpeople",
+   "id": "feature.the.people.layer.sgitpeople",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "The people layer, SGitPeople",
@@ -3224,7 +3224,7 @@
    ]
   },
   {
-   "id": "feature-the-user-s-key-pair",
+   "id": "feature.the.user.s.key.pair",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "The user's key pair",
@@ -3244,7 +3244,7 @@
    "versions": []
   },
   {
-   "id": "feature-the-device-s-key-pair",
+   "id": "feature.the.device.s.key.pair",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "The device's key pair",
@@ -3267,7 +3267,7 @@
    "versions": []
   },
   {
-   "id": "feature-vouching-for-a-device",
+   "id": "feature.vouching.for.a.device",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "Vouching for a device",
@@ -3289,7 +3289,7 @@
    "versions": []
   },
   {
-   "id": "feature-a-person-in-the-register-optionally",
+   "id": "feature.a.person.in.the.register.optionally",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "A person in the register, optionally",
@@ -3309,7 +3309,7 @@
    "versions": []
   },
   {
-   "id": "feature-diagnostics",
+   "id": "feature.diagnostics",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "Diagnostics",
@@ -3329,7 +3329,7 @@
    "versions": []
   },
   {
-   "id": "feature-the-about-screen",
+   "id": "feature.the.about.screen",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "The About screen",
@@ -3349,7 +3349,7 @@
    "versions": []
   },
   {
-   "id": "feature-the-vault-engine",
+   "id": "feature.the.vault.engine",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "The vault engine",
@@ -3369,7 +3369,7 @@
    "versions": []
   },
   {
-   "id": "feature-a-door-on-any-site",
+   "id": "feature.a.door.on.any.site",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "A door on any site",
@@ -3387,7 +3387,7 @@
    "versions": []
   },
   {
-   "id": "feature-the-build-pipeline",
+   "id": "feature.the.build.pipeline",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "The build pipeline",
@@ -3407,7 +3407,7 @@
    "versions": []
   },
   {
-   "id": "feature-pictures-of-every-screen",
+   "id": "feature.pictures.of.every.screen",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "Pictures of every screen",
@@ -3428,7 +3428,7 @@
    "versions": []
   },
   {
-   "id": "feature-reviews-from-the-pictures",
+   "id": "feature.reviews.from.the.pictures",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "Reviews from the pictures",
@@ -3469,7 +3469,7 @@
    ]
   },
   {
-   "id": "feature-sample-data-for-the-pictures",
+   "id": "feature.sample.data.for.the.pictures",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "Sample data for the pictures",
@@ -3490,7 +3490,7 @@
    "versions": []
   },
   {
-   "id": "feature-testflight-upload",
+   "id": "feature.testflight.upload",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "TestFlight upload",
@@ -3508,7 +3508,7 @@
    "versions": []
   },
   {
-   "id": "feature-vault-interop",
+   "id": "feature.vault.interop",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "Vault interop",
@@ -3528,7 +3528,7 @@
    "versions": []
   },
   {
-   "id": "feature-pki-interop",
+   "id": "feature.pki.interop",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "PKI interop",
@@ -3548,7 +3548,7 @@
    "versions": []
   },
   {
-   "id": "feature-the-visual-identity",
+   "id": "feature.the.visual.identity",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "The visual identity",
@@ -3570,7 +3570,7 @@
    "versions": []
   },
   {
-   "id": "feature-the-site",
+   "id": "feature.the.site",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "The site",
@@ -3588,7 +3588,7 @@
    "versions": []
   },
   {
-   "id": "feature-receiving-a-voice-note-from-the-share-sheet-whatsapp",
+   "id": "feature.receiving.a.voice.note.from.the.share.sheet.whatsapp",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "Receiving a voice note from the share sheet (WhatsApp)",
@@ -3603,7 +3603,7 @@
    "versions": []
   },
   {
-   "id": "feature-decoding-whatsapp-s-ogg-opus",
+   "id": "feature.decoding.whatsapp.s.ogg.opus",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "Decoding WhatsApp's Ogg Opus",
@@ -3618,7 +3618,7 @@
    "versions": []
   },
   {
-   "id": "feature-recording-with-the-screen-locked-or-the-app-in-the-backgroun",
+   "id": "feature.recording.with.the.screen.locked.or.the.app.in.the.backgroun",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "Recording with the screen locked or the app in the background: the audio background mode is declared",
@@ -3635,7 +3635,7 @@
    "versions": []
   },
   {
-   "id": "feature-saved-and-sent-states-on-a-note-saving-to-a-vault-automatica",
+   "id": "feature.saved.and.sent.states.on.a.note.saving.to.a.vault.automatica",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "Saved and sent states on a note; saving to a vault automatically; an inbox in the app; the app's own QR code, so a conductor can write back",
@@ -3652,7 +3652,7 @@
    "versions": []
   },
   {
-   "id": "feature-apple-s-larger-model-on-private-cloud-compute-as-an-option",
+   "id": "feature.apple.s.larger.model.on.private.cloud.compute.as.an.option",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "Apple's larger model on Private Cloud Compute, as an option",
@@ -3671,7 +3671,7 @@
    "versions": []
   },
   {
-   "id": "feature-translation-classification-citations-of-time-in-the-debrief",
+   "id": "feature.translation.classification.citations.of.time.in.the.debrief",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "Translation, classification, citations of time in the debrief",
@@ -3686,7 +3686,7 @@
    "versions": []
   },
   {
-   "id": "feature-the-passkey-ceremony-the-account-the-recovery-code",
+   "id": "feature.the.passkey.ceremony.the.account.the.recovery.code",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "The passkey ceremony, the account, the recovery code",
@@ -3701,7 +3701,7 @@
    "versions": []
   },
   {
-   "id": "feature-creating-an-account-adding-a-door-merge-audio-over-3-8-mb-in",
+   "id": "feature.creating.an.account.adding.a.door.merge.audio.over.3.8.mb.in",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "Creating an account, adding a door, merge, audio over 3.8 MB in a vault",
@@ -3716,7 +3716,7 @@
    "versions": []
   },
   {
-   "id": "feature-debriefs-signed-by-the-device-key-the-vouching-row-in-a-vaul",
+   "id": "feature.debriefs.signed.by.the.device.key.the.vouching.row.in.a.vaul",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "Debriefs signed by the device key; the vouching row in a vault's own screen",
@@ -3737,7 +3737,7 @@
    "versions": []
   },
   {
-   "id": "feature-the-answer-from-pki-sgit-ai-handed-to-the-app-by-ios",
+   "id": "feature.the.answer.from.pki.sgit.ai.handed.to.the.app.by.ios",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "The answer from pki.sgit.ai handed to the app by iOS",
@@ -3754,7 +3754,7 @@
    "versions": []
   },
   {
-   "id": "feature-checking-that-an-issuer-chains-to-the-register-s-root-throug",
+   "id": "feature.checking.that.an.issuer.chains.to.the.register.s.root.throug",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "Checking that an issuer chains to the register's root through its links; withdrawing a vouching statement; the user's key in a master vault behind a passkey; exporting the identity to sgit's key store from the app",
@@ -3771,7 +3771,7 @@
    "versions": []
   },
   {
-   "id": "feature-a-merge-when-a-device-and-its-server-have-both-changed-pushi",
+   "id": "feature.a.merge.when.a.device.and.its.server.have.both.changed.pushi",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "A merge when a device and its server have both changed; pushing or pulling a branch other than current; several servers for one vault; pushing automatically",
@@ -3786,7 +3786,7 @@
    "versions": []
   },
   {
-   "id": "feature-the-share-extension-app-intents",
+   "id": "feature.the.share.extension.app.intents",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "The share extension, App Intents",
@@ -3801,7 +3801,7 @@
    "versions": []
   },
   {
-   "id": "feature-paying-for-credit-through-the-app-store-the-ledger-in-the-us",
+   "id": "feature.paying.for.credit.through.the.app.store.the.ledger.in.the.us",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "Paying for credit through the App Store; the ledger in the user's vault; anything that stops someone editing their own balance",
@@ -3820,7 +3820,7 @@
    "versions": []
   },
   {
-   "id": "feature-the-app-store",
+   "id": "feature.the.app.store",
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "The App Store",
@@ -3835,7 +3835,7 @@
    "versions": []
   },
   {
-   "id": "sgit-feature-files-over-4-mb-in-the-vault-engine",
+   "id": "sgit-feature.files.over.4.mb.in.the.vault.engine",
    "kind": "feature",
    "app": "SGit Vaults",
    "title": "Files over 4 MB in the vault engine",
@@ -3855,7 +3855,7 @@
    "versions": []
   },
   {
-   "id": "sgit-feature-the-app-builds-and-its-tests-pass",
+   "id": "sgit-feature.the.app.builds.and.its.tests.pass",
    "kind": "feature",
    "app": "SGit Vaults",
    "title": "The app builds and its tests pass",
@@ -3875,7 +3875,7 @@
    "versions": []
   },
   {
-   "id": "sgit-feature-adding-files-underneath-the-screens",
+   "id": "sgit-feature.adding.files.underneath.the.screens",
    "kind": "feature",
    "app": "SGit Vaults",
    "title": "Adding files, underneath the screens",
@@ -3895,7 +3895,7 @@
    "versions": []
   },
   {
-   "id": "sgit-feature-testflight-upload",
+   "id": "sgit-feature.testflight.upload",
    "kind": "feature",
    "app": "SGit Vaults",
    "title": "TestFlight upload",
@@ -3916,7 +3916,7 @@
    "versions": []
   },
   {
-   "id": "sgit-feature-a-vault-made-on-this-device",
+   "id": "sgit-feature.a.vault.made.on.this.device",
    "kind": "feature",
    "app": "SGit Vaults",
    "title": "A vault made on this device",
@@ -3936,7 +3936,7 @@
    "versions": []
   },
   {
-   "id": "sgit-feature-the-access-key-on-the-create-screen",
+   "id": "sgit-feature.the.access.key.on.the.create.screen",
    "kind": "feature",
    "app": "SGit Vaults",
    "title": "The access key on the Create screen",
@@ -3956,7 +3956,7 @@
    "versions": []
   },
   {
-   "id": "sgit-feature-drag-and-drop",
+   "id": "sgit-feature.drag.and.drop",
    "kind": "feature",
    "app": "SGit Vaults",
    "title": "Drag and drop",
@@ -3976,7 +3976,7 @@
    "versions": []
   },
   {
-   "id": "sgit-feature-a-folder-tree-on-a-wide-screen",
+   "id": "sgit-feature.a.folder.tree.on.a.wide.screen",
    "kind": "feature",
    "app": "SGit Vaults",
    "title": "A folder tree on a wide screen",
@@ -3996,7 +3996,7 @@
    "versions": []
   },
   {
-   "id": "sgit-feature-a-picture-of-every-screen",
+   "id": "sgit-feature.a.picture.of.every.screen",
    "kind": "feature",
    "app": "SGit Vaults",
    "title": "A picture of every screen",
@@ -4018,7 +4018,7 @@
    "versions": []
   },
   {
-   "id": "sgit-feature-a-gallery-of-vaults",
+   "id": "sgit-feature.a.gallery.of.vaults",
    "kind": "feature",
    "app": "SGit Vaults",
    "title": "A gallery of vaults",
@@ -4038,7 +4038,7 @@
    "versions": []
   },
   {
-   "id": "sgit-feature-vaults-on-the-device",
+   "id": "sgit-feature.vaults.on.the.device",
    "kind": "feature",
    "app": "SGit Vaults",
    "title": "Vaults on the device",
@@ -4058,7 +4058,7 @@
    "versions": []
   },
   {
-   "id": "sgit-feature-adding-photos-videos-and-files-the-screens",
+   "id": "sgit-feature.adding.photos.videos.and.files.the.screens",
    "kind": "feature",
    "app": "SGit Vaults",
    "title": "Adding photos, videos and files, the screens",
@@ -4078,7 +4078,7 @@
    "versions": []
   },
   {
-   "id": "sgit-feature-browsing",
+   "id": "sgit-feature.browsing",
    "kind": "feature",
    "app": "SGit Vaults",
    "title": "Browsing",
@@ -4099,7 +4099,7 @@
    "versions": []
   },
   {
-   "id": "sgit-feature-saving-a-folder-out",
+   "id": "sgit-feature.saving.a.folder.out",
    "kind": "feature",
    "app": "SGit Vaults",
    "title": "Saving a folder out",
@@ -4120,7 +4120,7 @@
    "versions": []
   },
   {
-   "id": "sgit-feature-the-web-vault-inside-the-app",
+   "id": "sgit-feature.the.web.vault.inside.the.app",
    "kind": "feature",
    "app": "SGit Vaults",
    "title": "The web Vault inside the app",
@@ -4140,7 +4140,7 @@
    "versions": []
   },
   {
-   "id": "sgit-feature-your-activity",
+   "id": "sgit-feature.your.activity",
    "kind": "feature",
    "app": "SGit Vaults",
    "title": "Your activity",
@@ -4161,7 +4161,7 @@
    "versions": []
   },
   {
-   "id": "sgit-feature-ask-this-vault-an-experiment",
+   "id": "sgit-feature.ask.this.vault.an.experiment",
    "kind": "feature",
    "app": "SGit Vaults",
    "title": "Ask this vault, an experiment",
@@ -4182,7 +4182,7 @@
    "versions": []
   },
   {
-   "id": "sgit-feature-secrets",
+   "id": "sgit-feature.secrets",
    "kind": "feature",
    "app": "SGit Vaults",
    "title": "Secrets",
@@ -4206,7 +4206,7 @@
    "versions": []
   },
   {
-   "id": "sgit-feature-questions-for-you",
+   "id": "sgit-feature.questions.for.you",
    "kind": "feature",
    "app": "SGit Vaults",
    "title": "Questions for you",
@@ -4226,7 +4226,7 @@
    "versions": []
   },
   {
-   "id": "sgit-feature-the-same-vaults-on-every-device",
+   "id": "sgit-feature.the.same.vaults.on.every.device",
    "kind": "feature",
    "app": "SGit Vaults",
    "title": "The same vaults on every device",
@@ -4246,7 +4246,7 @@
    "versions": []
   },
   {
-   "id": "sgit-feature-sharing-a-vault",
+   "id": "sgit-feature.sharing.a.vault",
    "kind": "feature",
    "app": "SGit Vaults",
    "title": "Sharing a vault",
@@ -4266,7 +4266,7 @@
    "versions": []
   },
   {
-   "id": "sgit-feature-history",
+   "id": "sgit-feature.history",
    "kind": "feature",
    "app": "SGit Vaults",
    "title": "History",
@@ -4286,7 +4286,7 @@
    "versions": []
   },
   {
-   "id": "sgit-feature-local-first-vaults-and-named-remotes-keys-in-icloud-keychain",
+   "id": "sgit-feature.local.first.vaults.and.named.remotes.keys.in.icloud.keychain",
    "kind": "feature",
    "app": "SGit Vaults",
    "title": "Local-first vaults and named remotes; keys in iCloud Keychain",
@@ -4310,7 +4310,7 @@
    ]
   },
   {
-   "id": "sgit-feature-a-share-extension-background-uploads",
+   "id": "sgit-feature.a.share.extension.background.uploads",
    "kind": "feature",
    "app": "SGit Vaults",
    "title": "A share extension; background uploads",
@@ -4327,7 +4327,7 @@
    "versions": []
   },
   {
-   "id": "sgit-feature-a-merge-for-colliding-edits-branches",
+   "id": "sgit-feature.a.merge.for.colliding.edits.branches",
    "kind": "feature",
    "app": "SGit Vaults",
    "title": "A merge for colliding edits; branches",
@@ -4344,7 +4344,7 @@
    "versions": []
   },
   {
-   "id": "sgit-feature-a-read-only-token-that-can-be-revoked",
+   "id": "sgit-feature.a.read.only.token.that.can.be.revoked",
    "kind": "feature",
    "app": "SGit Vaults",
    "title": "A read-only token that can be revoked",
@@ -4363,7 +4363,7 @@
    "versions": []
   },
   {
-   "id": "sgit-feature-video-thumbnails-streaming-a-video-without-fetching-it-whole",
+   "id": "sgit-feature.video.thumbnails.streaming.a.video.without.fetching.it.whole",
    "kind": "feature",
    "app": "SGit Vaults",
    "title": "Video thumbnails; streaming a video without fetching it whole",

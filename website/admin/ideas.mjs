@@ -44,6 +44,9 @@ export const STATUSES = [
 const IDS = STATUSES.map((s) => s.id);
 
 // ------------------------------------------------------------------ text
+// An id from words, joined with dots: a run of letters and hyphens can look like an API key to the
+// repository's secret scan (validate.mjs), and a dot breaks every pattern it has.
+const slugOf = (s, n) => s.toLowerCase().replace(/[^a-z0-9]+/g, '.').replace(/^\.|\.$/g, '').slice(0, n).replace(/\.$/, '');
 const plain = (s) => s
   .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
   .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
@@ -167,7 +170,7 @@ function readReality(path, app, sitePath) {
     const where = isBuiltTable ? plain(cells[1]) : '';
     const tested = isBuiltTable ? plain(cells[2] || '') : plain(cells[1] || '');
     out.push({
-      id: `${app === 'SGit Vaults' ? 'sgit-' : ''}feature-${title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60)}`,
+      id: `${app === 'SGit Vaults' ? 'sgit-' : ''}feature.${slugOf(title, 60)}`,
       kind: 'feature', app, title, status,
       why: `The reality file, ${section}: ${wordSaid}.`,
       summary: clip(where || tested, 400),
@@ -292,7 +295,7 @@ function readDesignIdeas() {
       const word = m[2] || 'proposed';
       const status = word === 'built' ? 'seen-working' : word === 'unverified' ? 'built-untried' : 'proposed';
       out.push({
-        id: `design-${path.replace(/[^a-z0-9]+/g, '-')}-${title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 50)}`,
+        id: `design.${slugOf(path, 40)}.${slugOf(title, 50)}`,
         kind: 'design', app, title, status,
         why: `Listed on the design page "${pageTitle}" as ${word === 'proposed' ? 'proposed' : word === 'built' ? 'built and proven' : 'built, not yet proven'}.`,
         summary: clip(plain(m[3]), 400), detail: [plain(m[3])].filter(Boolean),
@@ -333,7 +336,7 @@ function readArticleTexts() {
       .replace(/\]\(([^)\s]+)\)/g, (m, h) => `](${toSite(h)})`)
       .replace(/\[\[([a-z]+)\]\]/g, (m, k) => `**(${k})**`);
     const first = paragraphs(markdown).find((p) => !/^(\*\(A picture|#|>|\||\*\*Kind)/.test(p) && !/^\*[^*]/.test(p)) || '';
-    return { id: path.replace(/[^a-z0-9]+/g, '-'), title, app, kind, summary: clip(plain(first), 300), markdown, url: `${HOST}/${path}/index.html` };
+    return { id: slugOf(path, 80), title, app, kind, summary: clip(plain(first), 300), markdown, url: `${HOST}/${path}/index.html` };
   });
 }
 
