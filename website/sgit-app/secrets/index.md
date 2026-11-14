@@ -167,3 +167,18 @@ Questions are also in the app (Settings, Questions) once step 1 is built.
 3. **AutoFill and passkeys.** Needs "AutoFill Credential Provider" switched on for `ai.sgit.vaults.app` in the Apple developer portal, and an App Group. Shall I prepare it?
 4. **Recovery.** If all your devices are lost, the vault keys go with iCloud Keychain. Proposed for later: a printed recovery sheet, or a second person who holds a sealed copy.
 5. **What a member of a shared vault can do.** Today, everything (they hold the vault key). Read-only members are possible with a read key; "may add, may not delete" needs the server.
+
+## Ideas
+
+- **A team with no admin and no account** [[proposed]]: five people swap cards and confirm each other, then share a vault, with no sign-up, invoice or IT person.
+- **Sharing a server cannot redirect** [[proposed]]: the key a secret is sealed to comes from a card confirmed in person, never from the server, which shuts out the key-swapping attacks found in other managers in 2026.
+- **One secret for one agent** [[proposed]]: give an AI session exactly one API key, sealed to its key, with a record of when and to whom.
+- **Signed history of every secret** [[proposed]]: who changed the router password and when, signed by their device, with the earlier version one tap away.
+- **Ask someone outside the team for a secret** [[proposed]]: a contractor drops the Wi-Fi or a server key into your inbox; they get no way to read anything back.
+- **Rotation on a branch** [[proposed]]: change a key, test it, then merge, so the team is never half on the old one and half on the new.
+- **Recovery through people you trust** [[proposed]]: lose every device and get back in with three of five people each holding a sealed part; no company reset.
+- **Leaving someone out, honestly** [[proposed]]: removing a member makes a new vault key and shows the checklist of secrets they saw, with a change action for each.
+- **A spotted secret** [[proposed]]: Apple's on-device model notices a key pasted into a note or a file and offers to move it into a secret.
+- **The trust map** [[proposed]]: a drawing of the people you have met, with their photos, solid where both confirmed and dashed where one side only.
+- **Secrets as files in vaults** [[unverified]]: each entry one encrypted JSON file, behind Face ID, with a strong-password maker.
+- **Questions for the owner, by voice** [[unverified]]: the people building the app ask, and the owner answers by choosing, typing or speaking.
