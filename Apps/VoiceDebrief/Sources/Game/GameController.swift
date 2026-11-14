@@ -331,7 +331,7 @@ final class GameController {
     private var starting = false
 
     /// Why listening cannot start now, or nil. A voice note being recorded owns the microphone.
-    static func refusal(localeId: String, noteRecording: Bool) -> String? {
+    nonisolated static func refusal(localeId: String, noteRecording: Bool) -> String? {
         if noteRecording { return "A voice note is being recorded. Finish it first: listening now would take its microphone." }
         if localeId.isEmpty { return "Choose the language spoken in Settings first." }
         return nil
