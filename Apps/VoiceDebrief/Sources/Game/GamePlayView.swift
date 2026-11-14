@@ -2,8 +2,9 @@ import Combine
 import SwiftUI
 import UIKit
 
-/// Experiment L03: play by voice, and see how long each command took to show.
-struct GamePlayView: View {
+/// One game, played by voice, with how long each command took to show. Opened from the Play landing page.
+struct GameScreen: View {
+    let kind: GameKind
     @AppStorage("vd.localeId") private var localeId = ""
     @Environment(\.horizontalSizeClass) private var sizeClass
     private let game = GameController.shared
@@ -43,9 +44,12 @@ struct GamePlayView: View {
             }
         }
         .background(DS.Palette.ground)
-        .navigationTitle("Play")
+        .navigationTitle(kind.title)
         .navigationBarTitleDisplayMode(.inline)
-        .onAppear { game.prepareModel() }
+        .onAppear {
+            if game.state.kind != kind { game.choose(kind) }
+            game.prepareModel()
+        }
         .onDisappear {
             player.stop()
             Task { await game.stopListening() }
@@ -60,12 +64,6 @@ struct GamePlayView: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: DS.Space.xs) {
-            Picker("Game", selection: Binding(get: { game.state.kind }, set: { game.choose($0) })) {
-                ForEach(GameKind.allCases) { kind in
-                    Text(kind.title).tag(kind)
-                }
-            }
-            .pickerStyle(.segmented)
             Text("Level \(game.state.levelIndex + 1): \(game.state.level.title)")
                 .font(DS.TypeScale.heading)
             Text(game.state.level.story)

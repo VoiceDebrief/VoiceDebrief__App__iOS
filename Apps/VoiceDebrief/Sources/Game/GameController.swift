@@ -61,9 +61,24 @@ final class GameController {
         let start = GameState.start(kind)
         state = start
         message = start.level.story
+        best = UserDefaults.standard.dictionary(forKey: Self.bestKey) as? [String: Int] ?? [:]
     }
 
     var stats: GameStats { GameStats.of(entries) }
+
+    private static let bestKey = "vd.game.best"
+    /// The best score reached in each game on this device, kept across launches.
+    private(set) var best: [String: Int] = [:]
+
+    func bestScore(_ kind: GameKind) -> Int? { best[kind.rawValue] }
+
+    private func keepBest() {
+        guard state.status == .levelWon || state.status == .won else { return }
+        let key = state.kind.rawValue
+        guard state.points > (best[key] ?? 0) else { return }
+        best[key] = state.points
+        UserDefaults.standard.set(best, forKey: Self.bestKey)
+    }
     /// The words of the sentence being said now: settled but not yet taken, then the part that may still change.
     var hearingSettled: String { String(liveSettled.dropFirst(min(consumed, liveSettled.count))).trimmingCharacters(in: .whitespacesAndNewlines) }
     var hearingVolatile: String { liveVolatile.trimmingCharacters(in: .whitespacesAndNewlines) }
@@ -195,6 +210,7 @@ final class GameController {
         let result = GameRules.apply(command, to: state)
         state = result.state
         let appliedAt = Date()
+        keepBest()
         message = result.message
         update(entryId) {
             $0.engine = engine

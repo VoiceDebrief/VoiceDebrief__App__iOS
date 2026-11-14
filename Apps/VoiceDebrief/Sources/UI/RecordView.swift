@@ -12,6 +12,11 @@ struct RecordView: View {
     @AppStorage("vd.localeId") private var localeId = ""
     @State private var importing = false
     @State private var showingMessages = false
+    /// A picture added while recording (pasted or chosen) and a line, sent with the note when it goes.
+    @State private var attached: UIImage?
+    @State private var attachedLine = ""
+    @State private var attachSender = PictureSender()
+    @State private var clipboardHasPicture = false
     @State private var path: [String] = []
 
     private var isRecording: Bool {
@@ -108,6 +113,8 @@ struct RecordView: View {
                     }
                 }
             }
+            // The shared vault's report says whether a newer build is waiting, and carries Claude's replies.
+            .task { await AgentsDesk.shared.refresh(book: book) }
             .sheet(isPresented: $showingMessages) {
                 NavigationStack { MessagesToClaudeView(session: session, book: book) }
             }
@@ -162,6 +169,7 @@ struct RecordView: View {
                     .multilineTextAlignment(.center)
             }
             liveCard
+            attachCard
         } else {
             if session.store.notes.isEmpty {
                 // The first visit: below the control, what happens, in a picture and one line.
@@ -176,6 +184,19 @@ struct RecordView: View {
                         .foregroundStyle(.red)
                         .font(.callout)
                     Button("Dismiss") { session.clearFailure() }
+                }
+            }
+            if let latest = AgentsDesk.shared.report?.latestBuild, AppInfo.isNewer(latest, than: AppInfo.version()) {
+                card {
+                    HStack(spacing: 10) {
+                        Image(systemName: "arrow.down.circle.fill").font(.title2).foregroundStyle(Color.accentColor)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("v\(latest) is in TestFlight").font(.headline)
+                            Text("You have v\(AppInfo.version()). Open TestFlight to update.").font(.footnote).foregroundStyle(.secondary)
+                        }
+                        Spacer()
+                        Link("Open", destination: AppInfo.testFlight).buttonStyle(.borderedProminent)
+                    }
                 }
             }
             if let briefing, !briefing.isEmpty {
@@ -250,6 +271,53 @@ struct RecordView: View {
             }
         }
         .padding(.top, DS.Space.xs)
+    }
+
+    /// While recording: add a picture and a line that go with the note (the owner: "I just took a screenshot
+    /// of this; where do I put it? Detect copy and paste here"). A picture on the clipboard is offered at
+    /// once, without reading it until you tap.
+    private var attachCard: some View {
+        card {
+            VStack(alignment: .leading, spacing: 10) {
+                if let attached {
+                    HStack(spacing: 10) {
+                        Image(uiImage: attached).resizable().scaledToFill()
+                            .frame(width: 64, height: 64).clipShape(RoundedRectangle(cornerRadius: 10))
+                        Text(addresseeRecipient.map { "Goes with the note to \($0.name)" } ?? "Kept with nothing: choose who the note is for to send it")
+                            .font(.footnote).foregroundStyle(.secondary)
+                        Spacer()
+                        Button("Remove", role: .destructive) { self.attached = nil }.font(.footnote)
+                    }
+                } else if clipboardHasPicture {
+                    Button {
+                        if let image = UIPasteboard.general.image { attached = image }
+                        clipboardHasPicture = false
+                    } label: {
+                        Label("A picture is on the clipboard: add it to this note", systemImage: "doc.on.clipboard.fill")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .buttonStyle(.borderedProminent)
+                }
+                TextField("Add a line (optional)", text: $attachedLine, axis: .vertical)
+                    .lineLimit(1...3)
+                    .textFieldStyle(.roundedBorder)
+                HStack(spacing: 10) {
+                    Button {
+                        if let image = UIPasteboard.general.image { attached = image }
+                    } label: { Label("Paste picture", systemImage: "doc.on.clipboard") }
+                    PhotoChooser { attached = $0 }
+                }
+                .buttonStyle(.bordered)
+                .font(.footnote)
+            }
+        }
+        .onAppear { clipboardHasPicture = UIPasteboard.general.hasImages }
+        .onReceive(NotificationCenter.default.publisher(for: UIPasteboard.changedNotification)) { _ in
+            clipboardHasPicture = UIPasteboard.general.hasImages
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
+            clipboardHasPicture = UIPasteboard.general.hasImages
+        }
     }
 
     private var liveCard: some View {
@@ -475,9 +543,15 @@ struct RecordView: View {
                 if let to = addresseeRecipient {
                     // Chosen before recording, so finishing is the send: no second question.
                     session.send(noteId: id, to: to)
+                    let image = attached, line = attachedLine
+                    if image != nil || !line.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                        Task { await attachSender.send(image: image, caption: line, to: to, about: id) }
+                    }
+                    attached = nil; attachedLine = ""
                     queuedFor = to.name
                     queuedNoteId = id
                 } else {
+                    attached = nil; attachedLine = ""
                     path.append(id)
                 }
             }
