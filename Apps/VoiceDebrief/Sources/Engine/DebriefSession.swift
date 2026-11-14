@@ -465,7 +465,8 @@ final class DebriefSession {
 // private(set), so sample values have to be set from this file. Called only by `SampleWorld`, which
 // exists only when the app is launched with -VDSampleData; not compiled into a release build.
 extension DebriefSession {
-    func showSample(phase: Phase, noteId: String? = nil, waiting: [String] = [],
+    func showSample(phase: Phase, noteId: String? = nil, waiting: [String] = [], recordingNote: String? = nil,
+                    sendingTo: String? = nil,
                     liveSettled: String = "", liveVolatile: String = "", levels: [Double] = []) {
         switch phase {
         case .recording(let since): recordingSince = since; working = nil; failure = nil
@@ -475,6 +476,9 @@ extension DebriefSession {
         }
         self.currentNoteId = noteId
         self.waiting = waiting
+        self.recordingNoteId = recordingNote
+        self.sendingTo = sendingTo
+        if sendingTo != nil { sharing = .sending(2, 5) }
         self.liveSettled = liveSettled
         self.liveVolatile = liveVolatile
         self.levels = levels

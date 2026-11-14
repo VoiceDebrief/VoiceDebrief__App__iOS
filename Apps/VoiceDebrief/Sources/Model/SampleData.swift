@@ -155,6 +155,8 @@ enum SampleData {
     }
 
     static let vaultName = "Sample vault (invented)"
+    /// Somebody a note can be sent to. Her lane is invented: nothing is ever sent to it.
+    static let recipientName = "Maria (invented)"
     static let serverName = "Sample server (invented)"
     /// A name that can never resolve (RFC 6761), in case anything ever tried.
     static let serverAddress = "https://sample-server.invalid"
