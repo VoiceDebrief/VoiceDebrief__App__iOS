@@ -7,9 +7,14 @@
 import { readFileSync, writeFileSync, existsSync, readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { execFileSync } from 'node:child_process';
 
 const ROOT    = join(dirname(fileURLToPath(import.meta.url)), '..');           // website/
 const CHECK   = process.argv.includes('--check');
+// The ideas tracker (ideas/index.md, ideas/ideas.json and the app's copies) is generated first, from the
+// issues, the articles, the reality files and the release history, so its page is current when it is built.
+try { execFileSync(process.execPath, [join(ROOT, 'admin/ideas.mjs'), ...(CHECK ? ['--check'] : [])], { stdio: ['ignore', 'ignore', 'inherit'] }); }
+catch { process.exit(1); }
 // CI owns the version: it is stamped in when the site is deployed (SITE_VERSION). The pages committed
 // to the repository carry a placeholder, so that a version change never makes them out of date.
 const VERSION = process.env.SITE_VERSION || 'dev';
@@ -70,6 +75,8 @@ const PAGES = [
     description: 'Five synthetic users on pictures of finishing a recording and sending it in one press, the briefing on opening and where the work happens: what round 2 fixed, who changed their mind, and fifteen new findings.' },
   { path: 'develop',  nav: 'Build',    title: 'Build, test and release VoiceDebrief for iOS',
     description: 'How the repository is laid out, how CI compiles and tests the app on a Mac, how the site is built, and how a release is made.' },
+  { path: 'ideas', nav: 'Ideas', title: 'Ideas for VoiceDebrief and SGit Vaults, and where each one stands',
+    description: 'Every idea and request for the two apps, from the issues, the articles and the reality files, with its status (seen working, built untried, in progress, proposed, parked), where it lives in the app and the versions that brought it. Generated, not written by hand.' },
   { path: 'versions', nav: null,       title: 'VoiceDebrief for iOS release history',
     description: 'Every release of the VoiceDebrief iOS repository, with what changed.' },
 ];
