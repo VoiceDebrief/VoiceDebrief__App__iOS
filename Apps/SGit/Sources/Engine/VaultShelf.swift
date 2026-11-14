@@ -157,6 +157,7 @@ final class VaultShelf {
     }
 
     func setToken(_ text: String) {
+        UsageLog.shared.action(text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "access-key.remove" : "access-key.save")
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
         store.set("access-token", trimmed.isEmpty ? nil : Data(trimmed.utf8))
         hasToken = token != nil
@@ -182,6 +183,10 @@ final class VaultShelf {
         store.set("commit-signer", try JSONEncoder().encode(StoredSigner(keyId: made.keyId, privateKey: key.rawRepresentation)))
         return made
     }
+
+    /// The server's access key, for the one place outside the engine that is handed it: the web Vault
+    /// inside the app, when the person allows changes there.
+    var accessKeyForTheWebVault: String? { token }
 
     /// The id this device's commits carry as their author.
     var deviceKeyId: String? { (try? commitSigner())?.keyId }
@@ -221,6 +226,7 @@ final class VaultShelf {
     /// Creates a new vault on this device and remembers its key. No server, no token, no network.
     @discardableResult
     func create(name: String) async -> SavedVault? {
+        UsageLog.shared.action("vault.create")
         guard busy == nil else { return nil }
         problem = nil
         busy = "Creating the vault"
@@ -252,6 +258,7 @@ final class VaultShelf {
     /// - Parameter pending: whether files are still on their way into the vault.
     @discardableResult
     func sendToServer(_ vault: SavedVault, pending: Bool = false) async -> Bool {
+        UsageLog.shared.action("vault.send-to-server")
         guard busy == nil else { return false }
         problem = nil
         let now = current(vault)
@@ -290,6 +297,7 @@ final class VaultShelf {
     /// to check the key.
     @discardableResult
     func add(keyText: String, name: String) async -> SavedVault? {
+        UsageLog.shared.action("vault.add")
         guard busy == nil else { return nil }
         problem = nil
         let text = VaultNaming.keyText(from: keyText)
@@ -314,6 +322,7 @@ final class VaultShelf {
     }
 
     func rename(_ vault: SavedVault, to name: String) {
+        UsageLog.shared.action("vault.rename")
         guard let index = vaults.firstIndex(where: { $0.id == vault.id }) else { return }
         vaults[index].name = label(name, vault.id)
         persist()
@@ -321,6 +330,7 @@ final class VaultShelf {
 
     /// Forgets a vault on this device. The vault itself stays where it is; without its key nobody can open it.
     func remove(_ vault: SavedVault) {
+        UsageLog.shared.action("vault.forget")
         vaults.removeAll { $0.id == vault.id }
         keys[vault.id] = nil
         opened[vault.id] = nil
@@ -471,12 +481,14 @@ final class VaultShelf {
     }
 
     func addToGallery(_ entry: GalleryEntry) {
+        UsageLog.shared.action("gallery.add")
         galleryOwn.removeAll { $0.link == entry.link }
         galleryOwn.append(entry)
         store.set("gallery", Gallery.file(galleryOwn))
     }
 
     func removeFromGallery(_ entry: GalleryEntry) {
+        UsageLog.shared.action("gallery.remove")
         galleryOwn.removeAll { $0.link == entry.link }
         store.set("gallery", galleryOwn.isEmpty ? nil : Gallery.file(galleryOwn))
     }
@@ -551,12 +563,14 @@ final class VaultShelf {
     }
 
     func delete(_ file: VaultFile, in vault: SavedVault) async throws {
+        UsageLog.shared.action("file.delete")
         try await change(vault, staged: [], removing: [file.path],
                          message: VaultNaming.fit("Remove \(VaultListing.name(of: file.path))"))
     }
 
     /// Renames a file within its folder: the same object under a new name, so nothing is uploaded again.
     func rename(_ file: VaultFile, to newName: String, in vault: SavedVault) async throws {
+        UsageLog.shared.action("file.rename")
         let name = VaultNaming.clean(newName)
         let folder = VaultListing.parent(of: file.path)
         let path = folder.isEmpty ? name : folder + "/" + name

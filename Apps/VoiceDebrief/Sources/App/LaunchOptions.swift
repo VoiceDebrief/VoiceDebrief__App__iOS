@@ -58,7 +58,7 @@ enum SampleSet: String, Sendable {
 /// The four tabs of the shell, so a launch can select one.
 enum RootTab: String, Hashable, Sendable {
     case record, library, vaults, settings
-    case contacts, identity, credit, lab, words, activity, about, guide
+    case contacts, identity, credit, lab, words, activity, about, guide, agents
 }
 
 /// Every screen a UI test can open directly. The raw value is the id used in `-VDScreen` and in

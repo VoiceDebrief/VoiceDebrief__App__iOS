@@ -16,6 +16,7 @@ on:
     paths:
       - 'Apps/SGit/**'
       - 'Packages/SGitVault/**'
+      - 'Packages/SGitPeople/**'
       - '.github/workflows/sgit-app.yml'
       - '.github/scripts/**'
   workflow_dispatch:

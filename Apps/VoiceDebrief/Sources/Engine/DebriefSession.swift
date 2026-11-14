@@ -82,6 +82,19 @@ final class DebriefSession {
     /// a headphone, car or lock-screen button. The screen that owns the recording finishes it.
     var finishRequests = 0
 
+    /// The phrase must be the last thing said for a moment: anything said after it cancels the finish,
+    /// so a phrase in passing does not stop the recording.
+    private var pendingFinish: Task<Void, Never>?
+    private func heard(_ text: String) {
+        pendingFinish?.cancel()
+        guard VoiceCommand.detect(text) == .finish else { return }
+        pendingFinish = Task { @MainActor [weak self] in
+            try? await Task.sleep(for: .seconds(1.5))
+            guard !Task.isCancelled, let self, self.recordingNote != nil else { return }
+            self.finishRequests += 1
+        }
+    }
+
     /// The note whose recording is being made right now, if any.
     var recordingNote: String? { recordingNoteId }
 
@@ -146,7 +159,7 @@ final class DebriefSession {
                     self.liveSettled = settled
                     self.liveVolatile = volatile
                     // "Send this now" at the end of what was said finishes the recording.
-                    if VoiceCommand.detect(settled + " " + volatile) == .finish { self.finishRequests += 1 }
+                    self.heard(settled + " " + volatile)
                 }
             }
         } catch {

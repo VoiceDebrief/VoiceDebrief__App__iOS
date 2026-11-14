@@ -72,6 +72,8 @@ Every page has a markdown twin: replace index.html with index.md.
 - https://ios.app.voicedebrief.ai/sgit-app/reviews/round-1/index.html : the sgit app's first review
   from pictures (14 November 2026): three synthetic users, seventeen findings, issues 110 to 116. The
   first: a teammate sent a vault key cannot add to it without an access key.
+- https://ios.app.voicedebrief.ai/sgit-app/guide/index.html : the sgit app explained screen by screen,
+  with numbered callouts on pictures taken by CI, how it came to be, and what was asked for next.
 - https://ios.app.voicedebrief.ai/sgit-app/built/index.html : its reality file. If it is not listed
   there as built, it does not exist.
 

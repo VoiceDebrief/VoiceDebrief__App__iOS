@@ -92,6 +92,7 @@ struct ShareVaultView: View {
                             Text(VaultNaming.cloneCommand(keyText: "<the vault key>"))
                                 .font(.footnote.monospaced())
                             Button("Copy the line with the key in it", systemImage: "doc.on.doc") {
+                                UsageLog.shared.action("share.copy-command")
                                 Clipboard.copySecret(VaultNaming.cloneCommand(keyText: vault.keyText))
                                 copied = "command"
                             }
@@ -103,7 +104,10 @@ struct ShareVaultView: View {
                             }
                         }
                     } else {
-                        Button("Show the vault key", systemImage: "eye") { showingKey = true }
+                        Button("Show the vault key", systemImage: "eye") {
+                            UsageLog.shared.action("share.show-vault-key")
+                            showingKey = true
+                        }
                     }
                 }
             }
@@ -114,6 +118,7 @@ struct ShareVaultView: View {
                     Button("Show the read key", systemImage: "eye") {
                         Task {
                             if let key = try? await shelf.key(for: vault) { readKey = key.exportReadKey() }
+                            UsageLog.shared.action("share.show-read-key")
                             showingReadKey = true
                         }
                     }
@@ -149,6 +154,7 @@ struct SecretBlock: View {
             .font(.footnote.monospaced())
             .textSelection(.enabled)
         Button("Copy the \(label)", systemImage: "doc.on.doc") {
+            UsageLog.shared.action("share.copy-key")
             Clipboard.copySecret(text)
             copied = label
         }
