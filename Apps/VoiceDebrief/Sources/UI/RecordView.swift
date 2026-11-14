@@ -340,7 +340,7 @@ struct RecordView: View {
                         .font(.footnote.weight(.semibold))
                         .foregroundStyle(Color.accentColor)
                 }
-                LevelBars(levels: session.levels, height: 44, barWidth: 4)
+                LevelBars(levels: session.levels, height: 32, barWidth: 4)
                     .accessibilityElement(children: .ignore)
                     .accessibilityLabel("Microphone level")
             }

@@ -174,9 +174,19 @@ final class DebriefSession {
         }
     }
 
+    /// The level display, calmer (the owner, twice: too sensitive, "very noisy"): room noise below a small
+    /// threshold shows as nothing, a rise is followed half way per sample and a fall a fifth of the way, so
+    /// the bars move with the voice rather than with every sample.
+    nonisolated static func smoothed(previous: Double, next: Double) -> Double {
+        let target = next < 0.06 ? 0 : next
+        let rate = target > previous ? 0.5 : 0.2
+        let value = previous + (target - previous) * rate
+        return value < 0.01 ? 0 : value
+    }
+
     private func pushLevel() {
         guard recordingSince != nil else { return }
-        levels.append(recorder.level())
+        levels.append(Self.smoothed(previous: levels.last ?? 0, next: recorder.level()))
         if levels.count > Self.levelCount { levels.removeFirst(levels.count - Self.levelCount) }
     }
 

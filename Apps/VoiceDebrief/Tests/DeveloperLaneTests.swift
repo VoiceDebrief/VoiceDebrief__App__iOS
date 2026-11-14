@@ -105,5 +105,9 @@ struct RecordingLevelTests {
         #expect(VoiceRecorder.level(decibels: -27.5) == 0.25)
         #expect(VoiceRecorder.level(decibels: 6) == 1)
         #expect(VoiceRecorder.level(decibels: -.infinity) == 0)
+        // The display is smoothed: room noise is nothing, a rise goes half way, a fall a fifth of the way.
+        #expect(DebriefSession.smoothed(previous: 0, next: 0.05) == 0)
+        #expect(DebriefSession.smoothed(previous: 0, next: 0.8) == 0.4)
+        #expect(abs(DebriefSession.smoothed(previous: 0.5, next: 0) - 0.4) < 1e-9)
     }
 }
