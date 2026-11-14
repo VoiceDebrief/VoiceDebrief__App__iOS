@@ -9,4 +9,4 @@ recovery code; add, edit, delete, each as one signed commit of one JSON file; va
 minutes, hidden in the app switcher; a secret's history from the vault's commits; "My secrets" made on first use as
 a vault on this device. Not in this issue: sync (122), sharing (124), AutoFill (125).
 
-**Written (14 November 2026, not yet compiled):** `Sources/Secrets/`; see the reality file's row. Left: a secret's own history (each change is a commit, not yet shown per secret), tags, import from other managers, a sheet covered in the app switcher.
+**Compiles and its tests pass (14 November 2026, `6b13fcb`); not yet used on a device:** `Sources/Secrets/`; see the reality file's row. Left: a secret's own history (each change is a commit, not yet shown per secret), tags, import from other managers, a sheet covered in the app switcher.

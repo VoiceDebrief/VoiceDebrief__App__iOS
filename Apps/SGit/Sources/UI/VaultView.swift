@@ -498,6 +498,15 @@ struct FileTile: View {
                         Image(systemName: FileRow.icon(for: file.path)).font(.largeTitle).foregroundStyle(.secondary)
                     }
                 }
+                .overlay {
+                    if VaultListing.kind(of: file.path) == .video {
+                        Image(systemName: "play.circle.fill")
+                            .font(.system(size: 34))
+                            .symbolRenderingMode(.palette)
+                            .foregroundStyle(.white, .black.opacity(0.45))
+                            .accessibilityLabel("Video")
+                    }
+                }
                 .background(.quaternary)
                 .clipShape(RoundedRectangle(cornerRadius: 8))
             Text(VaultListing.name(of: file.path))

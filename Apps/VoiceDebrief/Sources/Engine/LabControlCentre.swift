@@ -97,7 +97,7 @@ struct LabOpenSectionTool: Tool {
 
     @Generable
     struct Arguments {
-        @Guide(description: "The section to show", .anyOf(["record", "library", "vaults", "settings"]))
+        @Guide(description: "The section to show", .anyOf(["record", "library", "contacts", "vaults", "agents", "guide", "identity", "credit", "activity", "lab", "words", "about", "settings"]))
         let section: String
     }
 
@@ -138,7 +138,9 @@ struct LabFindNoteTool: Tool {
 
 /// Experiment L02, the control centre: sentences come in (spoken, typed or from the test set), each
 /// is put to the fixed phrases and, one at a time, to the model, and each proposed action waits for
-/// the person. The code owns the states. Nothing is carried out.
+/// the person. The code owns the states. Two confirmed actions are carried out, the two that are
+/// safe to undo: showing a section (through `LabActionHost`) and a search of the library that only
+/// reads. The rest are recorded.
 @MainActor
 @Observable
 final class LabControlCentre {
@@ -160,13 +162,17 @@ final class LabControlCentre {
     private(set) var testing = false
 
     private let defaults: UserDefaults
+    private let host: LabActionHost
+    /// The library the find action reads. Set by the screen.
+    var store: NoteStore?
     private let live = LiveTranscriber()
     private var consumed = 0
     private var waiting: [String] = []
     private var worker: Task<Void, Never>?
 
-    init(defaults: UserDefaults = .standard) {
+    init(defaults: UserDefaults = .standard, host: LabActionHost? = nil) {
         self.defaults = defaults
+        self.host = host ?? LabActionHost.shared
         if let data = defaults.data(forKey: Self.triggersKey), let saved = try? JSONDecoder().decode([LabTrigger].self, from: data) {
             triggers = saved
         } else {
@@ -213,6 +219,7 @@ final class LabControlCentre {
         let entry = LabControlEntry(id: Note.newId(at: now), heardAt: now, words: text, source: source, expected: expected,
                                     triggers: triggers, askModel: askModel, automatic: automatic)
         entries.insert(entry, at: 0)
+        takeUp(0)
         if entry.state == .asking {
             waiting.append(entry.id)
             startWorker()
@@ -239,6 +246,43 @@ final class LabControlCentre {
     private func update(_ id: String, _ change: (inout LabControlEntry) -> Void) {
         guard let index = entries.firstIndex(where: { $0.id == id }) else { return }
         change(&entries[index])
+        takeUp(index)
+    }
+
+    /// An action that has just been confirmed, by the person or by its switch, is taken up once.
+    private func takeUp(_ index: Int) {
+        guard entries[index].state == .done, entries[index].outcome == nil, let chosen = entries[index].chosen else { return }
+        entries[index].outcome = carryOut(chosen)
+    }
+
+    private func carryOut(_ proposal: LabControlProposal) -> LabOutcome {
+        switch LabAction(rawValue: proposal.action) {
+        case .openSection:
+            let names = host.sectionNames.isEmpty ? LabSections.names : host.sectionNames
+            guard let name = LabSections.name(in: proposal.argument, names: names) else {
+                return LabOutcome(carriedOut: false, words: "Not opened: no section is named in the words \(proposal.argument).")
+            }
+            guard let open = host.openSection else {
+                return LabOutcome(carriedOut: false, words: "Not opened: this build has not connected the Lab to the app's sections.")
+            }
+            return open(name)
+                ? LabOutcome(carriedOut: true, words: "Opened \(name).")
+                : LabOutcome(carriedOut: false, words: "Not opened: there is no section called \(name).")
+        case .findNote:
+            guard let store else {
+                return LabOutcome(carriedOut: false, words: "Not searched: there is no library here.")
+            }
+            guard !LabNoteSearch.needles(proposal.argument).isEmpty else {
+                return LabOutcome(carriedOut: false, words: "Not searched: no subject was given.")
+            }
+            let found = LabNoteSearch.find(proposal.argument, in: LabToolbox(store: store).notes)
+            if found.isEmpty {
+                return LabOutcome(carriedOut: true, words: "Searched: no note holds \(LabNoteSearch.needles(proposal.argument).joined(separator: " ")).")
+            }
+            return LabOutcome(carriedOut: true, words: "Found \(found.count): " + found.map { String($0.title.prefix(60)) }.joined(separator: "; "))
+        default:
+            return .recordedOnly
+        }
     }
 
     func doIt(_ id: String) { update(id) { $0.doIt() } }

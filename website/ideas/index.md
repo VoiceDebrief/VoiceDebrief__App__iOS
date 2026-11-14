@@ -5,9 +5,9 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | Status | Meaning | How many |
 |---|---|---|
 | Seen working | Built, and a run proved it: CI, a device or a server. | 27 |
-| Built, untried | In the app or the repository, but not yet proven by a run on a device. | 78 |
+| Built, untried | In the app or the repository, but not yet proven by a run on a device. | 80 |
 | In progress | Begun: part of it is built or a release has touched it. | 37 |
-| Proposed | Asked for or described; nothing of it is built. | 53 |
+| Proposed | Asked for or described; nothing of it is built. | 61 |
 | Parked | Waiting: on the owner, on Apple, or scheduled for later. | 6 |
 
 ## Seen working
@@ -115,12 +115,14 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | Vaults on the device | Feature | SGit Vaults | SGit Vaults |   | [reality file](../sgit-app/built/index.md) |
 | Adding photos, videos and files, the screens | Feature | SGit Vaults | SGit Vaults: a vault |   | [reality file](../sgit-app/built/index.md) |
 | Browsing | Feature | SGit Vaults | SGit Vaults: a vault; SGit Vaults: Share |   | [reality file](../sgit-app/built/index.md) |
+| Playing a video | Feature | SGit Vaults | SGit Vaults: a vault |   | [reality file](../sgit-app/built/index.md) |
 | Saving a folder out | Feature | SGit Vaults | SGit Vaults: a vault; SGit Vaults: Share |   | [reality file](../sgit-app/built/index.md) |
 | The web Vault inside the app | Feature | SGit Vaults | SGit Vaults: a vault |   | [reality file](../sgit-app/built/index.md) |
 | Your activity | Feature | SGit Vaults | SGit Vaults: Share; SGit Vaults: Settings |   | [reality file](../sgit-app/built/index.md) |
 | Ask this vault, an experiment | Feature | SGit Vaults | SGit Vaults: a vault; SGit Vaults: History |   | [reality file](../sgit-app/built/index.md) |
 | Secrets | Feature | SGit Vaults | SGit Vaults: a vault |   | [reality file](../sgit-app/built/index.md) |
 | Questions for you | Feature | SGit Vaults | SGit Vaults: Settings |   | [reality file](../sgit-app/built/index.md) |
+| Guide and what is new | Feature | SGit Vaults | SGit Vaults |   | [reality file](../sgit-app/built/index.md) |
 | The same vaults on every device | Feature | SGit Vaults | SGit Vaults: Settings |   | [reality file](../sgit-app/built/index.md) |
 | Sharing a vault | Feature | SGit Vaults | SGit Vaults: Share |   | [reality file](../sgit-app/built/index.md) |
 | History | Feature | SGit Vaults | SGit Vaults: History |   | [reality file](../sgit-app/built/index.md) |
@@ -204,6 +206,14 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | Recovery through people you trust | Design | SGit Vaults |   |   | [design](../sgit-app/secrets/index.md) |
 | Leaving someone out, honestly | Design | SGit Vaults |   |   | [design](../sgit-app/secrets/index.md) |
 | A spotted secret | Design | SGit Vaults |   |   | [design](../sgit-app/secrets/index.md) |
+| A history that does not show the secret | Design | SGit Vaults |   |   | [design](../sgit-app/secrets/index.md) |
+| Where each secret came from | Design | SGit Vaults |   |   | [design](../sgit-app/secrets/index.md) |
+| Proof you can check without the app | Design | SGit Vaults |   |   | [design](../sgit-app/secrets/index.md) |
+| A lost phone, in one screen | Design | SGit Vaults |   |   | [design](../sgit-app/secrets/index.md) |
+| Break glass, with time to say no | Design | SGit Vaults |   |   | [design](../sgit-app/secrets/index.md) |
+| A machine that hands in new keys | Design | SGit Vaults |   |   | [design](../sgit-app/secrets/index.md) |
+| Works on a plane | Design | SGit Vaults |   |   | [design](../sgit-app/secrets/index.md) |
+| A share with an end date | Design | SGit Vaults |   |   | [design](../sgit-app/secrets/index.md) |
 | The trust map | Design | SGit Vaults |   |   | [design](../sgit-app/secrets/index.md) |
 | Receiving a voice note from the share sheet (WhatsApp) | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
 | Decoding WhatsApp's Ogg Opus | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |

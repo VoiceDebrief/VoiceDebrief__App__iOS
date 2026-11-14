@@ -4,6 +4,31 @@
  "nextArt": [],
  "versions": [
   {
+   "version": "v0.1.74",
+   "date": "14 November 2026",
+   "notes": [
+    "The sgit app plays videos: a play mark on each video, a Play button that decrypts and plays it with sound (even on silent), full screen, and a picture from the video on its tile once it has been played",
+    "The sgit app has a Guide on its home list: what is new in each version, a guide with numbered pictures for each part (getting started, inside a vault, sharing, secrets), and every idea with where it stands"
+   ],
+   "hasPage": true,
+   "url": "https://ios.app.voicedebrief.ai/versions/v0.1.74/index.html",
+   "pictures": 0,
+   "art": [],
+   "issues": []
+  },
+  {
+   "version": "v0.1.73",
+   "date": "14 November 2026",
+   "notes": [
+    "The Lab's control centre (L02) now carries out two confirmed actions, the two that are safe to undo: opening a section of the app, and finding a note, which only reads the library and lists what it found on the card. Nothing happens before Do it, unless that action is switched to go ahead without asking. The other five actions are still recorded only, and each card says which it was. In test: no sentence has been put to a model."
+   ],
+   "hasPage": true,
+   "url": "https://ios.app.voicedebrief.ai/versions/v0.1.73/index.html",
+   "pictures": 0,
+   "art": [],
+   "issues": []
+  },
+  {
    "version": "v0.1.72",
    "date": "14 November 2026",
    "notes": [
