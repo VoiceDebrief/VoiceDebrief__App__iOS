@@ -43,3 +43,4 @@ One file per piece of work: `open/NNN-slug.md`, moved to `done/` when it is done
 | 102 | Prove the sgit app's large files against the live server | 100 on a device |
 | 103 | The sgit app after milestone one | 100; 011 and 017 |
 | 104 | A read-only share that can be taken back | the owner's decision |
+| 105 | "Send to vault" from Photos and Files: a share extension | signing; perhaps the owner (an App Group) |
