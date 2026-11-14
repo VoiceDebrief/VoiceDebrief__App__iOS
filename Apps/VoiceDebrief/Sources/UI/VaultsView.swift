@@ -18,6 +18,7 @@ struct VaultsView: View {
     var body: some View {
         NavigationStack {
             List {
+                SectionBannerRow(tab: .vaults)
                 Section {
                     if book.vaults.isEmpty {
                         Text("None yet.").foregroundStyle(.secondary)

@@ -1,0 +1,112 @@
+name: People interop
+
+# SGitPeople's messages, cards and sealed codes against pki.sgit.ai's own message.js and against tools/people/people.py.
+# Nothing else can vouch for the formats: Swift cannot be compiled where the app is written, and the message form is
+# pki.sgit.ai's.
+#
+#   make     Linux: message.js (lib v0.2.28, fetched and checked against pinned hashes) makes two keys and a
+#            message; people.py makes a key, a card and a message
+#   swift    macOS: the package's interop tests open both, and seal a message to message.js's key and a card
+#            message into people.py's lane form
+#   read     Linux: message.js and people.py open what Swift made; people.py and message.js also check each other
+#
+# Every key in a run is made for the run and protects nothing.
+on:
+  push:
+    branches: [dev, 'work/**']
+    paths:
+      - 'Packages/SGitPeople/**'
+      - 'tools/people/**'
+      - 'scripts/people-interop/**'
+      - 'scripts/pki-interop/fetch_pki_lib.sh'
+      - '.github/workflows/people-interop.yml'
+  schedule:
+    - cron: '47 5 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: people-interop-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  make:
+    name: message.js and people.py make
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: pip install cryptography requests
+      - name: pki.sgit.ai's modules, at a pinned version
+        run: scripts/pki-interop/fetch_pki_lib.sh "$RUNNER_TEMP/lib"
+      - name: people.py and message.js, both ways
+        run: python3 scripts/people-interop/people_py_interop.py local "$RUNNER_TEMP/lib" "$RUNNER_TEMP/local" | tee -a "$GITHUB_STEP_SUMMARY"
+      - name: Make for Swift
+        run: |
+          mkdir -p "$RUNNER_TEMP/made"
+          node scripts/people-interop/msgjs.mjs make "$RUNNER_TEMP/lib" "$RUNNER_TEMP/made" | tee -a "$GITHUB_STEP_SUMMARY"
+          python3 scripts/people-interop/people_py_interop.py make "$RUNNER_TEMP/made" | tee -a "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: people-made
+          path: ${{ runner.temp }}/made/
+          if-no-files-found: error
+          retention-days: 3
+
+  swift:
+    name: Swift opens theirs and seals its own
+    needs: make
+    runs-on: macos-26
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Select Xcode
+        run: .github/scripts/select-xcode.sh
+      - uses: actions/download-artifact@v4
+        with:
+          name: people-made
+          path: ${{ runner.temp }}/made
+      - name: The interop tests
+        working-directory: Packages/SGitPeople
+        env:
+          PEOPLE_INTEROP_DIR: ${{ runner.temp }}/made
+        run: ../../.github/scripts/run-and-summarize.sh "SGitPeople interop" "$RUNNER_TEMP/logs/interop.log" -- swift test --filter InteropTests
+      - uses: actions/upload-artifact@v4
+        with:
+          name: people-swift-made
+          path: ${{ runner.temp }}/made/
+          if-no-files-found: error
+          retention-days: 3
+
+  read:
+    name: message.js and people.py open Swift's
+    needs: swift
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: pip install cryptography requests
+      - name: pki.sgit.ai's modules, at a pinned version
+        run: scripts/pki-interop/fetch_pki_lib.sh "$RUNNER_TEMP/lib"
+      - uses: actions/download-artifact@v4
+        with:
+          name: people-swift-made
+          path: ${{ runner.temp }}/made
+      - name: message.js opens what Swift sealed
+        run: node scripts/people-interop/msgjs.mjs read "$RUNNER_TEMP/lib" "$RUNNER_TEMP/made" | tee -a "$GITHUB_STEP_SUMMARY"
+      - name: people.py opens what Swift put in its lane, and reads Swift's card
+        run: python3 scripts/people-interop/people_py_interop.py read "$RUNNER_TEMP/made" | tee -a "$GITHUB_STEP_SUMMARY"

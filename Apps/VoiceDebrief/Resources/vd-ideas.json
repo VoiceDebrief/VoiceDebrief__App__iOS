@@ -29,9 +29,9 @@
  ],
  "counts": {
   "seen-working": 27,
-  "built-untried": 66,
-  "in-progress": 33,
-  "proposed": 39,
+  "built-untried": 75,
+  "in-progress": 37,
+  "proposed": 53,
   "parked": 6
  },
  "ideas": [
@@ -1049,6 +1049,34 @@
    "source": "The owner"
   },
   {
+   "id": "issue-047",
+   "kind": "issue",
+   "number": "047",
+   "app": "VoiceDebrief",
+   "title": "The lab, second experiment (L02): the control centre",
+   "status": "in-progress",
+   "why": "The issue says: \"Built and in the Lab: sentences in (spoken, typed, or fourteen test sentences); two engines, the fixed phrases and the on-device model with one tool for each of...\"",
+   "summary": "Giving instructions is a different mode from thinking aloud. In a control mode the screen shows the actions and the reactions, not the transcript: an instruction is heard, an action is proposed, and the person says do it, not this, or edits it. No black magic: choose, see the pipeline, then trigger it. The phrases that trigger an action are listed and can be changed.",
+   "detail": [
+    "Giving instructions is a different mode from thinking aloud. In a control mode the screen shows the actions and the reactions, not the transcript: an instruction is heard, an action is proposed, and the person says do it, not this, or edits it. No black magic: choose, see the pipeline, then trigger it. The phrases that trigger an action are listed and can be changed.",
+    "Where it stands (14 November 2026)",
+    "Built and in the Lab: sentences in (spoken, typed, or fourteen test sentences); two engines, the fixed phrases and the on-device model with one tool for each of seven actions; a card for each proposal with its state and Do it, Not this, Edit; actions that may go ahead without asking; the phrase list, editable and kept on the device; a tally and a JSON log. Compiled and unit tested; never run against a model.",
+    "What it does not do yet",
+    "- It carries no action out. Do it records the choice. Wiring an action to the app (finish the recording, send, save, open a section) touches DebriefSession, RootView and the send path, which other sessions own. - The model is asked about every settled piece of speech, with no pause rule of its own and no state handed to it (whether a recording is running, who the recipients are). - Portuguese: the phrases and the test sentences are English only.",
+    "What decides the next step",
+    "The owner runs the test sentences on an iPhone, an iPad and a Mac and sends back the log. If the model proposes the right action often enough and fast enough, wire the actions that are safe to undo first. If it does not, the phrases are the engine and the model is not asked."
+   ],
+   "statusLine": "Status: open. From three voice notes the owner recorded while driving, 14 November 2026, relayed by the parent session. See the articles \"The lab\" and \"Two decision engines\".",
+   "places": [
+    "Settings: Recipients",
+    "Settings: Experiments, the Lab"
+   ],
+   "versions": [],
+   "features": [],
+   "url": "https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/047-lab-control-centre.md",
+   "source": "The owner's voice note"
+  },
+  {
    "id": "issue-100",
    "kind": "issue",
    "number": "100",
@@ -1475,6 +1503,177 @@
    "source": "The owner"
   },
   {
+   "id": "issue-119",
+   "kind": "issue",
+   "number": "119",
+   "app": "SGit Vaults",
+   "title": "sgit app: Apple Intelligence, a first experiment",
+   "status": "proposed",
+   "why": "Open, with nothing built yet: \"Status: open. Owner: the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB).\"",
+   "summary": "The owner, 14 November 2026: \"start thinking about how can we add Apple Intelligence to this app to make a lot of these things more straightforward ... let's start experimenting\".",
+   "detail": [
+    "The owner, 14 November 2026: \"start thinking about how can we add Apple Intelligence to this app to make a lot of these things more straightforward ... let's start experimenting\".",
+    "Written (14 November 2026, not yet compiled): Ask this vault, after VoiceDebrief's Lab. One question, a fresh session, four read-only tools over a copy of the listing and history, every call shown. See the reality file.",
+    "To learn from the owner's first tries on a device: does the model call a tool before answering; are the answers right; how long does it take; what did he want to ask that the tools could not answer.",
+    "Next experiments, in the order they look useful (none started):",
+    "1. A commit message from what changed (\"12 photographs of the stage and one video\"), offered, never applied unasked. One question, no tools. 2. Names for a selection being added: a folder suggestion from the files' names and dates. 3. Find by meaning: \"the photos from the dinner\" across vaults. Needs captions, which needs the Vision framework on the device at the time a picture is added; a larger piece of work. 4. A spoken question: the voice button (issue 120, with the people session's inbox) feeding this screen. 5. The standing position holds for all of them: the code owns the states, the model is asked one question at a time through function calls, and what it may touch is shown."
+   ],
+   "statusLine": "Status: open. Owner: the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB).",
+   "owner": "the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB)",
+   "places": [
+    "SGit Vaults: a vault",
+    "SGit Vaults: History"
+   ],
+   "versions": [],
+   "features": [],
+   "url": "https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/119-sgit-app-apple-intelligence.md",
+   "source": "The owner"
+  },
+  {
+   "id": "issue-120",
+   "kind": "issue",
+   "number": "120",
+   "app": "SGit Vaults",
+   "title": "sgit app: questions for the owner, answered by typing or by voice",
+   "status": "proposed",
+   "why": "Open, with nothing built yet: \"Status: open. Owner: the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB).\"",
+   "summary": "The owner, 14 November 2026: \"you need a way that you can start to ask questions from me throughout the app, so I can answer them even with voice\".",
+   "detail": [
+    "The owner, 14 November 2026: \"you need a way that you can start to ask questions from me throughout the app, so I can answer them even with voice\".",
+    "To do: Settings, Questions. Each question has an id, the words, why it matters, and proposed answers. The owner answers by choosing one, typing, or dictating (the keyboard's microphone: speech to text on the device). The answer goes to the developers over the developer lane, sealed to their key, as sgit/answer/v1; the app remembers what was answered. The questions ship with the app as a resource, written by the developers. Later: a recorded voice answer (VoiceDebrief's recorder), and questions that arrive in the inbox instead of with a build.",
+    "Written (14 November 2026, not yet compiled): Questions for you, on the home list and in Settings; nine questions in Resources/sg-questions.json."
+   ],
+   "statusLine": "Status: open. Owner: the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB).",
+   "owner": "the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB)",
+   "places": [
+    "SGit Vaults: Settings"
+   ],
+   "versions": [],
+   "features": [],
+   "url": "https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/120-sgit-app-questions-for-the-owner.md",
+   "source": "The owner"
+  },
+  {
+   "id": "issue-121",
+   "kind": "issue",
+   "number": "121",
+   "app": "SGit Vaults",
+   "title": "sgit app: secrets, kept as files in vaults",
+   "status": "proposed",
+   "why": "Open, with nothing built yet: \"Status: open. Owner: the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB). Design: website/sgit-app/secrets/index.md.\"",
+   "summary": "To do: a Secrets section listing the entries of every vault that has a secrets/ folder, grouped by vault (\"My secrets\", \"Team: devices\"); kinds login, device, Wi-Fi, card, note, token, vault key, read key, access key, recovery code; add, edit, delete, each as one signed commit of one JSON file; values behind Face ID, copied for two minutes, hidden in the app switcher; a secret's history from the...",
+   "detail": [
+    "To do: a Secrets section listing the entries of every vault that has a secrets/ folder, grouped by vault (\"My secrets\", \"Team: devices\"); kinds login, device, Wi-Fi, card, note, token, vault key, read key, access key, recovery code; add, edit, delete, each as one signed commit of one JSON file; values behind Face ID, copied for two minutes, hidden in the app switcher; a secret's history from the vault's commits; \"My secrets\" made on first use as a vault on this device. Not in this issue: sync (122), sharing (124), AutoFill (125).",
+    "Written (14 November 2026, not yet compiled): Sources/Secrets/; see the reality file's row. Left: a secret's own history (each change is a commit, not yet shown per secret), tags, import from other managers, a sheet covered in the app switcher."
+   ],
+   "statusLine": "Status: open. Owner: the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB). Design: website/sgit-app/secrets/index.md.",
+   "owner": "the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB)",
+   "places": [
+    "SGit Vaults: a vault",
+    "SGit Vaults: History"
+   ],
+   "versions": [],
+   "features": [],
+   "url": "https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/121-sgit-app-secrets-in-vaults.md",
+   "source": "The owner"
+  },
+  {
+   "id": "issue-122",
+   "kind": "issue",
+   "number": "122",
+   "app": "SGit Vaults",
+   "title": "sgit app: the same vaults on every device, without setting anything up",
+   "status": "in-progress",
+   "why": "Open, and the reality file lists for it: Secrets.",
+   "summary": "The owner: \"the synchronisation between devices ... has to be completely transparent and straightforward\".",
+   "detail": [
+    "The owner: \"the synchronisation between devices ... has to be completely transparent and straightforward\".",
+    "To do: the list of vaults and their keys, and the access key, in iCloud Keychain (synchronisable items, as VoiceDebrief did in issue 017), with a switch to keep them on this device only; pull when the app opens and comes to the front, push after each change, and say so on the vault's standing line. Each secret is its own file, so two devices changing different secrets do not conflict; the same secret changed on two devices keeps both and asks. Needs an access key to reach the server; without one a vault stays on the device it was made on, and the app says so. Mac, iPad and iPhone are the same app.",
+    "Written (14 November 2026, not yet compiled): see the reality file's row. Left: push after each change is what every write already does (a commit is pushed); a pull on a timer while the app is open; the same secret changed on two devices at once is decided by the server's compare-and-swap (the second write is retried on the newer head, so the later change wins and the earlier stays in history), not yet shown to the person."
+   ],
+   "statusLine": "Status: open. Owner: the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB).",
+   "owner": "the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB)",
+   "places": [
+    "SGit Vaults: History"
+   ],
+   "versions": [],
+   "features": [
+    "Secrets"
+   ],
+   "url": "https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/122-sgit-app-sync-between-my-devices.md",
+   "source": "The owner"
+  },
+  {
+   "id": "issue-123",
+   "kind": "issue",
+   "number": "123",
+   "app": "SGit Vaults",
+   "title": "sgit app: the trust map, from one person to a team",
+   "status": "proposed",
+   "why": "Open, with nothing built yet: \"Status: open. Owner: the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB), on the people session's SGitPeople (contacts, cards, confirmations).\"",
+   "summary": "To do: a drawing of people (with the photo taken when you met) and the links between them: solid when both confirmed, dashed when one side only, labelled with how they met; agents drawn as agents; tap a person for their fingerprint, the vaults you share and the secrets given. Suggestions for missing links. Computed on the device, never published. A short onboarding story for one person, two, five...",
+   "detail": [
+    "To do: a drawing of people (with the photo taken when you met) and the links between them: solid when both confirmed, dashed when one side only, labelled with how they met; agents drawn as agents; tap a person for their fingerprint, the vaults you share and the secrets given. Suggestions for missing links. Computed on the device, never published. A short onboarding story for one person, two, five, shown the first time."
+   ],
+   "statusLine": "Status: open. Owner: the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB), on the people session's SGitPeople (contacts, cards, confirmations).",
+   "owner": "the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB), on the people session's SGitPeople (contacts, cards, confirmations)",
+   "places": [
+    "SGit Vaults: Share"
+   ],
+   "versions": [],
+   "features": [],
+   "url": "https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/123-sgit-app-the-trust-map.md",
+   "source": "The owner"
+  },
+  {
+   "id": "issue-124",
+   "kind": "issue",
+   "number": "124",
+   "app": "SGit Vaults",
+   "title": "sgit app: a shared vault for chosen people",
+   "status": "in-progress",
+   "why": "Open, and the reality file lists for it: Secrets.",
+   "summary": "To do: on the trust map or in a vault's Share, choose people and send them the vault, each copy sealed to their key and dropped in their inbox; on their side, the invitation opens the vault in one tap and it appears with its members. The vault keeps a member list file so each member's app can draw who is in it. For now a member holds the vault key and can do everything (the owner: \"for now, the...",
+   "detail": [
+    "To do: on the trust map or in a vault's Share, choose people and send them the vault, each copy sealed to their key and dropped in their inbox; on their side, the invitation opens the vault in one tap and it appears with its members. The vault keeps a member list file so each member's app can draw who is in it. For now a member holds the vault key and can do everything (the owner: \"for now, the shared vault means you share the vault key, which is okay\"). The share sheet stops showing a raw vault key as a QR code once this exists."
+   ],
+   "statusLine": "Status: open. Owner: the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB), on SGitPeople's sendVault (a vault invitation sealed to a contact).",
+   "owner": "the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB), on SGitPeople's sendVault (a vault invitation sealed to a contact)",
+   "places": [
+    "SGit Vaults: Share"
+   ],
+   "versions": [],
+   "features": [
+    "Secrets"
+   ],
+   "url": "https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/124-sgit-app-shared-vaults-for-people.md",
+   "source": "The owner"
+  },
+  {
+   "id": "issue-125",
+   "kind": "issue",
+   "number": "125",
+   "app": "SGit Vaults",
+   "title": "sgit app: AutoFill, passwords and passkeys in other apps and in Safari",
+   "status": "in-progress",
+   "why": "Open, and the reality file lists for it: Secrets.",
+   "summary": "iOS lets a third-party app fill passwords and passkeys elsewhere only as an AutoFill credential provider: an app extension (ASCredentialProviderViewController) with the AutoFill Credential Provider capability, which the account holder switches on for ai.sgit.vaults.app in the developer portal, plus an App Group shared with the extension (the same one issue 105 waits for). Until then, the app...",
+   "detail": [
+    "iOS lets a third-party app fill passwords and passkeys elsewhere only as an AutoFill credential provider: an app extension (ASCredentialProviderViewController) with the AutoFill Credential Provider capability, which the account holder switches on for ai.sgit.vaults.app in the developer portal, plus an App Group shared with the extension (the same one issue 105 waits for). Until then, the app records which passkeys exist and where."
+   ],
+   "statusLine": "Status: open, needs the owner. Owner: the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB).",
+   "owner": "the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB)",
+   "places": [
+    "SGit Vaults: Share"
+   ],
+   "versions": [],
+   "features": [
+    "Secrets"
+   ],
+   "url": "https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/125-sgit-app-autofill-passwords-and-passkeys.md",
+   "source": "The owner"
+  },
+  {
    "id": "issue-200",
    "kind": "issue",
    "number": "200",
@@ -1487,9 +1686,9 @@
     "From: the owner, 14 November 2026 (the brief in the article). Session: the people session, branch work/people.",
     "Every install is a person with keys and an inbox; people meet by exchanging signed cards; everything they send each other, secrets included, is sealed to the recipient's key and dropped in their inbox. One Swift package, Packages/SGitPeople, used by both apps.",
     "Done in the package (first slice)",
-    "- PKIKit.swift and LaneCrypto.swift moved in from VoiceDebrief, made public, nothing else changed; pki-interop.yml compiles them from there. - ContactCard: a pki.sgit.ai statement (type: card, registry: sgit.ai/people) carrying the name, the sgit key bundle and the inbox; as sgc1. text (about 1,200 characters for a 4096-bit key), a link, a QR code. - ContactBook: contacts with how each was met; a later card from the same keys updates, other keys under a known fingerprint are refused. - PeopleMessage: sealed and signed in sgit's envelope; kinds text, voice-note reference, secret, vault invitation, card; from and to inside the seal are checked on opening. sgm1. text for a sealed message handed over without an inbox. - LaneClient: write, list, fetch, mark processed, configure, against answers recorded from dev.send.sgraph.ai. - InboxCheck (list, fetch only when something waits, keep on...",
+    "- PKIKit.swift and LaneCrypto.swift moved in from VoiceDebrief, made public, nothing else changed; pki-interop.yml compiles them from there. - ContactCard: a pki.sgit.ai statement (type: card, registry: sgit.ai/people) carrying the name, the sgit key bundle and the inbox; as sgc1. text (about 1,200 characters for a 4096-bit key), a link, a QR code. - ContactBook: contacts with how each was met; a later card from the same keys updates, other keys under a known fingerprint are refused. - PeopleMessage: sealed and signed in sgit's envelope; kinds text, voice-note reference, secret, vault invitation, card; from and to inside the seal are checked on opening. The message is pki.sgit.ai's own (pki.sgit.ai/message/v1, signed inside and out) with this package's fields added, and pki.sgit.ai's m1. code is the text for a sealed message handed over without an inbox. - LaneClient: write, list, fetch...",
     "Next",
-    "1. ~~Prove the first-contact round trip against the live server~~: done with tools/people/people.py on 14 November 2026 (see the reality file). Still to do: the same from Swift, which needs an access key where Swift runs. 2. Screens in SGit Vaults: You, Contacts, Inbox, Secrets (with the sgit app session, which owns Apps/SGit). 3. VoiceDebrief: its recipients become contacts; the record screen shows the inbox (the parent session's screens). 4. Devices (the owner, via the parent): your devices by their vouching statements in identity/devices/, name, kind, device key fingerprint, last seen; remove one, which withdraws its statement. After contacts and first contact. 5. A page on the site for card/#sgc1… and sealed/#sgm1… links, which shows what it holds and opens nothing.",
+    "1. ~~Prove the first-contact round trip against the live server~~: done with tools/people/people.py on 14 November 2026 (see the reality file). Still to do: the same from Swift, which needs an access key where Swift runs. 2. Screens in SGit Vaults: You, Contacts, Inbox, Secrets (with the sgit app session, which owns Apps/SGit). 3. VoiceDebrief: its recipients become contacts; the record screen shows the inbox (the parent session's screens). 4. Devices (the owner, via the parent): your devices by their vouching statements in identity/devices/, name, kind, device key fingerprint, last seen; remove one, which withdraws its statement. After contacts and first contact. 5. A page on the site for card/#sgc1… links (sealed messages use pki.sgit.ai's own m/#m1… page), which shows what it holds and opens nothing.",
     "Assumed, for the owner to confirm (the article's four decisions)",
     "1. The access key is given in the first exchange (section 5), sealed to the newcomer's card. 2. The card is a new signed statement in pki.sgit.ai's form, compatible with its key bundle. 3. Each person's inbox is a lane on a vault of their own. 4. Publishing to pki.sgit.ai is optional and off by default (nothing publishes yet)."
    ],
@@ -1919,6 +2118,214 @@
    "issues": [],
    "url": "https://ios.app.voicedebrief.ai/articles/where-each-key-lives/index.html",
    "source": "A position and a brief. From the owner's voice memos of 13 November 2026, written up by the agent. Decided by the owner the same day. None of it is built unless..."
+  },
+  {
+   "id": "design-sgit-app-secrets-a-team-with-no-admin-and-no-account",
+   "kind": "design",
+   "app": "SGit Vaults",
+   "title": "A team with no admin and no account",
+   "status": "proposed",
+   "why": "Listed on the design page \"A secrets manager made of people and vaults\" as proposed.",
+   "summary": "five people swap cards and confirm each other, then share a vault, with no sign-up, invoice or IT person.",
+   "detail": [
+    "five people swap cards and confirm each other, then share a vault, with no sign-up, invoice or IT person."
+   ],
+   "places": [],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/secrets/index.html",
+   "source": "A secrets manager made of people and vaults"
+  },
+  {
+   "id": "design-sgit-app-secrets-sharing-a-server-cannot-redirect",
+   "kind": "design",
+   "app": "SGit Vaults",
+   "title": "Sharing a server cannot redirect",
+   "status": "proposed",
+   "why": "Listed on the design page \"A secrets manager made of people and vaults\" as proposed.",
+   "summary": "the key a secret is sealed to comes from a card confirmed in person, never from the server, which shuts out the key-swapping attacks found in other managers in 2026.",
+   "detail": [
+    "the key a secret is sealed to comes from a card confirmed in person, never from the server, which shuts out the key-swapping attacks found in other managers in 2026."
+   ],
+   "places": [],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/secrets/index.html",
+   "source": "A secrets manager made of people and vaults"
+  },
+  {
+   "id": "design-sgit-app-secrets-one-secret-for-one-agent",
+   "kind": "design",
+   "app": "SGit Vaults",
+   "title": "One secret for one agent",
+   "status": "proposed",
+   "why": "Listed on the design page \"A secrets manager made of people and vaults\" as proposed.",
+   "summary": "give an AI session exactly one API key, sealed to its key, with a record of when and to whom.",
+   "detail": [
+    "give an AI session exactly one API key, sealed to its key, with a record of when and to whom."
+   ],
+   "places": [],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/secrets/index.html",
+   "source": "A secrets manager made of people and vaults"
+  },
+  {
+   "id": "design-sgit-app-secrets-signed-history-of-every-secret",
+   "kind": "design",
+   "app": "SGit Vaults",
+   "title": "Signed history of every secret",
+   "status": "proposed",
+   "why": "Listed on the design page \"A secrets manager made of people and vaults\" as proposed.",
+   "summary": "who changed the router password and when, signed by their device, with the earlier version one tap away.",
+   "detail": [
+    "who changed the router password and when, signed by their device, with the earlier version one tap away."
+   ],
+   "places": [],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/secrets/index.html",
+   "source": "A secrets manager made of people and vaults"
+  },
+  {
+   "id": "design-sgit-app-secrets-ask-someone-outside-the-team-for-a-secret",
+   "kind": "design",
+   "app": "SGit Vaults",
+   "title": "Ask someone outside the team for a secret",
+   "status": "proposed",
+   "why": "Listed on the design page \"A secrets manager made of people and vaults\" as proposed.",
+   "summary": "a contractor drops the Wi-Fi or a server key into your inbox; they get no way to read anything back.",
+   "detail": [
+    "a contractor drops the Wi-Fi or a server key into your inbox; they get no way to read anything back."
+   ],
+   "places": [],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/secrets/index.html",
+   "source": "A secrets manager made of people and vaults"
+  },
+  {
+   "id": "design-sgit-app-secrets-rotation-on-a-branch",
+   "kind": "design",
+   "app": "SGit Vaults",
+   "title": "Rotation on a branch",
+   "status": "proposed",
+   "why": "Listed on the design page \"A secrets manager made of people and vaults\" as proposed.",
+   "summary": "change a key, test it, then merge, so the team is never half on the old one and half on the new.",
+   "detail": [
+    "change a key, test it, then merge, so the team is never half on the old one and half on the new."
+   ],
+   "places": [],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/secrets/index.html",
+   "source": "A secrets manager made of people and vaults"
+  },
+  {
+   "id": "design-sgit-app-secrets-recovery-through-people-you-trust",
+   "kind": "design",
+   "app": "SGit Vaults",
+   "title": "Recovery through people you trust",
+   "status": "proposed",
+   "why": "Listed on the design page \"A secrets manager made of people and vaults\" as proposed.",
+   "summary": "lose every device and get back in with three of five people each holding a sealed part; no company reset.",
+   "detail": [
+    "lose every device and get back in with three of five people each holding a sealed part; no company reset."
+   ],
+   "places": [],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/secrets/index.html",
+   "source": "A secrets manager made of people and vaults"
+  },
+  {
+   "id": "design-sgit-app-secrets-leaving-someone-out-honestly",
+   "kind": "design",
+   "app": "SGit Vaults",
+   "title": "Leaving someone out, honestly",
+   "status": "proposed",
+   "why": "Listed on the design page \"A secrets manager made of people and vaults\" as proposed.",
+   "summary": "removing a member makes a new vault key and shows the checklist of secrets they saw, with a change action for each.",
+   "detail": [
+    "removing a member makes a new vault key and shows the checklist of secrets they saw, with a change action for each."
+   ],
+   "places": [],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/secrets/index.html",
+   "source": "A secrets manager made of people and vaults"
+  },
+  {
+   "id": "design-sgit-app-secrets-a-spotted-secret",
+   "kind": "design",
+   "app": "SGit Vaults",
+   "title": "A spotted secret",
+   "status": "proposed",
+   "why": "Listed on the design page \"A secrets manager made of people and vaults\" as proposed.",
+   "summary": "Apple's on-device model notices a key pasted into a note or a file and offers to move it into a secret.",
+   "detail": [
+    "Apple's on-device model notices a key pasted into a note or a file and offers to move it into a secret."
+   ],
+   "places": [],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/secrets/index.html",
+   "source": "A secrets manager made of people and vaults"
+  },
+  {
+   "id": "design-sgit-app-secrets-the-trust-map",
+   "kind": "design",
+   "app": "SGit Vaults",
+   "title": "The trust map",
+   "status": "proposed",
+   "why": "Listed on the design page \"A secrets manager made of people and vaults\" as proposed.",
+   "summary": "a drawing of the people you have met, with their photos, solid where both confirmed and dashed where one side only.",
+   "detail": [
+    "a drawing of the people you have met, with their photos, solid where both confirmed and dashed where one side only."
+   ],
+   "places": [],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/secrets/index.html",
+   "source": "A secrets manager made of people and vaults"
+  },
+  {
+   "id": "design-sgit-app-secrets-the-same-vaults-on-every-device",
+   "kind": "design",
+   "app": "SGit Vaults",
+   "title": "The same vaults on every device",
+   "status": "built-untried",
+   "why": "Listed on the design page \"A secrets manager made of people and vaults\" as built, not yet proven.",
+   "summary": "vault keys in iCloud Keychain, one item each, so an iPhone, iPad and Mac open the same vaults with nothing to set up.",
+   "detail": [
+    "vault keys in iCloud Keychain, one item each, so an iPhone, iPad and Mac open the same vaults with nothing to set up."
+   ],
+   "places": [],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/secrets/index.html",
+   "source": "A secrets manager made of people and vaults"
+  },
+  {
+   "id": "design-sgit-app-secrets-secrets-as-files-in-vaults",
+   "kind": "design",
+   "app": "SGit Vaults",
+   "title": "Secrets as files in vaults",
+   "status": "built-untried",
+   "why": "Listed on the design page \"A secrets manager made of people and vaults\" as built, not yet proven.",
+   "summary": "each entry one encrypted JSON file, behind Face ID, with a strong-password maker.",
+   "detail": [
+    "each entry one encrypted JSON file, behind Face ID, with a strong-password maker."
+   ],
+   "places": [],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/secrets/index.html",
+   "source": "A secrets manager made of people and vaults"
+  },
+  {
+   "id": "design-sgit-app-secrets-questions-for-the-owner-by-voice",
+   "kind": "design",
+   "app": "SGit Vaults",
+   "title": "Questions for the owner, by voice",
+   "status": "built-untried",
+   "why": "Listed on the design page \"A secrets manager made of people and vaults\" as built, not yet proven.",
+   "summary": "the people building the app ask, and the owner answers by choosing, typing or speaking.",
+   "detail": [
+    "the people building the app ask, and the owner answers by choosing, typing or speaking."
+   ],
+   "places": [],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/secrets/index.html",
+   "source": "A secrets manager made of people and vaults"
   },
   {
    "id": "feature-the-app-skeleton",
@@ -2619,14 +3026,32 @@
    "title": "The model door, first slice",
    "status": "built-untried",
    "why": "The reality file, Built: unverified: written, not yet proven by a run.",
-   "summary": "ModelDoor in Engine/LabModelDoor.swift: the one place the Lab's requests to the model are made, with a policy (which tools this request is offered) and a record (prompt, tool calls, answer, timings, the session's transcript). Only the Lab uses it; the debrief pipeline does not. Not a security boundary: one process, a way to organise and to see",
+   "summary": "ModelDoor in Engine/LabModelDoor.swift: the one place the Lab's requests to the model are made, with a policy (which tools this request is offered) and a record (prompt, tool calls, answer, timings, the session's transcript). Only the Lab uses it (L01 and L02, each with its own set of tools); the debrief pipeline does not. Not a security boundary: one process, a way to organise and to see",
    "detail": [
-    "ModelDoor in Engine/LabModelDoor.swift: the one place the Lab's requests to the model are made, with a policy (which tools this request is offered) and a record (prompt, tool calls, answer, timings, the session's transcript). Only the Lab uses it; the debrief pipeline does not. Not a security boundary: one process, a way to organise and to see",
+    "ModelDoor in Engine/LabModelDoor.swift: the one place the Lab's requests to the model are made, with a policy (which tools this request is offered) and a record (prompt, tool calls, answer, timings, the session's transcript). Only the Lab uses it (L01 and L02, each with its own set of tools); the debrief pipeline does not. Not a security boundary: one process, a way to organise and to see",
     "Unit tests: the policy offers only what it names, the recorder keeps calls in order, errors are sorted into plain words. The request itself is untested, as above"
    ],
    "places": [
     "Settings: Experiments, the Lab"
    ],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
+   "id": "feature-the-lab-experiment-l02-the-control-centre",
+   "kind": "feature",
+   "app": "VoiceDebrief",
+   "title": "The Lab, experiment L02: the control centre",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "UI/LabControlView.swift, Engine/LabControlCentre.swift, Model/LabControl.swift, reached from Settings, Lab: a sentence comes in (heard through the live words, typed, or one of fourteen test sentences) and two engines each say which of seven actions it asks for, or none: a list of fixed phrases that can be seen and changed and is kept on the device, and Apple's on-device model, asked one sentence...",
+   "detail": [
+    "UI/LabControlView.swift, Engine/LabControlCentre.swift, Model/LabControl.swift, reached from Settings, Lab: a sentence comes in (heard through the live words, typed, or one of fourteen test sentences) and two engines each say which of seven actions it asks for, or none: a list of fixed phrases that can be seen and changed and is kept on the device, and Apple's on-device model, asked one sentence at a time through the model door with one tool for each action. Each proposal is a card with its state (asking, waiting for you, done, not this) and Do it, Not this and Edit; an action can be marked to go ahead without asking. A tally of how often each engine proposed the right action and how long the model took, and the log exported as JSON, word for word. No action is carried out: nothing is recorded, sent, saved or opened, and the screen says so",
+    "Unit tests: the phrases (arguments, refusals, the longest phrase), the states and what each button does, the judging and the tally, the phrase list and the automatic marks kept across a reopen, the test sentences through the phrases alone (10 of 14 right), the log's JSON. No sentence has been put to a model, and listening has not been tried on a device: L01, which would show whether the model calls tools at all, has not been reported back either"
+   ],
+   "places": [],
    "issues": [],
    "url": "https://ios.app.voicedebrief.ai/built/index.html",
    "source": "The reality file",
@@ -2662,7 +3087,7 @@
    "summary": "tools/people/people.py: cards, sealed and signed messages, the inbox and the first contact in the same formats as SGitPeople, so that an agent can be a contact; keys and tokens in a folder outside the repository",
    "detail": [
     "tools/people/people.py: cards, sealed and signed messages, the inbox and the first contact in the same formats as SGitPeople, so that an agent can be a contact; keys and tokens in a folder outside the repository",
-    "Run on 14 November 2026 against dev.send.sgraph.ai from a cloud session: an inviter with an inbox, a newcomer with none; the access key sealed to the newcomer's card; the newcomer accepted, made an inbox on a new vault and sent the full card, which the inviter's check opened as from a contact and took the inbox from; then a text each way, each opened as from a contact. Both vaults destroyed afterwards. The access key it carried was a placeholder: the session's proxy adds the real one to every request"
+    "Reads and writes pki.sgit.ai's messages: checked both ways against its message.js (lib v0.2.28), inner signature and envelope. Run on 14 November 2026 against dev.send.sgraph.ai from a cloud session, in pki.sgit.ai's message form: an inviter with an inbox, a newcomer with none; the access key sealed to the newcomer's card; the newcomer accepted, made an inbox on a new vault and sent the full card, which the inviter's check opened as from a contact and took the inbox from; then a text and a reply to a note, each opened as from a contact. Both vaults destroyed afterwards. pki-agent.mjs itself was not run (not permitted in that session); it is built from the same message.js. The access key it carried was a placeholder: the session's proxy adds the real one to every request"
    ],
    "places": [],
    "issues": [],
@@ -2783,14 +3208,12 @@
    "title": "The people layer, SGitPeople",
    "status": "built-untried",
    "why": "The reality file, Built: unverified: written, not yet proven by a run.",
-   "summary": "Packages/SGitPeople/: a package for both apps (Apple SDK and the local SGitVault). ContactCard: a signed card (a pki.sgit.ai statement: name, the sgit key bundle, the inbox) as sgc1. text, a link and a QR code; ContactBook: contacts and how each was met; PeopleMessage: sealed to the recipient and signed by the sender in sgit's envelope, kinds text, voice-note reference, secret, vault invitation...",
+   "summary": "Packages/SGitPeople/: a package for both apps (Apple SDK and the local SGitVault). ContactCard: a signed card (a pki.sgit.ai statement: name, the sgit key bundle, the inbox) as sgc1. text, a link and a QR code; ContactBook: contacts and how each was met; PeopleMessage: pki.sgit.ai's own message form (pki.sgit.ai/message/v1, signed inside, then sealed in sgit's envelope and signed again), with this...",
    "detail": [
-    "Packages/SGitPeople/: a package for both apps (Apple SDK and the local SGitVault). ContactCard: a signed card (a pki.sgit.ai statement: name, the sgit key bundle, the inbox) as sgc1. text, a link and a QR code; ContactBook: contacts and how each was met; PeopleMessage: sealed to the recipient and signed by the sender in sgit's envelope, kinds text, voice-note reference, secret, vault invitation and card; LaneClient, InboxCheck, MessageStore, InboxSchedule, InboxMaker: the inbox on an append lane; SecretsStore: secrets in the Keychain (iCloud Keychain by default), each remembering who gave it and who holds which version; FirstContact: the access key sealed to a newcomer's card (issue 200). On no screen yet",
-    "Unit tests (swift test in ios.yml), the lane's answers replayed as recorded from dev.send.sgraph.ai on 14 November 2026; the first contact end to end with a folder for the vault server; a card made by people.py is read. Not yet against the live server from Swift; never run on a device"
+    "Packages/SGitPeople/: a package for both apps (Apple SDK and the local SGitVault). ContactCard: a signed card (a pki.sgit.ai statement: name, the sgit key bundle, the inbox) as sgc1. text, a link and a QR code; ContactBook: contacts and how each was met; PeopleMessage: pki.sgit.ai's own message form (pki.sgit.ai/message/v1, signed inside, then sealed in sgit's envelope and signed again), with this package's kinds added (text, voice-note reference, secret, vault invitation, card) and a reply naming what it answers; pki.sgit.ai's m1. code to hand one over without an inbox, and its k1. key code accepted for a newcomer; LaneClient, InboxCheck, MessageStore, InboxSchedule, InboxMaker: the inbox on an append lane; SecretsStore: secrets in the Keychain (iCloud Keychain by default), each remembering who gave it and who holds which version; FirstContact: the access key sealed to a newcomer's card...",
+    "Unit tests (swift test in ios.yml), the lane's answers replayed as recorded from dev.send.sgraph.ai on 14 November 2026; the first contact end to end with a folder for the vault server; a card made by people.py is read. people-interop.yml: pki.sgit.ai's message.js and people.py make keys, messages and a card that Swift opens, and open what Swift seals (not yet run). Not yet against the live server from Swift; never run on a device"
    ],
-   "places": [
-    "Settings: Recipients"
-   ],
+   "places": [],
    "issues": [
     "200"
    ],
@@ -3117,6 +3540,28 @@
     "It is the test"
    ],
    "places": [
+    "The repository: CI"
+   ],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
+   "id": "feature-the-visual-identity",
+   "kind": "feature",
+   "app": "VoiceDebrief",
+   "title": "The visual identity",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "UI/Design/ in each app (Tokens.swift: colour, spacing, corners, type; Sections.swift: one title, symbol, colour, picture and line per section; Icons.swift: one symbol per action and state; Components.swift: section icon, card, section header, tile, banner, state pill); the drawings and app icons drawn as code in tools/art/ and rendered into Art/ in each asset catalogue; the tab bar and sidebar...",
+   "detail": [
+    "UI/Design/ in each app (Tokens.swift: colour, spacing, corners, type; Sections.swift: one title, symbol, colour, picture and line per section; Icons.swift: one symbol per action and state; Components.swift: section icon, card, section header, tile, banner, state pill); the drawings and app icons drawn as code in tools/art/ and rendered into Art/ in each asset catalogue; the tab bar and sidebar read their titles and symbols from RootTab; the record screen's Explore tiles each have a picture, and a banner shows before the first note; SGit Vaults is indigo, with a banner when there are no vaults and illustrated rows for Gallery and Settings. The identity",
+    "CI compiles it. Not yet seen on a device or in the screens workflow's pictures"
+   ],
+   "places": [
+    "Record tab",
+    "Settings: Identity",
     "The repository: CI"
    ],
    "issues": [],
@@ -3708,6 +4153,91 @@
    ],
    "places": [
     "SGit Vaults: Share",
+    "SGit Vaults: Settings"
+   ],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
+   "id": "sgit-feature-ask-this-vault-an-experiment",
+   "kind": "feature",
+   "app": "SGit Vaults",
+   "title": "Ask this vault, an experiment",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "Engine/VaultAsk.swift, UI/AskVaultView.swift, on a vault's three dots: one question to Apple's on-device model (Foundation Models), in a fresh session, which may call four tools that read a copy of the vault's listing and history (a summary, one folder, recent changes, files by name). Every call and what it returned is shown under the answer. The model is given names, sizes and commit messages...",
+   "detail": [
+    "Engine/VaultAsk.swift, UI/AskVaultView.swift, on a vault's three dots: one question to Apple's on-device model (Foundation Models), in a fresh session, which may call four tools that read a copy of the vault's listing and history (a summary, one folder, recent changes, files by name). Every call and what it returned is shown under the answer. The model is given names, sizes and commit messages, never a file's contents; it cannot change anything; nothing leaves the device",
+    "The tools have unit tests. The model has never been asked anything by this app: CI's simulators have no Apple Intelligence, and nobody has run it on a device. Whether its answers are any good is the experiment"
+   ],
+   "places": [
+    "SGit Vaults: a vault",
+    "SGit Vaults: History"
+   ],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
+   "id": "sgit-feature-secrets",
+   "kind": "feature",
+   "app": "SGit Vaults",
+   "title": "Secrets",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "Sources/Secrets/: a Secrets row on the home list; every vault with a secrets/ folder, grouped, searchable; kinds login, device passcode, Wi-Fi, card, note, token, vault key, read key, access key, recovery codes; add, change and delete, each one signed commit of one encrypted JSON file (sgit.ai/secret/v1), read into memory, never into the file cache; hidden values behind Face ID or the passcode...",
+   "detail": [
+    "Sources/Secrets/: a Secrets row on the home list; every vault with a secrets/ folder, grouped, searchable; kinds login, device passcode, Wi-Fi, card, note, token, vault key, read key, access key, recovery codes; add, change and delete, each one signed commit of one encrypted JSON file (sgit.ai/secret/v1), read into memory, never into the file cache; hidden values behind Face ID or the passcode, copied for two minutes; \"Make a strong password\"; \"My secrets\" made on this device with the first secret; the app covered when not in front (the home stack; a sheet open at the time is not yet covered)",
+    "Unit tests for the format, the paths, the kinds and the password maker; written before its CI run, so not yet compiled when this row was written. Nobody has used it on a device. Sync between devices (issue 122), sharing with people (124) and AutoFill (125) are not built"
+   ],
+   "places": [
+    "SGit Vaults: a vault"
+   ],
+   "issues": [
+    "122",
+    "124",
+    "125"
+   ],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
+   "id": "sgit-feature-questions-for-you",
+   "kind": "feature",
+   "app": "SGit Vaults",
+   "title": "Questions for you",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "UI/QuestionsView.swift, Resources/sg-questions.json: questions from the people building the app, on the home list and in Settings; answer by choosing, typing, or the keyboard's dictation; sent sealed over the developer's lane as sgit/answer/v1",
+   "detail": [
+    "UI/QuestionsView.swift, Resources/sg-questions.json: questions from the people building the app, on the home list and in Settings; answer by choosing, typing, or the keyboard's dictation; sent sealed over the developer's lane as sgit/answer/v1",
+    "Unit tests for the bundled questions and the lane message; not yet compiled when written; nothing has been sent from a device"
+   ],
+   "places": [
+    "SGit Vaults: Settings"
+   ],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
+   "id": "sgit-feature-the-same-vaults-on-every-device",
+   "kind": "feature",
+   "app": "SGit Vaults",
+   "title": "The same vaults on every device",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "Engine/SecretStore.swift (two homes, after VoiceDebrief's), Engine/VaultShelf.swift: each vault that is on a server is also kept as its own iCloud Keychain item, and the access key too, so an iPhone, iPad and Mac on one Apple account open the same vaults with nothing to set up; a vault only on one device is not carried until it is on the server; new vaults from other devices are picked up when the...",
+   "detail": [
+    "Engine/SecretStore.swift (two homes, after VoiceDebrief's), Engine/VaultShelf.swift: each vault that is on a server is also kept as its own iCloud Keychain item, and the access key too, so an iPhone, iPad and Mac on one Apple account open the same vaults with nothing to set up; a vault only on one device is not carried until it is on the server; new vaults from other devices are picked up when the app comes to the front, and vaults already open are read again then; forgetting a vault takes it out of iCloud Keychain; a switch in Settings. \"My secrets\" is marked by a file so another device finds it, and goes to the server at once when there is an access key",
+    "Unit tests with two simulated devices sharing one iCloud Keychain. Never run across real devices. iCloud Keychain carries items on Apple's schedule, usually within a minute"
+   ],
+   "places": [
     "SGit Vaults: Settings"
    ],
    "issues": [],

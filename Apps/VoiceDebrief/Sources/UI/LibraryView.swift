@@ -27,8 +27,8 @@ struct LibraryView: View {
             .readableWidth()
             .overlay {
                 if session.store.notes.isEmpty {
-                    ContentUnavailableView("No notes yet", systemImage: "tray",
-                                           description: Text("A note is kept here the moment its recording stops."))
+                    DSEmptyState(tab: .library, title: "No notes yet",
+                                 message: "A note is kept here the moment its recording stops, with its transcript and debrief.")
                 }
             }
             .navigationTitle("Library")

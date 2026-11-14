@@ -40,7 +40,7 @@ Three jobs, in this order:
 
 **Settings.** Language, saving, lanes, and an Advanced area for diagnostics and the vault engine's log.
 
-**Look.** VoiceDebrief's green as the accent, red only for recording and failures, amber for anything degraded. System type. Cards with a hairline, no shadows. Content is held to a readable width so that a wide Mac window is not a stretched phone.
+**Look.** VoiceDebrief's green as the accent, red only for recording and failures, amber for anything degraded. System type. Cards with a hairline, no shadows. Content is held to a readable width so that a wide Mac window is not a stretched phone. The colours, type, icons and pictures are set out in [the visual identity](identity/index.md).
 
 ## Three builds
 

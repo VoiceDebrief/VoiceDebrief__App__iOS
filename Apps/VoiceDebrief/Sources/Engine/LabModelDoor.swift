@@ -30,6 +30,27 @@ final class ModelDoorRecorder: @unchecked Sendable {
     }
 }
 
+/// A set of tools the door can offer: what each is called and says of itself, and, where the
+/// framework exists, the tools themselves.
+protocol ModelDoorToolkit: Sendable {
+    var definitions: [ModelDoorToolDefinition] { get }
+    #if canImport(FoundationModels)
+    func tools(named names: [String], recorder: ModelDoorRecorder) -> [any Tool]
+    #endif
+}
+
+extension LabToolbox: ModelDoorToolkit {
+    var definitions: [ModelDoorToolDefinition] {
+        LabToolId.allCases.map { ModelDoorToolDefinition(name: $0.rawValue, description: $0.summary) }
+    }
+
+    #if canImport(FoundationModels)
+    func tools(named names: [String], recorder: ModelDoorRecorder) -> [any Tool] {
+        LabTools.make(LabToolId.allCases.filter { names.contains($0.rawValue) }, toolbox: self, recorder: recorder)
+    }
+    #endif
+}
+
 /// The model door: the one place a request to Apple's on-device model is made from the Lab. It has
 /// a policy (which tools this request is offered) and a record (everything that passed through).
 /// One fresh session per request and no history, so a request is one question.
@@ -38,14 +59,18 @@ final class ModelDoorRecorder: @unchecked Sendable {
 /// Nothing here is a security boundary. It is a way to organise and to see.
 enum ModelDoor {
     static func ask(_ request: ModelDoorRequest, toolbox: LabToolbox) async -> ModelDoorRecord {
-        let offered = request.policy.offered(from: LabToolId.allCases)
+        await ask(request, toolkit: toolbox)
+    }
+
+    static func ask(_ request: ModelDoorRequest, toolkit: some ModelDoorToolkit) async -> ModelDoorRecord {
+        let offered = toolkit.definitions.filter { request.policy.allows($0.name) }
         var record = ModelDoorRecord(
             startedAt: Date(),
             instructions: request.instructions,
             prompt: request.prompt,
             policy: request.policy,
-            toolsOffered: offered.map { ModelDoorToolDefinition(name: $0.rawValue, description: $0.summary) },
-            toolsWithheld: request.policy.withheld(from: LabToolId.allCases).map(\.rawValue))
+            toolsOffered: offered,
+            toolsWithheld: toolkit.definitions.filter { !request.policy.allows($0.name) }.map(\.name))
         let recorder = ModelDoorRecorder()
         let clock = ContinuousClock()
         let start = clock.now
@@ -54,7 +79,7 @@ enum ModelDoor {
         if case .unavailable(let why) = OnDeviceModel.status {
             record.error = ModelDoorError(kind: "unavailable", words: why, raw: "")
         } else {
-            let tools = LabTools.make(offered, toolbox: toolbox, recorder: recorder)
+            let tools = toolkit.tools(named: offered.map(\.name), recorder: recorder)
             let session = request.instructions.isEmpty
                 ? LanguageModelSession(tools: tools)
                 : LanguageModelSession(tools: tools, instructions: request.instructions)

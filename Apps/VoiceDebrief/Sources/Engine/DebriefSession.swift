@@ -86,11 +86,18 @@ final class DebriefSession {
     /// so a phrase in passing does not stop the recording.
     private var pendingFinish: Task<Void, Never>?
     private func heard(_ text: String) {
-        pendingFinish?.cancel()
-        guard VoiceCommand.detect(text) == .finish else { return }
+        // Only new words that undo the command ("... send it now, no wait") cancel it. A repeat of the same
+        // words, or the recogniser settling them, keeps the timer already running rather than restarting it.
+        guard VoiceCommand.detect(text) == .finish else {
+            pendingFinish?.cancel(); pendingFinish = nil
+            return
+        }
+        guard pendingFinish == nil else { return }
         pendingFinish = Task { @MainActor [weak self] in
             try? await Task.sleep(for: .seconds(1.5))
-            guard !Task.isCancelled, let self, self.recordingNote != nil else { return }
+            guard !Task.isCancelled, let self else { return }
+            self.pendingFinish = nil
+            guard self.recordingNote != nil else { return }
             self.finishRequests += 1
         }
     }
