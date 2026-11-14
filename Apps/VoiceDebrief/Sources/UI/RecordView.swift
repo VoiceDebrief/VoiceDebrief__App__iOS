@@ -211,6 +211,7 @@ struct RecordView: View {
                 tile("Lab", "Try Apple's model, tools on and off", "flask", .lab)
                 tile("Your words", "Names the clean text should know", "character.book.closed", .words)
                 tile("Your activity", "What you have used; send it", "chart.bar", .activity)
+                tile("Agents", "Who is working for you; talk to them", "person.3", .agents)
                 tile("Guide", "What is new, every idea, how things work", "book", .guide)
                 tile("What this build does", "Built, in test, not built", "checklist", .about)
             }

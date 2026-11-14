@@ -147,8 +147,10 @@ def drain(inbox, out):
             open(os.path.join(folder, name), 'wb').write(data)
             print(f"note {note_id}: {name}, {len(data)} bytes, {'intact' if whole else 'INCOMPLETE OR CORRUPT'}, from {header.get('app')}")
         for name, body in note['files'].items():
-            open(os.path.join(folder, name), 'wb').write(body)
-            print(f'note {note_id}: {name}, {len(body)} bytes')
+            path = os.path.join(folder, name)
+            fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)   # a vault key may be among them
+            os.write(fd, body); os.close(fd)
+            print(f'note {note_id}: {name}, {len(body)} bytes' + (' (a secret: not shown)' if 'key' in name else ''))
     by_lane = {}
     for entry in done: by_lane.setdefault(entry['inbox'], []).append(entry['file_id'])
     for lane, ids in by_lane.items():

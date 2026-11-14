@@ -5,7 +5,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | Status | Meaning | How many |
 |---|---|---|
 | Seen working | Built, and a run proved it: CI, a device or a server. | 27 |
-| Built, untried | In the app or the repository, but not yet proven by a run on a device. | 61 |
+| Built, untried | In the app or the repository, but not yet proven by a run on a device. | 62 |
 | In progress | Begun: part of it is built or a release has touched it. | 33 |
 | Proposed | Asked for or described; nothing of it is built. | 36 |
 | Parked | Waiting: on the owner, on Apple, or scheduled for later. | 6 |
@@ -77,6 +77,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | Where the work happens | Feature | VoiceDebrief | Record tab; Settings: Identity; Settings: Recipients |   | [reality file](../built/index.md) |
 | Finish by voice or by a button off the screen | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
 | Talk to Claude | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
+| Agents | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
 | Every section in plain sight | Feature | VoiceDebrief | Record tab |   | [reality file](../built/index.md) |
 | Your activity | Feature | VoiceDebrief | The repository: tools/conductor |   | [reality file](../built/index.md) |
 | A note's journey after Finish | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
