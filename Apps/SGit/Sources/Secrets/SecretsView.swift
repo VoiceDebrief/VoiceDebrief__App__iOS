@@ -42,6 +42,15 @@ struct SecretsView: View {
                     if shown.isEmpty {
                         Text(search.isEmpty ? "Nothing in it yet." : "Nothing matches.").foregroundStyle(.secondary)
                     }
+                    if shelf.current(vault).onDevice, shelf.hasToken, vault.canWrite {
+                        Button("Put these on the server, for your other devices", systemImage: "icloud.and.arrow.up") {
+                            Task {
+                                UsageLog.shared.action("secrets.send-to-server")
+                                if !(await shelf.sendToServer(vault)) { problem = shelf.problem }
+                                await reload()
+                            }
+                        }
+                    }
                     ForEach(shown) { entry in
                         NavigationLink {
                             SecretView(shelf: shelf, vault: vault, entry: entry) { await reload() }

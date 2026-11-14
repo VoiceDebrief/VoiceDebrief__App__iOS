@@ -29,7 +29,7 @@
  ],
  "counts": {
   "seen-working": 27,
-  "built-untried": 67,
+  "built-untried": 68,
   "in-progress": 36,
   "proposed": 42,
   "parked": 6
@@ -1534,12 +1534,13 @@
    "summary": "The owner: \"the synchronisation between devices ... has to be completely transparent and straightforward\".",
    "detail": [
     "The owner: \"the synchronisation between devices ... has to be completely transparent and straightforward\".",
-    "To do: the list of vaults and their keys, and the access key, in iCloud Keychain (synchronisable items, as VoiceDebrief did in issue 017), with a switch to keep them on this device only; pull when the app opens and comes to the front, push after each change, and say so on the vault's standing line. Each secret is its own file, so two devices changing different secrets do not conflict; the same secret changed on two devices keeps both and asks. Needs an access key to reach the server; without one a vault stays on the device it was made on, and the app says so. Mac, iPad and iPhone are the same app."
+    "To do: the list of vaults and their keys, and the access key, in iCloud Keychain (synchronisable items, as VoiceDebrief did in issue 017), with a switch to keep them on this device only; pull when the app opens and comes to the front, push after each change, and say so on the vault's standing line. Each secret is its own file, so two devices changing different secrets do not conflict; the same secret changed on two devices keeps both and asks. Needs an access key to reach the server; without one a vault stays on the device it was made on, and the app says so. Mac, iPad and iPhone are the same app.",
+    "Written (14 November 2026, not yet compiled): see the reality file's row. Left: push after each change is what every write already does (a commit is pushed); a pull on a timer while the app is open; the same secret changed on two devices at once is decided by the server's compare-and-swap (the second write is retried on the newer head, so the later change wins and the earlier stays in history), not yet shown to the person."
    ],
    "statusLine": "Status: open. Owner: the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB).",
    "owner": "the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB)",
    "places": [
-    "SGit Vaults"
+    "SGit Vaults: History"
    ],
    "versions": [],
    "features": [
@@ -3879,6 +3880,26 @@
    "detail": [
     "UI/QuestionsView.swift, Resources/sg-questions.json: questions from the people building the app, on the home list and in Settings; answer by choosing, typing, or the keyboard's dictation; sent sealed over the developer's lane as sgit/answer/v1",
     "Unit tests for the bundled questions and the lane message; not yet compiled when written; nothing has been sent from a device"
+   ],
+   "places": [
+    "SGit Vaults: Settings"
+   ],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
+   "id": "sgit-feature-the-same-vaults-on-every-device",
+   "kind": "feature",
+   "app": "SGit Vaults",
+   "title": "The same vaults on every device",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "Engine/SecretStore.swift (two homes, after VoiceDebrief's), Engine/VaultShelf.swift: each vault that is on a server is also kept as its own iCloud Keychain item, and the access key too, so an iPhone, iPad and Mac on one Apple account open the same vaults with nothing to set up; a vault only on one device is not carried until it is on the server; new vaults from other devices are picked up when the...",
+   "detail": [
+    "Engine/SecretStore.swift (two homes, after VoiceDebrief's), Engine/VaultShelf.swift: each vault that is on a server is also kept as its own iCloud Keychain item, and the access key too, so an iPhone, iPad and Mac on one Apple account open the same vaults with nothing to set up; a vault only on one device is not carried until it is on the server; new vaults from other devices are picked up when the app comes to the front, and vaults already open are read again then; forgetting a vault takes it out of iCloud Keychain; a switch in Settings. \"My secrets\" is marked by a file so another device finds it, and goes to the server at once when there is an access key",
+    "Unit tests with two simulated devices sharing one iCloud Keychain. Never run across real devices. iCloud Keychain carries items on Apple's schedule, usually within a minute"
    ],
    "places": [
     "SGit Vaults: Settings"

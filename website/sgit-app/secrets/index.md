@@ -1,6 +1,6 @@
 # A secrets manager made of people and vaults
 
-The design for the secrets manager in SGit Vaults, asked for by the owner on 14 November 2026. **This page is intention.** Built so far, compiled and tested but not yet used on a device: questions for the owner and the first secrets screens (steps 1 and 2 below), described in the reality file. What is built is in [the reality file](../built/index.md), and this page will say plainly as each part arrives.
+The design for the secrets manager in SGit Vaults, asked for by the owner on 14 November 2026. **This page is intention.** Built so far, compiled and tested but not yet used on a device: questions for the owner, the first secrets screens and the keys in iCloud Keychain (steps 1 to 3 below), described in the reality file. What is built is in [the reality file](../built/index.md), and this page will say plainly as each part arrives.
 
 The owner's words: "a full-blown secrets manager ... passwords, secrets, passkeys", "the synchronisation between devices ... has to be completely transparent", "the collaboration of secrets between people", "how do we go from one person to two people, three, five, the whole group, where each one trusts the other", "a visual representation of the trust", "every team can do this independently", "it is also going to be the foundation for things like the CRM vault".
 
@@ -180,5 +180,6 @@ Questions are also in the app (Settings, Questions) once step 1 is built.
 - **Leaving someone out, honestly** [[proposed]]: removing a member makes a new vault key and shows the checklist of secrets they saw, with a change action for each.
 - **A spotted secret** [[proposed]]: Apple's on-device model notices a key pasted into a note or a file and offers to move it into a secret.
 - **The trust map** [[proposed]]: a drawing of the people you have met, with their photos, solid where both confirmed and dashed where one side only.
+- **The same vaults on every device** [[unverified]]: vault keys in iCloud Keychain, one item each, so an iPhone, iPad and Mac open the same vaults with nothing to set up.
 - **Secrets as files in vaults** [[unverified]]: each entry one encrypted JSON file, behind Face ID, with a strong-password maker.
 - **Questions for the owner, by voice** [[unverified]]: the people building the app ask, and the owner answers by choosing, typing or speaking.

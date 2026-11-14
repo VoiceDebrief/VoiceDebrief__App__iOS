@@ -31,6 +31,9 @@ struct RootView: View {
                         .tracked("file")
                 }
         }
+        .onChange(of: phase) { _, now in
+            if now == .active { Task { await shelf.refreshFromOtherDevices() } }
+        }
         // In the app switcher, and whenever the app is not in front, nothing of a vault or a secret is shown.
         .overlay {
             if phase != .active {

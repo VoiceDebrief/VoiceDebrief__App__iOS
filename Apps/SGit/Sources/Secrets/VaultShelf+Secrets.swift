@@ -11,19 +11,33 @@ extension VaultShelf {
         return vaults.first { $0.id == id }
     }
 
+    /// The file that marks a vault as someone's own secrets, so that their other devices find it.
+    static let homeMarker = "secrets/.my-secrets"
+
     func makeSecretsHome() async -> SavedVault? {
         if let known = secretsHome { return known }
+        // Made on another device and carried here by iCloud Keychain.
+        if let found = vaults.first(where: { contents[$0.id]?.files.contains { $0.path == Self.homeMarker } ?? false }) {
+            UserDefaults.standard.set(found.id, forKey: Self.homeKey)
+            return found
+        }
         guard let made = await create(name: "My secrets") else { return nil }
         UserDefaults.standard.set(made.id, forKey: Self.homeKey)
+        try? await put(Data("The secrets of the person who made this vault, one file each, written by the sgit app.\n".utf8),
+                       at: Self.homeMarker, in: made, message: "My secrets")
         UsageLog.shared.action("secrets.home-made")
-        return made
+        // With an access key it goes to the server at once, so the person's other devices have it.
+        if hasToken, await sendToServer(made) { return current(made) }
+        return current(made)
     }
 
     /// The vaults that hold secrets, or could: the home first, then any vault with a `secrets/` file.
     var secretVaults: [SavedVault] {
         let home = secretsHome
         let others = vaults.filter { vault in
-            vault.id != home?.id && (contents[vault.id]?.files.contains { SecretEntry.isSecretPath($0.path) } ?? false)
+            vault.id != home?.id && (contents[vault.id]?.files.contains {
+                SecretEntry.isSecretPath($0.path) || $0.path == Self.homeMarker
+            } ?? false)
         }
         return (home.map { [$0] } ?? []) + others
     }

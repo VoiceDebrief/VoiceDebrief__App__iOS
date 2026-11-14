@@ -32,6 +32,16 @@ struct SettingsView: View {
             }
 
             Section {
+                Toggle("Keep vault keys in iCloud Keychain", isOn: Binding(get: { shelf.syncKeys }, set: { shelf.setSyncKeys($0) }))
+            } header: {
+                Text("Your other devices")
+            } footer: {
+                Text(shelf.syncKeys
+                     ? "On: every iPhone, iPad and Mac signed in to your Apple account opens the same vaults, with nothing to set up. A vault that is only on this device reaches them once it is on the server. Apple cannot read what iCloud Keychain carries; your Apple account becomes a way back into your vaults."
+                     : "Off: vault keys stay on this device. Your other devices keep what they already have; turning this off here removes nothing there.")
+            }
+
+            Section {
                 LabeledContent("Fingerprint", value: shelf.deviceFingerprint.map(VaultNaming.grouped) ?? "not made yet")
             } header: {
                 Text("This device's signing key")
