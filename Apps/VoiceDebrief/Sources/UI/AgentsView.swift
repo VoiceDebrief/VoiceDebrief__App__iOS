@@ -105,6 +105,10 @@ struct AgentsView: View {
         VStack(spacing: 0) {
             List {
                 Section {
+                    SendRoute(from: MyLook.shared.subject(id: "me"), to: [AvatarSubject(agent: agent)], size: 52)
+                        .padding(.vertical, DS.Space.xs)
+                }
+                Section {
                     LabeledContent("Role", value: agent.role)
                     LabeledContent("Status", value: agent.status)
                     Text(agent.doing)

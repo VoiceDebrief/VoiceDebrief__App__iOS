@@ -29,6 +29,7 @@ struct SendProgressCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
+            SendRoute(from: MyLook.shared.subject(id: "me"), to: [AvatarSubject.recipient(named: to)], size: 36)
             HStack {
                 Text(sentAt != nil ? "Sent to \(to)" : "Sending to \(to)").font(.headline)
                 Spacer()
