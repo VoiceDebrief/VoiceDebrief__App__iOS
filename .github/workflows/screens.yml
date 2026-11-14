@@ -50,7 +50,7 @@ jobs:
       matrix:
         device: [iPhone, iPad]
     runs-on: macos-26
-    timeout-minutes: 45
+    timeout-minutes: 60
     # A started job is never cancelled; a newer push replaces one that is still waiting.
     concurrency:
       group: screens-${{ matrix.device }}-${{ github.ref }}
@@ -85,7 +85,7 @@ jobs:
               CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
 
       - name: Take the screenshots, light then dark
-        timeout-minutes: 25
+        timeout-minutes: 35
         run: |
           u="${{ steps.sim.outputs.udid }}"
           device=$(echo "${{ matrix.device }}" | tr '[:upper:]' '[:lower:]')
