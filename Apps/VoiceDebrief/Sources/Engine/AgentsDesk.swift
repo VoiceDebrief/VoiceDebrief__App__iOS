@@ -78,7 +78,7 @@ final class AgentsDesk {
         let mine = sent.filter { $0.agent == agent }.map { AgentsReport.Message(id: $0.id, agent: agent, from: "you", at: $0.at, text: $0.text, replyTo: nil) }
         let theirs = (report?.messages ?? []).filter { $0.agent == agent }
         var seen = Set<String>()
-        return (theirs + mine).filter { seen.insert($0.id).inserted }.sorted { $0.at < $1.at }
+        return (theirs + mine).filter { seen.insert($0.id).inserted }.sorted { $0.at > $1.at }   // newest first
     }
 
     private func post(kind: String, name: String, body: Data, lane: DeveloperLane) async throws {

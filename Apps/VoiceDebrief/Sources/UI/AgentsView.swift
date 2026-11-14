@@ -10,6 +10,8 @@ struct AgentsView: View {
     @State private var selected: String?
     @State private var draft = ""
     @State private var sharing = false
+    /// The shared vault opened in the web Vault: the chat and mock-ups that change without a build.
+    @State private var workbench: SavedVault?
     @State private var said: String?
     /// The vault last given to Claude, so the button says so and is not pressed again by mistake.
     @AppStorage("vd.agentsGiven") private var given: String?
@@ -21,6 +23,9 @@ struct AgentsView: View {
             List(selection: $selected) {
                 Section {
                     overview
+                    if let v = book.vaults.first(where: { $0.id == desk.vaultId }), desk.report != nil {
+                        Button { workbench = v } label: { Label("Open the workbench", systemImage: "rectangle.and.pencil.and.ellipsis") }
+                    }
                     if selected != nil, desk.picture != nil {
                         Button { selected = nil } label: { Label("Show the overview", systemImage: "square.grid.2x2") }
                     }
@@ -57,6 +62,7 @@ struct AgentsView: View {
             }
         }
         .task { await desk.refresh(book: book) }
+        .sheet(item: $workbench) { v in WebVaultScreen(book: book, vault: v) }
         .task {
             // While you are here, look for news every two minutes.
             while !Task.isCancelled {
@@ -152,13 +158,22 @@ struct AgentsView: View {
                         Text("\(link.from == agent.id ? "→" : "←") \(link.from == agent.id ? link.to : link.from): \(link.label)").font(.footnote).foregroundStyle(.secondary)
                     }
                 }
-                Section("Conversation") {
+                Section("Conversation, newest first") {
                     let messages = desk.conversation(with: agent.id)
                     if messages.isEmpty { Text("No messages yet.").foregroundStyle(.secondary) }
                     ForEach(messages) { m in
                         HStack {
                             if m.from == "you" { Spacer(minLength: 40) }
-                            VStack(alignment: .leading, spacing: 2) {
+                            VStack(alignment: .leading, spacing: 4) {
+                                if let quote = m.quote, !quote.isEmpty {
+                                    // What you said, then the answer (the owner: "also show my message").
+                                    Text("You: \u{201C}\(quote)\u{201D}")
+                                        .font(.footnote)
+                                        .foregroundStyle(.secondary)
+                                        .padding(8)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .background(Color.accentColor.opacity(0.10), in: RoundedRectangle(cornerRadius: 8))
+                                }
                                 Text(m.text)
                                 Text(m.at.formatted(date: .omitted, time: .shortened)).font(.caption2).foregroundStyle(.secondary)
                             }
