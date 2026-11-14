@@ -8,6 +8,7 @@ is SGit Vaults (files iphone-light-<screen>.png). Without the second folder thos
 website/guides/guides.json and writes, for each step of each guide, one small JPEG at display size:
     website/guides/img/<guide>-<step>.jpg
     Apps/VoiceDebrief/Resources/vd-guide-<guide>-<step>.jpg   (the app's copy; resource names are unique)
+    Apps/SGit/Resources/sg-guide-<guide>-<step>.jpg            (SGit Vaults' copy, for its own guides)
 Run by hand when the pictures change, like release-pictures.py: the screens are not in the repository.
 Needs Pillow. Content is in guides.json; this script is only the drawing.
 """
@@ -69,7 +70,10 @@ def main():
             src = shots / f"iphone-light-{step['screen']}.png"
             if not src.exists(): sys.exit(f'missing {src}')
             im = draw(src, step['callouts'])
-            for p in (out_site / f"{g['id']}-{i}.jpg", out_app / f"vd-guide-{g['id']}-{i}.jpg"):
+            outs = [out_site / f"{g['id']}-{i}.jpg", out_app / f"vd-guide-{g['id']}-{i}.jpg"]
+            if g['app'] == 'SGit Vaults':
+                outs.append(REPO / 'Apps/SGit/Resources' / f"sg-guide-{g['id']}-{i}.jpg")
+            for p in outs:
                 im.save(p, 'JPEG', quality=72, optimize=True, progressive=True)
             print(f"{g['id']}-{i}.jpg  {p.stat().st_size // 1024} KB")
 
