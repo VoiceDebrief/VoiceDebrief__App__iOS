@@ -32,7 +32,7 @@ struct RecordView: View {
     /// The chosen recipient as a face for the route strip; Claude (developer) is drawn as the conductor.
     private var routeTo: [AvatarSubject] {
         guard let to = addresseeRecipient else { return [] }
-        return [AvatarSubject(id: to.link, name: to.name, kind: to.name == RecipientStore.builtInName ? .conductor : .person)]
+        return [AvatarSubject(recipient: to)]
     }
 
     private var addresseeRecipient: Recipient? {

@@ -17,6 +17,21 @@ extension AvatarSubject {
     init(agent: AgentsReport.Agent) {
         self.init(id: agent.id, name: agent.name, kind: AvatarKind(agentKind: agent.kind))
     }
+
+    /// A contact: drawn from its lane link, so it is the same face wherever it is shown. The built-in
+    /// recipient is the developer's conductor agent and is framed as one.
+    @MainActor
+    init(recipient: Recipient) {
+        self.init(id: recipient.link, name: recipient.name,
+                  kind: recipient.name == RecipientStore.builtInName ? .conductor : .person)
+    }
+
+    /// A contact known only by name (as a send is recorded): the stored contact if there is one.
+    @MainActor
+    static func recipient(named name: String) -> AvatarSubject {
+        if let known = RecipientStore.shared.all.first(where: { $0.name == name }) { return AvatarSubject(recipient: known) }
+        return AvatarSubject(id: name, name: name, kind: name == RecipientStore.builtInName ? .conductor : .person)
+    }
 }
 
 /// A person's or an agent's face: their photo if one is set, else a character generated from their
