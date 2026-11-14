@@ -9,7 +9,7 @@ name: sgit app screens
 on:
   workflow_dispatch:
   push:
-    branches: [dev, 'work/sgit-app*']
+    branches: [dev, work/sgit-app]
     paths:
       - 'Apps/SGit/Sources/UI/**'
       - 'Apps/SGit/Sources/App/**'

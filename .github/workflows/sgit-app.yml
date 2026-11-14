@@ -165,7 +165,7 @@ jobs:
       # would, and stop there. An entitlement or an extension that cannot be signed shows here, not on dev.
       # Two passes, so that a failure can be laid at the App Group's door or not: the first signs the
       # app with no entitlements at all, as the build on dev is signed today.
-      - name: Signing dry run, control: the app with no App Group
+      - name: Signing dry run, the control (the app with no App Group)
         if: startsWith(github.ref, 'refs/heads/work/sgit-app-share')
         timeout-minutes: 30
         continue-on-error: true
@@ -187,7 +187,7 @@ jobs:
           fi
           scripts/release/sgit-testflight.sh
 
-      - name: Signing dry run: the app with its App Group
+      - name: Signing dry run (the app with its App Group)
         if: startsWith(github.ref, 'refs/heads/work/sgit-app-share')
         timeout-minutes: 30
         env:
