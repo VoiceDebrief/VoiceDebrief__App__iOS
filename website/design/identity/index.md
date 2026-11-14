@@ -95,13 +95,19 @@ VoiceDebrief's mark is a voice becoming a note: five rounded bars, the sound, tu
 
 **How they are made.** Every picture is a function in `tools/art/art.mjs` that returns an SVG; `node tools/art/render.mjs` renders them in Chromium and writes 720 by 540 JPEGs (about 20 KB each) into the asset catalogues (`Art/VDArt-*`, `Art/SGArt-*`) and into `website/assets/art/` for this site. Changing a picture is changing its function and running the script.
 
-**Pictures from image models.** The owner offered image models through OpenRouter. `tools/imagegen/` holds a generator for them that records each image's model and prompt in `images.json`, so any picture made that way can be remade. Its first run was refused because the key had reached its spending limit, so every picture on this page and in the apps is drawn as code. When the key works, a generated picture may replace a drawn one if it keeps to the house style above.
+**Pictures from image models.** The owner offered image models through OpenRouter. `tools/imagegen/` holds a generator for them that records each image's model and prompt in `images.json`, so any picture made that way can be remade. Its first run was refused because the key had reached its spending limit, so the section pictures and the app icons are drawn as code. Once the limit was raised, the generator made the first-visit pictures of both apps (`VDArt-hero`, `SGArt-hero`) and two of the infographics below, for about $0.04 each; each image's model, prompt, date and cost are written beside it in `images.json` when it is made. A generated picture may replace a drawn one if it keeps to the house style above.
 
 ## Infographics
 
 Explanations on the site are drawn in the same style, on a light ground, with words. Each is checked against [what is built](../../built/index.md) before it is published.
 
 ![The life of a voice note: speak, transcript, debrief, library on the device; vault and contact encrypted, by choice](../../assets/art/info-journey.svg)
+
+Two more, made by an image model (Gemini through OpenRouter) from the prompts in `tools/imagegen/images.json`, and read word by word before they were used:
+
+![What a vault is: your files, encrypted on your device, the server keeps only ciphertext, opened with the key on another device](../../assets/art/info-what-a-vault-is.jpg)
+
+![Sending a note to a contact: you finish a note for a contact, it is encrypted to their key, only they can open it](../../assets/art/info-sending-a-note.jpg)
 
 ## Where it is applied
 

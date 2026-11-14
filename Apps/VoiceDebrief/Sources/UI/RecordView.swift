@@ -143,7 +143,8 @@ struct RecordView: View {
             if session.store.notes.isEmpty {
                 // The first visit: the front door says what happens, in a picture and one line.
                 SectionHero(tab: .record, title: "Your first voice note",
-                            line: "Tap the green button. Saved as you speak, then transcribed and debriefed on this device.")
+                            line: "Tap the green button. Saved as you speak, then transcribed and debriefed on this device.",
+                            height: 210, image: "VDArt-hero")
             } else {
                 VStack(spacing: 6) {
                     Text("Record a voice note")

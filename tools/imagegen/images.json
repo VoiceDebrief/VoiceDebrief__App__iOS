@@ -5,6 +5,65 @@
     "icon": "An iOS app icon, full-bleed square artwork filling the whole canvas edge to edge: no rounded corners, no border, no drop shadow around the square, no mockup, no device. Flat vector, bold and simple, readable at 60 pixels. No text or letters.",
     "infographic": "A clean, modern infographic for a technical product website, in a flat vector style. Off-white background (#F8FAFC), navy ink (#0B1B2B) for text and lines, signal green (#0E9E72) for the main path, mint (#9FD8C4) fills, indigo (#4F5BD5) for anything to do with vaults, amber (#DFA100) only for warnings. Rounded cards, simple pictograms, thin arrows, generous spacing, a clear left-to-right or top-to-bottom reading order. Text in a clean sans-serif, spelt exactly as given, British English, nothing else written."
   },
-  "images": [],
-  "note": "Each entry: id, style (a key of styles), accent, aspect, size [w,h], out (repository path, .jpg or .png), prompt, optional model. The first run (14 November 2026) was refused: the key had reached its limit. Every picture in use is drawn as code in tools/art."
+  "images": [
+    {
+      "id": "vd-hero-first-note",
+      "style": "tile",
+      "accent": "signal green #0E9E72",
+      "aspect": "3:2",
+      "size": [
+        960,
+        640
+      ],
+      "out": "Apps/VoiceDebrief/Resources/Assets.xcassets/Art/VDArt-hero.imageset/VDArt-hero.jpg",
+      "prompt": "A smartphone lying flat, seen from slightly above, its screen a large round green record button. From the phone rise soft sound waves that turn, as they climb, into three neat floating cards: one with lines of text (a transcript), one with a short bulleted summary, one with a check list. The cards glow faintly. Calm, confident, premium.",
+      "cost": 0.03716955,
+      "made": "2026-11-14",
+      "modelUsed": "google/gemini-nano-banana-2.1"
+    },
+    {
+      "id": "sg-hero-empty",
+      "style": "tile",
+      "accent": "indigo #4F5BD5",
+      "aspect": "3:2",
+      "size": [
+        960,
+        640
+      ],
+      "out": "Apps/SGit/Resources/Assets.xcassets/Art/SGArt-hero.imageset/SGArt-hero.jpg",
+      "prompt": "A sturdy, rounded, softly glowing indigo vault box seen from slightly above, its lid open. Photos, a short video frame and a few document cards float down into it from above. On the front of the vault, a small padlock. Calm, safe, premium.",
+      "cost": 0.036559215,
+      "made": "2026-11-14",
+      "modelUsed": "google/gemini-nano-banana-2.1"
+    },
+    {
+      "id": "info-what-a-vault-is",
+      "style": "infographic",
+      "aspect": "16:9",
+      "size": [
+        1600,
+        900
+      ],
+      "out": "website/assets/art/info-what-a-vault-is.jpg",
+      "prompt": "An infographic titled \"What a vault is\". Four steps from left to right, each a rounded card with a simple pictogram and a short caption underneath:\n1. A folder of files and photos. Caption: \"Your files\".\n2. A phone with a padlock. Caption: \"Encrypted on your device\".\n3. A server rack drawn in grey with a scrambled pattern. Caption: \"The server keeps only ciphertext\".\n4. A second device with a key opening the padlock. Caption: \"Opened with the key, on another device\".\nUnder the four steps, one line in smaller text: \"Every change is kept as a commit, so the vault has a history.\" No other text.",
+      "cost": 0.037494765,
+      "made": "2026-11-14",
+      "modelUsed": "google/gemini-nano-banana-2.1"
+    },
+    {
+      "id": "info-sending-a-note",
+      "style": "infographic",
+      "aspect": "16:9",
+      "size": [
+        1600,
+        900
+      ],
+      "out": "website/assets/art/info-sending-a-note.jpg",
+      "prompt": "An infographic titled \"Sending a note to a contact\". Three steps from left to right, each a rounded card with a simple pictogram and a short caption underneath:\n1. A phone showing a voice note with a sound wave. Caption: \"You finish a note for a contact\".\n2. A padlock with a small key labelled with a person icon. Caption: \"Encrypted to their key\".\n3. A second phone receiving an envelope. Caption: \"Only they can open it\".\nAbove the steps, a small green label: \"You choose who; nothing is sent without you\". No other text.",
+      "cost": 0.037548225,
+      "made": "2026-11-14",
+      "modelUsed": "google/gemini-nano-banana-2.1"
+    }
+  ],
+  "note": "Each entry: id, style (a key of styles), accent, aspect, size [w,h], out (repository path, .jpg or .png), prompt, optional model. cost (dollars, from OpenRouter), made and modelUsed are written back by generate.mjs. The section pictures and app icons are drawn as code in tools/art."
 }

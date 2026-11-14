@@ -149,9 +149,11 @@ struct SectionHero: View {
     var title: String?
     var line: String?
     var height: CGFloat = 150
+    /// A picture other than the section's own drawing, such as the record screen's first-visit picture.
+    var image: String?
 
     var body: some View {
-        Image(tab.art)
+        Image(image ?? tab.art)
             .resizable()
             .scaledToFill()
             .frame(height: height)

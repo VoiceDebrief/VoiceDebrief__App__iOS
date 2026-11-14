@@ -148,12 +148,15 @@ struct SGSectionHero: View {
     let section: SGSection
     var title: String?
     var line: String?
+    var height: CGFloat = 150
+    /// A picture other than the section's own drawing, such as the first-visit picture.
+    var image: String?
 
     var body: some View {
-        Image(section.art)
+        Image(image ?? section.art)
             .resizable()
             .scaledToFill()
-            .frame(height: 150)
+            .frame(height: height)
             .frame(maxWidth: .infinity)
             .clipped()
             .overlay(alignment: .bottomLeading) {

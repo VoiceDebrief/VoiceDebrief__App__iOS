@@ -16,7 +16,8 @@ struct VaultsView: View {
             if shelf.vaults.isEmpty {
                 Section {
                     SGSectionHero(section: .vaults, title: "No vaults yet",
-                                  line: "Encrypted here, before anything leaves this device")
+                                  line: "Encrypted here, before anything leaves this device",
+                                  height: 200, image: "SGArt-hero")
                         .listRowInsets(EdgeInsets())
                 }
                 Section {

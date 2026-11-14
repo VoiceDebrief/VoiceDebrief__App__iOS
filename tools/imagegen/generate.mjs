@@ -29,6 +29,7 @@ async function generate(image) {
     modalities: ['image', 'text'],
     messages: [{ role: 'user', content: promptFor(image) }],
     image_config: { aspect_ratio: image.aspect ?? '1:1' },
+    usage: { include: true },
   };
   const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
     method: 'POST',
@@ -39,6 +40,9 @@ async function generate(image) {
   const json = await res.json();
   const url = json.choices?.[0]?.message?.images?.[0]?.image_url?.url;
   if (!url) throw new Error(`${image.id}: no image in the response: ${JSON.stringify(json).slice(0, 300)}`);
+  image.cost = json.usage?.cost ?? null; // dollars, as OpenRouter reports it
+  image.made = new Date().toISOString().slice(0, 10);
+  image.modelUsed = json.model ?? body.model;
   return Buffer.from(url.split(',')[1], 'base64');
 }
 
@@ -57,3 +61,6 @@ function finish(image, raw) {
 const todo = manifest.images.filter(i => ids.length ? ids.includes(i.id) : (force || !existsSync(join(root, i.out))));
 const results = await Promise.allSettled(todo.map(async i => finish(i, await generate(i))));
 for (const r of results) if (r.status === 'rejected') console.error(String(r.reason));
+// Write back what each image cost and which model made it, beside its prompt.
+writeFileSync(join(here, 'images.json'), JSON.stringify(manifest, null, 2) + '\n');
+for (const i of todo) if (i.cost != null) console.log(`${i.id}: $${i.cost}`);
