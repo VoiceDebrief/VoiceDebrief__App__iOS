@@ -147,4 +147,16 @@ struct NamingTests {
         #expect(VaultNaming.saveOut(count: 12, bytes: 10).hasPrefix("Save these 12 files to Files ("))
         #expect(VaultNaming.cloneCommand(keyText: "abc:def") == "pip install sgit-ai && sgit clone abc:def")
     }
+
+    @Test func historySaysTheDayAndWhetherItWasThisDevice() {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "UTC")!
+        let now = Date(timeIntervalSince1970: 1_800_000_000)
+        #expect(VaultNaming.day(now.addingTimeInterval(-60), now: now, calendar: calendar) == "Today")
+        #expect(VaultNaming.day(now.addingTimeInterval(-86_400), now: now, calendar: calendar) == "Yesterday")
+        #expect(VaultNaming.day(now.addingTimeInterval(-10 * 86_400), now: now, calendar: calendar) != "Yesterday")
+        #expect(VaultNaming.signer(keyId: "key-abc", deviceKeyId: "key-abc") == "This device")
+        #expect(VaultNaming.signer(keyId: "key-12345678", deviceKeyId: "key-abc") == "Another device (key 12345678)")
+        #expect(VaultNaming.signer(keyId: nil, deviceKeyId: "key-abc") == "Nobody signed it")
+    }
 }
