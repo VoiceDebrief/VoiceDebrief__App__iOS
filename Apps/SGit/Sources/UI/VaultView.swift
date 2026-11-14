@@ -14,6 +14,8 @@ struct VaultView: View {
     /// On a wide screen the tree on the left chooses the folder, in place of pushing a new screen.
     @State private var chosen: String?
     @Environment(\.horizontalSizeClass) private var sizeClass
+    /// At the accessibility text sizes a tile cannot hold a file's name: the list is used, and the tree is wider.
+    @Environment(\.dynamicTypeSize) private var textSize
 
     @AppStorage("browse.asList") private var asList = false
     @AppStorage("photos.compatible") private var compatible = false
@@ -44,7 +46,7 @@ struct VaultView: View {
             if wide {
                 FolderTree(name: vault.name, nodes: VaultListing.tree(paths: contents?.files.map(\.path) ?? []),
                            here: here) { chosen = $0 }
-                    .frame(width: 250)
+                    .frame(width: textSize.isAccessibilitySize ? 400 : 250)
                 Divider()
             }
             files
@@ -74,8 +76,10 @@ struct VaultView: View {
                         Button(VaultNaming.saveOut(count: inside.count, bytes: inside.reduce(0) { $0 + $1.size }),
                                systemImage: "square.and.arrow.down.on.square") { Task { await saveOut() } }
                     }
-                    Button(asList ? "Show as a grid" : "Show as a list",
-                           systemImage: asList ? "square.grid.2x2" : "list.bullet") { asList.toggle() }
+                    if !textSize.isAccessibilitySize {
+                        Button(asList ? "Show as a grid" : "Show as a list",
+                               systemImage: asList ? "square.grid.2x2" : "list.bullet") { asList.toggle() }
+                    }
                 }
             }
         }
@@ -228,7 +232,7 @@ struct VaultView: View {
                             .buttonStyle(.plain)
                     }
                 }
-                if asList {
+                if asList || textSize.isAccessibilitySize {
                     ForEach(listing.files) { file in
                         NavigationLink(value: FileRoute(vault: vault, file: file)) {
                             FileRow(shelf: shelf, vault: vault, file: file)
