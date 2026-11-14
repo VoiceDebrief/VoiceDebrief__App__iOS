@@ -13,19 +13,20 @@ const SITE = join(dirname(fileURLToPath(import.meta.url)), '..');
 const version = process.argv[2];
 if (!/^v\d+\.\d+\.\d+$/.test(version || '')) { console.error('usage: release.mjs vMAJOR.MINOR.PATCH'); process.exit(1); }
 
+const date = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
 const historyPath = join(SITE, 'versions/index.md');
 const history = readFileSync(historyPath, 'utf8');
 const lines = history.split('\n');
 const notes = [];
 const out = lines.map((line) => {
-  const m = line.match(/^\| next \| ([^|]*) \| (.*) \|\s*$/);
+  // Lenient about spacing and an empty date column: a row is anything headed next.
+  const m = line.match(/^\|\s*next\s*\|([^|]*)\|(.*)\|\s*$/);
   if (!m) return line;
   notes.push(m[2].trim());
-  return `| ${version} | ${m[1].trim()} | ${m[2].trim()} |`;
+  return `| ${version} | ${m[1].trim() || date} | ${m[2].trim()} |`;
 });
 if (notes.length) writeFileSync(historyPath, out.join('\n'));
 
-const date = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
 const page = join(SITE, 'versions', version, 'index.md');
 if (!existsSync(page)) {
   mkdirSync(dirname(page), { recursive: true });
