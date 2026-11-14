@@ -10,7 +10,7 @@ public enum PeopleIdentity {
 
     public static func load(_ keychain: any PeopleKeychain) -> PKIIdentity? {
         for home in [KeychainHome.synchronised, .thisDeviceOnly] {
-            if let data = keychain.get(account, home), let identity = try? JSONDecoder.people.decode(PKIIdentity.self, from: data) {
+            if let data = keychain.get(account, home), let identity = try? JSONDecoder().decode(PKIIdentity.self, from: data) {
                 return identity
             }
         }
@@ -22,7 +22,8 @@ public enum PeopleIdentity {
                                   rsaBits: Int = 4096) throws -> PKIIdentity {
         if let kept = load(keychain) { return kept }
         let made = try PKI.generate(label: label, rsaBits: rsaBits)
-        guard let data = try? JSONEncoder.people.encode(made),
+        // The default date encoding is exact; ISO 8601 would drop the fraction of a second and change the identity.
+        guard let data = try? JSONEncoder().encode(made),
               keychain.set(account, data, synchronise ? .synchronised : .thisDeviceOnly) else { throw SecretsStore.Failure.keychainRefused }
         return made
     }

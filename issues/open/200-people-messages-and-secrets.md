@@ -32,7 +32,9 @@ each other, secrets included, is sealed to the recipient's key and dropped in th
    2026 (see the reality file). Still to do: the same from Swift, which needs an access key where Swift runs.
 2. Screens in SGit Vaults: You, Contacts, Inbox, Secrets (with the sgit app session, which owns `Apps/SGit`).
 3. VoiceDebrief: its recipients become contacts; the record screen shows the inbox (the parent session's screens).
-4. A page on the site for `card/#sgc1…` and `sealed/#sgm1…` links, which shows what it holds and opens nothing.
+4. Devices (the owner, via the parent): your devices by their vouching statements in `identity/devices/`, name,
+   kind, device key fingerprint, last seen; remove one, which withdraws its statement. After contacts and first contact.
+5. A page on the site for `card/#sgc1…` and `sealed/#sgm1…` links, which shows what it holds and opens nothing.
 
 ## Assumed, for the owner to confirm (the article's four decisions)
 
