@@ -66,7 +66,8 @@ struct SettingsView: View {
                 LabeledContent("Decryptions", value: "\(shelf.log.totals.decrypts)")
                 LabeledContent("Checks", value: "\(shelf.log.totals.verifications)")
                 LabeledContent("Errors", value: "\(shelf.log.totals.errors)")
-                NavigationLink("Every step") { TrafficView(log: shelf.log) }
+                NavigationLink("Every step") { TrafficView(log: shelf.log).tracked("traffic") }
+                NavigationLink("Your activity") { ActivityView().tracked("activity") }
             }
 
             Section("About") {

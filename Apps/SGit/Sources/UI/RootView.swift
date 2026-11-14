@@ -20,11 +20,14 @@ struct RootView: View {
     var body: some View {
         NavigationStack {
             VaultsView(shelf: shelf, outbox: outbox)
+                .tracked("vaults")
                 .navigationDestination(for: FolderRoute.self) { route in
                     VaultView(shelf: shelf, outbox: outbox, vault: route.vault, folder: route.folder)
+                        .tracked(route.folder.isEmpty ? "vault" : "vault.folder")
                 }
                 .navigationDestination(for: FileRoute.self) { route in
                     FileView(shelf: shelf, vault: route.vault, file: route.file)
+                        .tracked("file")
                 }
         }
     }

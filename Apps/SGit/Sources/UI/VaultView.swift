@@ -67,10 +67,19 @@ struct VaultView: View {
                         }
                     }
                 }
-                Button("Share", systemImage: "person.badge.plus") { sharing = true }
+                Button("Share", systemImage: "person.badge.plus") {
+                    UsageLog.shared.action("share.open")
+                    sharing = true
+                }
                 Menu("More", systemImage: "ellipsis.circle") {
-                    Button("History", systemImage: "clock.arrow.circlepath") { showingHistory = true }
-                    Button("Refresh", systemImage: "arrow.clockwise") { Task { await load() } }
+                    Button("History", systemImage: "clock.arrow.circlepath") {
+                        UsageLog.shared.action("history.open")
+                        showingHistory = true
+                    }
+                    Button("Refresh", systemImage: "arrow.clockwise") {
+                        UsageLog.shared.action("vault.refresh")
+                        Task { await load() }
+                    }
                     let inside = VaultListing.under(contents?.files ?? [], folder: here)
                     if !inside.isEmpty {
                         Button(VaultNaming.saveOut(count: inside.count, bytes: inside.reduce(0) { $0 + $1.size }),
@@ -111,21 +120,25 @@ struct VaultView: View {
         }
         .navigationDestination(item: $opened) { route in
             VaultView(shelf: shelf, outbox: outbox, vault: route.vault, folder: route.folder)
+                .tracked("vault.folder")
         }
         .navigationDestination(isPresented: $showingHistory) {
             HistoryView(shelf: shelf, vault: vault)
+                .tracked("history")
         }
         .sheet(item: $exporting) { export in
             FolderExporter(url: export.url).ignoresSafeArea()
         }
         .sheet(isPresented: $sharing) {
             NavigationStack { ShareVaultView(shelf: shelf, vault: vault, pending: !jobs.isEmpty) }
+                .tracked("share")
         }
     }
 
     /// Fetches every file in the open folder and beneath it, lays them out as they are in the vault, and
     /// hands the folder to the Files app. The files are the originals: decrypted, not converted.
     private func saveOut() async {
+        UsageLog.shared.action("folder.save-out")
         let wanted = VaultListing.under(contents?.files ?? [], folder: here)
         guard !wanted.isEmpty, intake == nil else { return }
         let name = here.isEmpty ? VaultNaming.clean(vault.name) : VaultListing.name(of: here)
@@ -295,6 +308,7 @@ struct VaultView: View {
     }
 
     private func take(photos items: [PhotosPickerItem]) async {
+        UsageLog.shared.action("files.pick-photos")
         var incoming: [IncomingFile] = []
         var missed = 0
         for (index, item) in items.enumerated() {
@@ -314,6 +328,7 @@ struct VaultView: View {
     }
 
     private func take(files urls: [URL]) async {
+        UsageLog.shared.action("files.pick-files")
         var incoming: [IncomingFile] = []
         var missed = 0
         for (index, url) in urls.enumerated() {
@@ -420,7 +435,10 @@ struct UploadCard: View {
             }
             HStack {
                 if !isRunning {
-                    Button(job.problem == nil ? "Carry on" : "Try again") { outbox.start(job.id, shelf: shelf) }
+                    Button(job.problem == nil ? "Carry on" : "Try again") {
+                        UsageLog.shared.action("upload.retry")
+                        outbox.start(job.id, shelf: shelf)
+                    }
                         .buttonStyle(.borderedProminent)
                 }
                 Button(isRunning ? "Cancel" : "Discard", role: .destructive) { outbox.discard(job.id) }

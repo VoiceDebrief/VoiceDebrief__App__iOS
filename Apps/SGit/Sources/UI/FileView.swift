@@ -62,7 +62,10 @@ struct FileView: View {
 
             Section {
                 if let local {
-                    Button("Open", systemImage: "arrow.up.left.and.arrow.down.right") { quickLook = local }
+                    Button("Open", systemImage: "arrow.up.left.and.arrow.down.right") {
+                        UsageLog.shared.action("file.open")
+                        quickLook = local
+                    }
                     ShareLink(item: local) { Label("Share", systemImage: "square.and.arrow.up") }
                     if kind == .image || kind == .video {
                         Button("Save to Photos", systemImage: "square.and.arrow.down") { Task { await saveToPhotos(local) } }
@@ -140,6 +143,7 @@ struct FileView: View {
     }
 
     private func saveToPhotos(_ url: URL) async {
+        UsageLog.shared.action("file.save-to-photos")
         notice = nil
         do {
             try await PhotoLibrary.save(url, isVideo: kind == .video)
