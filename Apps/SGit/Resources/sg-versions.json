@@ -3,7 +3,9 @@
  "next": [
   "The sgit app's Gallery shows the vaults published at sgit.ai/demos/vaults, 54 of them, grouped by kind and searchable; each opens live in the web Vault inside the app, to look at, with the read key its maker published. The list is read from sgit.ai each time, so new vaults appear without an update"
  ],
- "nextArt": [],
+ "nextArt": [
+  "+----------------------------------------------------------------------+\n| SGIT VAULTS                                              {{version}} |\n| {{date}}                                                             |\n+----------------------------------------------------------------------+\n| 54 PUBLISHED VAULTS, RUNNING LIVE INSIDE THE APP                     |\n|                                                                      |\n| * Every vault at sgit.ai/demos/vaults, grouped by kind, searchable   |\n| * Each opens in the web Vault in the app, with its public read key   |\n| * The list is read from sgit.ai each time; new ones need no update   |\n| * Secrets are no longer listed as files: only in Secrets, Face ID    |\n|                                                                      |\n|      you --- Ana        the trust map now draws its lines behind     |\n|       |                 each face and name, not through them         |\n|      Ben                                                             |\n|                                                                      |\n| WHERE    Home > Gallery > Published by sgit.ai                       |\n| TRY      Search \"graph\", open one, tap a file inside it              |\n| NOT YET  Looking only: these keys cannot change anything             |\n+----------------------------------------------------------------------+"
+ ],
  "versions": [
   {
    "version": "v0.1.93",
