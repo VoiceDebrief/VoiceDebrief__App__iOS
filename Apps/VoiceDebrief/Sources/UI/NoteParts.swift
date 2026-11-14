@@ -203,3 +203,46 @@ struct VersionBadge: View {
         .accessibilityLabel("Version \(AppInfo.versionLine()). Opens what is new in it.")
     }
 }
+
+/// Where the work is happening now: Apple's model on this device, or the network (issue 027). The owner
+/// could not tell which was in use; this says it in two plain lines, green while each is busy.
+struct WhereWorkHappens: View {
+    let session: DebriefSession
+
+    private var onDevice: String? {
+        if session.recordingNote != nil { return "Listening and writing the words as you speak" }
+        if let id = session.currentNoteId, let text = session.workingText(for: id) {
+            return text == "Writing the debrief" ? "Apple's model is writing the debrief" : "Apple's speech model: \(text.lowercased())"
+        }
+        return nil
+    }
+
+    private var network: String? {
+        guard let name = session.sendingTo else { return nil }
+        if case .sending(let done, let total) = session.sharing, total > 0 { return "Sending to \(name), part \(done) of \(total), encrypted" }
+        return "Sending to \(name), encrypted"
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            row("iphone", "On this device", onDevice ?? "Nothing running", busy: onDevice != nil)
+            row("network", "Network", network ?? "Not in use: nothing is leaving this device", busy: network != nil)
+        }
+        .padding(12)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .accessibilityElement(children: .combine)
+    }
+
+    private func row(_ icon: String, _ title: String, _ detail: String, busy: Bool) -> some View {
+        HStack(alignment: .firstTextBaseline, spacing: 10) {
+            Image(systemName: icon)
+                .foregroundStyle(busy ? Color.green : Color.secondary)
+                .symbolEffect(.pulse, isActive: busy)
+                .frame(width: 22)
+            Text(title).font(.footnote.weight(.semibold))
+            Text(detail).font(.footnote).foregroundStyle(busy ? Color.primary : Color.secondary)
+            Spacer(minLength: 0)
+        }
+    }
+}

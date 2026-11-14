@@ -105,6 +105,7 @@ struct RecordView: View {
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel("Microphone level")
             liveCard
+            WhereWorkHappens(session: session)
         } else {
             VStack(spacing: 6) {
                 Text("Record a voice note")
@@ -147,6 +148,7 @@ struct RecordView: View {
                         .font(.callout)
                 }
             }
+            WhereWorkHappens(session: session)
             recent
         }
     }

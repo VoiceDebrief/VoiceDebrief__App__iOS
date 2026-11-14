@@ -430,8 +430,13 @@ final class DebriefSession {
     private var outbox: [(noteId: String, lane: DeveloperLane, name: String)] = []
     private var draining = false
 
+    /// Who is being sent to over the network right now, for the screen that shows where work happens.
+    private(set) var sendingTo: String?
+
     private func sendNow(noteId: String, lane: DeveloperLane, name: String) async {
         guard let note = store.note(noteId), let url = store.audioURL(for: noteId) else { return }
+        sendingTo = name.isEmpty ? "lane \(lane.vault)" : name
+        defer { sendingTo = nil }
         sharingNoteId = noteId
         sharing = .sending(0, 0)
         do {
