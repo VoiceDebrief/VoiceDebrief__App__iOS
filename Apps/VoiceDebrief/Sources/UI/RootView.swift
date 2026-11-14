@@ -52,7 +52,7 @@ struct RootView: View {
             }
             .defaultVisibility(.hidden, for: .tabBar)
             Tab(RootTab.guide.title, systemImage: RootTab.guide.symbol, value: RootTab.guide) {
-                GuideView(go: { tab = $0 })
+                GuideView(go: { tab = $0 }, opening: guideOpening)
                     // Room at the bottom so the floating Talk button does not cover the last lines.
                     .safeAreaInset(edge: .bottom) { Color.clear.frame(height: 76) }
                     .tracked("guide")
@@ -153,6 +153,15 @@ struct RootView: View {
                 return (true, "Recording, for \(recipient.name) (sent when you finish).")
             }
         }
+    }
+
+    /// Screenshots only (issue 016): the item a sample launch opens the Guide on. Nil otherwise.
+    private var guideOpening: GuideItem? {
+        #if DEBUG
+        return SampleWorld.launched?.guideOpening
+        #else
+        return nil
+        #endif
     }
 
     /// A tab's own first screen, or, in a sample launch that names a screen reached by a tap from

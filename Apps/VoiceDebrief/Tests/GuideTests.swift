@@ -117,4 +117,11 @@ struct GuideTests {
         #expect(ReleaseCard.sections(in: card) == [.record, .agents])
         #expect(ReleaseCard.title(of: card) == "SENDING ON THE MOVE")
     }
+
+    @Test func aStepsNotesGoBesideThePictureOnlyWhenTheyHaveRoom() {
+        // an iPad's narrow detail column: picture above notes, never notes a letter wide
+        #expect(!StepPictureAndNotes.sideBySide(width: 420))
+        #expect(!StepPictureAndNotes.sideBySide(width: 600))
+        #expect(StepPictureAndNotes.sideBySide(width: 700))
+    }
 }

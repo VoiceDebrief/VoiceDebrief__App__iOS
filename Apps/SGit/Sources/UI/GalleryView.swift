@@ -12,6 +12,15 @@ struct GalleryView: View {
     @State private var adding = false
     @State private var loading = false
     @State private var notice: String?
+    /// The vaults published at sgit.ai/demos/vaults, live when the list could be read, else this build's copy.
+    @State private var demos: [DemoVault] = DemoCatalog.bundled()?.vaults ?? []
+    @State private var demosLive = false
+    @State private var openingDemo: DemoShown?
+
+    struct DemoShown: Identifiable {
+        let id = UUID()
+        let vault: SavedVault
+    }
 
     struct Shown: Identifiable {
         let id = UUID()
@@ -86,6 +95,38 @@ struct GalleryView: View {
                     }
                 }
             }
+            if !demos.isEmpty {
+                Section {
+                    Text("\(demos.count) vaults published by sgit.ai, each with a read key given out on purpose: it opens the vault to look at, never to change. Each opens in the web Vault inside this app, running live.")
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
+                    Link(destination: DemoCatalog.source) { Label("The list on sgit.ai", systemImage: "globe") }
+                } header: {
+                    Text("Published by sgit.ai")
+                } footer: {
+                    Text(demosLive ? "Read from sgit.ai just now." : "The copy that came with this version of the app; sgit.ai could not be read.")
+                }
+                ForEach(DemoCatalog.grouped(demos, search: search), id: \.category) { group in
+                    Section("\(group.category) (\(group.vaults.count))") {
+                        ForEach(group.vaults) { demo in
+                            Button { Task { await open(demo) } } label: {
+                                HStack(spacing: 12) {
+                                    Image(systemName: "eye.square").font(.title3).foregroundStyle(.tint)
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text(demo.name).foregroundStyle(.primary)
+                                        Text(demo.summary).font(.footnote).foregroundStyle(.secondary).lineLimit(3)
+                                        Text("\(demo.files) files · \(demo.size) · \(demo.published) · sgit.ai")
+                                            .font(.caption2).foregroundStyle(.tertiary)
+                                    }
+                                    Spacer()
+                                }
+                                .contentShape(Rectangle())
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                }
+            }
         }
         .navigationTitle("Gallery")
         .searchable(text: $search, prompt: "Name, topic or description")
@@ -94,12 +135,41 @@ struct GalleryView: View {
                 Button("Add", systemImage: "plus") { adding = true }
             }
         }
-        .refreshable { await refresh() }
-        .task { await refresh() }
+        .refreshable {
+            await refresh()
+            await refreshDemos()
+        }
+        .task {
+            await refresh()
+            await refreshDemos()
+        }
+        .fullScreenCover(item: $openingDemo) { shown in
+            WebVaultScreen(shelf: shelf, vault: shown.vault).tracked("web-vault.demo")
+        }
         .sheet(isPresented: $adding) { AddGalleryEntrySheet(shelf: shelf) }
         .fullScreenCover(item: $showing) { shown in
             SafariView(url: shown.url).ignoresSafeArea()
         }
+    }
+
+    private func refreshDemos() async {
+        let live = await DemoCatalog.fetchLive()
+        guard !live.isEmpty else { return }
+        demos = (DemoCatalog.bundled() ?? DemoCatalog(format: "", source: "", fetched: "", vaults: [])).merged(withLive: live)
+        demosLive = true
+    }
+
+    /// A published vault, opened looking only: its key is a public read key, so the web Vault cannot change it.
+    private func open(_ demo: DemoVault) async {
+        UsageLog.shared.action("gallery.open-demo")
+        notice = nil
+        var key = demo.readKey
+        if key == nil { key = await DemoCatalog.fetchKey(for: demo) }
+        guard let key else {
+            notice = "\(demo.name) has no read key on its page just now."
+            return
+        }
+        openingDemo = DemoShown(vault: SavedVault(id: demo.vault, name: demo.name, keyText: key, addedAt: Date(), createdHere: false))
     }
 
     private func refresh() async {

@@ -10,3 +10,5 @@ minutes, hidden in the app switcher; a secret's history from the vault's commits
 a vault on this device. Not in this issue: sync (122), sharing (124), AutoFill (125).
 
 **Compiles and its tests pass (14 November 2026, `6b13fcb`); not yet used on a device:** `Sources/Secrets/`; see the reality file's row. Left: a secret's own history (each change is a commit, not yet shown per secret), tags, import from other managers, a sheet covered in the app switcher.
+
+**Fixed (14 November 2026):** the pictures showed a team vault's `secrets/` folder in the file browser, where opening an entry would have decrypted it into the cache without Face ID. Secrets are now shown only in Secrets.

@@ -8,7 +8,6 @@ struct FeatureGuideView: View {
     let ideas: IdeaBook?
     let pictures: String
     var go: (RootTab) -> Void = { _ in }
-    @Environment(\.horizontalSizeClass) private var sizeClass
 
     var body: some View {
         ScrollViewReader { reader in
@@ -39,15 +38,7 @@ struct FeatureGuideView: View {
                         VStack(alignment: .leading, spacing: DS.Space.s) {
                             Text("\(index + 1). \(step.caption)").font(DS.TypeScale.title)
                             if let lead = step.lead { Text(lead).font(.body).lineSpacing(3) }
-                            if sizeClass == .regular {
-                                HStack(alignment: .top, spacing: DS.Space.l) {
-                                    GuidePicture(name: step.image, caption: step.caption).frame(width: 340)
-                                    Callouts(callouts: step.callouts)
-                                }
-                            } else {
-                                GuidePicture(name: step.image, caption: step.caption)
-                                Callouts(callouts: step.callouts)
-                            }
+                            StepPictureAndNotes(step: step)
                         }
                         .padding(DS.Space.m)
                         .dsSurface()
@@ -92,6 +83,38 @@ struct FeatureGuideView: View {
                 .dsSurface()
             }
         }
+    }
+}
+
+/// A step's picture and its numbered notes: side by side only when the notes get at least
+/// `notesMinimum` points beside the picture, otherwise the picture above the notes. Decided from the
+/// width the step is given, not the size class: an iPad's detail column can be regular and still narrow.
+struct StepPictureAndNotes: View {
+    let step: FeatureGuide.Step
+    static let pictureWidth: CGFloat = 340
+    static let notesMinimum: CGFloat = 260
+    @State private var width: CGFloat = 0
+
+    static func sideBySide(width: CGFloat) -> Bool {
+        width >= pictureWidth + DS.Space.l + notesMinimum
+    }
+
+    var body: some View {
+        Group {
+            if Self.sideBySide(width: width) {
+                HStack(alignment: .top, spacing: DS.Space.l) {
+                    GuidePicture(name: step.image, caption: step.caption).frame(width: Self.pictureWidth)
+                    Callouts(callouts: step.callouts).frame(minWidth: Self.notesMinimum)
+                }
+            } else {
+                VStack(alignment: .leading, spacing: DS.Space.s) {
+                    GuidePicture(name: step.image, caption: step.caption)
+                    Callouts(callouts: step.callouts)
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { width = $0 }
     }
 }
 

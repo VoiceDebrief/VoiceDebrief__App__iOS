@@ -60,6 +60,9 @@ struct RecordView: View {
                         // iPad and Mac: what you do on the left, what came back on the right (the owner:
                         // "on the iPad or laptop we can do better"). The control stays in the left column.
                         RecordWideLayout {
+                            // While recording, the time first and then the control ("Recording 1:30" sat
+                            // below the Finish button, seen in the screens session's pictures).
+                            recordingHeader
                             controls
                             content
                             Color.clear.frame(height: 1).id(Self.bottomId)
@@ -174,8 +177,8 @@ struct RecordView: View {
 
     // MARK: The middle of the screen
 
-    @ViewBuilder
-    private var content: some View {
+    /// "Recording", the time and where it is kept.
+    @ViewBuilder private var recordingHeader: some View {
         if case .recording(let since) = session.phase {
             VStack(spacing: 6) {
                 Label("Recording", systemImage: "circle.fill")
@@ -188,6 +191,14 @@ struct RecordView: View {
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
             }
+        }
+    }
+
+    @ViewBuilder
+    private var content: some View {
+        if case .recording = session.phase {
+            // On iPad and Mac the header sits above the control instead (see the wide layout).
+            if !wide { recordingHeader }
             liveCard
             attachCard
         } else {
@@ -405,15 +416,26 @@ struct RecordView: View {
     // MARK: The control, pinned where a thumb reaches
 
     private var addresseeChips: some View {
-        ViewThatFits(in: .horizontal) {
-            chipRow
-            ScrollView(.horizontal, showsIndicators: false) { chipRow.padding(.horizontal, 16) }
+        Group {
+            if wide {
+                // In the iPad and Mac column the chips wrap onto more lines rather than run off the edge
+                // ("Maria (in" was cut, seen in the screens session's pictures).
+                ChipFlow(spacing: 8) { chipItems }
+            } else {
+                ViewThatFits(in: .horizontal) {
+                    chipRow
+                    ScrollView(.horizontal, showsIndicators: false) { chipRow.padding(.horizontal, 16) }
+                }
+            }
         }
         .frame(maxWidth: .infinity)
     }
 
     private var chipRow: some View {
-            HStack(spacing: 8) {
+        HStack(spacing: 8) { chipItems }
+    }
+
+    @ViewBuilder private var chipItems: some View {
                 chip("Just me", systemImage: "person", selected: addresseeRecipient == nil) { addressee = "" }
                 ForEach(RecipientStore.shared.all) { recipient in
                     chip(recipient.name, systemImage: "paperplane", selected: addressee == recipient.link) { addressee = recipient.link }
@@ -428,7 +450,6 @@ struct RecordView: View {
                         .background(Color(.tertiarySystemFill), in: Capsule())
                 }
                 .buttonStyle(.plain)
-            }
     }
 
     private func chip(_ title: String, systemImage: String, selected: Bool, action: @escaping () -> Void) -> some View {
@@ -661,5 +682,49 @@ struct NoteRow: View {
             else if let sent = note.sends?.last { parts.append("Sent to \(sent.to) \(sent.at.formatted(.dateTime.hour(.twoDigits(amPM: .abbreviated)).minute(.twoDigits)))") }
         }
         return parts.joined(separator: " · ")
+    }
+}
+
+
+/// Chips laid out left to right, wrapping onto a new line when the row is full, each line centred.
+struct ChipFlow: Layout {
+    var spacing: CGFloat = 8
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        let rows = arrange(width: proposal.width ?? .infinity, subviews: subviews)
+        let height = rows.map(\.height).reduce(0, +) + spacing * CGFloat(max(rows.count - 1, 0))
+        let width = rows.map(\.width).max() ?? 0
+        return CGSize(width: proposal.width ?? width, height: height)
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        var y = bounds.minY
+        for row in arrange(width: bounds.width, subviews: subviews) {
+            var x = bounds.minX + (bounds.width - row.width) / 2
+            for index in row.items {
+                let size = subviews[index].sizeThatFits(.unspecified)
+                subviews[index].place(at: CGPoint(x: x, y: y + (row.height - size.height) / 2), proposal: ProposedViewSize(size))
+                x += size.width + spacing
+            }
+            y += row.height + spacing
+        }
+    }
+
+    private struct Row { var items: [Int] = []; var width: CGFloat = 0; var height: CGFloat = 0 }
+
+    private func arrange(width: CGFloat, subviews: Subviews) -> [Row] {
+        var rows: [Row] = [Row()]
+        for index in subviews.indices {
+            let size = subviews[index].sizeThatFits(.unspecified)
+            let extra = rows[rows.count - 1].items.isEmpty ? size.width : size.width + spacing
+            if rows[rows.count - 1].width + extra > width, !rows[rows.count - 1].items.isEmpty {
+                rows.append(Row())
+            }
+            let gap: CGFloat = rows[rows.count - 1].items.isEmpty ? 0 : spacing
+            rows[rows.count - 1].items.append(index)
+            rows[rows.count - 1].width += gap + size.width
+            rows[rows.count - 1].height = max(rows[rows.count - 1].height, size.height)
+        }
+        return rows
     }
 }

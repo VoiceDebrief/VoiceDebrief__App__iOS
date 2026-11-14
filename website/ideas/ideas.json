@@ -29,7 +29,7 @@
  ],
  "counts": {
   "seen-working": 27,
-  "built-untried": 87,
+  "built-untried": 88,
   "in-progress": 40,
   "proposed": 60,
   "parked": 6
@@ -1594,7 +1594,8 @@
    "summary": "To do: a Secrets section listing the entries of every vault that has a secrets/ folder, grouped by vault (\"My secrets\", \"Team: devices\"); kinds login, device, Wi-Fi, card, note, token, vault key, read key, access key, recovery code; add, edit, delete, each as one signed commit of one JSON file; values behind Face ID, copied for two minutes, hidden in the app switcher; a secret's history from the...",
    "detail": [
     "To do: a Secrets section listing the entries of every vault that has a secrets/ folder, grouped by vault (\"My secrets\", \"Team: devices\"); kinds login, device, Wi-Fi, card, note, token, vault key, read key, access key, recovery code; add, edit, delete, each as one signed commit of one JSON file; values behind Face ID, copied for two minutes, hidden in the app switcher; a secret's history from the vault's commits; \"My secrets\" made on first use as a vault on this device. Not in this issue: sync (122), sharing (124), AutoFill (125).",
-    "Compiles and its tests pass (14 November 2026, 6b13fcb); not yet used on a device: Sources/Secrets/; see the reality file's row. Left: a secret's own history (each change is a commit, not yet shown per secret), tags, import from other managers, a sheet covered in the app switcher."
+    "Compiles and its tests pass (14 November 2026, 6b13fcb); not yet used on a device: Sources/Secrets/; see the reality file's row. Left: a secret's own history (each change is a commit, not yet shown per secret), tags, import from other managers, a sheet covered in the app switcher.",
+    "Fixed (14 November 2026): the pictures showed a team vault's secrets/ folder in the file browser, where opening an entry would have decrypted it into the cache without Face ID. Secrets are now shown only in Secrets."
    ],
    "statusLine": "Status: open. Owner: the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB). Design: website/sgit-app/secrets/index.md.",
    "owner": "the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB)",
@@ -3755,7 +3756,7 @@
    "summary": ".github/workflows/screens.yml, Apps/VoiceDebrief/UITests/ScreensTests.swift, the scheme VoiceDebriefScreens: one UI test per screen launches the app over sample data and keeps a screenshot; 26 screens, six of them also scrolled to their end and three confirmations taken after a tap, on one iPhone (portrait) and one iPad (landscape) simulator, in light and dark, exported at most 1600 px, with a...",
    "detail": [
     ".github/workflows/screens.yml, Apps/VoiceDebrief/UITests/ScreensTests.swift, the scheme VoiceDebriefScreens: one UI test per screen launches the app over sample data and keeps a screenshot; 26 screens, six of them also scrolled to their end and three confirmations taken after a tap, on one iPhone (portrait) and one iPad (landscape) simulator, in light and dark, exported at most 1600 px, with a contact sheet per set, as the artifact screens-<commit sha>. By hand, and on a push that touches the screens",
-    "Run 1 of screens.yml (13 November 2026) produced all 68 pictures of the first 17 screens, and run 4 all 100 of the 25 there are now; both sets were downloaded and read from a Linux container. The run fails if a picture is missing"
+    "Run 1 of screens.yml (13 November 2026) produced all 68 pictures of the first 17 screens, and run 4 all 100 of the 25 there are now; both sets were downloaded and read from a Linux container. The run fails if a picture is missing. Five more ids added for the Guide and Play (40 pictures per set): proven when the next run of screens.yml is green"
    ],
    "places": [
     "The repository: pictures of every screen",
@@ -4243,11 +4244,12 @@
    "summary": "The last step of the Mac job in sgit-app.yml, with the release script: on a green push to dev, archive, sign and upload",
    "detail": [
     "The last step of the Mac job in sgit-app.yml, with the release script: on a green push to dev, archive, sign and upload",
-    "Run 7 (13 November 2026) uploaded ai.sgit.vaults.app 0.1.19 (7), which the owner installed on a Mac. Run 14 (14 November) uploaded 0.1.34 (14): creating a vault without an access key, the access key on the Create screen, drag and drop, the folder tree. Run 20 uploaded 0.1.37 (20): the fixes the pictures called for. Run 25 (05:54 UTC) uploaded 0.1.39 (25): the gallery. The owner has since used a TestFlight build on his iPhone: a vault on the device with six photos and two videos of 112 MB and 60 MB, added from the photo picker. Run 71 (14 November, 14:18 UTC) uploaded 0.1.70 (71): Secrets, Questions for you, Ask this vault, the same vaults on every device, the design restyle and the people engine."
+    "Run 7 (13 November 2026) uploaded ai.sgit.vaults.app 0.1.19 (7), which the owner installed on a Mac. Run 14 (14 November) uploaded 0.1.34 (14): creating a vault without an access key, the access key on the Create screen, drag and drop, the folder tree. Run 20 uploaded 0.1.37 (20): the fixes the pictures called for. Run 25 (05:54 UTC) uploaded 0.1.39 (25): the gallery. The owner has since used a TestFlight build on his iPhone: a vault on the device with six photos and two videos of 112 MB and 60 MB, added from the photo picker. Run 71 (14 November, 14:18 UTC) uploaded 0.1.70 (71): Secrets, Questions for you, Ask this vault, the same vaults on every device, the design restyle and the people engine. Run 87 (14 November, about 16:40 UTC) uploaded 0.1.81 (87): video playback and the Guide. Run 94 uploaded 0.1.87 (94): thumbnails and facts kept in the vault, People, who you trust, shared..."
    ],
    "places": [
     "SGit Vaults: Gallery",
-    "SGit Vaults: a vault"
+    "SGit Vaults: a vault",
+    "SGit Vaults: Share"
    ],
    "issues": [],
    "url": "https://ios.app.voicedebrief.ai/sgit-app/built/index.html",
@@ -4367,6 +4369,26 @@
    "detail": [
     "Model/Gallery.swift, UI/GalleryView.swift: a list of vaults to show somebody, by topic, with a search; each opens in the web Vault in the system's browser inside the app; one that carries a key can be added to the device's vaults. The list is what was added on the device (kept in the Keychain) and showcase.json from any vault on it. It ships empty",
     "Compiles, and its unit tests pass on the simulators (sgit-app.yml on f7dd58e): the file in both shapes, the links, the grouping, reading it from a vault, keeping an added entry. Opening a real vault in the in-app browser has never been tried, and the screen has not been pictured"
+   ],
+   "places": [
+    "SGit Vaults: Gallery"
+   ],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
+   "id": "sgit-feature.published.vaults.in.the.gallery",
+   "kind": "feature",
+   "app": "SGit Vaults",
+   "title": "Published vaults in the gallery",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "Model/DemoVaults.swift, UI/GalleryView.swift, Resources/sg-demo-vaults.json (written by scripts/sgit-app/demo_vaults.py): a \"Published by sgit.ai\" part of the Gallery listing the vaults at sgit.ai/demos/vaults (54 on 14 November 2026), grouped by kind and searchable, each opening in the web Vault inside the app with the read key its maker published on purpose (sgit_public_read_, so looking only...",
+   "detail": [
+    "Model/DemoVaults.swift, UI/GalleryView.swift, Resources/sg-demo-vaults.json (written by scripts/sgit-app/demo_vaults.py): a \"Published by sgit.ai\" part of the Gallery listing the vaults at sgit.ai/demos/vaults (54 on 14 November 2026), grouped by kind and searchable, each opening in the web Vault inside the app with the read key its maker published on purpose (sgit_public_read_, so looking only: \"Allow changes\" is never offered). The list is read live from the page's Markdown twin when the gallery opens; a vault new since this build has its key read from its own page when tapped; without a network the copy in the app is used, and the screen says which",
+    "Unit tests for reading the rows (one has a bar in its summary), taking only a public read key for the right vault, merging the live list with the bundled keys, and that the bundled copy holds only public read keys; not yet compiled when written"
    ],
    "places": [
     "SGit Vaults: Gallery"

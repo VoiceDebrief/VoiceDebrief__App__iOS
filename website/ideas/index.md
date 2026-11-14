@@ -5,7 +5,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | Status | Meaning | How many |
 |---|---|---|
 | Seen working | Built, and a run proved it: CI, a device or a server. | 27 |
-| Built, untried | In the app or the repository, but not yet proven by a run on a device. | 87 |
+| Built, untried | In the app or the repository, but not yet proven by a run on a device. | 88 |
 | In progress | Begun: part of it is built or a release has touched it. | 40 |
 | Proposed | Asked for or described; nothing of it is built. | 60 |
 | Parked | Waiting: on the owner, on Apple, or scheduled for later. | 6 |
@@ -38,7 +38,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | Files over 4 MB in the vault engine | Feature | SGit Vaults | SGit Vaults: a vault |   | [reality file](../sgit-app/built/index.md) |
 | The app builds and its tests pass | Feature | SGit Vaults | SGit Vaults |   | [reality file](../sgit-app/built/index.md) |
 | Adding files, underneath the screens | Feature | SGit Vaults | SGit Vaults: a vault |   | [reality file](../sgit-app/built/index.md) |
-| TestFlight upload | Feature | SGit Vaults | SGit Vaults: Gallery; SGit Vaults: a vault |   | [reality file](../sgit-app/built/index.md) |
+| TestFlight upload | Feature | SGit Vaults | SGit Vaults: Gallery; SGit Vaults: a vault; SGit Vaults: Share |   | [reality file](../sgit-app/built/index.md) |
 | A vault made on this device | Feature | SGit Vaults | SGit Vaults: a vault |   | [reality file](../sgit-app/built/index.md) |
 | A picture of every screen | Feature | SGit Vaults | SGit Vaults: Gallery; SGit Vaults: a vault; SGit Vaults: Share |   | [reality file](../sgit-app/built/index.md) |
 
@@ -116,6 +116,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | Drag and drop | Feature | SGit Vaults | SGit Vaults: a vault |   | [reality file](../sgit-app/built/index.md) |
 | A folder tree on a wide screen | Feature | SGit Vaults | SGit Vaults: a vault |   | [reality file](../sgit-app/built/index.md) |
 | A gallery of vaults | Feature | SGit Vaults | SGit Vaults: Gallery |   | [reality file](../sgit-app/built/index.md) |
+| Published vaults in the gallery | Feature | SGit Vaults | SGit Vaults: Gallery |   | [reality file](../sgit-app/built/index.md) |
 | Vaults on the device | Feature | SGit Vaults | SGit Vaults |   | [reality file](../sgit-app/built/index.md) |
 | Adding photos, videos and files, the screens | Feature | SGit Vaults | SGit Vaults: a vault |   | [reality file](../sgit-app/built/index.md) |
 | Browsing | Feature | SGit Vaults | SGit Vaults: a vault; SGit Vaults: Share |   | [reality file](../sgit-app/built/index.md) |

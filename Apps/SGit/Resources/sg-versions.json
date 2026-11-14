@@ -6,6 +6,45 @@
  "nextArt": [],
  "versions": [
   {
+   "version": "v0.1.109",
+   "date": "14 November 2026",
+   "notes": [
+    "The Guide on iPad: a guide's numbered notes sit beside its picture only when they have room (260 points or more), otherwise under it; before, in a narrow column they were squeezed to a letter or two wide."
+   ],
+   "hasPage": true,
+   "url": "https://ios.app.voicedebrief.ai/versions/v0.1.109/index.html",
+   "pictures": 0,
+   "art": [],
+   "issues": []
+  },
+  {
+   "version": "v0.1.108",
+   "date": "14 November 2026",
+   "notes": [
+    "iPad and Mac record screen, from the screenshots: the recipient chips wrap onto a second line instead of being cut (\"Maria (in\"), and while recording the time sits above the button.",
+    "Pictures of the Guide and of Play: five more screens photographed by CI on every device and appearance (the Guide, one feature guide, the latest release card, Play as it opens, and a game two commands in), 40 in each set. The Guide takes the item to open first, used only by the pictures. Nothing a user sees has changed."
+   ],
+   "hasPage": true,
+   "url": "https://ios.app.voicedebrief.ai/versions/v0.1.108/index.html",
+   "pictures": 0,
+   "art": [],
+   "issues": []
+  },
+  {
+   "version": "v0.1.107",
+   "date": "14 November 2026",
+   "notes": [
+    "The sgit app's Gallery shows the vaults published at sgit.ai/demos/vaults, 54 of them, grouped by kind and searchable; each opens live in the web Vault inside the app, to look at, with the read key its maker published. The list is read from sgit.ai each time, so new vaults appear without an update"
+   ],
+   "hasPage": true,
+   "url": "https://ios.app.voicedebrief.ai/versions/v0.1.107/index.html",
+   "pictures": 0,
+   "art": [
+    "+----------------------------------------------------------------------+\n| SGIT VAULTS                                              v0.1.107    |\n| 14 November 2026                                                     |\n+----------------------------------------------------------------------+\n| 54 PUBLISHED VAULTS, RUNNING LIVE INSIDE THE APP                     |\n|                                                                      |\n| * Every vault at sgit.ai/demos/vaults, grouped by kind, searchable   |\n| * Each opens in the web Vault in the app, with its public read key   |\n| * The list is read from sgit.ai each time; new ones need no update   |\n| * Secrets are no longer listed as files: only in Secrets, Face ID    |\n|                                                                      |\n|      you --- Ana        the trust map now draws its lines behind     |\n|       |                 each face and name, not through them         |\n|      Ben                                                             |\n|                                                                      |\n| WHERE    Home > Gallery > Published by sgit.ai                       |\n| TRY      Search \"graph\", open one, tap a file inside it              |\n| NOT YET  Looking only: these keys cannot change anything             |\n+----------------------------------------------------------------------+"
+   ],
+   "issues": []
+  },
+  {
    "version": "v0.1.106",
    "date": "14 November 2026",
    "notes": [
