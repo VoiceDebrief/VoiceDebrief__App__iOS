@@ -40,17 +40,15 @@ def differs(a, b):
 ids = sorted({f.name[len(s) + 1:-4] for s in SETS for f in new.glob(f"{s}-*.png")})
 rows = []
 for i in ids:
-    share, state = 0.0, "same"
-    for s in SETS:
-        n, o = new / f"{s}-{i}.png", old / f"{s}-{i}.png"
-        if not n.exists():
-            continue
-        if not o.exists():
-            share, state = 1.0, "new"
-            break
-        share = max(share, differs(n, o))
-    if state != "new" and share >= THRESHOLD:
-        state = "changed"
+    # A set the old folder lacks altogether (a cancelled job) is not compared; a screen is new
+    # only when the old folder has it in no set.
+    pairs = [(new / f"{s}-{i}.png", old / f"{s}-{i}.png") for s in SETS]
+    pairs = [(n, o) for n, o in pairs if n.exists() and o.exists()]
+    if not pairs:
+        share, state = 1.0, "new"
+    else:
+        share = max(differs(n, o) for n, o in pairs)
+        state = "changed" if share >= THRESHOLD else "same"
     rows.append((share, i, state))
 gone = sorted({f.name[len(s) + 1:-4] for s in SETS for f in old.glob(f"{s}-*.png")} - set(ids))
 
