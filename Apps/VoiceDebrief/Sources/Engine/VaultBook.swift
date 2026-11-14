@@ -54,6 +54,40 @@ extension SavedVault {
     }
 }
 
+/// The part of a vault's record that travels with its key: one Keychain item per vault.
+struct SharedVaultRecord: Codable, Equatable, Sendable {
+    var id: String
+    var name: String
+    var keyText: String
+    var addedAt: Date
+    var remoteId: String?
+}
+
+/// The part that is true of one device only, and stays on it.
+struct LocalVaultState: Codable, Equatable, Sendable {
+    var createdHere = false
+    var onDevice = false
+    var localHead: String?
+    var remoteHead: String?
+    var syncedAt: Date?
+    var pushProblem: String?
+}
+
+extension SavedVault {
+    var shared: SharedVaultRecord { SharedVaultRecord(id: id, name: name, keyText: keyText, addedAt: addedAt, remoteId: remoteId) }
+    var local: LocalVaultState {
+        LocalVaultState(createdHere: createdHere, onDevice: onDevice, localHead: localHead, remoteHead: remoteHead,
+                        syncedAt: syncedAt, pushProblem: pushProblem)
+    }
+
+    init(shared: SharedVaultRecord, local: LocalVaultState) {
+        self.init(id: shared.id, name: shared.name, keyText: shared.keyText, addedAt: shared.addedAt,
+                  createdHere: local.createdHere, onDevice: local.onDevice, remoteId: shared.remoteId,
+                  localHead: local.localHead, remoteHead: local.remoteHead, syncedAt: local.syncedAt,
+                  pushProblem: local.pushProblem)
+    }
+}
+
 /// What a vault holds now, as the screens show it.
 struct VaultContents: Equatable, Sendable {
     var head: VaultCommit
@@ -87,12 +121,16 @@ enum VaultBookError: LocalizedError, Equatable {
 /// A server is a remote: a name, an address and an access token, added when the vault should also be
 /// elsewhere. Push and pull are explicit, and only ever move a server's branch forward.
 ///
-/// Keys, tokens and the signing key live in the Keychain. Every request, decryption and signature check
+/// Vault keys, servers and their tokens are one Keychain item each, kept on this device and, unless the
+/// person turns it off, in iCloud Keychain as well, so a vault made on one device appears on the others
+/// and survives losing a device (`SharedSecrets`). The key that signs this device's commits is never
+/// synchronised. Every request, decryption and signature check
 /// is recorded in `log`, never with key material, so the screens can show how a vault actually works.
 @MainActor
 @Observable
 final class VaultBook {
     private let store: any SecretStore
+    private let shelf: SharedSecrets
     let log = VaultTrafficLog()
     /// Where vaults on this device are kept: `<localRoot>/<vault id>/bare/…`, the layout a server holds.
     let localRoot: URL
@@ -103,6 +141,8 @@ final class VaultBook {
     private(set) var remotes: [VaultRemote] = []
     /// The ids of the servers that have a token in the Keychain.
     private(set) var remotesWithToken: Set<String> = []
+    /// Whether vault keys and server tokens are kept in iCloud Keychain as well as on this device.
+    private(set) var keysInICloud = true
     private(set) var busy: String?
     private(set) var problem: String?
     private(set) var notice: String?
@@ -120,57 +160,129 @@ final class VaultBook {
         self.localRoot = localRoot
         self.cacheRoot = cacheRoot
         self.connect = connect
-        if let data = store.get("vaults"), let saved = try? JSONDecoder().decode([SavedVault].self, from: data) {
-            vaults = saved
-        }
-        if let data = store.get("remotes"), let saved = try? JSONDecoder().decode([VaultRemote].self, from: data) {
-            remotes = saved
-        }
-        adoptEarlierVersions()
-        remotesWithToken = Set(remotes.map(\.id).filter { token(for: $0) != nil })
+        self.shelf = SharedSecrets(store: store, prefixes: [Self.vaultPrefix, Self.serverPrefix, Self.tokenPrefix])
+        adoptEarlierBuilds()
+        shelf.reconcile()
+        load()
     }
 
-    /// The first builds with vaults (from v0.1.5) assumed one server and kept one token. What they left becomes a named server, and
-    /// every vault they knew (all of which exist only on that server) stays attached to it.
-    private func adoptEarlierVersions() {
+    static let vaultPrefix = "vault-"
+    static let serverPrefix = "server-"
+    static let tokenPrefix = "remote-token-"
+    static let stateName = "local-vault-state"
+
+    /// What earlier builds left in this device's Keychain, brought to the present shape. It runs before
+    /// anything is read from iCloud Keychain, so it only ever touches what this device already had.
+    ///
+    /// - The first builds with vaults (from v0.1.5) assumed one server and kept one token, "access-token".
+    ///   That becomes a named server with that token, and every vault those builds knew (all of which
+    ///   exist only on that server) stays attached to it.
+    /// - Builds up to the first with servers kept every vault in one item and every server in another.
+    ///   Each vault and each server becomes an item of its own, and the two lists go.
+    private func adoptEarlierBuilds() {
+        let vaultList = store.get("vaults")
+        let serverList = store.get("remotes")
         let earlierToken = store.get("access-token")
+        guard vaultList != nil || serverList != nil || earlierToken != nil else { return }
+        if let vaultList, let saved = try? JSONDecoder().decode([SavedVault].self, from: vaultList) { vaults = saved }
+        if let serverList, let saved = try? JSONDecoder().decode([VaultRemote].self, from: serverList) { remotes = saved }
+
         let orphans = vaults.contains { !$0.onDevice && $0.remoteId == nil }
-        guard earlierToken != nil || orphans else { return }
-        let server = VaultAddress.defaultServer
-        var remote = remotes.first { $0.url == server }
-        if remote == nil {
-            let made = VaultRemote(id: Self.newRemoteId(), name: server.host() ?? "Server", url: server)
-            remotes.append(made)
-            persistRemotes()
-            remote = made
-        }
-        guard let remote else { return }
-        if let earlierToken {
-            if store.get(Self.tokenName(remote.id)) == nil { store.set(Self.tokenName(remote.id), earlierToken) }
-            store.set("access-token", nil)
-        }
-        if orphans {
+        if earlierToken != nil || orphans {
+            let server = VaultAddress.defaultServer
+            let remote: VaultRemote
+            if let known = remotes.first(where: { $0.url == server }) {
+                remote = known
+            } else {
+                remote = VaultRemote(id: Self.newRemoteId(), name: server.host() ?? "Server", url: server)
+                remotes.append(remote)
+            }
+            if let earlierToken, shelf.get(Self.tokenName(remote.id)) == nil { shelf.set(Self.tokenName(remote.id), earlierToken) }
             for i in vaults.indices where !vaults[i].onDevice && vaults[i].remoteId == nil { vaults[i].remoteId = remote.id }
-            persist()
         }
+        persistRemotes()
+        persist()
+        store.set("vaults", nil)
+        store.set("remotes", nil)
+        store.set("access-token", nil)
+    }
+
+    /// Reads the vaults, the servers and which servers have a token from this device's Keychain items.
+    private func load() {
+        var states: [String: LocalVaultState] = [:]
+        if let data = store.get(Self.stateName), let saved = try? JSONDecoder().decode([String: LocalVaultState].self, from: data) {
+            states = saved
+        }
+        vaults = shelf.names(Self.vaultPrefix)
+            .compactMap { shelf.get($0) }
+            .compactMap { try? JSONDecoder().decode(SharedVaultRecord.self, from: $0) }
+            .map { SavedVault(shared: $0, local: states[$0.id] ?? LocalVaultState()) }
+            .sorted { ($0.addedAt, $0.id) < ($1.addedAt, $1.id) }
+        remotes = shelf.names(Self.serverPrefix)
+            .compactMap { shelf.get($0) }
+            .compactMap { try? JSONDecoder().decode(VaultRemote.self, from: $0) }
+            .sorted { ($0.name, $0.id) < ($1.name, $1.id) }
+        remotesWithToken = Set(remotes.map(\.id).filter { token(for: $0) != nil })
+        keysInICloud = shelf.isOn
+    }
+
+    /// Looks in iCloud Keychain for vaults, servers and tokens another device made, changed or removed.
+    /// Called when the Vaults screen appears.
+    func refreshKeys() {
+        guard busy == nil else { return }
+        if shelf.reconcile() {
+            load()
+            for id in Array(opened.keys) where !vaults.contains(where: { $0.id == id }) { opened[id] = nil }
+        }
+    }
+
+    /// Keeps vault keys and server tokens in iCloud Keychain as well (on), or on this device only (off).
+    /// Turning it off takes everything onto this device first, then removes it from iCloud Keychain.
+    func setKeysInICloud(_ on: Bool) {
+        shelf.setOn(on)
+        load()
+    }
+
+    /// Where a vault's key is kept, in words.
+    func keyHome(of vault: SavedVault) -> String {
+        let name = Self.vaultPrefix + vault.id
+        if shelf.home(of: name) == .synchronised { return "In iCloud Keychain, on your devices" }
+        if shelf.wasWithdrawn(name) { return "On this device only (removed from iCloud Keychain by another device)" }
+        return "On this device only"
     }
 
     // MARK: What is kept
 
     static func newRemoteId() -> String { String(UUID().uuidString.lowercased().prefix(8)) }
-    static func tokenName(_ remoteId: String) -> String { "remote-token-\(remoteId)" }
+    static func tokenName(_ remoteId: String) -> String { tokenPrefix + remoteId }
 
     private func token(for remoteId: String) -> String? {
-        guard let data = store.get(Self.tokenName(remoteId)), let text = String(data: data, encoding: .utf8), !text.isEmpty else { return nil }
+        guard let data = shelf.get(Self.tokenName(remoteId)), let text = String(data: data, encoding: .utf8), !text.isEmpty else { return nil }
         return text
     }
 
+    private static func encoded<T: Encodable>(_ value: T) -> Data? {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.sortedKeys]
+        return try? encoder.encode(value)
+    }
+
+    /// Writes each vault's shared record to its own item (only when it changed) and this device's state
+    /// of them all to one item that stays here. Removing a vault's item is `remove`'s job.
     private func persist() {
-        store.set("vaults", try? JSONEncoder().encode(vaults))
+        for vault in vaults {
+            guard let data = Self.encoded(vault.shared) else { continue }
+            if shelf.get(Self.vaultPrefix + vault.id) != data { shelf.set(Self.vaultPrefix + vault.id, data) }
+        }
+        let states = Dictionary(vaults.map { ($0.id, $0.local) }, uniquingKeysWith: { first, _ in first })
+        store.set(Self.stateName, Self.encoded(states))
     }
 
     private func persistRemotes() {
-        store.set("remotes", try? JSONEncoder().encode(remotes))
+        for remote in remotes {
+            guard let data = Self.encoded(remote) else { continue }
+            if shelf.get(Self.serverPrefix + remote.id) != data { shelf.set(Self.serverPrefix + remote.id, data) }
+        }
     }
 
     private func update(_ id: String, _ change: (inout SavedVault) -> Void) {
@@ -234,7 +346,7 @@ final class VaultBook {
     /// Keeps, replaces or (with empty text) removes a server's access token.
     func setToken(_ text: String, for remote: VaultRemote) {
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        store.set(Self.tokenName(remote.id), trimmed.isEmpty ? nil : Data(trimmed.utf8))
+        shelf.set(Self.tokenName(remote.id), trimmed.isEmpty ? nil : Data(trimmed.utf8))
         if trimmed.isEmpty { remotesWithToken.remove(remote.id) } else { remotesWithToken.insert(remote.id) }
     }
 
@@ -259,10 +371,10 @@ final class VaultBook {
             vaults[i].pushProblem = nil
         }
         persist()
-        store.set(Self.tokenName(remote.id), nil)
+        shelf.set(Self.tokenName(remote.id), nil)
         remotesWithToken.remove(remote.id)
         remotes.removeAll { $0.id == remote.id }
-        persistRemotes()
+        shelf.set(Self.serverPrefix + remote.id, nil)
     }
 
     /// Chooses the server a vault on this device is pushed to, or none.
@@ -282,7 +394,11 @@ final class VaultBook {
     /// One honest line about where a vault is.
     static func status(of vault: SavedVault, server: String?) -> String {
         let server = server ?? "the server"
-        guard vault.onDevice else { return "On \(server) only, not kept on this device" }
+        guard vault.onDevice else {
+            // Its key arrived from another device, and that device has not pushed it anywhere.
+            guard vault.remoteId != nil else { return "On another of your devices only: not yet pushed to a server" }
+            return "On \(server) only, not kept on this device"
+        }
         guard vault.remoteId != nil else { return "On this device only" }
         if let problem = vault.pushProblem { return "Push to \(server) failed: \(problem)" }
         guard let remoteHead = vault.remoteHead else { return "On this device; not yet pushed to \(server)" }
@@ -374,6 +490,7 @@ final class VaultBook {
         vaults.removeAll { $0.id == vault.id }
         keys[vault.id] = nil
         opened[vault.id] = nil
+        shelf.set(Self.vaultPrefix + vault.id, nil)
         persist()
         if now.onDevice, VaultKey.isValidVaultId(vault.id) {
             try? FileManager.default.removeItem(at: folder(of: vault.id))

@@ -1,5 +1,7 @@
 # 027: Show where the work happens; small remarks from the model; talking to the app
 
+**Item 1 begun (untried on a device): two lines on the record screen, on this device and network, green while busy. Lane sends are shown; vault push and pull, pki.sgit.ai and Apple's model downloads are not yet. Items 2 to 4 not started.**
+
 **Status:** open. Asked for by the owner in a voice note, 13 November 2026. Laboratory work first.
 
 1. **On the device, or over the network?** Make it obvious, with something large and plain, when the app is

@@ -26,9 +26,10 @@ struct Device {
     }
 
     /// - Parameter server: the folder that plays the server, or nil for no network at all.
-    init(server: URL?, store seeded: MemoryStore? = nil) {
+    /// - Parameter cloud: the iCloud Keychain this device is signed in to. Two devices given the same one share it.
+    init(server: URL?, store seeded: MemoryStore? = nil, cloud: MemoryCloud = MemoryCloud()) {
         root = Self.folder("device")
-        store = seeded ?? MemoryStore()
+        store = seeded ?? MemoryStore(cloud: cloud)
         book = VaultBook(store: store, localRoot: root.appending(path: "vaults"), cacheRoot: root.appending(path: "cache"),
                          connect: { _ in
                              if let server { return FolderVaultTransport(root: server, perVaultSubfolder: "") }
@@ -158,7 +159,7 @@ struct VaultBookTests {
         #expect(book.hasToken(remote))
         #expect(device.store.get(VaultBook.tokenName(remote.id)) == Data("abc".utf8))
         // The token is not in the list of servers.
-        #expect(!String(decoding: try #require(device.store.get("remotes")), as: UTF8.self).contains("abc"))
+        #expect(!String(decoding: try #require(device.store.get(VaultBook.serverPrefix + remote.id)), as: UTF8.self).contains("abc"))
 
         let reopened = VaultBook(store: device.store, localRoot: book.localRoot, cacheRoot: book.cacheRoot)
         #expect(reopened.remotes == [remote])
@@ -399,7 +400,10 @@ struct VaultBookTests {
 
     @Test func theStatusLineSaysWhereAVaultIs() {
         var vault = SavedVault(id: "abcd1234", name: "a", keyText: "k", addedAt: Date(), createdHere: true)
+        #expect(VaultBook.status(of: vault, server: nil) == "On another of your devices only: not yet pushed to a server")
+        vault.remoteId = "r"
         #expect(VaultBook.status(of: vault, server: "S") == "On S only, not kept on this device")
+        vault.remoteId = nil
         vault.onDevice = true
         #expect(VaultBook.status(of: vault, server: nil) == "On this device only")
         vault.remoteId = "r"

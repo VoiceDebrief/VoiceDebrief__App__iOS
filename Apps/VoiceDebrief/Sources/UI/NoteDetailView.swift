@@ -50,6 +50,11 @@ struct NoteDetailView: View {
                                 .font(.footnote)
                                 .foregroundStyle(.green)
                         }
+                        ForEach(Array((note.sends ?? []).enumerated()), id: \.offset) { _, sent in
+                            Label("Sent to \(sent.to), \(sent.at.formatted(date: .omitted, time: .shortened))", systemImage: "paperplane.fill")
+                                .font(.footnote)
+                                .foregroundStyle(.green)
+                        }
                         if let why = note.saveProblem {
                             Label("Not saved to a vault: \(why)", systemImage: "exclamationmark.triangle.fill")
                                 .font(.footnote)
