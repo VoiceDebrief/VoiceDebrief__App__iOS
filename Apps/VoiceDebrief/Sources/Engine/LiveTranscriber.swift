@@ -78,7 +78,13 @@ final class LiveTranscriber: @unchecked Sendable {
         let inputFormat = input.outputFormat(forBus: 0)
         guard inputFormat.sampleRate > 0, inputFormat.channelCount > 0 else { throw Failure.noInput }
         let converter = self.converter
-        input.installTap(onBus: 0, bufferSize: 4096, format: inputFormat) { buffer, _ in
+        // installTap raises an Objective-C exception, which Swift cannot catch, if a tap is already on the bus
+        // or the format given does not match the hardware's; it crashed build 0.1.91 on the owner's iPhone
+        // (14 November 2026). So: take off any tap left from before, and let the node use its own format
+        // (nil); each buffer says its format and the converter follows it.
+        input.removeTap(onBus: 0)
+        tapped = false
+        input.installTap(onBus: 0, bufferSize: 4096, format: nil) { buffer, _ in
             guard let converted = converter.convert(buffer, to: format) else { return }
             continuation.yield(AnalyzerInput(buffer: converted))
         }
