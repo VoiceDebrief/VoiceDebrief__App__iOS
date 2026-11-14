@@ -29,8 +29,8 @@
  ],
  "counts": {
   "seen-working": 27,
-  "built-untried": 86,
-  "in-progress": 39,
+  "built-untried": 87,
+  "in-progress": 40,
   "proposed": 60,
   "parked": 6
  },
@@ -1075,6 +1075,35 @@
    "versions": [],
    "features": [],
    "url": "https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/047-lab-control-centre.md",
+   "source": "The owner's voice note"
+  },
+  {
+   "id": "issue-048",
+   "kind": "issue",
+   "number": "048",
+   "app": "VoiceDebrief",
+   "title": "The lab, fourth experiment (L04): live labels",
+   "status": "in-progress",
+   "why": "The issue says: \"Built in the Lab as its own screen, with its own listening (the live words) and a field to type sentences into. Compiled and unit tested; no loop has been run...\"",
+   "summary": "While a note is being recorded, ask Apple's model every few seconds to fill a small set of labels from the transcript so far, and show them as a grid of chips that update live: who it is for (matched to contacts and agents, with their avatar), topic, title, urgency, and a couple of others from a list. The owner can override by voice in the middle of a recording, and the override sticks: the code...",
+   "detail": [
+    "While a note is being recorded, ask Apple's model every few seconds to fill a small set of labels from the transcript so far, and show them as a grid of chips that update live: who it is for (matched to contacts and agents, with their avatar), topic, title, urgency, and a couple of others from a list. The owner can override by voice in the middle of a recording, and the override sticks: the code owns the state, and the model proposes through function calls, one tool for each label, with no long history. Send a window of the transcript and measure whether sending all of it is fast enough. Show the timing of every loop.",
+    "Where it stands (14 November 2026)",
+    "Built in the Lab as its own screen, with its own listening (the live words) and a field to type sentences into. Compiled and unit tested; no loop has been run against a model.",
+    "What it does not do yet, and why",
+    "- It is not on the Record screen and labels do not travel with a note. The board of labels is a plain value that can be saved, with the matched recipient and the title ready to be read from it; putting it on RecordView and into a note belongs to the session that owns them. - It keeps no recording. The Lab's listening hears the words and nothing else. - The switches for which labels are on the L04 screen, not in Settings, which this session does not own. - Tokens are estimated at four characters each. Apple's framework has a token counter, but it is not known to be in the iOS 26.5 SDK that CI builds with. - A new session is made for every loop, tools and all. L03 keeps a session ready between requests; if the loops are slow, that is the first thing to try, and the log will say whether it is needed. - English only: the spoken phrases that set a label.",
+    "What to measure, from the log",
+    "Time to the first label and time in all, at each window size, on an iPhone, an iPad and a Mac. Whether the model calls the label tools at all. How often a label it offers is right, and how often it churns a label that was already right. Whether \"everything so far\" fails once a note is long."
+   ],
+   "statusLine": "Status: open. From the owner's five-minute voice note of 14 November 2026, 19:07, relayed by the parent session. See the articles \"The lab\" and \"Two decision engines\".",
+   "places": [
+    "Record tab",
+    "Settings: Recipients",
+    "Settings: Experiments, the Lab"
+   ],
+   "versions": [],
+   "features": [],
+   "url": "https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/048-lab-live-labels.md",
    "source": "The owner's voice note"
   },
   {
@@ -3340,6 +3369,27 @@
    ],
    "places": [
     "Settings: Experiments, the Lab"
+   ],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
+   "id": "feature.the.lab.experiment.l04.live.labels",
+   "kind": "feature",
+   "app": "VoiceDebrief",
+   "title": "The Lab, experiment L04: live labels",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "UI/LabLabelsView.swift, Engine/LabLabelsDesk.swift, Model/LabLabels.swift, reached from Lab: while you speak (the live words, or sentences typed in), Apple's on-device model is asked every 3, 5 or 10 seconds to fill in a small set of labels from a window of the words so far (the last 250, 500 or 1,000 tokens or so, or everything), in a new session each time, with one tool for each label: who it is...",
+   "detail": [
+    "UI/LabLabelsView.swift, Engine/LabLabelsDesk.swift, Model/LabLabels.swift, reached from Lab: while you speak (the live words, or sentences typed in), Apple's on-device model is asked every 3, 5 or 10 seconds to fill in a small set of labels from a window of the words so far (the last 250, 500 or 1,000 tokens or so, or everything), in a new session each time, with one tool for each label: who it is for, topic, title, urgency always, and kind, next action, people mentioned and project from a list of switches on the screen. The labels are a grid of chips that update as each loop returns; the one naming a person is matched to a contact or to an agent in the last agents report and shows their avatar, and only when the words mean exactly one of them. The code owns the labels: a label you set by saying so (this is a memo for, the topic is, the title is, this is urgent) or by tapping it is...",
+    "Unit tests: matching a name to one contact and refusing to guess between two, the board (tidying, choices, pins, handing a label back), the spoken phrases, the window, the prompt, a loop's outcomes and notice, an answer that arrives after a label was pinned, the choices kept across a reopen, the log's JSON. No loop has been run against a model: the timings the experiment exists to measure are unknown. Tokens are counted as four characters each, which is a rule of thumb, because the token counter in Apple's framework is not known to exist in the iOS 26.5 SDK that CI builds with. Listening uses the same rules as L02 and has not been tried on a device"
+   ],
+   "places": [
+    "Record tab",
+    "The repository: CI"
    ],
    "issues": [],
    "url": "https://ios.app.voicedebrief.ai/built/index.html",

@@ -5,8 +5,8 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | Status | Meaning | How many |
 |---|---|---|
 | Seen working | Built, and a run proved it: CI, a device or a server. | 27 |
-| Built, untried | In the app or the repository, but not yet proven by a run on a device. | 86 |
-| In progress | Begun: part of it is built or a release has touched it. | 39 |
+| Built, untried | In the app or the repository, but not yet proven by a run on a device. | 87 |
+| In progress | Begun: part of it is built or a release has touched it. | 40 |
 | Proposed | Asked for or described; nothing of it is built. | 60 |
 | Parked | Waiting: on the owner, on Apple, or scheduled for later. | 6 |
 
@@ -99,6 +99,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | The model door, first slice | Feature | VoiceDebrief | Settings: Experiments, the Lab |   | [reality file](../built/index.md) |
 | The Lab, experiment L03: a game played by voice | Feature | VoiceDebrief |   | [v0.1.80](../versions/v0.1.80/index.md) | [reality file](../built/index.md) |
 | The Lab, experiment L02: the control centre | Feature | VoiceDebrief | Settings: Experiments, the Lab |   | [reality file](../built/index.md) |
+| The Lab, experiment L04: live labels | Feature | VoiceDebrief | Record tab; The repository: CI |   | [reality file](../built/index.md) |
 | Recipients, added by QR code | Feature | VoiceDebrief | Settings: Recipients |   | [reality file](../built/index.md) |
 | A clean text, with questions | Feature | VoiceDebrief | A note: Clean text; Library, then a note |   | [reality file](../built/index.md) |
 | Credit that counts down, with a simulated top-up | Feature | VoiceDebrief | The balance in the top bar; Settings: Recipients |   | [reality file](../built/index.md) |
@@ -159,6 +160,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | Diagnostics describes a pasted lane that nothing uses | Issue | VoiceDebrief | A note: the send bar; Settings: Recipients; Settings: Diagnostics | [v0.1.29](../versions/v0.1.29/index.md) | [041](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/041-diagnostics-describes-a-lane-nothing-uses.md) |
 | Two sentences that say the wrong thing | Issue | VoiceDebrief | Vaults tab; Settings tab | [v0.1.40](../versions/v0.1.40/index.md) | [045](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/045-two-sentences-that-say-the-wrong-thing.md) |
 | The lab, second experiment (L02): the control centre | Issue | VoiceDebrief | Settings: Recipients; Settings: Experiments, the Lab |   | [047](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/047-lab-control-centre.md) |
+| The lab, fourth experiment (L04): live labels | Issue | VoiceDebrief | Record tab; Settings: Recipients; Settings: Experiments, the Lab |   | [048](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/048-lab-live-labels.md) |
 | The sgit app, milestone one | Issue | SGit Vaults | SGit Vaults: Share |   | [100](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/100-sgit-app-milestone-one.md) |
 | The sgit app after milestone one | Issue | SGit Vaults | SGit Vaults: Share |   | [103](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/103-sgit-app-after-milestone-one.md) |
 | A gallery of vaults, opened in a browser inside the app | Issue | SGit Vaults | SGit Vaults: Gallery |   | [107](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/107-sgit-app-gallery.md) |

@@ -51,6 +51,8 @@ struct ModelDoorToolCall: Codable, Equatable, Sendable, Identifiable {
     /// False when the tool could not do what was asked, such as a note id that does not exist.
     let ok: Bool
     let durationMs: Double
+    /// How long after the request began the call arrived, where that was measured.
+    var atMs: Double?
 
     var id: Int { order }
 }
