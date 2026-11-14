@@ -514,7 +514,8 @@ final class DebriefSession {
                 UsageLog.shared.action("send.sent.try\(attempt)")
                 return
             } catch {
-                let why = error.localizedDescription
+                var why = error.localizedDescription
+                if why.hasSuffix(".") { why.removeLast() }
                 guard let wait = SendRetry.wait(before: attempt + 1), store.note(noteId)?.pendingSend != nil else {
                     let problem = attempt > 1 ? "not sent after \(attempt) tries (\(why))" : why
                     sharing = .failed(problem)

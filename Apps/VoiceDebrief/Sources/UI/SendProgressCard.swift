@@ -18,7 +18,10 @@ struct SendProgressCard: View {
         return nil
     }
     private var sentAt: Date? { note?.sends?.last(where: { $0.to == to })?.at }
-    private var failed: String? { note?.sendProblem }
+    /// Without its own full stop, so the sentence around it does not end in two ("lost.. Open").
+    private var failed: String? {
+        note?.sendProblem.map { $0.hasSuffix(".") ? String($0.dropLast()) : $0 }
+    }
     private var retrying: (attempt: Int, of: Int, next: Date)? {
         if case .retrying(let attempt, let of, let next, _) = session.sharing(for: noteId) { return (attempt, of, next) }
         return nil
@@ -82,6 +85,8 @@ struct SendProgressCard: View {
 
     private var sendLabel: String {
         if let sentAt { return "Encrypted and sent, \(sentAt.formatted(date: .omitted, time: .shortened))" }
+        if retrying != nil { return "Not sent yet: waiting for a connection" }
+        if failed != nil { return "Not sent" }
         if let (done, total) = sendingPart, total > 0 { return "Encrypting and sending, part \(done) of \(total)" }
         if sendingPart != nil { return "Encrypting" }
         return "Encrypted and sent when written up"
