@@ -5,6 +5,8 @@ import SwiftUI
 struct GameBoardView: View {
     let state: GameState
     let hint: GameHint?
+    /// In Boxes, draw the player as the owner's own avatar.
+    var asMe = false
 
     var body: some View {
         GeometryReader { geometry in
@@ -21,7 +23,13 @@ struct GameBoardView: View {
                         .position(center(point, cell: cell, origin: origin))
                         .allowsHitTesting(false)
                 }
-                GamePlayerMark(kind: state.kind, facing: state.facing, lost: state.status == .lost)
+                Group {
+                    if asMe && state.kind == .boxes {
+                        GamePlayerSprite(size: cell * 0.86)
+                    } else {
+                        GamePlayerMark(kind: state.kind, facing: state.facing, lost: state.status == .lost)
+                    }
+                }
                     .frame(width: cell * 0.86, height: cell * 0.86)
                     .position(center(state.player, cell: cell, origin: origin))
                     .animation(.spring(duration: 0.16, bounce: 0.15), value: state.player)
@@ -53,10 +61,10 @@ struct GameBoardPainter {
         let whole = CGRect(x: origin.x, y: origin.y, width: cell * CGFloat(state.width), height: cell * CGFloat(state.height))
         if side {
             context.fill(Path(roundedRect: whole, cornerRadius: cell * 0.2),
-                         with: .linearGradient(Gradient(colors: [Color(dsHex: 0x0B1B2B), Color(dsHex: 0x1B3A55)]),
+                         with: .linearGradient(Gradient(colors: [GamePalette.skyTop, GamePalette.skyBottom]),
                                                startPoint: CGPoint(x: whole.midX, y: whole.minY), endPoint: CGPoint(x: whole.midX, y: whole.maxY)))
         } else {
-            context.fill(Path(roundedRect: whole, cornerRadius: cell * 0.2), with: .color(Color(dsHex: 0xE8EEF2)))
+            context.fill(Path(roundedRect: whole, cornerRadius: cell * 0.2), with: .color(GamePalette.floor))
         }
         for y in 0..<state.height {
             for x in 0..<state.width {
@@ -71,12 +79,12 @@ struct GameBoardPainter {
         case .floor:
             if !side { context.fill(Path(roundedRect: inset, cornerRadius: cell * 0.12), with: .color(.white)) }
         case .wall, .secret:
-            let colour = side ? Color(dsHex: 0x5B4A3A) : Color(dsHex: 0x12283C)
+            let colour = side ? GamePalette.wallSide : GamePalette.wall
             context.fill(Path(roundedRect: r.insetBy(dx: cell * 0.02, dy: cell * 0.02), cornerRadius: cell * 0.1), with: .color(colour))
             if side {
                 var top = Path()
                 top.addRect(CGRect(x: r.minX, y: r.minY, width: r.width, height: cell * 0.14))
-                context.fill(top, with: .color(Color(dsHex: 0x3E8E5E)))
+                context.fill(top, with: .color(GamePalette.grass))
             }
             if tile == .secret {
                 // A hairline crack, for the observant.
@@ -89,22 +97,22 @@ struct GameBoardPainter {
         case .gold:
             if !side { context.fill(Path(roundedRect: inset, cornerRadius: cell * 0.12), with: .color(.white)) }
             if side {
-                context.fill(star(in: r.insetBy(dx: cell * 0.22, dy: cell * 0.22)), with: .color(Color(dsHex: 0xF0B429)))
+                context.fill(star(in: r.insetBy(dx: cell * 0.22, dy: cell * 0.22)), with: .color(GamePalette.gold))
             } else {
                 let coin = r.insetBy(dx: cell * 0.26, dy: cell * 0.26)
-                context.fill(Path(ellipseIn: coin), with: .color(Color(dsHex: 0xF0B429)))
-                context.stroke(Path(ellipseIn: coin.insetBy(dx: cell * 0.06, dy: cell * 0.06)), with: .color(Color(dsHex: 0xB98500)), lineWidth: cell * 0.04)
+                context.fill(Path(ellipseIn: coin), with: .color(GamePalette.gold))
+                context.stroke(Path(ellipseIn: coin.insetBy(dx: cell * 0.06, dy: cell * 0.06)), with: .color(GamePalette.goldEdge), lineWidth: cell * 0.04)
             }
         case .key:
             if !side { context.fill(Path(roundedRect: inset, cornerRadius: cell * 0.12), with: .color(.white)) }
-            let colour = Color(dsHex: 0xB98500)
+            let colour = GamePalette.goldEdge
             let ring = CGRect(x: r.minX + cell * 0.18, y: r.midY - cell * 0.14, width: cell * 0.28, height: cell * 0.28)
             context.stroke(Path(ellipseIn: ring), with: .color(colour), lineWidth: cell * 0.07)
             context.fill(Path(CGRect(x: ring.maxX, y: r.midY - cell * 0.035, width: cell * 0.36, height: cell * 0.07)), with: .color(colour))
             context.fill(Path(CGRect(x: r.maxX - cell * 0.24, y: r.midY, width: cell * 0.07, height: cell * 0.14)), with: .color(colour))
         case .door:
-            context.fill(Path(roundedRect: r.insetBy(dx: cell * 0.08, dy: cell * 0.02), cornerRadius: cell * 0.08), with: .color(Color(dsHex: 0x8A5A2B)))
-            context.fill(Path(ellipseIn: CGRect(x: r.midX - cell * 0.07, y: r.midY - cell * 0.1, width: cell * 0.14, height: cell * 0.14)), with: .color(Color(dsHex: 0xF0B429)))
+            context.fill(Path(roundedRect: r.insetBy(dx: cell * 0.08, dy: cell * 0.02), cornerRadius: cell * 0.08), with: .color(GamePalette.wood))
+            context.fill(Path(ellipseIn: CGRect(x: r.midX - cell * 0.07, y: r.midY - cell * 0.1, width: cell * 0.14, height: cell * 0.14)), with: .color(GamePalette.gold))
         case .trap:
             if !side { context.fill(Path(roundedRect: inset, cornerRadius: cell * 0.12), with: .color(Color(dsHex: 0xFFE3E3))) }
             var spikes = Path()
@@ -117,18 +125,18 @@ struct GameBoardPainter {
                 spikes.addLine(to: CGPoint(x: left + width * 0.9, y: r.maxY - cell * 0.08))
                 spikes.closeSubpath()
             }
-            context.fill(spikes, with: .color(side ? Color(dsHex: 0xC9D2DA) : Color(light: 0xD93A3F, dark: 0xFF6B6B)))
+            context.fill(spikes, with: .color(side ? GamePalette.dangerSide : GamePalette.danger))
         case .exit:
             let open = state.exitOpen
             if side {
                 let lamp = r.insetBy(dx: cell * 0.2, dy: cell * 0.12)
                 if open {
-                    context.fill(Path(ellipseIn: r.insetBy(dx: -cell * 0.1, dy: -cell * 0.1)), with: .color(Color(dsHex: 0xF0B429).opacity(0.25)))
+                    context.fill(Path(ellipseIn: r.insetBy(dx: -cell * 0.1, dy: -cell * 0.1)), with: .color(GamePalette.gold.opacity(0.25)))
                 }
-                context.fill(Path(roundedRect: lamp, cornerRadius: cell * 0.12), with: .color(open ? Color(dsHex: 0xF0B429) : Color(dsHex: 0x6B7785)))
+                context.fill(Path(roundedRect: lamp, cornerRadius: cell * 0.12), with: .color(open ? GamePalette.gold : GamePalette.lampOff))
             } else {
                 context.fill(Path(roundedRect: inset, cornerRadius: cell * 0.12),
-                             with: .color(open ? Color(light: 0x0E9E72, dark: 0x12C08A) : Color(dsHex: 0x9AA6B2)))
+                             with: .color(open ? GamePalette.open : GamePalette.closed))
                 var arrow = Path()
                 arrow.move(to: CGPoint(x: r.minX + cell * 0.3, y: r.midY))
                 arrow.addLine(to: CGPoint(x: r.maxX - cell * 0.3, y: r.midY))
@@ -178,7 +186,7 @@ struct GamePlayerMark: View {
             switch kind {
             case .boxes:
                 ZStack {
-                    RoundedRectangle(cornerRadius: s * 0.22).fill(lost ? Color.gray : DS.Palette.green)
+                    RoundedRectangle(cornerRadius: s * 0.22).fill(lost ? Color.gray : GamePalette.player)
                     HStack(spacing: s * 0.16) {
                         Circle().fill(.white).frame(width: s * 0.2)
                         Circle().fill(.white).frame(width: s * 0.2)
@@ -188,10 +196,10 @@ struct GamePlayerMark: View {
             case .lantern:
                 ZStack {
                     // The lantern's glow, on the side the figure faces.
-                    Circle().fill(Color(dsHex: 0xF0B429).opacity(lost ? 0 : 0.35))
+                    Circle().fill(GamePalette.gold.opacity(lost ? 0 : 0.35))
                         .frame(width: s * 0.6)
                         .offset(x: (look == 0 ? 1 : look) * s * 0.3, y: s * 0.05)
-                    Capsule().fill(lost ? Color.gray : DS.Palette.green)
+                    Capsule().fill(lost ? Color.gray : GamePalette.player)
                         .frame(width: s * 0.36, height: s * 0.5)
                         .offset(y: s * 0.18)
                     Circle().fill(Color(dsHex: 0xF5D6B8))
@@ -200,7 +208,7 @@ struct GamePlayerMark: View {
                     Circle().fill(Color(dsHex: 0x0B1B2B))
                         .frame(width: s * 0.07)
                         .offset(x: (look == 0 ? 0.5 : look) * s * 0.08, y: -s * 0.22)
-                    RoundedRectangle(cornerRadius: s * 0.04).fill(Color(dsHex: 0xF0B429))
+                    RoundedRectangle(cornerRadius: s * 0.04).fill(GamePalette.gold)
                         .frame(width: s * 0.14, height: s * 0.18)
                         .offset(x: (look == 0 ? 1 : look) * s * 0.3, y: s * 0.12)
                 }
