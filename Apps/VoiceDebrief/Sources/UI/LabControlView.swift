@@ -43,7 +43,7 @@ struct LabControlView: View {
             } header: {
                 Text("Words in")
             } footer: {
-                Text("Model: \(OnDeviceModel.status.text). Each sentence is one question to the model, in a new session, with one tool for each action.")
+                Text("Model: \(OnDeviceModel.status.text). Each sentence is one question to the model, in a new session, with one tool for each action. Listening stops when you leave this screen or the app, and does not start while a note is being recorded.")
             }
 
             Section {

@@ -10,14 +10,26 @@ struct AgentsView: View {
     @State private var selected: String?
     @State private var draft = ""
     @State private var sharing = false
+    /// The shared vault opened in the web Vault: the chat and mock-ups that change without a build.
+    @State private var workbench: SavedVault?
     @State private var said: String?
+    /// The vault last given to Claude, so the button says so and is not pressed again by mistake.
+    @AppStorage("vd.agentsGiven") private var given: String?
 
     private var vault: SavedVault? { book.vaults.first { $0.id == desk.vaultId } }
 
     var body: some View {
         NavigationSplitView {
             List(selection: $selected) {
-                Section { overview }
+                Section {
+                    overview
+                    if let v = book.vaults.first(where: { $0.id == desk.vaultId }), desk.report != nil {
+                        Button { workbench = v } label: { Label("Open the workbench", systemImage: "rectangle.and.pencil.and.ellipsis") }
+                    }
+                    if selected != nil, desk.picture != nil {
+                        Button { selected = nil } label: { Label("Show the overview", systemImage: "square.grid.2x2") }
+                    }
+                }
                 if let report = desk.report {
                     Section("Agents") {
                         ForEach(report.agents) { agent in
@@ -36,6 +48,12 @@ struct AgentsView: View {
         } detail: {
             if let report = desk.report, let id = selected, let agent = report.agents.first(where: { $0.id == id }) {
                 detail(agent, report: report)
+                    .toolbar {
+                        // Back to the overview picture (the owner: "how do I close that and go back?").
+                        ToolbarItem(placement: .topBarLeading) {
+                            Button { selected = nil } label: { Label("Overview", systemImage: "square.grid.2x2") }
+                        }
+                    }
             } else if let picture = desk.picture, let image = UIImage(data: picture) {
                 ScrollView { Image(uiImage: image).resizable().scaledToFit().padding() }
                     .navigationTitle("Overview")
@@ -44,6 +62,7 @@ struct AgentsView: View {
             }
         }
         .task { await desk.refresh(book: book) }
+        .sheet(item: $workbench) { v in WebVaultScreen(book: book, vault: v) }
         .task {
             // While you are here, look for news every two minutes.
             while !Task.isCancelled {
@@ -84,19 +103,39 @@ struct AgentsView: View {
                 Text("None").tag("")
                 ForEach(book.vaults.filter { $0.canWrite }) { v in Text(v.name).tag(v.id) }
             }
+            if book.vaults.filter({ $0.canWrite }).isEmpty {
+                Text("You have no vault you can write to yet: create one on the Vaults tab first.")
+                    .font(.footnote).foregroundStyle(.orange)
+            }
             Text("2. Give it to Claude (developer). Its key is sealed on this device to Claude's key; the server cannot read it.")
-            Button(sharing ? "Sending" : "Give this vault to Claude (developer)") {
+            // One clear button, a visible "sending", and an unmissable result (the owner tapped four times
+            // because nothing showed that it had gone).
+            Button {
                 guard let vault else { return }
                 Task {
                     sharing = true
                     defer { sharing = false }
-                    do { try await desk.shareVault(vault); said = "Sent. Claude will write the first report into it shortly." }
+                    do { try await desk.shareVault(vault); given = vault.id; said = nil }
                     catch { said = "Not sent: \(error.localizedDescription)" }
                 }
+            } label: {
+                HStack(spacing: 8) {
+                    if sharing { ProgressView().controlSize(.small) }
+                    else { Image(systemName: given == vault?.id ? "checkmark.circle.fill" : "paperplane.fill") }
+                    Text(sharing ? "Sending, sealed to Claude's key" : given == vault?.id ? "Given to Claude" : "Give this vault to Claude (developer)")
+                }
+                .frame(maxWidth: .infinity)
             }
-            .disabled(vault == nil || sharing)
+            .buttonStyle(.borderedProminent)
+            .controlSize(.large)
+            .disabled(vault == nil || sharing || given == vault?.id)
+            if given != nil, given == vault?.id {
+                Label("Sent. Claude has the key, sealed to its key; the first report and its replies arrive in this vault in a few minutes. Pull to refresh.", systemImage: "checkmark.seal.fill")
+                    .font(.callout.weight(.semibold))
+                    .foregroundStyle(.green)
+            }
             Text("3. Pull to refresh. The report appears here; nothing is invented by the app.")
-            if let said { Text(said).font(.footnote).foregroundStyle(.secondary) }
+            if let said { Text(said).font(.footnote).foregroundStyle(.red) }
         }
         .font(.callout)
     }
@@ -119,13 +158,22 @@ struct AgentsView: View {
                         Text("\(link.from == agent.id ? "→" : "←") \(link.from == agent.id ? link.to : link.from): \(link.label)").font(.footnote).foregroundStyle(.secondary)
                     }
                 }
-                Section("Conversation") {
+                Section("Conversation, newest first") {
                     let messages = desk.conversation(with: agent.id)
                     if messages.isEmpty { Text("No messages yet.").foregroundStyle(.secondary) }
                     ForEach(messages) { m in
                         HStack {
                             if m.from == "you" { Spacer(minLength: 40) }
-                            VStack(alignment: .leading, spacing: 2) {
+                            VStack(alignment: .leading, spacing: 4) {
+                                if let quote = m.quote, !quote.isEmpty {
+                                    // What you said, then the answer (the owner: "also show my message").
+                                    Text("You: \u{201C}\(quote)\u{201D}")
+                                        .font(.footnote)
+                                        .foregroundStyle(.secondary)
+                                        .padding(8)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .background(Color.accentColor.opacity(0.10), in: RoundedRectangle(cornerRadius: 8))
+                                }
                                 Text(m.text)
                                 Text(m.at.formatted(date: .omitted, time: .shortened)).font(.caption2).foregroundStyle(.secondary)
                             }

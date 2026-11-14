@@ -23,6 +23,8 @@ struct AgentsReport: Codable, Equatable, Sendable {
         var at: Date
         var text: String
         var replyTo: String?
+        /// What it answers, in your words (the start of your note's transcript), so the reply makes sense on its own.
+        var quote: String? = nil
     }
 
     var v: Int

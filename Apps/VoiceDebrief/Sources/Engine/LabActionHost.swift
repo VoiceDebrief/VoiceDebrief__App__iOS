@@ -12,6 +12,10 @@ final class LabActionHost {
     /// The names `openSection` accepts. Empty means not said: the Lab's own list is used.
     var sectionNames: [String] = []
 
+    /// Set by whoever owns recording: whether a note is being recorded right now. While one is, the
+    /// Lab does not listen: the microphone and the audio session are the recording's.
+    var isRecording: (() -> Bool)?
+
     /// Set by whoever owns recording. Starts a recording now, for the recipient named (as it was
     /// said, in lower case). Returns whether a recording started, and one plain sentence for the card.
     /// The Lab lets go of the microphone before it calls this.
