@@ -61,5 +61,12 @@
     "question": "Should each device send its activity record on its own when the app opens? (issue 117)",
     "why": "Today it is a button on each device, so the picture across your three devices depends on remembering to press it.",
     "options": ["Yes, with a switch, off by default", "Yes, on by default in test builds", "No, keep the button"]
+  },
+  {
+    "id": "keep-location",
+    "asked": "2026-11-14",
+    "question": "Should the facts kept beside a photo or video include where it was taken?",
+    "why": "It is useful for searching later, and anyone with the vault's key can read it. It is off by default; there is a switch in Settings.",
+    "options": ["Off by default, a switch (as built)", "On by default", "Never keep it"]
   }
 ]

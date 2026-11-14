@@ -16,11 +16,12 @@ struct FileRoute: Hashable {
 struct RootView: View {
     let shelf: VaultShelf
     let outbox: Outbox
+    let people: PeopleModel
     @Environment(\.scenePhase) private var phase
 
     var body: some View {
         NavigationStack {
-            VaultsView(shelf: shelf, outbox: outbox)
+            VaultsView(shelf: shelf, outbox: outbox, people: people)
                 .tracked("vaults")
                 .navigationDestination(for: FolderRoute.self) { route in
                     VaultView(shelf: shelf, outbox: outbox, vault: route.vault, folder: route.folder)

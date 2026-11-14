@@ -29,9 +29,9 @@
  ],
  "counts": {
   "seen-working": 27,
-  "built-untried": 81,
+  "built-untried": 85,
   "in-progress": 38,
-  "proposed": 61,
+  "proposed": 60,
   "parked": 6
  },
  "ideas": [
@@ -2430,8 +2430,8 @@
    "kind": "design",
    "app": "SGit Vaults",
    "title": "The trust map",
-   "status": "proposed",
-   "why": "Listed on the design page \"A secrets manager made of people and vaults\" as proposed.",
+   "status": "built-untried",
+   "why": "Listed on the design page \"A secrets manager made of people and vaults\" as built, not yet proven.",
    "summary": "a drawing of the people you have met, with their photos, solid where both confirmed and dashed where one side only.",
    "detail": [
     "a drawing of the people you have met, with their photos, solid where both confirmed and dashed where one side only."
@@ -4150,7 +4150,7 @@
    "summary": "The last step of the Mac job in sgit-app.yml, with the release script: on a green push to dev, archive, sign and upload",
    "detail": [
     "The last step of the Mac job in sgit-app.yml, with the release script: on a green push to dev, archive, sign and upload",
-    "Run 7 (13 November 2026) uploaded ai.sgit.vaults.app 0.1.19 (7), which the owner installed on a Mac. Run 14 (14 November) uploaded 0.1.34 (14): creating a vault without an access key, the access key on the Create screen, drag and drop, the folder tree. Run 20 uploaded 0.1.37 (20): the fixes the pictures called for. Run 25 (05:54 UTC) uploaded 0.1.39 (25): the gallery. Nobody has reported from any of the three yet"
+    "Run 7 (13 November 2026) uploaded ai.sgit.vaults.app 0.1.19 (7), which the owner installed on a Mac. Run 14 (14 November) uploaded 0.1.34 (14): creating a vault without an access key, the access key on the Create screen, drag and drop, the folder tree. Run 20 uploaded 0.1.37 (20): the fixes the pictures called for. Run 25 (05:54 UTC) uploaded 0.1.39 (25): the gallery. The owner has since used a TestFlight build on his iPhone: a vault on the device with six photos and two videos of 112 MB and 60 MB, added from the photo picker. Run 71 (14 November, 14:18 UTC) uploaded 0.1.70 (71): Secrets, Questions for you, Ask this vault, the same vaults on every device, the design restyle and the people engine."
    ],
    "places": [
     "SGit Vaults: Gallery",
@@ -4365,6 +4365,27 @@
    "versions": []
   },
   {
+   "id": "sgit-feature.a.small.picture.and.the.facts.beside.each.file",
+   "kind": "feature",
+   "app": "SGit Vaults",
+   "title": "A small picture and the facts beside each file",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "Engine/FileFacts.swift, Engine/Outbox.swift: while a file is added, before its plain copy goes, the app makes a small picture (480 pixels: the image itself, a frame of a video, the first page of a PDF or document) and a facts file, seals both like any file and puts them in the same commit. Layout, for any client: .sgit/thumbs/<content hash>.jpg and .sgit/meta/<content hash>.json, keyed by the...",
+   "detail": [
+    "Engine/FileFacts.swift, Engine/Outbox.swift: while a file is added, before its plain copy goes, the app makes a small picture (480 pixels: the image itself, a frame of a video, the first page of a PDF or document) and a facts file, seals both like any file and puts them in the same commit. Layout, for any client: .sgit/thumbs/<content hash>.jpg and .sgit/meta/<content hash>.json, keyed by the file's content hash (the 12 hex characters the tree already records), so a renamed or moved file keeps them. Schema sgit.ai/file-meta/v1: name, size, contentHash, contentType, kind, addedAt; for images width, height, orientation, taken, make, model, lens, iso, exposure, aperture, focal length; for video and audio duration, width, height, frame rate, codec, taken, make, model; location only when the person turns on Settings, Keep where photos and videos were taken (off by default); header, every...",
+    "Unit tests for the picture and facts of a photo, the layout, a QuickTime location, and the outbox writing a facts file per file in the same commit; not yet compiled when written. Files added before this have no picture kept; they are shown as before"
+   ],
+   "places": [
+    "SGit Vaults: a vault",
+    "SGit Vaults: Settings"
+   ],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
    "id": "sgit-feature.saving.a.folder.out",
    "kind": "feature",
    "app": "SGit Vaults",
@@ -4441,6 +4462,46 @@
    "places": [
     "SGit Vaults: a vault",
     "SGit Vaults: History"
+   ],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
+   "id": "sgit-feature.people",
+   "kind": "feature",
+   "app": "SGit Vaults",
+   "title": "People",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "The people session's screens (Sources/People/, on the shared SGitPeople package): a People row on the home list with the unread count; You (your card as a QR code and a link), Contacts (add by scanning, a picture or pasting; a photo of the person, on this device only), Inbox; Keys and access (an access key, keys given or received, who holds which) reached from Secrets",
+   "detail": [
+    "The people session's screens (Sources/People/, on the shared SGitPeople package): a People row on the home list with the unread count; You (your card as a QR code and a link), Contacts (add by scanning, a picture or pasting; a photo of the person, on this device only), Inbox; Keys and access (an access key, keys given or received, who holds which) reached from Secrets",
+    "The screens compile and the app's tests pass (the people session's runs 53 and 60); wired here, not yet compiled when written. Nothing has run on a device; making an inbox and sending use the live server only once a person holds an access key"
+   ],
+   "places": [
+    "SGit Vaults: Share"
+   ],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
+   "id": "sgit-feature.who.you.trust.and.shared.vaults.for.people",
+   "kind": "feature",
+   "app": "SGit Vaults",
+   "title": "Who you trust, and shared vaults for people",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "Sources/Team/: a \"Who you trust\" row on the home list draws you in the middle and each contact around you with their photo (an agent as a chip), the line between solid and thick when fingerprints were checked face to face and they have written to you, solid when both sides hold each other's card, dashed when only you hold theirs; a person's page says how you met and what is missing. \"Make a shared...",
+   "detail": [
+    "Sources/Team/: a \"Who you trust\" row on the home list draws you in the middle and each contact around you with their photo (an agent as a chip), the line between solid and thick when fingerprints were checked face to face and they have written to you, solid when both sides hold each other's card, dashed when only you hold theirs; a person's page says how you met and what is missing. \"Make a shared vault with some of them\": choose people whose inbox you know, name it; the app makes the vault, puts it on the server, writes .sgit/members.json (schema sgit.ai/members/v1: names, key fingerprints, who added whom, never keys) and sends each person the vault key sealed to their key. A vault with members says \"Shared with …\" at the top",
+    "Unit tests for the links, the layout, the summary and the member list; not yet compiled when written. Nothing has been sent to a real person. On the receiving side, \"Open this vault\" on a received invitation (the people session's) adds it to the list of vaults through the same check as pasting a key"
+   ],
+   "places": [
+    "SGit Vaults: Share"
    ],
    "issues": [],
    "url": "https://ios.app.voicedebrief.ai/sgit-app/built/index.html",

@@ -34,19 +34,20 @@ struct VaultView: View {
     @State private var exporting: FolderExport?
     @State private var inWebVault = false
     @State private var askingModel = false
+    @State private var members: VaultMembers?
 
     private var contents: VaultContents? { shelf.contents[vault.id] }
     private var onDevice: Bool { shelf.current(vault).onDevice }
     private var here: String { chosen ?? folder }
     private var wide: Bool { sizeClass == .regular && folder.isEmpty }
-    private var listing: VaultListing { VaultListing.of(contents?.files ?? [], in: here) }
+    private var listing: VaultListing { VaultListing.of(VaultListing.visible(contents?.files ?? []), in: here) }
     private var jobs: [UploadJob] { outbox.jobs(for: vault) }
     private var title: String { here.isEmpty || wide ? vault.name : VaultListing.name(of: here) }
 
     var body: some View {
         HStack(spacing: 0) {
             if wide {
-                FolderTree(name: vault.name, nodes: VaultListing.tree(paths: contents?.files.map(\.path) ?? []),
+                FolderTree(name: vault.name, nodes: VaultListing.tree(paths: VaultListing.visible(contents?.files ?? []).map(\.path)),
                            here: here) { chosen = $0 }
                     .frame(width: textSize.isAccessibilitySize ? 400 : 250)
                 Divider()
@@ -56,7 +57,10 @@ struct VaultView: View {
         .navigationTitle(title)
         .navigationBarTitleDisplayMode(.inline)
         .refreshable { await load() }
-        .task { if contents == nil { await load() } }
+        .task {
+            if contents == nil { await load() }
+            members = await shelf.members(of: vault)
+        }
         .toolbar {
             ToolbarItemGroup(placement: .topBarTrailing) {
                 if vault.canWrite {
@@ -92,7 +96,7 @@ struct VaultView: View {
                         UsageLog.shared.action("vault.refresh")
                         Task { await load() }
                     }
-                    let inside = VaultListing.under(contents?.files ?? [], folder: here)
+                    let inside = VaultListing.under(VaultListing.visible(contents?.files ?? []), folder: here)
                     if !inside.isEmpty {
                         Button(VaultNaming.saveOut(count: inside.count, bytes: inside.reduce(0) { $0 + $1.size }),
                                systemImage: "square.and.arrow.down.on.square") { Task { await saveOut() } }
@@ -157,7 +161,7 @@ struct VaultView: View {
     /// hands the folder to the Files app. The files are the originals: decrypted, not converted.
     private func saveOut() async {
         UsageLog.shared.action("folder.save-out")
-        let wanted = VaultListing.under(contents?.files ?? [], folder: here)
+        let wanted = VaultListing.under(VaultListing.visible(contents?.files ?? []), folder: here)
         guard !wanted.isEmpty, intake == nil else { return }
         let name = here.isEmpty ? VaultNaming.clean(vault.name) : VaultListing.name(of: here)
         let target = FileManager.default.temporaryDirectory
@@ -183,8 +187,9 @@ struct VaultView: View {
     }
 
     static func summary(_ contents: VaultContents) -> String {
-        let count = contents.files.count
-        let bytes = contents.files.reduce(0) { $0 + $1.size }
+        let shown = VaultListing.visible(contents.files)
+        let count = shown.count
+        let bytes = shown.reduce(0) { $0 + $1.size }
         let when = contents.head.timestamp.formatted(date: .abbreviated, time: .shortened)
         return "\(count) file\(count == 1 ? "" : "s") · \(bytes.fileSizeText) · last change \(when)"
     }
@@ -196,12 +201,18 @@ struct VaultView: View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 12) {
                 if contents != nil {
-                    let waiting = jobs.reduce(0) { $0 + $1.items.count }
+                    let waiting = jobs.reduce(0) { $0 + $1.shown.count }
                     Label(VaultNaming.arrival(onDevice: onDevice, server: shelf.serverName, pendingFiles: waiting,
                                               failed: jobs.contains { $0.problem != nil }, checked: shelf.checkedAt[vault.id]),
                           systemImage: waiting > 0 ? "arrow.up.circle" : (onDevice ? "iphone" : "checkmark.icloud"))
                         .font(.footnote)
                         .foregroundStyle(jobs.contains { $0.problem != nil } ? Color.red : Color.secondary)
+                        .padding(.horizontal)
+                }
+                if let members, here.isEmpty, members.members.count > 1 {
+                    Label("Shared with " + members.members.map(\.name).joined(separator: ", "), systemImage: "person.3")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
                         .padding(.horizontal)
                 }
                 if wide, !here.isEmpty {
@@ -437,7 +448,7 @@ struct UploadCard: View {
                 Text(job.totalBytes.fileSizeText).font(.footnote).foregroundStyle(.secondary)
             }
             ProgressView(value: outbox.fraction(of: job))
-            ForEach(job.items) { item in
+            ForEach(job.shown) { item in
                 let state = outbox.progress[item.id] ?? ItemProgress(phase: item.uploaded ? .uploaded : .waiting)
                 HStack(spacing: 8) {
                     Text(item.name).font(.footnote).lineLimit(1)

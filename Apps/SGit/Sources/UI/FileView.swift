@@ -21,6 +21,7 @@ struct FileView: View {
     @State private var confirmingDelete = false
     @State private var working = false
     @State private var inWebVault = false
+    @State private var facts: FileMeta?
     @Environment(\.dismiss) private var dismiss
 
     /// Files up to this size are fetched as soon as the screen opens; larger ones wait to be asked.
@@ -125,6 +126,9 @@ struct FileView: View {
                 if let type = file.contentType, !type.isEmpty { LabeledContent("Type", value: type) }
                 LabeledContent("Object", value: String(file.blobId.suffix(12)))
                 if file.large { LabeledContent("Stored", value: "as a large object, in parts") }
+                if let facts {
+                    ForEach(facts.lines, id: \.0) { line in LabeledContent(line.0, value: line.1) }
+                }
             }
 
             if vault.canWrite {
@@ -146,6 +150,7 @@ struct FileView: View {
         .fullScreenCover(isPresented: $inWebVault) {
             WebVaultScreen(shelf: shelf, vault: vault, path: file.path).tracked("web-vault")
         }
+        .task { facts = await shelf.facts(for: file, in: vault) }
         .task {
             // A video waits for Play unless it is small or already decrypted; then it is ready, not playing.
             if shelf.isCached(file, in: vault) || file.size <= Self.fetchUnasked { await fetch() }
