@@ -39,6 +39,12 @@ final class NotePlayer {
             isPlaying = false
             ticker?.cancel()
         } else {
+            // Not while a voice note is being recorded: taking the audio session for playback would
+            // leave that recording silent.
+            guard !VoiceRecorder.noteRecording else {
+                problem = "Finish the recording first: playing now would stop the microphone."
+                return
+            }
             try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .spokenAudio)
             try? AVAudioSession.sharedInstance().setActive(true)
             player.play()

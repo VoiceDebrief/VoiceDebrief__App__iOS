@@ -21,11 +21,16 @@ final class VoiceRecorder {
 
     var isRecording: Bool { recorder?.isRecording ?? false }
 
+    /// True from the moment a voice note starts recording until it stops, for anything else that would
+    /// take the audio session (playback, the Lab): changing it during a recording leaves a file of silence.
+    static private(set) var noteRecording = false
+
     func start(writingTo file: URL) async throws {
         guard await AVAudioApplication.requestRecordPermission() else { throw RecorderError.denied }
         let session = AVAudioSession.sharedInstance()
         try session.setCategory(.record, mode: .default)
         try session.setActive(true)
+        Self.noteRecording = true
         let settings: [String: Any] = [
             AVFormatIDKey: Int(kAudioFormatLinearPCM),
             AVSampleRateKey: 16_000,
@@ -41,10 +46,14 @@ final class VoiceRecorder {
     }
 
     /// How loud the microphone is now, from 0 (silence) to 1. Zero when not recording.
-    func level() -> Double {
-        guard let recorder, recorder.isRecording else { return 0 }
+    func level() -> Double { VoiceRecorder.level(decibels: decibels()) }
+
+    /// The meter's last reading in decibels: 0 is full scale, a quiet room is about -60, and -160 is
+    /// nothing at all reaching the microphone.
+    func decibels() -> Double {
+        guard let recorder, recorder.isRecording else { return -160 }
         recorder.updateMeters()
-        return VoiceRecorder.level(decibels: Double(recorder.averagePower(forChannel: 0)))
+        return Double(recorder.averagePower(forChannel: 0))
     }
 
     /// The meter's decibels (0 is full scale, about -55 is a quiet room) as 0 to 1, on a curve, so that
@@ -59,6 +68,7 @@ final class VoiceRecorder {
     func stop() {
         recorder?.stop()
         recorder = nil
+        Self.noteRecording = false
         try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
     }
 }

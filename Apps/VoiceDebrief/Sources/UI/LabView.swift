@@ -40,7 +40,7 @@ struct LabView: View {
             } header: {
                 Text("Experiments")
             } footer: {
-                Text("An experiment changes nothing that is kept: its tools only read or take note. In L02, two confirmed actions are carried out: opening a section and searching the notes.")
+                Text("An experiment changes nothing that is kept: its tools only read or take note. In L02, three confirmed actions are carried out: opening a section, searching the notes, and starting a recording for someone.")
             }
             Section("Apple's on-device model") {
                 LabeledContent("Status", value: OnDeviceModel.status.text)

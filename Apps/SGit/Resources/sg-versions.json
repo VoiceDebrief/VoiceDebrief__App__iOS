@@ -6,6 +6,30 @@
  "nextArt": [],
  "versions": [
   {
+   "version": "v0.1.78",
+   "date": "14 November 2026",
+   "notes": [
+    "The Lab's control centre (L02) gains a third action it can carry out: record a note for a named person. It always waits for Do it and cannot be switched to go ahead by itself, because a note recorded for a person is sent to them when it is finished; the card says so before the button is pressed, and afterwards shows what the app answered, including a refusal when no contact has that name. The Lab's side only: until the Record screen is connected to it, the card says recording is not connected. A correction made afterwards in the log no longer carries anything out."
+   ],
+   "hasPage": true,
+   "url": "https://ios.app.voicedebrief.ai/versions/v0.1.78/index.html",
+   "pictures": 0,
+   "art": [],
+   "issues": []
+  },
+  {
+   "version": "v0.1.77",
+   "date": "14 November 2026",
+   "notes": [
+    "Three notes from 0.1.72 arrived as pure silence (-91 dB throughout): nothing reached the microphone. While recording, the app now says so after three seconds of true silence (\"No sound is reaching the microphone: another app may be using it\"), so a silent recording is noticed at once. A quiet room does not trigger it."
+   ],
+   "hasPage": true,
+   "url": "https://ios.app.voicedebrief.ai/versions/v0.1.77/index.html",
+   "pictures": 0,
+   "art": [],
+   "issues": []
+  },
+  {
    "version": "v0.1.76",
    "date": "14 November 2026",
    "notes": [

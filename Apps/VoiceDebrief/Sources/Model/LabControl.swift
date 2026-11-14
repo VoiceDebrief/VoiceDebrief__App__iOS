@@ -10,6 +10,7 @@ enum LabAction: String, Codable, CaseIterable, Sendable, Identifiable {
     case openSection
     case saveToVault
     case findNote
+    case recordTo
 
     var id: String { rawValue }
 
@@ -25,6 +26,7 @@ enum LabAction: String, Codable, CaseIterable, Sendable, Identifiable {
         case .openSection: return "Open a section"
         case .saveToVault: return "Save to a vault"
         case .findNote: return "Find a note"
+        case .recordTo: return "Record a note for someone"
         }
     }
 
@@ -38,6 +40,7 @@ enum LabAction: String, Codable, CaseIterable, Sendable, Identifiable {
         case .openSection: return "Shows one section of the app."
         case .saveToVault: return "Saves the current note to the vault."
         case .findNote: return "Looks for an earlier note about a subject."
+        case .recordTo: return "Starts recording a new note that is for a person, named by the speaker."
         }
     }
 
@@ -45,16 +48,20 @@ enum LabAction: String, Codable, CaseIterable, Sendable, Identifiable {
     var argumentName: String? {
         switch self {
         case .recordFor: return "minutes"
-        case .sendTo: return "recipient"
+        case .sendTo, .recordTo: return "recipient"
         case .openSection: return "section"
         case .findNote: return "words"
         case .finishRecording, .cancelLast, .saveToVault: return nil
         }
     }
 
-    /// Whether this experiment carries the action out once it is confirmed. Only the two that are
-    /// safe to undo: showing a section, and a search that only reads.
-    var isCarriedOut: Bool { self == .openSection || self == .findNote }
+    /// Whether this experiment carries the action out once it is confirmed: showing a section, a
+    /// search that only reads, and starting a recording for someone.
+    var isCarriedOut: Bool { self == .openSection || self == .findNote || self == .recordTo }
+
+    /// An action that never goes ahead without Do it. A note recorded for a person is sent to them
+    /// when it is finished, and a spoken finish needs no tap, so a misheard name must be seen first.
+    var alwaysAsks: Bool { self == .recordTo }
 
     static func title(for id: String) -> String {
         LabAction(rawValue: id)?.title ?? (id == none ? "No action" : id)
@@ -101,6 +108,7 @@ struct LabOutcome: Codable, Equatable, Sendable {
     let words: String
 
     static let recordedOnly = LabOutcome(carriedOut: false, words: "Recorded only. This action is not carried out yet.")
+    static let correctedLater = LabOutcome(carriedOut: false, words: "Corrected afterwards. Nothing was carried out.")
 }
 
 /// An action and what it applies to.
@@ -133,6 +141,9 @@ struct LabTrigger: Codable, Equatable, Sendable, Identifiable {
             LabTrigger(phrase: "save this to my vault", action: LabAction.saveToVault.rawValue),
             LabTrigger(phrase: "save to the vault", action: LabAction.saveToVault.rawValue),
             LabTrigger(phrase: "find the note about", action: LabAction.findNote.rawValue),
+            LabTrigger(phrase: "record a note for", action: LabAction.recordTo.rawValue),
+            LabTrigger(phrase: "start recording for", action: LabAction.recordTo.rawValue),
+            LabTrigger(phrase: "start a recording for", action: LabAction.recordTo.rawValue),
         ]
 }
 
@@ -258,7 +269,7 @@ struct LabControlEntry: Codable, Equatable, Sendable, Identifiable {
             state = .nothing
             return
         }
-        if automatic.contains(proposal.action) {
+        if automatic.contains(proposal.action), LabAction(rawValue: proposal.action)?.alwaysAsks != true {
             state = .done
             chosen = proposal
             self.automatic = true
@@ -386,10 +397,12 @@ struct LabControlTest: Equatable, Sendable, Identifiable {
         LabControlTest(words: "Open the library.", expected: LabAction.openSection.rawValue),
         LabControlTest(words: "Save this to my vault.", expected: LabAction.saveToVault.rawValue),
         LabControlTest(words: "Find the note about the boiler.", expected: LabAction.findNote.rawValue),
+        LabControlTest(words: "Record a note for Maria.", expected: LabAction.recordTo.rawValue),
         // Asked for in words no fixed phrase holds: what a model could add.
         LabControlTest(words: "Could you take me to the settings?", expected: LabAction.openSection.rawValue),
         LabControlTest(words: "That is enough for this one, wrap it up.", expected: LabAction.finishRecording.rawValue),
         LabControlTest(words: "Maria should get a copy of this.", expected: LabAction.sendTo.rawValue),
+        LabControlTest(words: "I want to say something new to Maria.", expected: LabAction.recordTo.rawValue),
         // Not instructions: thinking aloud, a report of what someone else did, a refusal.
         LabControlTest(words: "I think the meeting went well and we should plan the next one.", expected: LabAction.none),
         LabControlTest(words: "She said she would send the report to Maria on Friday.", expected: LabAction.none),

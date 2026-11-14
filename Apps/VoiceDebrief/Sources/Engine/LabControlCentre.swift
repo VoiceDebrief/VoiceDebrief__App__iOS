@@ -25,6 +25,7 @@ struct LabControlToolkit: ModelDoorToolkit {
             case .openSection: return LabOpenSectionTool(recorder: recorder)
             case .saveToVault: return LabSaveToVaultTool(recorder: recorder)
             case .findNote: return LabFindNoteTool(recorder: recorder)
+            case .recordTo: return LabRecordToTool(recorder: recorder)
             }
         }
     }
@@ -56,6 +57,22 @@ struct LabSendToTool: Tool {
     @Generable
     struct Arguments {
         @Guide(description: "The name of the person to send the note to, as it was said")
+        let recipient: String
+    }
+
+    func call(arguments: Arguments) async throws -> String {
+        recorder.measure(tool: name, arguments: ["recipient": arguments.recipient]) { LabControlToolkit.reply }
+    }
+}
+
+struct LabRecordToTool: Tool {
+    let name = LabAction.recordTo.rawValue
+    let description = LabAction.recordTo.summary
+    let recorder: ModelDoorRecorder
+
+    @Generable
+    struct Arguments {
+        @Guide(description: "The name of the person the new note is for, as it was said")
         let recipient: String
     }
 
@@ -169,6 +186,9 @@ final class LabControlCentre {
     private var consumed = 0
     private var waiting: [String] = []
     private var worker: Task<Void, Never>?
+    private var starting: Set<String> = []
+    /// The action being carried out that takes time, if any: tests wait on it.
+    private(set) var pendingAction: Task<Void, Never>?
 
     init(defaults: UserDefaults = .standard, host: LabActionHost? = nil) {
         self.defaults = defaults
@@ -205,6 +225,7 @@ final class LabControlCentre {
     }
 
     func setAutomatic(_ action: String, _ on: Bool) {
+        if on, LabAction(rawValue: action)?.alwaysAsks == true { return }
         if on { automatic.insert(action) } else { automatic.remove(action) }
         defaults.set(automatic.sorted(), forKey: Self.automaticKey)
     }
@@ -252,7 +273,33 @@ final class LabControlCentre {
     /// An action that has just been confirmed, by the person or by its switch, is taken up once.
     private func takeUp(_ index: Int) {
         guard entries[index].state == .done, entries[index].outcome == nil, let chosen = entries[index].chosen else { return }
-        entries[index].outcome = carryOut(chosen)
+        guard LabAction(rawValue: chosen.action) == .recordTo else {
+            entries[index].outcome = carryOut(chosen)
+            return
+        }
+        let id = entries[index].id
+        guard !starting.contains(id) else { return }
+        starting.insert(id)
+        pendingAction = Task { [weak self] in
+            guard let self else { return }
+            let outcome = await self.startRecording(for: chosen.argument)
+            self.starting.remove(id)
+            if let at = self.entries.firstIndex(where: { $0.id == id }) { self.entries[at].outcome = outcome }
+        }
+    }
+
+    /// The recording is started by whoever owns recording, after the Lab has let go of the microphone.
+    private func startRecording(for argument: String) async -> LabOutcome {
+        let recipient = LabTriggerMatcher.words(argument).joined(separator: " ")
+        guard !recipient.isEmpty else {
+            return LabOutcome(carriedOut: false, words: "Not started: no one was named.")
+        }
+        guard let start = host.startRecording else {
+            return LabOutcome(carriedOut: false, words: "Not started: this build has not connected the Lab to recording.")
+        }
+        await stopListening()
+        let result = await start(recipient)
+        return LabOutcome(carriedOut: result.started, words: result.words)
     }
 
     private func carryOut(_ proposal: LabControlProposal) -> LabOutcome {
@@ -287,7 +334,15 @@ final class LabControlCentre {
 
     func doIt(_ id: String) { update(id) { $0.doIt() } }
     func notThis(_ id: String) { update(id) { $0.notThis() } }
-    func edit(_ id: String, action: String, argument: String) { update(id) { $0.edit(action: action, argument: argument) } }
+    /// A correction made on a card that is waiting is also the go-ahead. One made afterwards, in the
+    /// log, only says what the sentence asked for: nothing is carried out.
+    func edit(_ id: String, action: String, argument: String) {
+        update(id) { entry in
+            let wasWaiting = entry.state == .waiting
+            entry.edit(action: action, argument: argument)
+            if !wasWaiting, entry.state == .done, entry.outcome == nil { entry.outcome = .correctedLater }
+        }
+    }
 
     /// The test sentences, one after another, each judged against the action it asks for.
     func runTests() async {

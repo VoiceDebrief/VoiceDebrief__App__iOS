@@ -96,7 +96,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | The Lab, experiment L01: one prompt, tools on and off | Feature | VoiceDebrief | Settings: Experiments, the Lab; The repository: CI |   | [reality file](../built/index.md) |
 | The model door, first slice | Feature | VoiceDebrief | Settings: Experiments, the Lab |   | [reality file](../built/index.md) |
 | The Lab, experiment L03: a game played by voice | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
-| The Lab, experiment L02: the control centre | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
+| The Lab, experiment L02: the control centre | Feature | VoiceDebrief | Settings: Experiments, the Lab |   | [reality file](../built/index.md) |
 | Recipients, added by QR code | Feature | VoiceDebrief | Settings: Recipients |   | [reality file](../built/index.md) |
 | A clean text, with questions | Feature | VoiceDebrief | A note: Clean text; Library, then a note |   | [reality file](../built/index.md) |
 | Credit that counts down, with a simulated top-up | Feature | VoiceDebrief | The balance in the top bar; Settings: Recipients |   | [reality file](../built/index.md) |

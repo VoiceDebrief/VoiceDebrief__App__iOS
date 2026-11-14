@@ -99,6 +99,29 @@ struct RootView: View {
                 tab = found
                 return true
             }
+            // Lab L02 may start a recording for a named contact, only after Do it (issue 047). The match
+            // is exact, ignoring case, with "claude" for Claude (developer); anything else is refused.
+            LabActionHost.shared.startRecording = { [session] spoken in
+                let wanted = spoken.trimmingCharacters(in: .whitespaces).lowercased()
+                let all = RecipientStore.shared.all
+                let found = all.first { $0.name.lowercased() == wanted }
+                    ?? (wanted == "claude" ? RecipientStore.shared.builtIn : nil)
+                guard let recipient = found else {
+                    let names = all.map(\.name).joined(separator: ", ")
+                    return (false, "Not started: there is no contact called \(spoken)." + (names.isEmpty ? "" : " Contacts: \(names)."))
+                }
+                if session.recordingNote != nil { return (false, "Not started: a recording is already running.") }
+                let localeId = UserDefaults.standard.string(forKey: "vd.localeId") ?? ""
+                if localeId.isEmpty { return (false, "Not started: choose a language on the Record screen first.") }
+                UserDefaults.standard.set(recipient.link, forKey: "vd.addressee")
+                tab = .record
+                await session.startRecording(localeId: localeId)
+                guard session.recordingNote != nil else {
+                    if case .failed(let why) = session.phase { return (false, "Not started: \(why)") }
+                    return (false, "Not started: the recording could not begin.")
+                }
+                return (true, "Recording, for \(recipient.name) (sent when you finish).")
+            }
         }
     }
 
