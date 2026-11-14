@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="720" viewBox="0 0 1600 720">
+<rect width="1600" height="720" fill="#F8FAFC"/>
+<text x="80" y="78" font-family="Inter, -apple-system, 'Helvetica Neue', sans-serif" font-size="34" font-weight="800" fill="#0B1B2B">The life of a voice note</text>
+<text x="80" y="114" font-family="Inter, -apple-system, 'Helvetica Neue', sans-serif" font-size="20" fill="#45596E">Everything up to the debrief happens on the device. Nothing leaves it unencrypted.</text>
+<rect x="60" y="150" width="1100" height="44" rx="22" fill="#0E9E72" fill-opacity="0.1"/>
+<text x="610" y="179" text-anchor="middle" font-family="Inter, -apple-system, 'Helvetica Neue', sans-serif" font-size="18" font-weight="700" fill="#0A7D5A">ON THIS DEVICE, AUTOMATIC</text>
+<rect x="1200" y="150" width="340" height="44" rx="22" fill="#4F5BD5" fill-opacity="0.1"/>
+<text x="1370" y="179" text-anchor="middle" font-family="Inter, -apple-system, 'Helvetica Neue', sans-serif" font-size="18" font-weight="700" fill="#4F5BD5">ENCRYPTED, BY CHOICE</text>
+<path d="M326 375 h22" stroke="#0E9E72" stroke-width="5" stroke-linecap="round"/><path d="M342 365 l10 10 l-10 10" fill="none" stroke="#0E9E72" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M606 375 h22" stroke="#0E9E72" stroke-width="5" stroke-linecap="round"/><path d="M622 365 l10 10 l-10 10" fill="none" stroke="#0E9E72" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M886 375 h22" stroke="#0E9E72" stroke-width="5" stroke-linecap="round"/><path d="M902 365 l10 10 l-10 10" fill="none" stroke="#0E9E72" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+<g transform="translate(200 260)">
+    <rect x="-120" y="-30" width="240" height="290" rx="26" fill="#FFFFFF" stroke="#E3E9EF" stroke-width="2"/>
+    <circle cx="0" cy="50" r="46" fill="#0E9E72"/>
+    <g transform="translate(0 50)" fill="none" stroke="#FFFFFF" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><rect x="-11" y="-26" width="22" height="34" rx="11" fill="#FFFFFF" stroke="none"/><path d="M-20 0 a20 20 0 0 0 40 0"/><path d="M0 20 v8"/></g>
+    <text x="0" y="138" text-anchor="middle" font-family="Inter, -apple-system, 'Helvetica Neue', sans-serif" font-size="24" font-weight="700" fill="#0B1B2B">You speak</text>
+    <text x="0" y="170" text-anchor="middle" font-family="Inter, -apple-system, 'Helvetica Neue', sans-serif" font-size="17" fill="#45596E">One tap to record.</text><text x="0" y="194" text-anchor="middle" font-family="Inter, -apple-system, 'Helvetica Neue', sans-serif" font-size="17" fill="#45596E">Saved as you speak,</text><text x="0" y="218" text-anchor="middle" font-family="Inter, -apple-system, 'Helvetica Neue', sans-serif" font-size="17" fill="#45596E">so a crash loses nothing.</text>
+  </g>
+<g transform="translate(480 260)">
+    <rect x="-120" y="-30" width="240" height="290" rx="26" fill="#FFFFFF" stroke="#E3E9EF" stroke-width="2"/>
+    <circle cx="0" cy="50" r="46" fill="#2F80ED"/>
+    <g transform="translate(0 50)" fill="none" stroke="#FFFFFF" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path d="M-22 -14 h44"/><path d="M-22 0 h44"/><path d="M-22 14 h28"/></g>
+    <text x="0" y="138" text-anchor="middle" font-family="Inter, -apple-system, 'Helvetica Neue', sans-serif" font-size="24" font-weight="700" fill="#0B1B2B">Transcript</text>
+    <text x="0" y="170" text-anchor="middle" font-family="Inter, -apple-system, 'Helvetica Neue', sans-serif" font-size="17" fill="#45596E">Apple's speech model,</text><text x="0" y="194" text-anchor="middle" font-family="Inter, -apple-system, 'Helvetica Neue', sans-serif" font-size="17" fill="#45596E">on the device,</text><text x="0" y="218" text-anchor="middle" font-family="Inter, -apple-system, 'Helvetica Neue', sans-serif" font-size="17" fill="#45596E">as you speak and after.</text>
+  </g>
+<g transform="translate(760 260)">
+    <rect x="-120" y="-30" width="240" height="290" rx="26" fill="#FFFFFF" stroke="#E3E9EF" stroke-width="2"/>
+    <circle cx="0" cy="50" r="46" fill="#8E5CF7"/>
+    <g transform="translate(0 50)" fill="none" stroke="#FFFFFF" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path d="M0 -24 Q0 0 24 0 Q0 0 0 24 Q0 0 -24 0 Q0 0 0 -24 Z" fill="#FFFFFF" stroke="none"/></g>
+    <text x="0" y="138" text-anchor="middle" font-family="Inter, -apple-system, 'Helvetica Neue', sans-serif" font-size="24" font-weight="700" fill="#0B1B2B">Debrief</text>
+    <text x="0" y="170" text-anchor="middle" font-family="Inter, -apple-system, 'Helvetica Neue', sans-serif" font-size="17" fill="#45596E">Apple's on-device model:</text><text x="0" y="194" text-anchor="middle" font-family="Inter, -apple-system, 'Helvetica Neue', sans-serif" font-size="17" fill="#45596E">one sentence, key points,</text><text x="0" y="218" text-anchor="middle" font-family="Inter, -apple-system, 'Helvetica Neue', sans-serif" font-size="17" fill="#45596E">actions.</text>
+  </g>
+<g transform="translate(1040 260)">
+    <rect x="-120" y="-30" width="240" height="290" rx="26" fill="#FFFFFF" stroke="#E3E9EF" stroke-width="2"/>
+    <circle cx="0" cy="50" r="46" fill="#12C08A"/>
+    <g transform="translate(0 50)" fill="none" stroke="#FFFFFF" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><rect x="-22" y="-24" width="44" height="48" rx="8"/><path d="M-10 -24 v12 h20 v-12"/><path d="M-12 10 h24"/></g>
+    <text x="0" y="138" text-anchor="middle" font-family="Inter, -apple-system, 'Helvetica Neue', sans-serif" font-size="24" font-weight="700" fill="#0B1B2B">Library</text>
+    <text x="0" y="170" text-anchor="middle" font-family="Inter, -apple-system, 'Helvetica Neue', sans-serif" font-size="17" fill="#45596E">Kept on this device,</text><text x="0" y="194" text-anchor="middle" font-family="Inter, -apple-system, 'Helvetica Neue', sans-serif" font-size="17" fill="#45596E">with the audio,</text><text x="0" y="218" text-anchor="middle" font-family="Inter, -apple-system, 'Helvetica Neue', sans-serif" font-size="17" fill="#45596E">always. No switch.</text>
+  </g>
+<path d="M1166 340 C 1210 340, 1210 300, 1250 300" fill="none" stroke="#4F5BD5" stroke-width="5" stroke-linecap="round"/>
+<path d="M1166 420 C 1210 420, 1210 520, 1250 520" fill="none" stroke="#E5577E" stroke-width="5" stroke-linecap="round"/>
+<g transform="translate(1390 300)">
+  <rect x="-140" y="-80" width="280" height="160" rx="26" fill="#FFFFFF" stroke="#4F5BD5" stroke-opacity="0.4" stroke-width="2"/>
+  <circle cx="-82" cy="0" r="38" fill="#4F5BD5"/><g transform="translate(-82 0) scale(0.8)" fill="none" stroke="#FFFFFF" stroke-width="7" stroke-linecap="round"><rect x="-18" y="-4" width="36" height="28" rx="6" fill="#FFFFFF" stroke="none"/><path d="M-11 -4 v-9 a11 11 0 0 1 22 0 v9"/></g>
+  <text x="-30" y="-14" font-family="Inter, -apple-system, 'Helvetica Neue', sans-serif" font-size="22" font-weight="700" fill="#0B1B2B">Your vault</text>
+  <text x="-30" y="14" font-family="Inter, -apple-system, 'Helvetica Neue', sans-serif" font-size="16" fill="#45596E">a signed commit,</text>
+  <text x="-30" y="36" font-family="Inter, -apple-system, 'Helvetica Neue', sans-serif" font-size="16" fill="#45596E">on finishing</text>
+</g>
+<g transform="translate(1390 520)">
+  <rect x="-140" y="-80" width="280" height="160" rx="26" fill="#FFFFFF" stroke="#E5577E" stroke-opacity="0.4" stroke-width="2"/>
+  <circle cx="-82" cy="0" r="38" fill="#E5577E"/><g transform="translate(-82 0) scale(0.8)" fill="none" stroke="#FFFFFF" stroke-width="7" stroke-linecap="round"><path d="M-24 2 L24 -18 L8 22 L0 6 Z" fill="#FFFFFF" stroke="none"/></g>
+  <text x="-30" y="-14" font-family="Inter, -apple-system, 'Helvetica Neue', sans-serif" font-size="22" font-weight="700" fill="#0B1B2B">A contact</text>
+  <text x="-30" y="14" font-family="Inter, -apple-system, 'Helvetica Neue', sans-serif" font-size="16" fill="#45596E">encrypted to</text>
+  <text x="-30" y="36" font-family="Inter, -apple-system, 'Helvetica Neue', sans-serif" font-size="16" fill="#45596E">their key</text>
+</g>
+<text x="80" y="672" font-family="Inter, -apple-system, 'Helvetica Neue', sans-serif" font-size="17" fill="#6B7F94">No server of ours. No API key. The only server is the vault server, and it stores ciphertext.</text>
+</svg>

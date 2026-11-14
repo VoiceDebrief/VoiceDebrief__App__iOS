@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The visual identity of VoiceDebrief and SGit Vaults</title>
+<meta name="description" content="One family, two apps: colour, type, spacing, corners, the marks and app icons, a symbol and a picture for every section, and how the pictures are made.">
+<link rel="canonical" href="https://ios.app.voicedebrief.ai/design/identity/index.html">
+<meta property="og:url" content="https://ios.app.voicedebrief.ai/design/identity/index.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="VoiceDebrief for iOS">
+<meta property="og:title" content="The visual identity of VoiceDebrief and SGit Vaults">
+<meta property="og:description" content="One family, two apps: colour, type, spacing, corners, the marks and app icons, a symbol and a picture for every section, and how the pictures are made.">
+<link rel="alternate" type="text/markdown" href="index.md" title="This page as markdown">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/vd-tokens.css">
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+
+<nav class="site"><div class="row">
+  <a class="brand" href="../../index.html">Voice<em>Debrief</em> <span>iOS</span></a>
+  <span class="beta" title="In development: there is nothing to install yet">IN DEVELOPMENT</span>
+  <a class="parent" href="https://voicedebrief.ai" title="A VoiceDebrief product">&#8599; part of <b>voicedebrief.ai</b></a>
+  <a class="ver" href="../../versions/index.html" title="Release history">dev</a>
+  <a class="nl" href="../../built/index.html">Built</a>
+  <a class="nl" href="../../architecture/index.html">How it works</a>
+  <a class="nl here" href="../../design/index.html">Design</a>
+  <a class="nl" href="../../plan/index.html">Plan</a>
+  <a class="nl" href="../../articles/index.html">Articles</a>
+  <a class="nl" href="../../develop/index.html">Build</a>
+  <a class="gh" href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">&#9733; GitHub</a>
+</div></nav>
+
+<main class="doc">
+<div class="crumb"><a href="../../index.html">VoiceDebrief iOS</a> / design / identity</div>
+<h1 id="the-visual-identity-one-family-two-apps">The visual identity: one family, two apps</h1>
+<p>How VoiceDebrief and SGit Vaults look, and why: colour, type, spacing, corners, the marks, the icons and the pictures. Decided on 14 November 2026 after the owner asked for &quot;a very strong visual identity&quot; and &quot;icons for everything&quot;. The <a href="../index.html">design</a> says how the apps behave; this page says how they look. Everything here is in the code: <code>Sources/UI/Design/</code> in each app, and <code>tools/art/</code> for every picture.</p>
+<p><img class="shot" src="../../assets/art/info-family.svg" alt="The family: two marks on the same navy ground" loading="lazy"></p>
+<h2 id="five-decisions">Five decisions</h2>
+<div class="tablewrap"><table>
+<thead><tr><th></th><th>Decision</th></tr></thead>
+<tbody>
+<tr><td>Ground</td><td>A deep navy, <code>#0B1B2B</code>, is the family's ground: the app icons, the drawings, the hero banners. The screens themselves stay in Apple's system colours, light and dark</td></tr>
+<tr><td>One accent per app</td><td>VoiceDebrief is signal green, <code>#0E9E72</code>. SGit Vaults is indigo, <code>#4F5BD5</code>. Indigo means a vault in both apps, so the Vaults section of VoiceDebrief is indigo too</td></tr>
+<tr><td>Colour carries meaning</td><td>Red only for recording and failure. Amber only for something degraded. Every section has one colour, used for its icon, its tile and its picture, and nothing else</td></tr>
+<tr><td>One symbol per thing</td><td>Every section, action and state has one SF Symbol, kept in one file (<code>Icons.swift</code>, and <code>Sections.swift</code> for sections), so the same thing looks the same everywhere</td></tr>
+<tr><td>A picture per section</td><td>Each part of the app has a drawing in the house style: on the home screen's tiles, as a banner where a section begins, in empty states. No picture contains words, and none shows something the app does not do</td></tr>
+</tbody></table></div>
+<h2 id="colour">Colour</h2>
+<div class="tablewrap"><table>
+<thead><tr><th>Token</th><th>Light</th><th>Dark</th><th>Used for</th></tr></thead>
+<tbody>
+<tr><td><code>DS.Palette.navy</code></td><td><code>#0B1B2B</code></td><td><code>#0B1B2B</code></td><td>The family ground: icons, drawings, banners</td></tr>
+<tr><td><code>DS.Palette.green</code></td><td><code>#0E9E72</code></td><td><code>#12C08A</code></td><td>VoiceDebrief's accent; the record control; saved and done</td></tr>
+<tr><td><code>DS.Palette.mint</code></td><td><code>#9FD8C4</code></td><td><code>#9FD8C4</code></td><td>Highlights in drawings</td></tr>
+<tr><td><code>DS.Palette.indigo</code></td><td><code>#4F5BD5</code></td><td><code>#7C86F0</code></td><td>SGit Vaults' accent; anything to do with a vault, in both apps</td></tr>
+<tr><td><code>DS.Palette.amber</code></td><td><code>#B98500</code></td><td><code>#F0B429</code></td><td>Degraded: worked, but not fully</td></tr>
+<tr><td><code>DS.Palette.red</code></td><td><code>#D93A3F</code></td><td><code>#FF6B6B</code></td><td>Recording and failure only</td></tr>
+<tr><td><code>DS.Palette.hairline</code></td><td>primary at 9%</td><td>primary at 9%</td><td>The edge of a card. There are no shadows on screens</td></tr>
+</tbody></table></div>
+<p>The accent colours are the asset catalogues' <code>AccentColor</code>, so every system control takes them without code.</p>
+<h2 id="sections-one-colour-one-symbol-one-picture">Sections: one colour, one symbol, one picture</h2>
+<p>VoiceDebrief's parts, in the order of the sidebar. The tab bar, the sidebar, the home screen's tiles and each section's banner all read from <code>RootTab</code> in <code>Sources/UI/Design/Sections.swift</code>, so they cannot disagree.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Picture</th><th>Section</th><th>Symbol</th><th>Colour</th><th>The tile's line</th></tr></thead>
+<tbody>
+<tr><td><img class="shot" src="../../assets/art/vd-record.jpg" alt="Record" loading="lazy"></td><td>Record</td><td><code>mic.fill</code></td><td><code>#0E9E72</code></td><td>A voice note in, a transcript and a debrief out</td></tr>
+<tr><td><img class="shot" src="../../assets/art/vd-library.jpg" alt="Library" loading="lazy"></td><td>Library</td><td><code>tray.full</code></td><td><code>#2F80ED</code></td><td>Every note, by day</td></tr>
+<tr><td><img class="shot" src="../../assets/art/vd-contacts.jpg" alt="Contacts" loading="lazy"></td><td>Contacts</td><td><code>person.2</code></td><td><code>#E5577E</code></td><td>Who notes go to; add one by QR code</td></tr>
+<tr><td><img class="shot" src="../../assets/art/vd-vaults.jpg" alt="Vaults" loading="lazy"></td><td>Vaults</td><td><code>lock.shield</code></td><td><code>#4F5BD5</code></td><td>Encrypted copies that you own</td></tr>
+<tr><td><img class="shot" src="../../assets/art/vd-identity.jpg" alt="Identity" loading="lazy"></td><td>Identity</td><td><code>person.badge.key</code></td><td><code>#8E5CF7</code></td><td>Your keys and your devices</td></tr>
+<tr><td><img class="shot" src="../../assets/art/vd-credit.jpg" alt="Credit" loading="lazy"></td><td>Credit</td><td><code>sterlingsign.circle</code></td><td><code>#D4A12A</code></td><td>What each thing costs</td></tr>
+<tr><td><img class="shot" src="../../assets/art/vd-activity.jpg" alt="Your activity" loading="lazy"></td><td>Your activity</td><td><code>chart.bar</code></td><td><code>#F08A4B</code></td><td>What you have used; send it</td></tr>
+<tr><td><img class="shot" src="../../assets/art/vd-lab.jpg" alt="Lab" loading="lazy"></td><td>Lab</td><td><code>flask</code></td><td><code>#13A8C8</code></td><td>Try Apple's model, tools on and off</td></tr>
+<tr><td><img class="shot" src="../../assets/art/vd-words.jpg" alt="Your words" loading="lazy"></td><td>Your words</td><td><code>character.book.closed</code></td><td><code>#2BB39A</code></td><td>Names the clean text should know</td></tr>
+<tr><td><img class="shot" src="../../assets/art/vd-about.jpg" alt="What this build does" loading="lazy"></td><td>What this build does</td><td><code>checklist</code></td><td><code>#12C08A</code></td><td>Built, in test, not built</td></tr>
+<tr><td><img class="shot" src="../../assets/art/vd-settings.jpg" alt="Settings" loading="lazy"></td><td>Settings</td><td><code>gearshape</code></td><td><code>#8A9BB0</code></td><td>Language, saving, diagnostics</td></tr>
+</tbody></table></div>
+<p>SGit Vaults' parts, from <code>SGSection</code> in its own <code>Sections.swift</code>:</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Picture</th><th>Section</th><th>Symbol</th><th>Colour</th></tr></thead>
+<tbody>
+<tr><td><img class="shot" src="../../assets/art/sg-vaults.jpg" alt="Vaults" loading="lazy"></td><td>Vaults</td><td><code>lock.shield</code></td><td><code>#4F5BD5</code></td></tr>
+<tr><td><img class="shot" src="../../assets/art/sg-gallery.jpg" alt="Gallery" loading="lazy"></td><td>Gallery</td><td><code>square.grid.2x2</code></td><td><code>#E07A3F</code></td></tr>
+<tr><td><img class="shot" src="../../assets/art/sg-share.jpg" alt="Share" loading="lazy"></td><td>Share</td><td><code>link</code></td><td><code>#E5577E</code></td></tr>
+<tr><td><img class="shot" src="../../assets/art/sg-history.jpg" alt="History" loading="lazy"></td><td>History</td><td><code>clock.arrow.circlepath</code></td><td><code>#13A8C8</code></td></tr>
+<tr><td><img class="shot" src="../../assets/art/sg-settings.jpg" alt="Settings" loading="lazy"></td><td>Settings</td><td><code>gearshape</code></td><td><code>#8A9BB0</code></td></tr>
+</tbody></table></div>
+<h2 id="actions-and-states">Actions and states</h2>
+<p>From <code>Icons.swift</code>, the same in both apps.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Meaning</th><th>Symbol</th><th></th><th>Meaning</th><th>Symbol</th></tr></thead>
+<tbody>
+<tr><td>Record</td><td><code>mic.fill</code></td><td></td><td>Done</td><td><code>checkmark.circle.fill</code></td></tr>
+<tr><td>Finish</td><td><code>checkmark</code></td><td></td><td>Working</td><td><code>clock.arrow.circlepath</code></td></tr>
+<tr><td>Share</td><td><code>square.and.arrow.up</code></td><td></td><td>Degraded</td><td><code>exclamationmark.triangle.fill</code> (amber)</td></tr>
+<tr><td>Save to a vault</td><td><code>lock.shield</code></td><td></td><td>Failed</td><td><code>xmark.octagon.fill</code> (red)</td></tr>
+<tr><td>Send</td><td><code>paperplane.fill</code></td><td></td><td>In a vault</td><td><code>lock.shield.fill</code> (indigo)</td></tr>
+<tr><td>Discard</td><td><code>trash</code></td><td></td><td>Sent</td><td><code>paperplane.circle.fill</code></td></tr>
+<tr><td>Try again</td><td><code>arrow.clockwise</code></td><td></td><td>On this device</td><td><code>iphone</code></td></tr>
+<tr><td>Scan a QR code</td><td><code>qrcode.viewfinder</code></td><td></td><td>A note</td><td><code>waveform</code></td></tr>
+<tr><td>Language</td><td><code>globe</code></td><td></td><td>What is new</td><td><code>sparkles</code></td></tr>
+</tbody></table></div>
+<p>A state is shown as a <code>StatusPill</code>: the symbol and a word or two in the state's colour, on a 12% wash of it. Never colour alone.</p>
+<h2 id="type-spacing-and-corners">Type, spacing and corners</h2>
+<ul>
+<li><strong>Type.</strong> Apple's system font throughout, so Dynamic Type and every language work. Display text, titles and numbers use the rounded design (<code>DS.TypeScale.display</code>, <code>.title</code>, <code>.number</code>): the timer, a section's banner, the balance. Body text is the plain system font.</li>
+<li><strong>Spacing.</strong> A 4-point grid: 4, 8, 12, 16, 24, 32, 48 (<code>DS.Space</code>). Screens are padded 16 or 20 at the edges, and content is held to a readable width on iPad and Mac.</li>
+<li><strong>Corners.</strong> Continuous curves always. 12 for a control or thumbnail, 18 for a card, 26 for a banner, and a section icon's square at 28% of its size (<code>DS.Radius</code>).</li>
+<li><strong>Surfaces.</strong> A card is the grouped surface colour with a hairline edge (<code>dsSurface()</code>), no shadow. Depth belongs to the drawings, not the screens.</li>
+</ul>
+<h2 id="the-marks-and-the-app-icons">The marks and the app icons</h2>
+<p>VoiceDebrief's mark is a voice becoming a note: five rounded bars, the sound, turning into three lines, the text, the first line green. SGit Vaults' mark is a vault whose door is a history: a rounded square holding a commit graph with one green branch. Both are white on the same navy, lit from the lower right by the app's own colour. They are drawn as code (<code>iconVoiceDebrief</code> and <code>iconSGit</code> in <code>tools/art/art.mjs</code>) and rendered to the 1024-pixel <code>AppIcon.png</code> in each asset catalogue.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>VoiceDebrief</th><th>SGit Vaults</th></tr></thead>
+<tbody>
+<tr><td><img class="shot" src="../../assets/art/icon-voicedebrief.png" alt="The VoiceDebrief app icon" loading="lazy"></td><td><img class="shot" src="../../assets/art/icon-sgit.png" alt="The SGit Vaults app icon" loading="lazy"></td></tr>
+</tbody></table></div>
+<h2 id="the-pictures">The pictures</h2>
+<p><strong>The house style.</strong> A navy night card; a soft glow of the section's colour behind one subject; flat, rounded shapes with gentle gradients; off-white highlights; depth from one soft shadow; a faint dot grid. No words, no faces, no logos. One subject per picture, centred, with room around it so it reads at the size of a tile.</p>
+<p><strong>How they are made.</strong> Every picture is a function in <code>tools/art/art.mjs</code> that returns an SVG; <code>node tools/art/render.mjs</code> renders them in Chromium and writes 720 by 540 JPEGs (about 20 KB each) into the asset catalogues (<code>Art/VDArt-*</code>, <code>Art/SGArt-*</code>) and into <code>website/assets/art/</code> for this site. Changing a picture is changing its function and running the script.</p>
+<p><strong>Pictures from image models.</strong> The owner offered image models through OpenRouter. <code>tools/imagegen/</code> holds a generator for them that records each image's model and prompt in <code>images.json</code>, so any picture made that way can be remade. Its first run was refused because the key had reached its spending limit, so every picture on this page and in the apps is drawn as code. When the key works, a generated picture may replace a drawn one if it keeps to the house style above.</p>
+<h2 id="infographics">Infographics</h2>
+<p>Explanations on the site are drawn in the same style, on a light ground, with words. Each is checked against <a href="../../built/index.html">what is built</a> before it is published.</p>
+<p><img class="shot" src="../../assets/art/info-journey.svg" alt="The life of a voice note: speak, transcript, debrief, library on the device; vault and contact encrypted, by choice" loading="lazy"></p>
+<h2 id="where-it-is-applied">Where it is applied</h2>
+<ul>
+<li><strong>Built:</strong> the tokens, sections, icons and components in both apps; the new app icons; SGit Vaults' indigo accent; the tab bar and sidebar reading from <code>RootTab</code>; the record screen's Explore tiles with a picture each; a banner on the record screen before the first note; the record control in the house green with its ring; cards with a hairline; in SGit Vaults, a banner when there are no vaults and illustrated rows for Gallery and Settings.</li>
+<li><strong>Next, screen by screen:</strong> a banner at the top of each section; empty states with their picture; the note screen's cards and state pills; Library rows with state pills; the vault screens in indigo.</li>
+</ul>
+</main>
+
+<footer class="site"><div class="cols">
+  <div>
+    <div class="brandline">Voice<em>Debrief</em> <span>iOS</span></div>
+    <p>The VoiceDebrief transcript and debrief as a native iPhone and iPad app, on Apple's own models, with the results in a vault you own. In development: there is nothing to install yet. Content CC BY 4.0; code Apache 2.0.</p>
+    <p class="partnote">This site is static and has no analytics.</p>
+    <p class="verline">site dev · <a href="index.md">this page as markdown</a> · <a href="../../llms.txt">llms.txt</a></p>
+  </div>
+  <div>
+    <h4>The app</h4>
+    <a href="../../built/index.html">What is built</a>
+    <a href="../../plan/index.html">The plan</a>
+    <a href="../../develop/index.html">Build and test</a>
+    <a href="../../versions/index.html">Release history</a>
+    <a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">GitHub</a>
+  </div>
+  <div>
+    <h4>VoiceDebrief</h4>
+    <a href="https://voicedebrief.ai">voicedebrief.ai</a>
+    <a href="https://meetscribe.chrome-extension.voicedebrief.ai">MeetScribe for Google Meet</a>
+  </div>
+  <div>
+    <h4>Built on</h4>
+    <a href="https://sgit.ai">sgit.ai</a>
+    <a href="https://pki.sgit.ai">pki.sgit.ai</a>
+    <a href="https://sgit.ai/security/index.html">The vault security model</a>
+  </div>
+</div></footer>
+</body>
+</html>

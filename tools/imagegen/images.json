@@ -5,10 +5,6 @@
     "icon": "An iOS app icon, full-bleed square artwork filling the whole canvas edge to edge: no rounded corners, no border, no drop shadow around the square, no mockup, no device. Flat vector, bold and simple, readable at 60 pixels. No text or letters.",
     "infographic": "A clean, modern infographic for a technical product website, in a flat vector style. Off-white background (#F8FAFC), navy ink (#0B1B2B) for text and lines, signal green (#0E9E72) for the main path, mint (#9FD8C4) fills, indigo (#4F5BD5) for anything to do with vaults, amber (#DFA100) only for warnings. Rounded cards, simple pictograms, thin arrows, generous spacing, a clear left-to-right or top-to-bottom reading order. Text in a clean sans-serif, spelt exactly as given, British English, nothing else written."
   },
-  "images": [
-    { "id": "test-vaults", "style": "tile", "accent": "indigo #4F5BD5", "aspect": "4:3", "size": [720, 540], "out": "../scratch-test/test-vaults.jpg",
-      "prompt": "A sturdy rounded vault door, slightly open, with a soft indigo glow inside and a small stack of note cards with sound waves on them going in." },
-    { "id": "test-icon-vd", "style": "icon", "aspect": "1:1", "size": [1024, 1024], "out": "../scratch-test/test-icon-vd.png",
-      "prompt": "The icon for VoiceDebrief, an app that records a voice note and turns it into a transcript and a short debrief. A deep navy to signal green (#0B1B2B to #0E9E72) diagonal gradient background. In the centre, a bold white rounded speech-bubble shape whose lower half is made of vertical sound-wave bars of different heights, turning into three neat horizontal lines of text at the top: voice becoming a note." }
-  ]
+  "images": [],
+  "note": "Each entry: id, style (a key of styles), accent, aspect, size [w,h], out (repository path, .jpg or .png), prompt, optional model. The first run (14 November 2026) was refused: the key had reached its limit. Every picture in use is drawn as code in tools/art."
 }

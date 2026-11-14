@@ -28,6 +28,8 @@ const PAGES = [
     description: 'For a person or an agent session that wants to receive voice notes from the app: make an inbox (a key pair, a vault, a lane), hand out its QR code or link, and open what arrives.' },
   { path: 'credit', nav: null, title: 'Credit in VoiceDebrief for iOS: a balance that counts down, and how a top-up will be paid for',
     description: 'The credit ledger, the placeholder prices, what happens below zero, the simulated top-up, what Apple requires for a real one, what the owner must create in App Store Connect, and why nothing stops someone changing their own balance.' },
+  { path: 'design/identity', nav: null, title: 'The visual identity of VoiceDebrief and SGit Vaults',
+    description: 'One family, two apps: colour, type, spacing, corners, the marks and app icons, a symbol and a picture for every section, and how the pictures are made.' },
   { path: 'design',   nav: 'Design',   title: 'The VoiceDebrief iOS design: a recorder that does not lose things',
     description: 'What the app should look like and how it should behave: the three jobs, the decisions, the screens and three builds, agreed between a product agent and a design agent.' },
   { path: 'plan',     nav: 'Plan',     title: 'The VoiceDebrief iOS plan',

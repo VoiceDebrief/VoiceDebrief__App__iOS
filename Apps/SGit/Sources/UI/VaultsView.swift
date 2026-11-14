@@ -15,8 +15,12 @@ struct VaultsView: View {
         List {
             if shelf.vaults.isEmpty {
                 Section {
+                    SGSectionHero(section: .vaults, title: "No vaults yet",
+                                  line: "Encrypted here, before anything leaves this device")
+                        .listRowInsets(EdgeInsets())
+                }
+                Section {
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("No vaults yet").font(.headline)
                         Text("A vault is a folder of files with a history, encrypted on this device before anything leaves it. Whoever holds its key can open it; the server that stores it cannot.")
                             .foregroundStyle(.secondary)
                         Text("Add a vault somebody gave you by its key, or create one.")
@@ -67,8 +71,12 @@ struct VaultsView: View {
                 NavigationLink {
                     GalleryView(shelf: shelf)
                 } label: {
-                    Label("Gallery", systemImage: "square.grid.2x2")
+                    sectionRow(.gallery)
                 }
+                Button { showSettings = true } label: {
+                    sectionRow(.settings)
+                }
+                .buttonStyle(.plain)
             } footer: {
                 Text("Vaults to show somebody, each opened in the web Vault inside the app.")
             }
@@ -105,6 +113,29 @@ struct VaultsView: View {
         .sheet(isPresented: $showSettings) {
             NavigationStack { SettingsView(shelf: shelf) }
         }
+    }
+}
+
+extension VaultsView {
+    /// A part of the app as a row: its drawing as a thumbnail, its icon, name and line.
+    func sectionRow(_ section: SGSection) -> some View {
+        HStack(spacing: DS.Space.s) {
+            Image(section.art)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 72, height: 54)
+                .clipShape(RoundedRectangle(cornerRadius: DS.Radius.control, style: .continuous))
+                .accessibilityHidden(true)
+            VStack(alignment: .leading, spacing: 2) {
+                HStack(spacing: DS.Space.xs) {
+                    SGSectionIcon(section: section, size: 20)
+                    Text(section.title).font(.body.weight(.semibold))
+                }
+                Text(section.line).font(.footnote).foregroundStyle(.secondary)
+            }
+        }
+        .padding(.vertical, 2)
+        .contentShape(Rectangle())
     }
 }
 

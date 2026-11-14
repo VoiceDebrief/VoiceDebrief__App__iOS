@@ -13,7 +13,7 @@ export const C = {
 export const T = {
   record: '#0E9E72', library: '#2F80ED', vaults: '#4F5BD5', recipients: '#E5577E', identity: '#8E5CF7',
   credit: '#D4A12A', lab: '#13A8C8', words: '#2BB39A', diagnostics: '#7B8DA3', status: '#12C08A',
-  settings: '#8A9BB0', gallery: '#E07A3F', share: '#E5577E', history: '#13A8C8',
+  settings: '#8A9BB0', activity: '#F08A4B', contacts: '#E5577E', about: '#12C08A', gallery: '#E07A3F', share: '#E5577E', history: '#13A8C8',
 };
 
 // A deterministic sequence, so a picture is the same every time it is drawn.
@@ -75,6 +75,8 @@ const bars = (x, cy, w, maxH, n, color, seed = 3, bw = 0) => {
 const W = 720, H = 540;
 
 export const tiles = {
+  contacts: () => tiles.recipients(),
+  about: () => tiles.status(),
   record: () => frame(W, H, T.record, `
     <circle cx="360" cy="250" r="168" fill="none" stroke="${C.mint}" stroke-opacity="0.12" stroke-width="2"/>
     <circle cx="360" cy="250" r="134" fill="none" stroke="${C.mint}" stroke-opacity="0.22" stroke-width="2"/>
@@ -196,6 +198,14 @@ export const tiles = {
     ${[0, 1, 2].map(i => `<rect x="466" y="${288 + i * 46}" width="128" height="8" rx="4" fill="#FFFFFF" fill-opacity="0.25"/>
       <circle cx="${490 + [60, 20, 90][i]}" cy="${292 + i * 46}" r="13" fill="${i === 0 ? C.greenHi : '#FFFFFF'}"/>`).join('')}`),
 
+  activity: () => frame(W, H, T.activity, `
+    <g filter="url(#soft)"><rect x="160" y="110" width="400" height="300" rx="30" fill="url(#deep)" stroke="#FFFFFF" stroke-opacity="0.2" stroke-width="3"/></g>
+    ${[0.35, 0.55, 0.42, 0.75, 0.62, 0.9].map((v, i) => `<rect x="${200 + i * 56}" y="${370 - v * 200}" width="34" height="${v * 200}" rx="10" fill="${i === 5 ? 'url(#acc)' : '#FFFFFF'}" fill-opacity="${i === 5 ? 1 : 0.28 + i * 0.08}"/>`).join('')}
+    <line x1="190" x2="530" y1="376" y2="376" stroke="#FFFFFF" stroke-opacity="0.3" stroke-width="3"/>
+    <g filter="url(#soft)" transform="translate(560 130)"><circle r="58" fill="url(#acc)"/>
+      <circle r="40" fill="none" stroke="#FFFFFF" stroke-width="7"/>
+      <path d="M0 -24 V0 L16 12" fill="none" stroke="#FFFFFF" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></g>`),
+
   gallery: () => frame(W, H, T.gallery, [[-10, 180, 130], [4, 300, 110], [14, 400, 160]].map(([rot, x, y], i) => `
     <g transform="rotate(${rot} ${x + 100} ${y + 100})" filter="url(#soft)">
       <rect x="${x}" y="${y}" width="200" height="200" rx="18" fill="url(#card)"/>
@@ -259,3 +269,77 @@ export function iconSGit(size = 1024) {
 <circle cx="600" cy="380" r="50" fill="${C.greenHi}"/>
 </svg>`;
 }
+
+// ---------------------------------------------------------------- infographics for the site
+// Words in these are checked against website/built/index.md: nothing here may claim what is not built.
+const FONT = `font-family="Inter, -apple-system, 'Helvetica Neue', sans-serif"`;
+
+function step(x, y, tint, glyph, title, sub) {
+  return `<g transform="translate(${x} ${y})">
+    <rect x="-120" y="-30" width="240" height="290" rx="26" fill="#FFFFFF" stroke="#E3E9EF" stroke-width="2"/>
+    <circle cx="0" cy="50" r="46" fill="${tint}"/>
+    <g transform="translate(0 50)" fill="none" stroke="#FFFFFF" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">${glyph}</g>
+    <text x="0" y="138" text-anchor="middle" ${FONT} font-size="24" font-weight="700" fill="${C.navy}">${title}</text>
+    ${sub.map((s, i) => `<text x="0" y="${170 + i * 24}" text-anchor="middle" ${FONT} font-size="17" fill="#45596E">${s}</text>`).join('')}
+  </g>`;
+}
+
+const G = {
+  mic: `<rect x="-11" y="-26" width="22" height="34" rx="11" fill="#FFFFFF" stroke="none"/><path d="M-20 0 a20 20 0 0 0 40 0"/><path d="M0 20 v8"/>`,
+  disk: `<rect x="-22" y="-24" width="44" height="48" rx="8"/><path d="M-10 -24 v12 h20 v-12"/><path d="M-12 10 h24"/>`,
+  words: `<path d="M-22 -14 h44"/><path d="M-22 0 h44"/><path d="M-22 14 h28"/>`,
+  spark: `<path d="M0 -24 Q0 0 24 0 Q0 0 0 24 Q0 0 -24 0 Q0 0 0 -24 Z" fill="#FFFFFF" stroke="none"/>`,
+  lock: `<rect x="-18" y="-4" width="36" height="28" rx="6" fill="#FFFFFF" stroke="none"/><path d="M-11 -4 v-9 a11 11 0 0 1 22 0 v9"/>`,
+  plane: `<path d="M-24 2 L24 -18 L8 22 L0 6 Z" fill="#FFFFFF" stroke="none"/>`,
+};
+
+export const infographics = {
+  journey: () => `<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="720" viewBox="0 0 1600 720">
+<rect width="1600" height="720" fill="#F8FAFC"/>
+<text x="80" y="78" ${FONT} font-size="34" font-weight="800" fill="${C.navy}">The life of a voice note</text>
+<text x="80" y="114" ${FONT} font-size="20" fill="#45596E">Everything up to the debrief happens on the device. Nothing leaves it unencrypted.</text>
+<rect x="60" y="150" width="1100" height="44" rx="22" fill="${C.green}" fill-opacity="0.1"/>
+<text x="610" y="179" text-anchor="middle" ${FONT} font-size="18" font-weight="700" fill="#0A7D5A">ON THIS DEVICE, AUTOMATIC</text>
+<rect x="1200" y="150" width="340" height="44" rx="22" fill="${C.indigo}" fill-opacity="0.1"/>
+<text x="1370" y="179" text-anchor="middle" ${FONT} font-size="18" font-weight="700" fill="${C.indigo}">ENCRYPTED, BY CHOICE</text>
+${[200, 480, 760].map(x => `<path d="M${x + 126} 375 h22" stroke="${C.green}" stroke-width="5" stroke-linecap="round"/><path d="M${x + 142} 365 l10 10 l-10 10" fill="none" stroke="${C.green}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>`).join('')}
+${step(200, 260, C.green, G.mic, 'You speak', ['One tap to record.', 'Saved as you speak,', 'so a crash loses nothing.'])}
+${step(480, 260, T.library, G.words, 'Transcript', ["Apple's speech model,", 'on the device,', 'as you speak and after.'])}
+${step(760, 260, T.identity, G.spark, 'Debrief', ["Apple's on-device model:", 'one sentence, key points,', 'actions.'])}
+${step(1040, 260, T.about, G.disk, 'Library', ['Kept on this device,', 'with the audio,', 'always. No switch.'])}
+<path d="M1166 340 C 1210 340, 1210 300, 1250 300" fill="none" stroke="${C.indigo}" stroke-width="5" stroke-linecap="round"/>
+<path d="M1166 420 C 1210 420, 1210 520, 1250 520" fill="none" stroke="${T.contacts}" stroke-width="5" stroke-linecap="round"/>
+<g transform="translate(1390 300)">
+  <rect x="-140" y="-80" width="280" height="160" rx="26" fill="#FFFFFF" stroke="${C.indigo}" stroke-opacity="0.4" stroke-width="2"/>
+  <circle cx="-82" cy="0" r="38" fill="${C.indigo}"/><g transform="translate(-82 0) scale(0.8)" fill="none" stroke="#FFFFFF" stroke-width="7" stroke-linecap="round">${G.lock}</g>
+  <text x="-30" y="-14" ${FONT} font-size="22" font-weight="700" fill="${C.navy}">Your vault</text>
+  <text x="-30" y="14" ${FONT} font-size="16" fill="#45596E">a signed commit,</text>
+  <text x="-30" y="36" ${FONT} font-size="16" fill="#45596E">on finishing</text>
+</g>
+<g transform="translate(1390 520)">
+  <rect x="-140" y="-80" width="280" height="160" rx="26" fill="#FFFFFF" stroke="${T.contacts}" stroke-opacity="0.4" stroke-width="2"/>
+  <circle cx="-82" cy="0" r="38" fill="${T.contacts}"/><g transform="translate(-82 0) scale(0.8)" fill="none" stroke="#FFFFFF" stroke-width="7" stroke-linecap="round">${G.plane}</g>
+  <text x="-30" y="-14" ${FONT} font-size="22" font-weight="700" fill="${C.navy}">A contact</text>
+  <text x="-30" y="14" ${FONT} font-size="16" fill="#45596E">encrypted to</text>
+  <text x="-30" y="36" ${FONT} font-size="16" fill="#45596E">their key</text>
+</g>
+<text x="80" y="672" ${FONT} font-size="17" fill="#6B7F94">No server of ours. No API key. The only server is the vault server, and it stores ciphertext.</text>
+</svg>`,
+
+  family: () => `<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="560" viewBox="0 0 1600 560">
+<rect width="1600" height="560" fill="#F8FAFC"/>
+<text x="80" y="78" ${FONT} font-size="34" font-weight="800" fill="${C.navy}">One family, two apps</text>
+<text x="80" y="114" ${FONT} font-size="20" fill="#45596E">The same navy ground, the same white mark, a different colour each. Indigo means a vault in both.</text>
+<g transform="translate(140 170) scale(0.25)">${iconVoiceDebrief().replace(/^<svg[^>]*>|<\/svg>$/g, '').replace(/id="(g|h)"/g, 'id="vd$1"').replace(/url\(#(g|h)\)/g, 'url(#vd$1)')}</g>
+<g transform="translate(860 170) scale(0.25)">${iconSGit().replace(/^<svg[^>]*>|<\/svg>$/g, '').replace(/id="(g|h)"/g, 'id="sg$1"').replace(/url\(#(g|h)\)/g, 'url(#sg$1)')}</g>
+<text x="420" y="230" ${FONT} font-size="30" font-weight="800" fill="${C.navy}">VoiceDebrief</text>
+<text x="420" y="266" ${FONT} font-size="19" fill="#45596E">A voice (the bars) becoming a note</text>
+<text x="420" y="292" ${FONT} font-size="19" fill="#45596E">(the lines). Accent: signal green.</text>
+<rect x="420" y="320" width="56" height="56" rx="14" fill="${C.green}"/><rect x="488" y="320" width="56" height="56" rx="14" fill="${C.mint}"/><rect x="556" y="320" width="56" height="56" rx="14" fill="${C.navy}"/>
+<text x="1140" y="230" ${FONT} font-size="30" font-weight="800" fill="${C.navy}">SGit Vaults</text>
+<text x="1140" y="266" ${FONT} font-size="19" fill="#45596E">A vault whose door is a history</text>
+<text x="1140" y="292" ${FONT} font-size="19" fill="#45596E">(a commit graph). Accent: indigo.</text>
+<rect x="1140" y="320" width="56" height="56" rx="14" fill="${C.indigo}"/><rect x="1208" y="320" width="56" height="56" rx="14" fill="${C.greenHi}"/><rect x="1276" y="320" width="56" height="56" rx="14" fill="${C.navy}"/>
+<text x="80" y="500" ${FONT} font-size="17" fill="#6B7F94">Red only for recording and failure. Amber only for something degraded. Never a colour for decoration alone.</text>
+</svg>`,
+};

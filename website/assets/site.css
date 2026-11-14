@@ -243,3 +243,5 @@ nav.site .brand em{font-style:normal;color:var(--accent)}
 nav.site .beta{font:700 .62rem var(--sans);letter-spacing:.12em;color:var(--vd-ai);background:var(--accent);border-radius:4px;padding:.12rem .4rem}
 footer.site .brandline em{font-style:normal;color:var(--accent)}
 nav.site .brand span,footer.site .brandline span{color:var(--ink)}
+main.doc td img.shot{width:168px;max-width:none;margin:.2rem 0;border-radius:10px}
+main.doc td code{white-space:nowrap}

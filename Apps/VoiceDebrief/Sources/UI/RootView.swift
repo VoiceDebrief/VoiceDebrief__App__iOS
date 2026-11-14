@@ -30,42 +30,42 @@ struct RootView: View {
         // visible and linked, not hidden away"). A sidebar on iPad and Mac; on iPhone the first four are
         // tabs and the rest are under More.
         TabView(selection: $tab) {
-            Tab("Record", systemImage: "mic.fill", value: RootTab.record) {
+            Tab(RootTab.record.title, systemImage: RootTab.record.symbol, value: RootTab.record) {
                 launched(.record) { RecordView(session: session, book: book, go: { tab = $0 }) }.tracked("record")
             }
-            Tab("Library", systemImage: "tray.full", value: RootTab.library) {
+            Tab(RootTab.library.title, systemImage: RootTab.library.symbol, value: RootTab.library) {
                 launched(.library) { LibraryView(session: session, book: book) }.tracked("library")
             }
-            Tab("Contacts", systemImage: "person.2", value: RootTab.contacts) {
+            Tab(RootTab.contacts.title, systemImage: RootTab.contacts.symbol, value: RootTab.contacts) {
                 NavigationStack { RecipientsView() }.tracked("contacts")
             }
-            Tab("Vaults", systemImage: "lock.shield", value: RootTab.vaults) {
+            Tab(RootTab.vaults.title, systemImage: RootTab.vaults.symbol, value: RootTab.vaults) {
                 launched(.vaults) { VaultsView(book: book) }.tracked("vaults")
             }
             TabSection("You") {
-                Tab("Identity", systemImage: "person.badge.key", value: RootTab.identity) {
+                Tab(RootTab.identity.title, systemImage: RootTab.identity.symbol, value: RootTab.identity) {
                     NavigationStack { IdentityView(vaults: book) }.tracked("identity")
                 }
-                Tab("Credit", systemImage: "sterlingsign.circle", value: RootTab.credit) {
+                Tab(RootTab.credit.title, systemImage: RootTab.credit.symbol, value: RootTab.credit) {
                     NavigationStack { CreditView() }.tracked("credit")
                 }
-                Tab("Your activity", systemImage: "chart.bar", value: RootTab.activity) {
+                Tab(RootTab.activity.title, systemImage: RootTab.activity.symbol, value: RootTab.activity) {
                     NavigationStack { ActivityView() }.tracked("activity")
                 }
             }
             TabSection("Experiments") {
-                Tab("Lab", systemImage: "flask", value: RootTab.lab) {
+                Tab(RootTab.lab.title, systemImage: RootTab.lab.symbol, value: RootTab.lab) {
                     NavigationStack { LabView(store: session.store) }.tracked("lab")
                 }
-                Tab("Your words", systemImage: "character.book.closed", value: RootTab.words) {
+                Tab(RootTab.words.title, systemImage: RootTab.words.symbol, value: RootTab.words) {
                     NavigationStack { GlossaryView() }.tracked("words")
                 }
             }
             TabSection("More") {
-                Tab("What this build does", systemImage: "checklist", value: RootTab.about) {
+                Tab(RootTab.about.title, systemImage: RootTab.about.symbol, value: RootTab.about) {
                     NavigationStack { StatusView() }.tracked("about")
                 }
-                Tab("Settings", systemImage: "gearshape", value: RootTab.settings) {
+                Tab(RootTab.settings.title, systemImage: RootTab.settings.symbol, value: RootTab.settings) {
                     launched(.settings) { SettingsView(session: session, book: book) }.tracked("settings")
                 }
             }

@@ -5,7 +5,7 @@ import { dirname, join, resolve } from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { createRequire } from 'node:module';
-import { tiles, iconVoiceDebrief, iconSGit } from './art.mjs';
+import { tiles, iconVoiceDebrief, iconSGit, infographics } from './art.mjs';
 
 const require = createRequire(import.meta.url);
 const { chromium } = require('playwright');
@@ -14,7 +14,8 @@ const vdAssets = join(root, 'Apps/VoiceDebrief/Resources/Assets.xcassets');
 const sgAssets = join(root, 'Apps/SGit/Resources/Assets.xcassets');
 const site = join(root, 'website/assets/art');
 
-const vdTiles = ['record', 'library', 'vaults', 'recipients', 'identity', 'credit', 'lab', 'words', 'diagnostics', 'status', 'settings'];
+// One per RootTab, plus diagnostics (inside Settings). Keep in step with Sources/UI/Design/Sections.swift.
+const vdTiles = ['record', 'library', 'contacts', 'vaults', 'identity', 'credit', 'activity', 'lab', 'words', 'about', 'settings', 'diagnostics'];
 const sgTiles = ['vaults', 'gallery', 'share', 'history', 'settings'];
 
 const browser = await chromium.launch();
@@ -64,6 +65,14 @@ for (const [svg, catalogue, siteName] of [[iconVoiceDebrief(), vdAssets, 'icon-v
   execFileSync('convert', [raw, '-alpha', 'off', '-strip', out]);
   execFileSync('convert', [raw, '-resize', '256x256', '-strip', join(site, `${siteName}.png`)]);
   writeFileSync(join(site, `${siteName}.svg`), svg);
+}
+for (const [name, draw] of Object.entries(infographics)) {
+  const svg = draw();
+  writeFileSync(join(site, `info-${name}.svg`), svg);
+  const m = svg.match(/width="(\d+)" height="(\d+)"/);
+  const raw = join(tmp, `info-${name}.png`);
+  await png(svg, +m[1], +m[2], raw);
+  jpeg(raw, join(site, `info-${name}.jpg`)); // for places that cannot show SVG
 }
 await browser.close();
 console.log('rendered');
