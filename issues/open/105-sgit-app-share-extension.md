@@ -40,3 +40,18 @@ Automatic signing should register the App Group and the extension's identifier b
 ## 14 November 2026, 04:15 UTC: the first dry run
 
 Step 1 compiles and its test passes on the branch `work/sgit-app-share` (a parcel left in the shared folder becomes a job; the list the extension is given holds no key). The signing dry run then failed, as it was there to: `exportArchive Authentication failed` and `No profiles for 'ai.sgit.vaults.app' were found`. That message does not say whether the App Group is the cause, so the next run signs twice: once with no entitlements, as the build on `dev` is signed today, and once with the App Group. If only the second fails, the App Group has to be registered by the owner (the three things listed above).
+
+## 14 November 2026, 05:20 UTC: the second dry run places it
+
+With no entitlements the app signs for distribution (the control passed). With the App Group it does not:
+
+    Provisioning profile "iOS Team Store Provisioning Profile: ai.sgit.vaults.app" doesn't include the App Groups capability.
+    ... doesn't support the group.ai.sgit.vaults.app App Group.
+
+So automatic signing does not register the group by itself. **Needed from the owner**, in the Apple Developer account (developer.apple.com, Certificates, Identifiers & Profiles):
+
+1. Identifiers, the plus, **App Groups**: description "SGit Vaults", identifier `group.ai.sgit.vaults.app`.
+2. Identifiers, **`ai.sgit.vaults.app`**: tick **App Groups**, Configure, choose `group.ai.sgit.vaults.app`, Save.
+3. Later, when the extension exists: an App ID `ai.sgit.vaults.app.share` with App Groups ticked and the same group. Automatic signing may make this one itself; the dry run will say.
+
+Nothing else is needed: the next dry run on `work/sgit-app-share` will pick the new profile up. Until then the branch stays off `dev`, where the entitlement would stop every upload.

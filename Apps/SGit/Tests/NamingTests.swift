@@ -105,6 +105,30 @@ struct NamingTests {
         #expect(Gallery.grouped(entries, search: "nothing like it").isEmpty)
     }
 
+    @Test func aVaultSaysWhereItStands() {
+        #expect(VaultNaming.standing(canWrite: true, onDevice: true) == "Only on this device")
+        #expect(VaultNaming.standing(canWrite: true, onDevice: false) == "Shared: you can add and change")
+        #expect(VaultNaming.standing(canWrite: false, onDevice: false) == "Shared: you can look, not change")
+        let now = Date(timeIntervalSince1970: 10_000)
+        #expect(VaultNaming.arrival(onDevice: false, server: "s", pendingFiles: 3, failed: false, checked: nil) == "3 files on their way in. Keep the app open.")
+        #expect(VaultNaming.arrival(onDevice: false, server: "s", pendingFiles: 1, failed: false, checked: nil) == "1 file on its way in. Keep the app open.")
+        #expect(VaultNaming.arrival(onDevice: false, server: "s", pendingFiles: 2, failed: true, checked: nil).contains("did not go in"))
+        #expect(VaultNaming.arrival(onDevice: true, server: "s", pendingFiles: 0, failed: false, checked: nil) == "Everything here is on this device only.")
+        #expect(VaultNaming.arrival(onDevice: false, server: "s", pendingFiles: 0, failed: false, checked: now.addingTimeInterval(-30), now: now) == "Everything here is on s. Checked just now.")
+        #expect(VaultNaming.arrival(onDevice: false, server: "s", pendingFiles: 0, failed: false, checked: now.addingTimeInterval(-600), now: now) == "Everything here is on s. Checked 10 minutes ago.")
+    }
+
+    @Test func anInvitationCarriesTheStepsAndSaysWhatTheKeyAllows() {
+        let full = VaultNaming.invitation(name: "Summit", keyText: "some-pass:abcd1234", readOnly: false, server: "s")
+        #expect(full.contains("Add a vault by its key"))
+        #expect(full.contains("some-pass:abcd1234"))
+        #expect(full.contains("https://vault.sgraph.ai/#some-pass:abcd1234"))
+        #expect(full.contains("access key for s"))
+        let look = VaultNaming.invitation(name: "Summit", keyText: "sgit_private_read_" + String(repeating: "ab", count: 32) + ":abcd1234", readOnly: true, server: "s")
+        #expect(look.contains("look and not change"))
+        #expect(!look.contains("Or open it in a browser"))
+    }
+
     @Test func aFileIsKnownByItsName() {
         #expect(VaultListing.kind(of: "a/IMG_1.HEIC") == .image)
         #expect(VaultListing.kind(of: "clip.MOV") == .video)

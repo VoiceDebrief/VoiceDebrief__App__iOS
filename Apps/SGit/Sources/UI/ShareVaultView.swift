@@ -53,6 +53,16 @@ struct ShareVaultView: View {
                     Text("First, put it on a server")
                 }
             }
+            if !shelf.current(vault).onDevice {
+                Section {
+                    ShareLink(item: VaultNaming.invitation(name: vault.name, keyText: vault.keyText, readOnly: !vault.canWrite,
+                                                           server: shelf.serverName)) {
+                        Label(vault.canWrite ? "Send the way in" : "Send the way in, to look only", systemImage: "paperplane")
+                    }
+                } footer: {
+                    Text("Sends a message with the key, a link for a browser and the steps for the person receiving it. Send it only to the person, by a channel you trust: it is the key itself.")
+                }
+            }
             if vault.canWrite {
                 Section {
                     Label {

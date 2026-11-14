@@ -63,8 +63,8 @@ struct VaultView: View {
                         }
                     }
                 }
+                Button("Share", systemImage: "person.badge.plus") { sharing = true }
                 Menu("More", systemImage: "ellipsis.circle") {
-                    Button("Share the vault", systemImage: "person.badge.key") { sharing = true }
                     Button("History", systemImage: "clock.arrow.circlepath") { showingHistory = true }
                     Button("Refresh", systemImage: "arrow.clockwise") { Task { await load() } }
                     Button(asList ? "Show as a grid" : "Show as a list",
@@ -122,6 +122,15 @@ struct VaultView: View {
         let listing = self.listing
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 12) {
+                if contents != nil {
+                    let waiting = jobs.reduce(0) { $0 + $1.items.count }
+                    Label(VaultNaming.arrival(onDevice: onDevice, server: shelf.serverName, pendingFiles: waiting,
+                                              failed: jobs.contains { $0.problem != nil }, checked: shelf.checkedAt[vault.id]),
+                          systemImage: waiting > 0 ? "arrow.up.circle" : (onDevice ? "iphone" : "checkmark.icloud"))
+                        .font(.footnote)
+                        .foregroundStyle(jobs.contains { $0.problem != nil } ? Color.red : Color.secondary)
+                        .padding(.horizontal)
+                }
                 if wide, !here.isEmpty {
                     Text(here.replacingOccurrences(of: "/", with: " / "))
                         .font(.footnote)

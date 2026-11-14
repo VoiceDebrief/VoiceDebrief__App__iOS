@@ -15,3 +15,11 @@ To do: a visible "Share" on the vault; the sheet to open with the action ("Send 
 sends to carry the steps for the receiver, and the warning beneath; a sentence on a lost phone (the key is on
 this device only: write it down, or it is gone) where a vault is made and on the share sheet. To decide with
 the owner: an invitation that may add and may not delete, beside issue 104.
+
+**Done (14 November 2026, green in CI and in the pictures of that run):** Share is on the vault's toolbar. The
+sheet opens with "Send the way in", which sends a message with the steps for the receiver, the key and a link
+for a browser; the warning is beneath it. The Create sheet says the key is kept on this device only and what
+losing the device means. The add sheet says an access key is also needed to add files (issue 110).
+
+**Left:** the sentence on a lost phone on the share sheet; the invitation that may add and may not delete, which
+waits for the owner's decision on issues 104 and 110.

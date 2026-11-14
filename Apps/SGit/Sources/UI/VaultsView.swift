@@ -45,8 +45,8 @@ struct VaultsView: View {
                         NavigationLink(value: FolderRoute(vault: vault, folder: "")) {
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(vault.name)
-                                Text("\(vault.id) · \(vault.canWrite ? "read and write" : "read only") · \(vault.onDevice ? "on this device only" : "on \(shelf.serverName)")")
-                                    .font(.footnote.monospaced())
+                                Text(VaultNaming.standing(canWrite: vault.canWrite, onDevice: vault.onDevice))
+                                    .font(.footnote)
                                     .foregroundStyle(.secondary)
                                 let waiting = outbox.jobs(for: vault)
                                 if !waiting.isEmpty {
@@ -128,10 +128,10 @@ struct AddVaultSheet: View {
                         Button("Scan a QR code", systemImage: "qrcode.viewfinder") { scanning = true }
                     }
                 } footer: {
-                    Text("Paste the key somebody gave you, or the key sgit printed when the vault was created. A vault key can read and write. A read key can only read.")
+                    Text("Paste what you were sent: a vault key (you can add and change), a read key (you can only look) or a link to the vault. To add files to a shared vault you also need an access key for \(shelf.serverName), which is not part of the vault key: ask whoever sent it, and enter it in Settings.")
                 }
                 Section {
-                    TextField("Name, for this device only", text: $name)
+                    TextField("Your name for it", text: $name)
                 }
                 if let busy = shelf.busy {
                     Section {
@@ -180,8 +180,15 @@ struct AddVaultSheet: View {
 struct CreateVaultSheet: View {
     let shelf: VaultShelf
     @State private var name = ""
-    @State private var forTheTeam = true
+    @State private var forTheTeam: Bool
     @State private var accessKey = ""
+
+    init(shelf: VaultShelf) {
+        self.shelf = shelf
+        // On for somebody who already has an access key; off, and nothing asked for, for somebody who has not.
+        _forTheTeam = State(initialValue: shelf.hasToken)
+    }
+
     @Environment(\.dismiss) private var dismiss
 
     private var needsKey: Bool { forTheTeam && !shelf.hasToken }
@@ -193,12 +200,12 @@ struct CreateVaultSheet: View {
         NavigationStack {
             Form {
                 Section {
-                    TextField("Name, for this device only", text: $name)
+                    TextField("Name", text: $name)
                 } footer: {
-                    Text("A new vault is a random key, an empty folder and one signed commit, made on this device. Its key is kept in this device's Keychain.")
+                    Text("The name is for you, on this device: anybody you share the vault with names it themselves. The vault's key is made here and kept on this device only, so if this device is lost and the key was never given to anybody or written down, the vault cannot be opened again.")
                 }
                 Section {
-                    Toggle("Put it on the server, to share it", isOn: $forTheTeam)
+                    Toggle("Share it: put it on the server", isOn: $forTheTeam)
                     if needsKey {
                         SecureField("Access key for \(shelf.serverName)", text: $accessKey)
                             .textInputAutocapitalization(.never)
@@ -209,7 +216,7 @@ struct CreateVaultSheet: View {
                 } footer: {
                     Text(forTheTeam
                          ? "The vault is made here, then sent to \(shelf.serverName), encrypted, so that anybody you give its key to can open it. The server takes new vaults only from people it knows: that is what the access key is for. It is kept in this device's Keychain."
-                         : "The vault stays on this device only: no account, no key for a server, no network. You can put it on the server later, from its Share screen.")
+                         : "The vault stays on this device only: no account, no access key, no network, and nobody else can open it. You can put it on the server later, from its Share screen, which is when an access key is needed.")
                 }
                 if let busy = shelf.busy {
                     Section {

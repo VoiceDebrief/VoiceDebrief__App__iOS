@@ -21,3 +21,12 @@ Findings 9 to 14. Screens `create`, `vaults`, `add`, `settings`, `vault`, `file`
 - **iPad**: lists as wide as the window; tiles phone-sized in a wide window.
 - **Small**: a photo needs a second tap to fill the screen; "The decrypted copy is in this app's cache" reads as
   a warning; a commit's title is a hash; a grid in one folder and a list in another with no visible switch.
+
+**Done (14 November 2026, green in CI and in the pictures of that run):** the Create sheet's switch is off for a
+person with no access key and the sheet says what turning it on needs; the name is said to be for this device,
+others name the vault themselves; a vault's row is in words ("Shared: you can add and change", "Only on this
+device").
+
+**Left:** one line for each of the four keys where it first appears and another word for the access key; words
+on the plus and the three dots (Share is out of the dots, History is not); "Remove the access key"; the
+conversion switch; iPad widths; the small things.
