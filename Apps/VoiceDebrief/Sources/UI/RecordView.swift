@@ -141,6 +141,13 @@ struct RecordView: View {
             }
             liveCard
         } else {
+            if session.store.notes.isEmpty {
+                // The first visit: below the control, what happens, in a picture and one line.
+                SectionHero(tab: .record, title: "Your first voice note",
+                            line: "Saved as you speak, then transcribed and debriefed on this device.",
+                            height: 210, image: "VDArt-hero")
+            }
+
             if case .failed(let why) = session.phase {
                 card {
                     Label(why, systemImage: "exclamationmark.triangle.fill")
@@ -198,45 +205,29 @@ struct RecordView: View {
         }
     }
 
-    /// Every other part of the app, one tile each, so that a person can find and try it.
+    /// Every other part of the app, one illustrated tile each, so that a person can find and try it.
+    /// Titles, symbols, colours and pictures come from `RootTab` (Sources/UI/Design/Sections.swift).
     private var explore: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("Explore").font(.headline)
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 150), spacing: 10)], spacing: 10) {
-                tile("Library", "Every note, by day", "tray.full", .library)
-                tile("Contacts", "Who notes go to; add by QR", "person.2", .contacts)
-                tile("Vaults", "Encrypted, yours, on every device", "lock.shield", .vaults)
-                tile("Identity", "Your keys and your devices", "person.badge.key", .identity)
-                tile("Credit", "What each thing costs", "sterlingsign.circle", .credit)
-                tile("Lab", "Try Apple's model, tools on and off", "flask", .lab)
-                tile("Your words", "Names the clean text should know", "character.book.closed", .words)
-                tile("Your activity", "What you have used; send it", "chart.bar", .activity)
-                tile("Agents", "Who is working for you; talk to them", "person.3", .agents)
-                tile("Guide", "What is new, every idea, how things work", "book", .guide)
-                tile("What this build does", "Built, in test, not built", "checklist", .about)
+        VStack(alignment: .leading, spacing: DS.Space.s) {
+            DSSectionHeader(title: "Explore", symbol: "square.grid.2x2.fill",
+                            subtitle: "Everything else the app can do. Each tile opens it.")
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 150), spacing: DS.Space.s)], spacing: DS.Space.s) {
+                ForEach(RootTab.allCases.filter { $0 != .record }) { tab in
+                    Button {
+                        UsageLog.shared.action("home.tile.\(tab.rawValue)")
+                        go(tab)
+                    } label: {
+                        SectionTile(tab: tab)
+                    }
+                    .buttonStyle(.plain)
+                }
             }
             Link(destination: AppInfo.notes()) {
-                Label("What is new in \(AppInfo.shortVersion())", systemImage: "sparkles")
+                Label("What is new in \(AppInfo.shortVersion())", systemImage: Icon.whatsNew)
                     .font(.callout)
             }
         }
-        .padding(.top, 8)
-    }
-
-    private func tile(_ title: String, _ line: String, _ icon: String, _ to: RootTab) -> some View {
-        Button { UsageLog.shared.action("home.tile.\(to.rawValue)"); go(to) } label: {
-            VStack(alignment: .leading, spacing: 6) {
-                Image(systemName: icon)
-                    .font(.title2)
-                    .foregroundStyle(Color.accentColor)
-                Text(title).font(.subheadline.weight(.semibold)).foregroundStyle(.primary)
-                Text(line).font(.caption).foregroundStyle(.secondary).multilineTextAlignment(.leading)
-            }
-            .frame(maxWidth: .infinity, minHeight: 92, alignment: .topLeading)
-            .padding(12)
-            .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
-        }
-        .buttonStyle(.plain)
+        .padding(.top, DS.Space.xs)
     }
 
     private var liveCard: some View {
@@ -277,7 +268,7 @@ struct RecordView: View {
                         }
                     }
                 }
-                .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+                .dsSurface()
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
@@ -289,7 +280,7 @@ struct RecordView: View {
         }
         .padding(16)
         .frame(maxWidth: .infinity, minHeight: 0, alignment: .leading)
-        .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+        .dsSurface()
     }
 
     // MARK: The control, pinned where a thumb reaches
@@ -358,9 +349,14 @@ struct RecordView: View {
             } label: {
                 ZStack {
                     Circle()
-                        .fill(localeId.isEmpty ? Color.gray : Color.green)
+                        .fill(localeId.isEmpty ? AnyShapeStyle(Color.gray) : AnyShapeStyle(DS.Palette.green.gradient))
                         .frame(width: 120, height: 120)
-                        .shadow(color: .green.opacity(0.35), radius: 12, y: 4)
+                    Circle()
+                        .strokeBorder(.white.opacity(0.35), lineWidth: 2)
+                        .frame(width: 120, height: 120)
+                    Circle()
+                        .strokeBorder(DS.Palette.green.opacity(isRecording ? 0.5 : 0.18), lineWidth: 8)
+                        .frame(width: 140, height: 140)
                     Image(systemName: isRecording ? "checkmark" : "mic.fill")
                         .font(.system(size: 46, weight: .semibold))
                         .foregroundStyle(.white)
