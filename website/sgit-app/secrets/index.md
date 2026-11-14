@@ -187,7 +187,7 @@ Questions are also in the app (Settings, Questions) once step 1 is built.
 - **A machine that hands in new keys** [[proposed]]: a server or CI job changes its own credential and drops the new one into your inbox; it can write there, never read the vault.
 - **Works on a plane** [[proposed]]: every secret is in a vault on the device; reading, adding and changing need no network, and sync happens when there is one.
 - **A share with an end date** [[proposed]]: one entry sealed to one card, with a date after which the app reminds you to change it, because a copy given cannot be taken back.
-- **The trust map** [[proposed]]: a drawing of the people you have met, with their photos, solid where both confirmed and dashed where one side only.
+- **The trust map** [[unverified]]: a drawing of the people you have met, with their photos, solid where both confirmed and dashed where one side only.
 - **The same vaults on every device** [[unverified]]: vault keys in iCloud Keychain, one item each, so an iPhone, iPad and Mac open the same vaults with nothing to set up.
 - **Secrets as files in vaults** [[unverified]]: each entry one encrypted JSON file, behind Face ID, with a strong-password maker.
 - **Questions for the owner, by voice** [[unverified]]: the people building the app ask, and the owner answers by choosing, typing or speaking.

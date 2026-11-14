@@ -34,6 +34,7 @@ struct VaultView: View {
     @State private var exporting: FolderExport?
     @State private var inWebVault = false
     @State private var askingModel = false
+    @State private var members: VaultMembers?
 
     private var contents: VaultContents? { shelf.contents[vault.id] }
     private var onDevice: Bool { shelf.current(vault).onDevice }
@@ -56,7 +57,10 @@ struct VaultView: View {
         .navigationTitle(title)
         .navigationBarTitleDisplayMode(.inline)
         .refreshable { await load() }
-        .task { if contents == nil { await load() } }
+        .task {
+            if contents == nil { await load() }
+            members = await shelf.members(of: vault)
+        }
         .toolbar {
             ToolbarItemGroup(placement: .topBarTrailing) {
                 if vault.canWrite {
@@ -203,6 +207,12 @@ struct VaultView: View {
                           systemImage: waiting > 0 ? "arrow.up.circle" : (onDevice ? "iphone" : "checkmark.icloud"))
                         .font(.footnote)
                         .foregroundStyle(jobs.contains { $0.problem != nil } ? Color.red : Color.secondary)
+                        .padding(.horizontal)
+                }
+                if let members, here.isEmpty, members.members.count > 1 {
+                    Label("Shared with " + members.members.map(\.name).joined(separator: ", "), systemImage: "person.3")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
                         .padding(.horizontal)
                 }
                 if wide, !here.isEmpty {

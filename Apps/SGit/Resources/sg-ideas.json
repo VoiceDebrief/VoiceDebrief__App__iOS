@@ -29,9 +29,9 @@
  ],
  "counts": {
   "seen-working": 7,
-  "built-untried": 23,
+  "built-untried": 25,
   "in-progress": 15,
-  "proposed": 40,
+  "proposed": 39,
   "parked": 1
  },
  "ideas": [
@@ -1162,8 +1162,8 @@
    "kind": "design",
    "app": "SGit Vaults",
    "title": "The trust map",
-   "status": "proposed",
-   "why": "Listed on the design page \"A secrets manager made of people and vaults\" as proposed.",
+   "status": "built-untried",
+   "why": "Listed on the design page \"A secrets manager made of people and vaults\" as built, not yet proven.",
    "summary": "a drawing of the people you have met, with their photos, solid where both confirmed and dashed where one side only.",
    "detail": [
     "a drawing of the people you have met, with their photos, solid where both confirmed and dashed where one side only."
@@ -1620,6 +1620,26 @@
    "detail": [
     "The people session's screens (Sources/People/, on the shared SGitPeople package): a People row on the home list with the unread count; You (your card as a QR code and a link), Contacts (add by scanning, a picture or pasting; a photo of the person, on this device only), Inbox; Keys and access (an access key, keys given or received, who holds which) reached from Secrets",
     "The screens compile and the app's tests pass (the people session's runs 53 and 60); wired here, not yet compiled when written. Nothing has run on a device; making an inbox and sending use the live server only once a person holds an access key"
+   ],
+   "places": [
+    "SGit Vaults: Share"
+   ],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
+   "id": "sgit-feature.who.you.trust.and.shared.vaults.for.people",
+   "kind": "feature",
+   "app": "SGit Vaults",
+   "title": "Who you trust, and shared vaults for people",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "Sources/Team/: a \"Who you trust\" row on the home list draws you in the middle and each contact around you with their photo (an agent as a chip), the line between solid and thick when fingerprints were checked face to face and they have written to you, solid when both sides hold each other's card, dashed when only you hold theirs; a person's page says how you met and what is missing. \"Make a shared...",
+   "detail": [
+    "Sources/Team/: a \"Who you trust\" row on the home list draws you in the middle and each contact around you with their photo (an agent as a chip), the line between solid and thick when fingerprints were checked face to face and they have written to you, solid when both sides hold each other's card, dashed when only you hold theirs; a person's page says how you met and what is missing. \"Make a shared vault with some of them\": choose people whose inbox you know, name it; the app makes the vault, puts it on the server, writes .sgit/members.json (schema sgit.ai/members/v1: names, key fingerprints, who added whom, never keys) and sends each person the vault key sealed to their key. A vault with members says \"Shared with …\" at the top",
+    "Unit tests for the links, the layout, the summary and the member list; not yet compiled when written. Nothing has been sent to a real person; the receiving side opens the vault once the people session adds \"Open this vault\" to a received invitation"
    ],
    "places": [
     "SGit Vaults: Share"

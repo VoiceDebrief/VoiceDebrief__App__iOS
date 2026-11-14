@@ -85,6 +85,12 @@ struct VaultsView: View {
                         .badge(people.unreadCount)
                 }
                 NavigationLink {
+                    TrustMapView(shelf: shelf, people: people)
+                        .tracked("trust-map")
+                } label: {
+                    Label("Who you trust", systemImage: "point.3.connected.trianglepath.dotted")
+                }
+                NavigationLink {
                     QuestionsView()
                         .tracked("questions")
                 } label: {

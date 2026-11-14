@@ -233,6 +233,12 @@ struct ScreenshotRoot: View {
             if let hub = PeopleModel.sample(.full).hub { NavigationStack { ContactsView(hub: hub) } }
         case ("people-inbox", _):
             if let hub = PeopleModel.sample(.full).hub { NavigationStack { InboxView(hub: hub) } }
+        case ("trust-map", _):
+            NavigationStack { TrustMapView(shelf: shelf, people: .sample(.full)) }
+        case ("share-with-people", _):
+            if let hub = PeopleModel.sample(.full).hub {
+                NavigationStack { ShareWithPeopleView(shelf: shelf, hub: hub, vault: nil) }
+            }
         case ("keys-and-access", _):
             if let hub = PeopleModel.sample(.full).hub { NavigationStack { KeysAndAccessView(hub: hub) } }
         case ("questions", _):

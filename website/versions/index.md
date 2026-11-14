@@ -4,6 +4,7 @@ Every release of this repository. Every push to `dev` is a release: CI works out
 
 | Version | Date | What changed |
 |---|---|---|
+| next | 14 November 2026 | The sgit app draws who you trust: you in the middle, each person around you with their photo, the line solid when you both have each other's card and dashed when only you have theirs. From the map, make a shared vault for chosen people: the vault's key is sealed to each person's key and sent to their inbox, and the vault shows who it is shared with |
 | next | 14 November 2026 | The sgit app gains People: your card as a QR code, contacts you add by scanning (with a photo of the person, kept on your device), an inbox for sealed messages, and Keys and access under Secrets |
 | next | 14 November 2026 | The sgit app keeps a small picture and the facts of every file in the vault beside it, so a folder of large videos shows its pictures without anyone downloading the videos: the picture (a photo, a frame of a video, a page of a document) and a facts file (size, dimensions, length, codec, camera, when it was taken; where only if you allow it) in a hidden .sgit folder that any client can read |
 | next | 14 November 2026 | The sgit app plays videos: a play mark on each video, a Play button that decrypts and plays it with sound (even on silent), full screen, and a picture from the video on its tile once it has been played |
