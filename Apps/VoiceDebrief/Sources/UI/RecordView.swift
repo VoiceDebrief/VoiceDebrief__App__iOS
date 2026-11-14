@@ -11,6 +11,7 @@ struct RecordView: View {
     var go: (RootTab) -> Void = { _ in }
     @AppStorage("vd.localeId") private var localeId = ""
     @State private var importing = false
+    @State private var showingMessages = false
     @State private var path: [String] = []
 
     private var isRecording: Bool {
@@ -69,6 +70,18 @@ struct RecordView: View {
                 ToolbarItem(placement: .topBarTrailing) { WorkStatusIcons(session: session) }
                 if !isRecording {
                     ToolbarItem(placement: .topBarTrailing) {
+                        // Claude's replies to what you sent (the owner: "see what was acted on").
+                        Button { showingMessages = true } label: {
+                            Image(systemName: "bubble.left.and.bubble.right")
+                                .overlay(alignment: .topTrailing) {
+                                    if !(AgentsDesk.shared.report?.messages ?? []).filter({ $0.from != "you" }).isEmpty {
+                                        Circle().fill(Color.accentColor).frame(width: 8, height: 8).offset(x: 3, y: -3)
+                                    }
+                                }
+                        }
+                        .accessibilityLabel("Messages to and from Claude")
+                    }
+                    ToolbarItem(placement: .topBarTrailing) {
                         LanguageMenu()
                             .disabled(session.isBusy)
                     }
@@ -88,6 +101,9 @@ struct RecordView: View {
                             }
                     }
                 }
+            }
+            .sheet(isPresented: $showingMessages) {
+                NavigationStack { MessagesToClaudeView(session: session, book: book) }
             }
             .navigationDestination(for: String.self) { id in
                 NoteDetailView(noteId: id, session: session, book: book)
