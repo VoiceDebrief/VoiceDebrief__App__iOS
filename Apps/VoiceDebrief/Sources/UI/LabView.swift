@@ -17,10 +17,20 @@ struct LabView: View {
                             .foregroundStyle(.secondary)
                     }
                 }
+                NavigationLink {
+                    LabControlView()
+                } label: {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("L02: Control centre")
+                        Text("Say or type an instruction. The fixed phrases and the model each propose an action, and you confirm, refuse or correct it.")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                    }
+                }
             } header: {
                 Text("Experiments")
             } footer: {
-                Text("An experiment changes nothing: its tools only read, and what the model chooses is shown, not acted on.")
+                Text("An experiment changes nothing: its tools only read or take note, and what the model chooses is shown, not acted on.")
             }
             Section("Apple's on-device model") {
                 LabeledContent("Status", value: OnDeviceModel.status.text)
