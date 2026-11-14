@@ -528,9 +528,17 @@ final class VaultShelf {
 
     func thumbnail(for file: VaultFile, in vault: SavedVault) async -> UIImage? {
         let kind = VaultListing.kind(of: file.path)
-        guard kind == .image || kind == .video else { return nil }
         let kept = thumbnailFolder.appending(path: String(file.blobId.suffix(32)) + ".jpg")
         if let image = UIImage(contentsOfFile: kept.path) { return image }
+        // The small picture kept in the vault beside the file: a few kilobytes, whatever the file's size.
+        if let hash = file.contentHash, contents[vault.id]?.files.contains(where: { $0.path == FileFacts.thumbPath(hash) }) == true,
+           let handle = try? await open(vault), let data = try? await handle.read(FileFacts.thumbPath(hash)),
+           let image = UIImage(data: data) {
+            try? FileManager.default.createDirectory(at: thumbnailFolder, withIntermediateDirectories: true)
+            try? data.write(to: kept, options: .atomic)
+            return image
+        }
+        guard kind == .image || kind == .video else { return nil }
         // A video is decrypted for its picture only when it is small or already decrypted (played once).
         let limit = kind == .video ? Self.largestAutomaticVideoThumbnail : Self.largestAutomaticThumbnail
         guard file.size <= limit || isCached(file, in: vault) else { return nil }
@@ -545,6 +553,14 @@ final class VaultShelf {
         try? FileManager.default.createDirectory(at: thumbnailFolder, withIntermediateDirectories: true)
         try? data.write(to: kept, options: .atomic)
         return UIImage(data: data)
+    }
+
+    /// The facts kept beside a file, when there are any.
+    func facts(for file: VaultFile, in vault: SavedVault) async -> FileMeta? {
+        guard let hash = file.contentHash,
+              contents[vault.id]?.files.contains(where: { $0.path == FileFacts.metaPath(hash) }) == true,
+              let handle = try? await open(vault), let data = try? await handle.read(FileFacts.metaPath(hash)) else { return nil }
+        return FileMeta.decode(data)
     }
 
     // MARK: The gallery
@@ -597,7 +613,12 @@ final class VaultShelf {
     // MARK: History
 
     /// What a commit changed, against its first parent.
+    /// What a commit changed among the files a person browses: thumbnails, facts and other hidden files are left out.
     func changes(in commit: VaultCommit, of vault: SavedVault) async throws -> [VaultChange] {
+        try await allChanges(in: commit, of: vault).filter { VaultListing.isVisible($0.path) }
+    }
+
+    func allChanges(in commit: VaultCommit, of vault: SavedVault) async throws -> [VaultChange] {
         let handle = try await open(vault)
         let after = try await handle.files(in: commit)
         guard let parentId = commit.parents.first else { return VaultChange.between([], after) }

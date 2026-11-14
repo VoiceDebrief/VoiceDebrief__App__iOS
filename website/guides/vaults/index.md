@@ -12,7 +12,6 @@ A vault is an encrypted, version-controlled folder you own. It is made on this d
 2. A name for a new vault.
 3. Create a vault: a random key, made and kept on this device.
 4. Servers you can push a vault to. The access token is kept in the Keychain.
-5. Add a server by its address.
 
 ## 2. Inside a vault.
 
@@ -29,4 +28,4 @@ A vault is an encrypted, version-controlled folder you own. It is made on this d
 - Vault keys and server tokens in iCloud Keychain, on by default: **Built, untried**. Done in the code, and the issue says: "Status: done in the code and its tests; not yet seen between two devices. Decided by the owner, 13 November 2026, and confirmed by him in the work/local-vaults..."
 - A vault, for someone who has never met one: **In progress**. Open, and the reality file lists for it: Reviews from the pictures.
 
-*Pictures: iPhone, light, from screens.yml run 39 on dev (commit 1d21781, 14 November 2026). Newer builds may differ: the record screen now chooses who a note is for above the record control.*
+*Pictures: VoiceDebrief: iPhone, light, from screens.yml run 43606968488 on work/sherpa at 0f2e6f8 (the same tree as dev, v0.1.74, 14 November 2026), after the design session's restyle.*

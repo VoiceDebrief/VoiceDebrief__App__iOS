@@ -68,6 +68,16 @@ struct VaultListing: Equatable, Sendable {
         return below("") ?? []
     }
 
+    /// The files a person browses: not those in a hidden folder or with a hidden name (`.sgit/` holds
+    /// thumbnails and facts; `secrets/.my-secrets` marks a vault of secrets).
+    static func visible(_ all: [VaultFile]) -> [VaultFile] {
+        all.filter { isVisible($0.path) }
+    }
+
+    static func isVisible(_ path: String) -> Bool {
+        !path.split(separator: "/").contains { $0.hasPrefix(".") }
+    }
+
     /// Every file in a folder and beneath it; the whole vault for the empty folder.
     static func under(_ all: [VaultFile], folder: String) -> [VaultFile] {
         folder.isEmpty ? all : all.filter { $0.path.hasPrefix(folder + "/") }

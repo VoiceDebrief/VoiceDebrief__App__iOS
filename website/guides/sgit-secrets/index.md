@@ -38,4 +38,4 @@ A secret is a password, a Wi-Fi network, a server or a card, kept as one encrypt
 - Secrets as files in vaults: **Built, untried**. Listed on the design page "A secrets manager made of people and vaults" as built, not yet proven.
 - Questions for the owner, by voice: **Built, untried**. Listed on the design page "A secrets manager made of people and vaults" as built, not yet proven.
 
-*Pictures: SGit Vaults: iPhone, light, from sgit-app-screens.yml run 43592618173 (work/sgit-app at 6b13fcb, landed on dev as 9ea9212, 14 November 2026), before the design session's restyle.*
+*Pictures: SGit Vaults: iPhone, light, from sgit-app-screens.yml run 43606971217 on work/sherpa at 0f2e6f8 (the same tree as dev, 14 November 2026), after the design session's restyle.*

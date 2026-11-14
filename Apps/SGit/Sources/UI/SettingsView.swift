@@ -4,6 +4,7 @@ import SwiftUI
 struct SettingsView: View {
     let shelf: VaultShelf
     @AppStorage("photos.compatible") private var compatible = false
+    @AppStorage(FileFacts.keepLocationSetting) private var keepLocation = false
     @State private var token = ""
     @State private var cacheBytes: Int?
     @Environment(\.dismiss) private var dismiss
@@ -51,10 +52,11 @@ struct SettingsView: View {
 
             Section {
                 Toggle("Make photos and videos open in any browser", isOn: $compatible)
+                Toggle("Keep where photos and videos were taken", isOn: $keepLocation)
             } header: {
                 Text("Photos and videos")
             } footer: {
-                Text("Off: a photo or video goes in exactly as it is in your library, which is the original and quick, but a colleague's browser may not be able to show it (often HEIC and HEVC). On: it is converted to JPEG or H.264 first, which every browser shows; that takes longer and is no longer the original.")
+                Text("Off: a photo or video goes in exactly as it is in your library, which is the original and quick, but a colleague's browser may not be able to show it (often HEIC and HEVC). On: it is converted to JPEG or H.264 first, which every browser shows; that takes longer and is no longer the original. Each file also gets a small picture and a note of its facts (size, camera, length, when it was taken) kept beside it in the vault; where it was taken is kept only if you turn that on, because anyone with the vault's key can read it.")
             }
 
             Section {

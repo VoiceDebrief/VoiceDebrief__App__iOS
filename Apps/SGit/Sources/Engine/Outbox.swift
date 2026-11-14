@@ -24,6 +24,9 @@ struct UploadItem: Codable, Identifiable, Hashable, Sendable {
     var sealed: Sealed?
     /// The server holds the encrypted object.
     var uploaded = false
+    /// Set on a thumbnail or facts file made for the item with this id: it travels in the same commit
+    /// and is not counted or shown as a file of its own.
+    var companionOf: UUID?
 }
 
 /// One selection: the files picked together, which become one commit.
@@ -39,6 +42,8 @@ struct UploadJob: Codable, Identifiable, Hashable, Sendable {
     var problem: String?
 
     var totalBytes: Int { items.reduce(0) { $0 + $1.bytes } }
+    /// The files the person chose, without the thumbnails and facts made for them.
+    var shown: [UploadItem] { items.filter { $0.companionOf == nil } }
 }
 
 /// What one item is doing now. Not kept: it is rebuilt as the work runs.
@@ -232,7 +237,8 @@ final class Outbox {
         let sealedDir = sealedFolder(id)
 
         // 1. Encrypt each file to disk. The plain copy goes once its ciphertext is recorded.
-        for item in job.items where item.sealed == nil {
+        let keepLocation = FileFacts.keepLocation
+        for item in job.items where item.sealed == nil && item.companionOf == nil {
             try Task.checkCancellation()
             guard let plainName = item.plainName else { continue }
             let plain = plainFolder(id).appending(path: plainName)
@@ -242,6 +248,25 @@ final class Outbox {
             let staged = try await stager.stage(file: plain, as: item.path, in: sealedDir) { done in
                 Task { @MainActor in self.setProgress(itemId, .encrypting, Double(done) / Double(total)) }
             }
+            // While the plain copy is here: a small picture and the file's facts, sealed the same way, so that
+            // a folder shows the picture without anybody fetching the file. A failure here loses only them.
+            var companions: [UploadItem] = []
+            let made = await FileFacts.make(for: plain, name: item.name, size: staged.size, contentHash: staged.contentHash,
+                                            contentType: staged.contentType, keepLocation: keepLocation)
+            for (data, path) in [(made.thumb, FileFacts.thumbPath(staged.contentHash)), (made.meta, FileFacts.metaPath(staged.contentHash))] {
+                guard let data else { continue }
+                let extra = plainFolder(id).appending(path: "extra-\(UUID().uuidString)")
+                guard (try? data.write(to: extra)) != nil,
+                      let sealedExtra = try? await stager.stage(file: extra, as: path, in: sealedDir) else { continue }
+                try? FileManager.default.removeItem(at: extra)
+                companions.append(UploadItem(id: UUID(), name: VaultListing.name(of: path), path: path, bytes: sealedExtra.size,
+                                             plainName: nil,
+                                             sealed: UploadItem.Sealed(blobId: sealedExtra.blobId, contentHash: sealedExtra.contentHash,
+                                                                       contentType: sealedExtra.contentType, large: sealedExtra.large,
+                                                                       ciphertextBytes: sealedExtra.ciphertextBytes),
+                                             companionOf: itemId))
+            }
+            let extras = companions
             update(id) { job in
                 guard let index = job.items.firstIndex(where: { $0.id == itemId }) else { return }
                 job.items[index].sealed = UploadItem.Sealed(blobId: staged.blobId, contentHash: staged.contentHash,
@@ -249,6 +274,8 @@ final class Outbox {
                                                            ciphertextBytes: staged.ciphertextBytes)
                 job.items[index].bytes = staged.size
                 job.items[index].plainName = nil
+                job.items.removeAll { $0.companionOf == itemId }
+                job.items.append(contentsOf: extras)
             }
             try? FileManager.default.removeItem(at: plain)
             setProgress(itemId, .waiting, 0)
