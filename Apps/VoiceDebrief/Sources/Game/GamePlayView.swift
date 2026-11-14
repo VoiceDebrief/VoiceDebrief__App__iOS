@@ -1,4 +1,6 @@
+import Combine
 import SwiftUI
+import UIKit
 
 /// Experiment L03: play by voice, and see how long each command took to show.
 struct GamePlayView: View {
@@ -44,6 +46,10 @@ struct GamePlayView: View {
         .navigationBarTitleDisplayMode(.inline)
         .onAppear { game.prepareModel() }
         .onDisappear {
+            player.stop()
+            Task { await game.stopListening() }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.didEnterBackgroundNotification)) { _ in
             player.stop()
             Task { await game.stopListening() }
         }

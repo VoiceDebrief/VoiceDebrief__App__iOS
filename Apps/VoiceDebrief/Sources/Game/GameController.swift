@@ -325,17 +325,34 @@ final class GameController {
 
     // MARK: Listening
 
+    /// Goes up on every stop, so that a start still waiting (for permission, or for the speech model)
+    /// when it was stopped gives up instead of taking the microphone afterwards.
+    private var listenGeneration = 0
+    private var starting = false
+
+    /// Why listening cannot start now, or nil. A voice note being recorded owns the microphone.
+    static func refusal(localeId: String, noteRecording: Bool) -> String? {
+        if noteRecording { return "A voice note is being recorded. Finish it first: listening now would take its microphone." }
+        if localeId.isEmpty { return "Choose the language spoken in Settings first." }
+        return nil
+    }
+
     func startListening(localeId: String) async {
-        guard !listening else { return }
+        guard !listening, !starting else { return }
         problem = nil
-        guard !localeId.isEmpty else {
-            problem = "Choose the language spoken in Settings first."
+        if let why = Self.refusal(localeId: localeId, noteRecording: VoiceRecorder.noteRecording) {
+            problem = why
             return
         }
+        starting = true
+        defer { starting = false }
+        let mine = listenGeneration
         guard await AVAudioApplication.requestRecordPermission() else {
             problem = "The microphone is not allowed for this app."
             return
         }
+        // Stopped while asking, or a recording began meanwhile: give up.
+        guard mine == listenGeneration, !VoiceRecorder.noteRecording else { return }
         do {
             let session = AVAudioSession.sharedInstance()
             // Play and record, out of the speaker, so the voice player can be heard by the microphone.
@@ -351,6 +368,11 @@ final class GameController {
                 let at = Date()
                 Task { @MainActor [weak self] in self?.heardLive(settled: settled, volatile: volatile, at: at) }
             }
+            if mine != listenGeneration {
+                // A stop overtook this start while the speech model was being readied.
+                listening = false
+                await live.stop()
+            }
         } catch {
             listening = false
             await live.stop()
@@ -358,13 +380,15 @@ final class GameController {
         }
     }
 
+    /// Lets go of the microphone. The audio session is left as it is: deactivating it here could cut
+    /// off a recording or playback that another part of the app has started since.
     func stopListening() async {
+        listenGeneration += 1
         guard listening else { return }
         listening = false
         earlyTask?.cancel()
         earlyTask = nil
         await live.stop()
-        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
         let rest = (String(liveSettled.dropFirst(consumed)) + " " + liveVolatile).trimmingCharacters(in: .whitespacesAndNewlines)
         let ended = lastVolatileChange ?? Date()
         if let pendingEarly = early {
