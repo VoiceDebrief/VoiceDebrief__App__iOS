@@ -10,6 +10,7 @@ Built (untried on a device): the Send buttons are a bar fixed at the bottom of t
 whatever the note above is doing; pressing one before the note is finished sends it the moment it is, so the
 phone can be put away.
 
-Not built: finish and send in one press from the record screen, to a default recipient; sending to several
-recipients at once; going straight back to recording the next note; remembering on the note who it went to.
+Built since (untried on a device): finish and send in one press from the record screen, to any of the
+person's own recipients, staying on the record screen for the next note; sends queued one after another;
+the note remembers who it went to. Not built: sending to several recipients at once; a default recipient.
 For driving, the controls should be reachable without looking: see 021 and the voice session in 027.

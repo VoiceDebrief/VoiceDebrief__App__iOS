@@ -17,7 +17,6 @@ One file per piece of work: `open/NNN-slug.md`, moved to `done/` when it is done
 | 014 | Several vaults and lanes, by name | |
 | 015 | The larger Apple model, as an option | the entitlement; the iOS 27 SDK in CI |
 | 016 | Screens and synthetic users | |
-| 017 | Vault keys in iCloud Keychain, on by default | |
 | 018 | User key, device key, vouching, pki.sgit.ai | the owner, on two devices; the Apple team id for the automatic return |
 | 019 | Lanes are recipients; an inbox | 014 |
 | 020 | Show the flow as it happens | 013 for the full record |
@@ -39,6 +38,7 @@ One file per piece of work: `open/NNN-slug.md`, moved to `done/` when it is done
 | 039 | A copy off the phone that anyone can make | the main session; the vaults session |
 | 040 | A way to say no in each confirmation | the main session; a device |
 | 041 | Diagnostics describes a pasted lane that nothing uses | the main session |
+| 042 | Telling speakers apart | the owner: decision 4 |
 | 100 | The sgit app, milestone one | a device and the live server |
 | 102 | Prove the sgit app's large files against the live server | 100 on a device |
 | 103 | The sgit app after milestone one | 100; 011 and 017 |

@@ -14,6 +14,8 @@ struct Note: Codable, Identifiable, Equatable, Sendable {
     var clean: CleanText? = nil
     /// Each time this note was saved into a vault, newest last.
     var saves: [NoteSave]? = nil
+    /// Each time this note was sent to a recipient, newest last.
+    var sends: [NoteSend]? = nil
     /// Why the last automatic save did not happen, in plain words.
     var saveProblem: String? = nil
 
@@ -52,6 +54,12 @@ struct Note: Codable, Identifiable, Equatable, Sendable {
         }
         return "On this device"
     }
+}
+
+/// One send of a note to a recipient.
+struct NoteSend: Codable, Equatable, Sendable {
+    let to: String
+    let at: Date
 }
 
 /// One save of a note into a vault.
