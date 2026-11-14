@@ -29,9 +29,9 @@
  ],
  "counts": {
   "seen-working": 7,
-  "built-untried": 19,
+  "built-untried": 21,
   "in-progress": 15,
-  "proposed": 32,
+  "proposed": 40,
   "parked": 1
  },
  "ideas": [
@@ -472,7 +472,7 @@
    "summary": "The owner, 14 November 2026: \"start thinking about how can we add Apple Intelligence to this app to make a lot of these things more straightforward ... let's start experimenting\".",
    "detail": [
     "The owner, 14 November 2026: \"start thinking about how can we add Apple Intelligence to this app to make a lot of these things more straightforward ... let's start experimenting\".",
-    "Written (14 November 2026, not yet compiled): Ask this vault, after VoiceDebrief's Lab. One question, a fresh session, four read-only tools over a copy of the listing and history, every call shown. See the reality file.",
+    "Compiles and its tests pass (14 November 2026, 6b13fcb); not yet used on a device: Ask this vault, after VoiceDebrief's Lab. One question, a fresh session, four read-only tools over a copy of the listing and history, every call shown. See the reality file.",
     "To learn from the owner's first tries on a device: does the model call a tool before answering; are the answers right; how long does it take; what did he want to ask that the tools could not answer.",
     "Next experiments, in the order they look useful (none started):",
     "1. A commit message from what changed (\"12 photographs of the stage and one video\"), offered, never applied unasked. One question, no tools. 2. Names for a selection being added: a folder suggestion from the files' names and dates. 3. Find by meaning: \"the photos from the dinner\" across vaults. Needs captions, which needs the Vision framework on the device at the time a picture is added; a larger piece of work. 4. A spoken question: the voice button (issue 120, with the people session's inbox) feeding this screen. 5. The standing position holds for all of them: the code owns the states, the model is asked one question at a time through function calls, and what it may touch is shown."
@@ -500,7 +500,7 @@
    "detail": [
     "The owner, 14 November 2026: \"you need a way that you can start to ask questions from me throughout the app, so I can answer them even with voice\".",
     "To do: Settings, Questions. Each question has an id, the words, why it matters, and proposed answers. The owner answers by choosing one, typing, or dictating (the keyboard's microphone: speech to text on the device). The answer goes to the developers over the developer lane, sealed to their key, as sgit/answer/v1; the app remembers what was answered. The questions ship with the app as a resource, written by the developers. Later: a recorded voice answer (VoiceDebrief's recorder), and questions that arrive in the inbox instead of with a build.",
-    "Written (14 November 2026, not yet compiled): Questions for you, on the home list and in Settings; nine questions in Resources/sg-questions.json."
+    "Compiles and its tests pass (14 November 2026, 6b13fcb); not yet used on a device: Questions for you, on the home list and in Settings; nine questions in Resources/sg-questions.json."
    ],
    "statusLine": "Status: open. Owner: the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB).",
    "owner": "the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB)",
@@ -523,7 +523,7 @@
    "summary": "To do: a Secrets section listing the entries of every vault that has a secrets/ folder, grouped by vault (\"My secrets\", \"Team: devices\"); kinds login, device, Wi-Fi, card, note, token, vault key, read key, access key, recovery code; add, edit, delete, each as one signed commit of one JSON file; values behind Face ID, copied for two minutes, hidden in the app switcher; a secret's history from the...",
    "detail": [
     "To do: a Secrets section listing the entries of every vault that has a secrets/ folder, grouped by vault (\"My secrets\", \"Team: devices\"); kinds login, device, Wi-Fi, card, note, token, vault key, read key, access key, recovery code; add, edit, delete, each as one signed commit of one JSON file; values behind Face ID, copied for two minutes, hidden in the app switcher; a secret's history from the vault's commits; \"My secrets\" made on first use as a vault on this device. Not in this issue: sync (122), sharing (124), AutoFill (125).",
-    "Written (14 November 2026, not yet compiled): Sources/Secrets/; see the reality file's row. Left: a secret's own history (each change is a commit, not yet shown per secret), tags, import from other managers, a sheet covered in the app switcher."
+    "Compiles and its tests pass (14 November 2026, 6b13fcb); not yet used on a device: Sources/Secrets/; see the reality file's row. Left: a secret's own history (each change is a commit, not yet shown per secret), tags, import from other managers, a sheet covered in the app switcher."
    ],
    "statusLine": "Status: open. Owner: the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB). Design: website/sgit-app/secrets/index.md.",
    "owner": "the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB)",
@@ -548,7 +548,7 @@
    "detail": [
     "The owner: \"the synchronisation between devices ... has to be completely transparent and straightforward\".",
     "To do: the list of vaults and their keys, and the access key, in iCloud Keychain (synchronisable items, as VoiceDebrief did in issue 017), with a switch to keep them on this device only; pull when the app opens and comes to the front, push after each change, and say so on the vault's standing line. Each secret is its own file, so two devices changing different secrets do not conflict; the same secret changed on two devices keeps both and asks. Needs an access key to reach the server; without one a vault stays on the device it was made on, and the app says so. Mac, iPad and iPhone are the same app.",
-    "Written (14 November 2026, not yet compiled): see the reality file's row. Left: push after each change is what every write already does (a commit is pushed); a pull on a timer while the app is open; the same secret changed on two devices at once is decided by the server's compare-and-swap (the second write is retried on the newer head, so the later change wins and the earlier stays in history), not yet shown to the person."
+    "Compiles and its tests pass (14 November 2026, 6b13fcb); not yet used on a device: see the reality file's row. Left: push after each change is what every write already does (a commit is pushed); a pull on a timer while the app is open; the same secret changed on two devices at once is decided by the server's compare-and-swap (the second write is retried on the newer head, so the later change wins and the earlier stays in history), not yet shown to the person."
    ],
    "statusLine": "Status: open. Owner: the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB).",
    "owner": "the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB)",
@@ -1030,6 +1030,134 @@
    "source": "A secrets manager made of people and vaults"
   },
   {
+   "id": "design.sgit.app.secrets.a.history.that.does.not.show.the.secret",
+   "kind": "design",
+   "app": "SGit Vaults",
+   "title": "A history that does not show the secret",
+   "status": "proposed",
+   "why": "Listed on the design page \"A secrets manager made of people and vaults\" as proposed.",
+   "summary": "someone with a read key on the history sees who changed which entry and when, and which fields, without ever seeing a value.",
+   "detail": [
+    "someone with a read key on the history sees who changed which entry and when, and which fields, without ever seeing a value."
+   ],
+   "places": [],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/secrets/index.html",
+   "source": "A secrets manager made of people and vaults"
+  },
+  {
+   "id": "design.sgit.app.secrets.where.each.secret.came.from",
+   "kind": "design",
+   "app": "SGit Vaults",
+   "title": "Where each secret came from",
+   "status": "proposed",
+   "why": "Listed on the design page \"A secrets manager made of people and vaults\" as proposed.",
+   "summary": "every entry says who gave it to you and through which confirmed card, so a secret of unknown origin stands out.",
+   "detail": [
+    "every entry says who gave it to you and through which confirmed card, so a secret of unknown origin stands out."
+   ],
+   "places": [],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/secrets/index.html",
+   "source": "A secrets manager made of people and vaults"
+  },
+  {
+   "id": "design.sgit.app.secrets.proof.you.can.check.without.the.app",
+   "kind": "design",
+   "app": "SGit Vaults",
+   "title": "Proof you can check without the app",
+   "status": "proposed",
+   "why": "Listed on the design page \"A secrets manager made of people and vaults\" as proposed.",
+   "summary": "the open sgit command on any computer clones the vault and checks every signature; nothing rests on trusting this app or its maker.",
+   "detail": [
+    "the open sgit command on any computer clones the vault and checks every signature; nothing rests on trusting this app or its maker."
+   ],
+   "places": [],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/secrets/index.html",
+   "source": "A secrets manager made of people and vaults"
+  },
+  {
+   "id": "design.sgit.app.secrets.a.lost.phone.in.one.screen",
+   "kind": "design",
+   "app": "SGit Vaults",
+   "title": "A lost phone, in one screen",
+   "status": "proposed",
+   "why": "Listed on the design page \"A secrets manager made of people and vaults\" as proposed.",
+   "summary": "which secrets that device held, one action to stop trusting its key, and the checklist of what to change.",
+   "detail": [
+    "which secrets that device held, one action to stop trusting its key, and the checklist of what to change."
+   ],
+   "places": [],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/secrets/index.html",
+   "source": "A secrets manager made of people and vaults"
+  },
+  {
+   "id": "design.sgit.app.secrets.break.glass.with.time.to.say.no",
+   "kind": "design",
+   "app": "SGit Vaults",
+   "title": "Break glass, with time to say no",
+   "status": "proposed",
+   "why": "Listed on the design page \"A secrets manager made of people and vaults\" as proposed.",
+   "summary": "a trusted person asks for a sealed secret through your inbox; it opens for them only if you have not refused within a set number of hours.",
+   "detail": [
+    "a trusted person asks for a sealed secret through your inbox; it opens for them only if you have not refused within a set number of hours."
+   ],
+   "places": [],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/secrets/index.html",
+   "source": "A secrets manager made of people and vaults"
+  },
+  {
+   "id": "design.sgit.app.secrets.a.machine.that.hands.in.new.keys",
+   "kind": "design",
+   "app": "SGit Vaults",
+   "title": "A machine that hands in new keys",
+   "status": "proposed",
+   "why": "Listed on the design page \"A secrets manager made of people and vaults\" as proposed.",
+   "summary": "a server or CI job changes its own credential and drops the new one into your inbox; it can write there, never read the vault.",
+   "detail": [
+    "a server or CI job changes its own credential and drops the new one into your inbox; it can write there, never read the vault."
+   ],
+   "places": [],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/secrets/index.html",
+   "source": "A secrets manager made of people and vaults"
+  },
+  {
+   "id": "design.sgit.app.secrets.works.on.a.plane",
+   "kind": "design",
+   "app": "SGit Vaults",
+   "title": "Works on a plane",
+   "status": "proposed",
+   "why": "Listed on the design page \"A secrets manager made of people and vaults\" as proposed.",
+   "summary": "every secret is in a vault on the device; reading, adding and changing need no network, and sync happens when there is one.",
+   "detail": [
+    "every secret is in a vault on the device; reading, adding and changing need no network, and sync happens when there is one."
+   ],
+   "places": [],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/secrets/index.html",
+   "source": "A secrets manager made of people and vaults"
+  },
+  {
+   "id": "design.sgit.app.secrets.a.share.with.an.end.date",
+   "kind": "design",
+   "app": "SGit Vaults",
+   "title": "A share with an end date",
+   "status": "proposed",
+   "why": "Listed on the design page \"A secrets manager made of people and vaults\" as proposed.",
+   "summary": "one entry sealed to one card, with a date after which the app reminds you to change it, because a copy given cannot be taken back.",
+   "detail": [
+    "one entry sealed to one card, with a date after which the app reminds you to change it, because a copy given cannot be taken back."
+   ],
+   "places": [],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/secrets/index.html",
+   "source": "A secrets manager made of people and vaults"
+  },
+  {
    "id": "design.sgit.app.secrets.the.trust.map",
    "kind": "design",
    "app": "SGit Vaults",
@@ -1358,6 +1486,26 @@
    "versions": []
   },
   {
+   "id": "sgit-feature.playing.a.video",
+   "kind": "feature",
+   "app": "SGit Vaults",
+   "title": "Playing a video",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "UI/FileView.swift, UI/VaultView.swift: a play mark on every video tile; a video's screen opens on a Play button that decrypts it (with progress) and plays it with sound even on silent, with a full-screen button; a frame of the video becomes its tile picture once it has been decrypted, or straight away for videos up to 25 MB. Asked for by the owner on 14 November 2026 after adding videos from his...",
+   "detail": [
+    "UI/FileView.swift, UI/VaultView.swift: a play mark on every video tile; a video's screen opens on a Play button that decrypts it (with progress) and plays it with sound even on silent, with a full-screen button; a frame of the video becomes its tile picture once it has been decrypted, or straight away for videos up to 25 MB. Asked for by the owner on 14 November 2026 after adding videos from his iPhone",
+    "Not yet compiled when written. A video plays only once it is wholly decrypted to this device: 112 MB takes a few seconds on the device, longer from the server; playing while it downloads is not built"
+   ],
+   "places": [
+    "SGit Vaults: a vault"
+   ],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
    "id": "sgit-feature.saving.a.folder.out",
    "kind": "feature",
    "app": "SGit Vaults",
@@ -1429,7 +1577,7 @@
    "summary": "Engine/VaultAsk.swift, UI/AskVaultView.swift, on a vault's three dots: one question to Apple's on-device model (Foundation Models), in a fresh session, which may call four tools that read a copy of the vault's listing and history (a summary, one folder, recent changes, files by name). Every call and what it returned is shown under the answer. The model is given names, sizes and commit messages...",
    "detail": [
     "Engine/VaultAsk.swift, UI/AskVaultView.swift, on a vault's three dots: one question to Apple's on-device model (Foundation Models), in a fresh session, which may call four tools that read a copy of the vault's listing and history (a summary, one folder, recent changes, files by name). Every call and what it returned is shown under the answer. The model is given names, sizes and commit messages, never a file's contents; it cannot change anything; nothing leaves the device",
-    "The tools have unit tests. The model has never been asked anything by this app: CI's simulators have no Apple Intelligence, and nobody has run it on a device. Whether its answers are any good is the experiment"
+    "The tools' unit tests pass (6b13fcb). The model has never been asked anything by this app: CI's simulators have no Apple Intelligence, and nobody has run it on a device. Whether its answers are any good is the experiment"
    ],
    "places": [
     "SGit Vaults: a vault",
@@ -1450,7 +1598,7 @@
    "summary": "Sources/Secrets/: a Secrets row on the home list; every vault with a secrets/ folder, grouped, searchable; kinds login, device passcode, Wi-Fi, card, note, token, vault key, read key, access key, recovery codes; add, change and delete, each one signed commit of one encrypted JSON file (sgit.ai/secret/v1), read into memory, never into the file cache; hidden values behind Face ID or the passcode...",
    "detail": [
     "Sources/Secrets/: a Secrets row on the home list; every vault with a secrets/ folder, grouped, searchable; kinds login, device passcode, Wi-Fi, card, note, token, vault key, read key, access key, recovery codes; add, change and delete, each one signed commit of one encrypted JSON file (sgit.ai/secret/v1), read into memory, never into the file cache; hidden values behind Face ID or the passcode, copied for two minutes; \"Make a strong password\"; \"My secrets\" made on this device with the first secret; the app covered when not in front (the home stack; a sheet open at the time is not yet covered)",
-    "Unit tests for the format, the paths, the kinds and the password maker; written before its CI run, so not yet compiled when this row was written. Nobody has used it on a device. Sync between devices (issue 122), sharing with people (124) and AutoFill (125) are not built"
+    "Unit tests for the format, the paths, the kinds and the password maker; compiles and the tests pass (6b13fcb). Nobody has used it on a device. Sync between devices (issue 122), sharing with people (124) and AutoFill (125) are not built"
    ],
    "places": [
     "SGit Vaults: a vault"
@@ -1474,10 +1622,30 @@
    "summary": "UI/QuestionsView.swift, Resources/sg-questions.json: questions from the people building the app, on the home list and in Settings; answer by choosing, typing, or the keyboard's dictation; sent sealed over the developer's lane as sgit/answer/v1",
    "detail": [
     "UI/QuestionsView.swift, Resources/sg-questions.json: questions from the people building the app, on the home list and in Settings; answer by choosing, typing, or the keyboard's dictation; sent sealed over the developer's lane as sgit/answer/v1",
-    "Unit tests for the bundled questions and the lane message; not yet compiled when written; nothing has been sent from a device"
+    "Unit tests for the bundled questions and the lane message pass (6b13fcb); nothing has been sent from a device"
    ],
    "places": [
     "SGit Vaults: Settings"
+   ],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
+   "id": "sgit-feature.guide.and.what.is.new",
+   "kind": "feature",
+   "app": "SGit Vaults",
+   "title": "Guide and what is new",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "Sources/Guide/ (copied from VoiceDebrief's, the Sherpa session's work), a row on the home list: what changed in each version, the feature guides with numbered pictures (four: getting started, inside a vault, sharing, secrets), and every idea with where it stands, from sg-versions.json, sg-guides.json and sg-ideas.json, which the site's generator writes",
+   "detail": [
+    "Sources/Guide/ (copied from VoiceDebrief's, the Sherpa session's work), a row on the home list: what changed in each version, the feature guides with numbered pictures (four: getting started, inside a vault, sharing, secrets), and every idea with where it stands, from sg-versions.json, sg-guides.json and sg-ideas.json, which the site's generator writes",
+    "A unit test that the app's own data loads; not yet compiled when this row was written"
+   ],
+   "places": [
+    "SGit Vaults"
    ],
    "issues": [],
    "url": "https://ios.app.voicedebrief.ai/sgit-app/built/index.html",
@@ -1494,7 +1662,7 @@
    "summary": "Engine/SecretStore.swift (two homes, after VoiceDebrief's), Engine/VaultShelf.swift: each vault that is on a server is also kept as its own iCloud Keychain item, and the access key too, so an iPhone, iPad and Mac on one Apple account open the same vaults with nothing to set up; a vault only on one device is not carried until it is on the server; new vaults from other devices are picked up when the...",
    "detail": [
     "Engine/SecretStore.swift (two homes, after VoiceDebrief's), Engine/VaultShelf.swift: each vault that is on a server is also kept as its own iCloud Keychain item, and the access key too, so an iPhone, iPad and Mac on one Apple account open the same vaults with nothing to set up; a vault only on one device is not carried until it is on the server; new vaults from other devices are picked up when the app comes to the front, and vaults already open are read again then; forgetting a vault takes it out of iCloud Keychain; a switch in Settings. \"My secrets\" is marked by a file so another device finds it, and goes to the server at once when there is an access key",
-    "Unit tests with two simulated devices sharing one iCloud Keychain. Never run across real devices. iCloud Keychain carries items on Apple's schedule, usually within a minute"
+    "Unit tests with two simulated devices sharing one iCloud Keychain pass (6b13fcb). Never run across real devices. iCloud Keychain carries items on Apple's schedule, usually within a minute"
    ],
    "places": [
     "SGit Vaults: Settings"

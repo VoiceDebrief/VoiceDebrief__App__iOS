@@ -23,7 +23,7 @@ struct PeopleHome: View {
                         NavigationLink { ContactsView(hub: hub) } label: {
                             Label("Contacts (\(hub.contacts.count))", systemImage: "person.2")
                         }
-                        NavigationLink { InboxView(hub: hub) } label: {
+                        NavigationLink { InboxView(hub: hub, openVault: model.openVault) } label: {
                             Label(hub.unread > 0 ? "Inbox, \(hub.unread) new" : "Inbox", systemImage: "tray")
                         }
                     }
@@ -270,6 +270,7 @@ struct ContactDetailView: View {
 
 struct InboxView: View {
     let hub: PeopleHub
+    var openVault: ((VaultInvitation) async -> String?)? = nil
 
     var body: some View {
         List {
@@ -280,7 +281,7 @@ struct InboxView: View {
             }
             if let problem = hub.problem { Text(problem).font(.footnote).foregroundStyle(.red) }
             ForEach(hub.messages) { received in
-                NavigationLink { MessageView(hub: hub, received: received) } label: {
+                NavigationLink { MessageView(hub: hub, received: received, openVault: openVault) } label: {
                     VStack(alignment: .leading, spacing: 2) {
                         HStack {
                             if received.readAt == nil { Circle().fill(.tint).frame(width: 8, height: 8).accessibilityLabel("New") }
@@ -304,6 +305,8 @@ struct InboxView: View {
 struct MessageView: View {
     let hub: PeopleHub
     let received: ReceivedMessage
+    var openVault: ((VaultInvitation) async -> String?)? = nil
+    @State private var opening = false
     @State private var status: String?
 
     var body: some View {
@@ -329,6 +332,16 @@ struct MessageView: View {
                     Section("A vault") {
                         LabeledContent("Name", value: vault.name)
                         LabeledContent("Access", value: vault.canWrite ? "Read and write" : "Read only")
+                        if let openVault, received.trust == .contact || received.trust == .cardInside {
+                            Button("Open this vault") {
+                                opening = true
+                                Task {
+                                    status = await openVault(vault) ?? "\(vault.name) is now on your list of vaults."
+                                    opening = false
+                                }
+                            }
+                            .disabled(opening)
+                        }
                     }
                 }
             } else if let problem = received.problem {

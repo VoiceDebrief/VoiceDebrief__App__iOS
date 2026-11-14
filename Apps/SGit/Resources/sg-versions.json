@@ -6,6 +6,19 @@
  "nextArt": [],
  "versions": [
   {
+   "version": "v0.1.74",
+   "date": "14 November 2026",
+   "notes": [
+    "The sgit app plays videos: a play mark on each video, a Play button that decrypts and plays it with sound (even on silent), full screen, and a picture from the video on its tile once it has been played",
+    "The sgit app has a Guide on its home list: what is new in each version, a guide with numbered pictures for each part (getting started, inside a vault, sharing, secrets), and every idea with where it stands"
+   ],
+   "hasPage": true,
+   "url": "https://ios.app.voicedebrief.ai/versions/v0.1.74/index.html",
+   "pictures": 0,
+   "art": [],
+   "issues": []
+  },
+  {
    "version": "v0.1.73",
    "date": "14 November 2026",
    "notes": [

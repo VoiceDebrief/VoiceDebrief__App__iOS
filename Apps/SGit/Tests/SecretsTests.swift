@@ -61,4 +61,13 @@ struct SecretsTests {
         #expect(header.kind == "sgit/answer/v1")
         #expect(header.name == "answer.json")
     }
+
+    @Test func theGuideReadsThisAppsOwnData() {
+        let guides = GuideBook.bundled()
+        #expect(guides != nil)
+        #expect(guides?.guides.contains { $0.app == "SGit Vaults" } == true)
+        #expect(IdeaBook.bundled() != nil)
+        #expect(VersionHistory.bundled() != nil)
+        #expect(GuideBook.resource == "sg-guides")
+    }
 }

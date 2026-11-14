@@ -216,6 +216,11 @@ struct ScreenshotRoot: View {
             if let home = shelf.secretsHome {
                 SampleSecret(shelf: shelf, vault: home)
             }
+        case ("guide", _):
+            NavigationStack {
+                GuideHome(ideas: IdeaBook.bundled(), history: VersionHistory.bundled(), guides: GuideBook.bundled(),
+                          current: AppInfo.shortVersion(), lastSeen: "")
+            }
         case ("questions", _):
             NavigationStack { QuestionsView() }
         case ("share", let vault?):

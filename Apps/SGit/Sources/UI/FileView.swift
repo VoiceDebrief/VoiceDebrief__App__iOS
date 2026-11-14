@@ -34,13 +34,40 @@ struct FileView: View {
             Section {
                 ZStack {
                     if let player {
-                        VideoPlayer(player: player).frame(height: 320)
+                        VideoPlayer(player: player)
+                            .frame(height: 320)
+                            .overlay(alignment: .topTrailing) {
+                                Button {
+                                    player.pause()
+                                    quickLook = local
+                                } label: {
+                                    Image(systemName: "arrow.up.left.and.arrow.down.right")
+                                        .padding(10)
+                                        .background(.ultraThinMaterial, in: Circle())
+                                }
+                                .padding(10)
+                                .accessibilityLabel("Full screen")
+                            }
                     } else if let preview {
                         Image(uiImage: preview)
                             .resizable()
                             .scaledToFit()
                             .frame(maxWidth: .infinity, maxHeight: 380)
                             .onTapGesture { quickLook = local }
+                    } else if kind == .video || kind == .audio, !fetching {
+                        Button {
+                            UsageLog.shared.action("file.play")
+                            Task { await fetch(play: true) }
+                        } label: {
+                            VStack(spacing: 10) {
+                                Image(systemName: "play.circle.fill").font(.system(size: 72))
+                                Text(shelf.isCached(file, in: vault) ? "Play" : "Play (\(file.size.fileSizeText) to decrypt first)")
+                                    .font(.callout.weight(.medium))
+                            }
+                            .frame(maxWidth: .infinity, minHeight: 220)
+                        }
+                        .buttonStyle(.plain)
+                        .foregroundStyle(Color.accentColor)
                     } else {
                         VStack(spacing: 10) {
                             Image(systemName: FileRow.icon(for: file.path)).font(.system(size: 56)).foregroundStyle(.secondary)
@@ -71,7 +98,7 @@ struct FileView: View {
                     if kind == .image || kind == .video {
                         Button("Save to Photos", systemImage: "square.and.arrow.down") { Task { await saveToPhotos(local) } }
                     }
-                } else if !fetching {
+                } else if !fetching, kind != .video, kind != .audio {
                     Button("Fetch (\(file.size.fileSizeText))", systemImage: "arrow.down.circle") { Task { await fetch() } }
                 }
             } footer: {
@@ -120,6 +147,7 @@ struct FileView: View {
             WebVaultScreen(shelf: shelf, vault: vault, path: file.path).tracked("web-vault")
         }
         .task {
+            // A video waits for Play unless it is small or already decrypted; then it is ready, not playing.
             if shelf.isCached(file, in: vault) || file.size <= Self.fetchUnasked { await fetch() }
         }
         .onDisappear { player?.pause() }
@@ -135,7 +163,7 @@ struct FileView: View {
         }
     }
 
-    private func fetch() async {
+    private func fetch(play: Bool = false) async {
         guard local == nil, !fetching else { return }
         fetching = true
         problem = nil
@@ -148,7 +176,13 @@ struct FileView: View {
                 let data = await Task.detached(priority: .userInitiated) { Thumbnail.jpeg(of: url, maxPixel: 2_400) }.value
                 preview = data.flatMap { UIImage(data: $0) }
             case .video, .audio:
-                player = AVPlayer(url: url)
+                let made = AVPlayer(url: url)
+                player = made
+                if play {
+                    // Sound even with the ringer switch on silent, as the Photos app plays a video.
+                    try? AVAudioSession.sharedInstance().setCategory(.playback)
+                    made.play()
+                }
             case .document:
                 break
             }
