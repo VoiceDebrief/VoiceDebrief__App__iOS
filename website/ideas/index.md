@@ -38,7 +38,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | Files over 4 MB in the vault engine | Feature | SGit Vaults | SGit Vaults: a vault |   | [reality file](../sgit-app/built/index.md) |
 | The app builds and its tests pass | Feature | SGit Vaults | SGit Vaults |   | [reality file](../sgit-app/built/index.md) |
 | Adding files, underneath the screens | Feature | SGit Vaults | SGit Vaults: a vault |   | [reality file](../sgit-app/built/index.md) |
-| TestFlight upload | Feature | SGit Vaults | SGit Vaults: Gallery; SGit Vaults: a vault |   | [reality file](../sgit-app/built/index.md) |
+| TestFlight upload | Feature | SGit Vaults | SGit Vaults: Gallery; SGit Vaults: a vault; SGit Vaults: Share |   | [reality file](../sgit-app/built/index.md) |
 | A vault made on this device | Feature | SGit Vaults | SGit Vaults: a vault |   | [reality file](../sgit-app/built/index.md) |
 | A picture of every screen | Feature | SGit Vaults | SGit Vaults: Gallery; SGit Vaults: a vault; SGit Vaults: Share |   | [reality file](../sgit-app/built/index.md) |
 
