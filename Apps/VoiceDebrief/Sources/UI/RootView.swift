@@ -92,6 +92,13 @@ struct RootView: View {
             session.onNoteReady = { [store, book] id in
                 Task { await AutoSave.run(noteId: id, store: store, book: book) }
             }
+            // Lab L02 may open a section by voice (issue 047): the names are the tabs' own.
+            LabActionHost.shared.sectionNames = RootTab.allCases.map(\.rawValue)
+            LabActionHost.shared.openSection = { name in
+                guard let found = RootTab(rawValue: name) else { return false }
+                tab = found
+                return true
+            }
         }
     }
 
