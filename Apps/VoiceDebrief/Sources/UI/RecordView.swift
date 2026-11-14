@@ -42,6 +42,8 @@ struct RecordView: View {
             ScrollViewReader { proxy in
                 ScrollView {
                     VStack(spacing: 24) {
+                        // At the top when idle; while recording it is pinned above the growing words.
+                        if !isRecording { controls }
                         content
                         // The live words grow downwards: this is what the screen follows while recording.
                         Color.clear.frame(height: 1).id(Self.bottomId)
@@ -56,7 +58,9 @@ struct RecordView: View {
                     withAnimation(.easeOut(duration: 0.2)) { proxy.scrollTo(Self.bottomId, anchor: .bottom) }
                 }
             }
-            .safeAreaInset(edge: .bottom) { controls }
+            .safeAreaInset(edge: .top) {
+                if isRecording { controls.background(.bar) }
+            }
             .navigationTitle("VoiceDebrief")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -140,16 +144,6 @@ struct RecordView: View {
             liveCard
             WhereWorkHappens(session: session)
         } else {
-            VStack(spacing: 6) {
-                Text("Record a voice note")
-                    .font(.title2.weight(.semibold))
-                Text("Saved as you speak, then transcribed and debriefed on this device.")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-            }
-            .multilineTextAlignment(.center)
-            .padding(.top, 8)
-
             if case .failed(let why) = session.phase {
                 card {
                     Label(why, systemImage: "exclamationmark.triangle.fill")
@@ -172,19 +166,9 @@ struct RecordView: View {
                     Button("Dismiss") { self.briefing = nil }
                 }
             }
-            if let name = queuedFor {
-                card {
-                    Label("Your last note will be sent to \(name) as soon as it is written up. You can record the next one now.", systemImage: "paperplane.fill")
-                        .font(.callout)
-                    HStack {
-                        Button("Do not send", role: .destructive) {
-                            if let id = queuedNoteId { session.cancelQueuedSend(id) }
-                            queuedFor = nil
-                            queuedNoteId = nil
-                        }
-                        Spacer()
-                        Button("OK") { queuedFor = nil; queuedNoteId = nil }
-                    }
+            if let name = queuedFor, let id = queuedNoteId {
+                SendProgressCard(noteId: id, to: name, session: session) {
+                    withAnimation { queuedFor = nil; queuedNoteId = nil }
                 }
             }
             if let notice = session.notice {
@@ -304,7 +288,14 @@ struct RecordView: View {
     // MARK: The control, pinned where a thumb reaches
 
     private var addresseeChips: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
+        ViewThatFits(in: .horizontal) {
+            chipRow
+            ScrollView(.horizontal, showsIndicators: false) { chipRow.padding(.horizontal, 16) }
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    private var chipRow: some View {
             HStack(spacing: 8) {
                 chip("Just me", systemImage: "person", selected: addresseeRecipient == nil) { addressee = "" }
                 ForEach(RecipientStore.shared.all) { recipient in
@@ -321,8 +312,6 @@ struct RecordView: View {
                 }
                 .buttonStyle(.plain)
             }
-            .padding(.horizontal, 16)
-        }
     }
 
     private func chip(_ title: String, systemImage: String, selected: Bool, action: @escaping () -> Void) -> some View {
@@ -341,6 +330,8 @@ struct RecordView: View {
     private var controls: some View {
         VStack(spacing: 10) {
             if !isRecording {
+                Text("Record a voice note")
+                    .font(.title2.weight(.semibold))
                 Text("Record a note for")
                     .font(.caption)
                     .foregroundStyle(.secondary)
@@ -356,9 +347,10 @@ struct RecordView: View {
                 ZStack {
                     Circle()
                         .fill(localeId.isEmpty ? Color.gray : Color.green)
-                        .frame(width: 88, height: 88)
+                        .frame(width: 120, height: 120)
+                        .shadow(color: .green.opacity(0.35), radius: 12, y: 4)
                     Image(systemName: isRecording ? "checkmark" : "mic.fill")
-                        .font(.system(size: 34, weight: .semibold))
+                        .font(.system(size: 46, weight: .semibold))
                         .foregroundStyle(.white)
                         .contentTransition(.symbolEffect(.replace))
                 }
@@ -410,10 +402,8 @@ struct RecordView: View {
                 .disabled(localeId.isEmpty)
             }
         }
-        .padding(.top, 12)
-        .padding(.bottom, 8)
+        .padding(.vertical, 8)
         .frame(maxWidth: .infinity)
-        .background(.bar)
     }
 
     private var caption: String {
