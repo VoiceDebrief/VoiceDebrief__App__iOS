@@ -5,7 +5,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | Status | Meaning | How many |
 |---|---|---|
 | Seen working | Built, and a run proved it: CI, a device or a server. | 27 |
-| Built, untried | In the app or the repository, but not yet proven by a run on a device. | 65 |
+| Built, untried | In the app or the repository, but not yet proven by a run on a device. | 66 |
 | In progress | Begun: part of it is built or a release has touched it. | 34 |
 | Proposed | Asked for or described; nothing of it is built. | 39 |
 | Parked | Waiting: on the owner, on Apple, or scheduled for later. | 6 |
@@ -98,6 +98,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | Vouching for a device | Feature | VoiceDebrief | Settings: Identity |   | [reality file](../built/index.md) |
 | A person in the register, optionally | Feature | VoiceDebrief | Settings: Identity |   | [reality file](../built/index.md) |
 | Diagnostics | Feature | VoiceDebrief | Settings: Diagnostics |   | [reality file](../built/index.md) |
+| The visual identity | Feature | VoiceDebrief | Record tab; Settings: Identity; The repository: CI |   | [reality file](../built/index.md) |
 | Recording with the screen locked or the app in the background: the audio background mode is declared | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
 | The access key on the Create screen | Feature | SGit Vaults | SGit Vaults: the Create sheet |   | [reality file](../sgit-app/built/index.md) |
 | Drag and drop | Feature | SGit Vaults | SGit Vaults: a vault |   | [reality file](../sgit-app/built/index.md) |

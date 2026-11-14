@@ -1,0 +1,9 @@
+# What changed in v0.1.61
+
+Released 14 November 2026. Every push to the repository's `dev` branch is a release; this page was written by CI from the notes that came with it. [Every version](../index.md) · [What is built](../../built/index.md)
+
+A second Lab experiment, L02, the control centre, from the owner's notes while driving: giving instructions is a different mode from thinking aloud. Under Settings, Lab: say, type or replay a sentence, and two engines each say which action it asks for, the fixed phrases (now a list you can see and change, kept on the device) and Apple's on-device model, asked one sentence at a time with one tool for each action. Each proposed action is a card that waits: Do it, Not this, or Edit. An action can be marked to go ahead without asking. Fourteen test sentences, some said in words no phrase holds and some that are not instructions at all, count how often each engine is right and how long the model takes; the log is exported as JSON. The experiment carries no action out: nothing is recorded, sent, saved or opened. In test: it compiles and its logic is unit tested, but no sentence has been put to a model.
+
+A visual identity for both apps, at the owner's request: [the identity](../../design/identity/index.md) sets one family (a navy ground, green for VoiceDebrief, indigo for SGit Vaults and for vaults in both), one symbol, colour and picture per section, a type scale, spacing and corners, all in a small design system in each app. New app icons for both. The record screen's Explore tiles each have a drawing, a banner greets the first visit, and the record control has the house green and a ring; SGit Vaults turns indigo, with a banner when there are no vaults. Two infographics on the site: the life of a voice note, and the family.
+
+Pictures of the screens are added to this page when the screens workflow has taken them for this version.
