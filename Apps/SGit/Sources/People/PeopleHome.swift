@@ -149,6 +149,8 @@ struct YouView: View {
 struct ContactsView: View {
     let hub: PeopleHub
     @State private var adding = false
+    /// Just met in person: offer a photo of them.
+    @State private var photoFor: Contact?
 
     var body: some View {
         List {
@@ -158,21 +160,28 @@ struct ContactsView: View {
             }
             ForEach(hub.contacts) { contact in
                 NavigationLink { ContactDetailView(hub: hub, contactId: contact.id) } label: {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(contact.name)
-                        Text(contact.canReceive ? contact.met.words : "\(contact.met.words). No inbox yet")
-                            .font(.caption).foregroundStyle(.secondary)
+                    HStack {
+                        ContactPhoto(data: hub.book.photo(contact.id), name: contact.name).frame(width: 36, height: 36)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(contact.name)
+                            Text(contact.canReceive ? contact.met.words : "\(contact.met.words). No inbox yet")
+                                .font(.caption).foregroundStyle(.secondary)
+                        }
                     }
                 }
             }
             .onDelete { offsets in offsets.map { hub.contacts[$0].id }.forEach(hub.removeContact) }
         }
         .navigationTitle("Contacts")
+        .sheet(item: $photoFor) { contact in
+            TakePhotoSheet(hub: hub, contact: contact)
+        }
         .toolbar { Button { adding = true } label: { Label("Add", systemImage: "plus") } }
         .sheet(isPresented: $adding) {
             CodeInputSheet(title: "Add a contact", prompt: "Scan their card, choose a picture of it, or paste the link they sent.") { text in
                 do {
-                    try hub.addContact(from: text, met: CodeInputSheet.lastWasCamera ? .inPerson : .byMessage)
+                    let added = try hub.addContact(from: text, met: CodeInputSheet.lastWasCamera ? .inPerson : .byMessage)
+                    if case .new(let contact) = added, contact.met == .inPerson { photoFor = contact }
                     return nil
                 } catch {
                     return error.localizedDescription
@@ -189,6 +198,7 @@ struct ContactDetailView: View {
     @State private var status: String?
     @State private var invitation: String?
     @State private var sending = false
+    @State private var takingPhoto = false
 
     var contact: Contact? { hub.contact(contactId) }
 
@@ -196,6 +206,10 @@ struct ContactDetailView: View {
         Form {
             if let contact {
                 Section {
+                    HStack {
+                        ContactPhoto(data: hub.book.photo(contact.id), name: contact.name).frame(width: 64, height: 64)
+                        Button(hub.book.photo(contact.id) == nil ? "Add a photo" : "Change the photo") { takingPhoto = true }
+                    }
                     LabeledContent("Name on their card", value: contact.card.name)
                     LabeledContent("How you met", value: contact.met.words)
                     LabeledContent("Encryption key", value: contact.card.fingerprint)
@@ -238,6 +252,9 @@ struct ContactDetailView: View {
             }
         }
         .navigationTitle(contact?.name ?? "Contact")
+        .sheet(isPresented: $takingPhoto) {
+            if let contact { TakePhotoSheet(hub: hub, contact: contact) }
+        }
     }
 
     private func send(_ action: @escaping () async throws -> Void) {
@@ -543,5 +560,107 @@ struct CodeInputSheet: View {
         guard let image = CIImage(data: data),
               let detector = CIDetector(ofType: CIDetectorTypeQRCode, context: nil, options: [CIDetectorAccuracy: CIDetectorAccuracyHigh]) else { return nil }
         return detector.features(in: image).compactMap { ($0 as? CIQRCodeFeature)?.messageString }.first
+    }
+}
+
+// MARK: Photos of people
+
+/// A contact's picture, or their initial. Kept on this device only.
+struct ContactPhoto: View {
+    let data: Data?
+    let name: String
+
+    var body: some View {
+        if let data, let image = UIImage(data: data) {
+            Image(uiImage: image).resizable().scaledToFill().clipShape(Circle()).accessibilityLabel("Photo of \(name)")
+        } else {
+            Circle().fill(.quaternary).overlay(Text(String(name.prefix(1))).font(.headline)).accessibilityHidden(true)
+        }
+    }
+}
+
+/// "Take a photo of the person in front of you": offered after a card is scanned in person.
+struct TakePhotoSheet: View {
+    let hub: PeopleHub
+    let contact: Contact
+    @Environment(\.dismiss) private var dismiss
+    @State private var camera = false
+    @State private var picture: PhotosPickerItem?
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section {
+                    Text("Take a photo of \(contact.name), so you know the face that goes with this card. It stays on this device: it is not in your card and is never sent.")
+                        .font(.callout)
+                }
+                Section {
+                    if UIImagePickerController.isSourceTypeAvailable(.camera) {
+                        Button { camera = true } label: { Label("Take a photo", systemImage: "camera") }
+                    }
+                    PhotosPicker(selection: $picture, matching: .images) { Label("Choose a photo", systemImage: "photo") }
+                }
+            }
+            .navigationTitle("A photo of \(contact.name)")
+            .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Not now") { dismiss() } } }
+            .fullScreenCover(isPresented: $camera) {
+                CameraPicker { image in
+                    camera = false
+                    if let image { keep(image) }
+                }
+                .ignoresSafeArea()
+            }
+            .onChange(of: picture) { _, item in
+                guard let item else { return }
+                Task {
+                    if let data = try? await item.loadTransferable(type: Data.self), let image = UIImage(data: data) { keep(image) }
+                }
+            }
+        }
+    }
+
+    private func keep(_ image: UIImage) {
+        try? hub.book.setPhoto(contact.id, jpeg: Self.small(image))
+        hub.reload()
+        dismiss()
+    }
+
+    /// At most 512 points on the long side, JPEG: a face, not an archive.
+    static func small(_ image: UIImage) -> Data? {
+        let side: CGFloat = 512
+        let scale = min(1, side / max(image.size.width, image.size.height))
+        let size = CGSize(width: image.size.width * scale, height: image.size.height * scale)
+        let format = UIGraphicsImageRendererFormat.default()
+        format.scale = 1
+        return UIGraphicsImageRenderer(size: size, format: format).image { _ in image.draw(in: CGRect(origin: .zero, size: size)) }
+            .jpegData(compressionQuality: 0.8)
+    }
+}
+
+/// The camera, for one photo.
+struct CameraPicker: UIViewControllerRepresentable {
+    let done: (UIImage?) -> Void
+
+    func makeCoordinator() -> Coordinator { Coordinator(done: done) }
+
+    func makeUIViewController(context: Context) -> UIImagePickerController {
+        let picker = UIImagePickerController()
+        picker.sourceType = .camera
+        picker.cameraDevice = .rear
+        picker.delegate = context.coordinator
+        return picker
+    }
+
+    func updateUIViewController(_ controller: UIImagePickerController, context: Context) {}
+
+    final class Coordinator: NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+        let done: (UIImage?) -> Void
+        init(done: @escaping (UIImage?) -> Void) { self.done = done }
+
+        func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
+            done(info[.originalImage] as? UIImage)
+        }
+
+        func imagePickerControllerDidCancel(_ picker: UIImagePickerController) { done(nil) }
     }
 }
