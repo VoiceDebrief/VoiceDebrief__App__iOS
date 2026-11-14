@@ -19,7 +19,7 @@ struct NoteDetailView: View {
                         // The gist first: the debrief's one sentence is the heading, the date beneath it.
                         if let gist = oneSentence(note) {
                             Text(gist)
-                                .font(.title3.weight(.semibold))
+                                .font(DS.TypeScale.title)
                                 .textSelection(.enabled)
                             Text(note.createdAt.formatted(date: .abbreviated, time: .shortened) + " · " + meta(note))
                                 .font(.footnote)
@@ -38,31 +38,31 @@ struct NoteDetailView: View {
                             Text(working)
                         }
                     } else if note.processing {
-                        Label("This note was interrupted before it finished. The recording is kept.", systemImage: "exclamationmark.triangle.fill")
-                            .foregroundStyle(.orange)
+                        Label("This note was interrupted before it finished. The recording is kept.", systemImage: Icon.warning)
+                            .foregroundStyle(DS.Palette.amber)
                             .font(.callout)
                     } else {
-                        Label("Kept on this device", systemImage: "lock.fill")
+                        Label("Kept on this device", systemImage: Icon.onDevice)
                             .font(.footnote)
                             .foregroundStyle(.secondary)
                         if let last = note.saves?.last {
-                            Label("Saved to the vault \(last.vaultName), \(last.at.formatted(date: .omitted, time: .shortened))", systemImage: "lock.doc.fill")
+                            Label("Saved to the vault \(last.vaultName), \(last.at.formatted(date: .omitted, time: .shortened))", systemImage: Icon.inVault)
                                 .font(.footnote)
-                                .foregroundStyle(.green)
+                                .foregroundStyle(DS.Palette.indigo)
                         }
                         ForEach(Array((note.sends ?? []).enumerated()), id: \.offset) { _, sent in
-                            Label("Sent to \(sent.to), \(sent.at.formatted(date: .omitted, time: .shortened))", systemImage: "paperplane.fill")
+                            Label("Sent to \(sent.to), \(sent.at.formatted(date: .omitted, time: .shortened))", systemImage: Icon.sent)
                                 .font(.footnote)
-                                .foregroundStyle(.green)
+                                .foregroundStyle(DS.Palette.green)
                         }
                         if let why = note.saveProblem {
-                            Label("Not saved to a vault: \(why)", systemImage: "exclamationmark.triangle.fill")
+                            Label("Not saved to a vault: \(why)", systemImage: Icon.failed)
                                 .font(.footnote)
-                                .foregroundStyle(.orange)
+                                .foregroundStyle(DS.Palette.red)
                         }
                     }
                     if let problem = session.store.problem {
-                        Label(problem, systemImage: "exclamationmark.triangle.fill").foregroundStyle(.red).font(.callout)
+                        Label(problem, systemImage: Icon.failed).foregroundStyle(DS.Palette.red).font(.callout)
                     }
                 }
 

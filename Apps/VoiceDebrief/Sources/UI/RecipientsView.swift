@@ -304,7 +304,7 @@ struct SendBar: View {
             case .sent(let count):
                 Label("Sent, in \(count) encrypted messages", systemImage: "checkmark.circle.fill")
                     .font(.footnote)
-                    .foregroundStyle(.green)
+                    .foregroundStyle(DS.Palette.green)
                     .padding(.horizontal, 16)
             case .retrying(let attempt, let of, let next, _):
                 HStack(spacing: 8) {
@@ -317,13 +317,13 @@ struct SendBar: View {
             case .failed(let why):
                 Label(why, systemImage: "exclamationmark.triangle")
                     .font(.footnote)
-                    .foregroundStyle(.red)
+                    .foregroundStyle(DS.Palette.red)
                     .padding(.horizontal, 16)
             case .idle:
                 if let why = session.store.note(noteId)?.sendProblem {
                     Label("Not sent: \(why)", systemImage: "exclamationmark.triangle")
                         .font(.footnote)
-                        .foregroundStyle(.red)
+                        .foregroundStyle(DS.Palette.red)
                         .padding(.horizontal, 16)
                 }
             }

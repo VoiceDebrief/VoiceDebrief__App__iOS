@@ -76,6 +76,20 @@ From `Icons.swift`, the same in both apps.
 
 A state is shown as a `StatusPill`: the symbol and a word or two in the state's colour, on a 12% wash of it. Never colour alone.
 
+## Avatars: who is who
+
+Every person and every agent has a face, so that "if I want to talk to the conductor, I should very easily see who they are" (the owner, 14 November 2026). An avatar is a photo where one is set (on the device only, never sent), else a character generated from a stable id: a key fingerprint for a person, an agent's id, or the owner's own key. The same id draws the same character on every device (`AvatarSeed`: SHA-256 of the id picks a colour from the palette, a second colour, a head shape, eyes and a mouth; tested against values worked out independently).
+
+| Kind | Face | Frame |
+|---|---|---|
+| You | A person's face | A green ring |
+| A person | A circle, squircle, hexagon or flower, with eyes, a mouth and cheeks | A hairline |
+| A conductor | A head with an antenna and a visor | A gold ring and a baton badge, so it stands out |
+| A session | The same head | An indigo ring |
+| A sub-agent | The same head | A dashed ring |
+
+`SendRoute` draws who a note goes from and to: you, an arrow, then the recipient, or several recipients overlapping with "Sam, Ana and 3 more" beneath; with none, "This device". On the Identity screen, "How you look" offers a photo or another look.
+
 ## Type, spacing and corners
 
 - **Type.** Apple's system font throughout, so Dynamic Type and every language work. Display text, titles and numbers use the rounded design (`DS.TypeScale.display`, `.title`, `.number`): the timer, a section's banner, the balance. Body text is the plain system font.

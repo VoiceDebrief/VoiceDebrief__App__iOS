@@ -107,6 +107,18 @@
 <tr><td>Language</td><td><code>globe</code></td><td></td><td>What is new</td><td><code>sparkles</code></td></tr>
 </tbody></table></div>
 <p>A state is shown as a <code>StatusPill</code>: the symbol and a word or two in the state's colour, on a 12% wash of it. Never colour alone.</p>
+<h2 id="avatars-who-is-who">Avatars: who is who</h2>
+<p>Every person and every agent has a face, so that &quot;if I want to talk to the conductor, I should very easily see who they are&quot; (the owner, 14 November 2026). An avatar is a photo where one is set (on the device only, never sent), else a character generated from a stable id: a key fingerprint for a person, an agent's id, or the owner's own key. The same id draws the same character on every device (<code>AvatarSeed</code>: SHA-256 of the id picks a colour from the palette, a second colour, a head shape, eyes and a mouth; tested against values worked out independently).</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Kind</th><th>Face</th><th>Frame</th></tr></thead>
+<tbody>
+<tr><td>You</td><td>A person's face</td><td>A green ring</td></tr>
+<tr><td>A person</td><td>A circle, squircle, hexagon or flower, with eyes, a mouth and cheeks</td><td>A hairline</td></tr>
+<tr><td>A conductor</td><td>A head with an antenna and a visor</td><td>A gold ring and a baton badge, so it stands out</td></tr>
+<tr><td>A session</td><td>The same head</td><td>An indigo ring</td></tr>
+<tr><td>A sub-agent</td><td>The same head</td><td>A dashed ring</td></tr>
+</tbody></table></div>
+<p><code>SendRoute</code> draws who a note goes from and to: you, an arrow, then the recipient, or several recipients overlapping with &quot;Sam, Ana and 3 more&quot; beneath; with none, &quot;This device&quot;. On the Identity screen, &quot;How you look&quot; offers a photo or another look.</p>
 <h2 id="type-spacing-and-corners">Type, spacing and corners</h2>
 <ul>
 <li><strong>Type.</strong> Apple's system font throughout, so Dynamic Type and every language work. Display text, titles and numbers use the rounded design (<code>DS.TypeScale.display</code>, <code>.title</code>, <code>.number</code>): the timer, a section's banner, the balance. Body text is the plain system font.</li>
