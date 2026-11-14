@@ -1,0 +1,19 @@
++----------------------------------------------------------------------+
+| SGIT VAULTS                                              v0.1.107    |
+| 14 November 2026                                                     |
++----------------------------------------------------------------------+
+| 54 PUBLISHED VAULTS, RUNNING LIVE INSIDE THE APP                     |
+|                                                                      |
+| * Every vault at sgit.ai/demos/vaults, grouped by kind, searchable   |
+| * Each opens in the web Vault in the app, with its public read key   |
+| * The list is read from sgit.ai each time; new ones need no update   |
+| * Secrets are no longer listed as files: only in Secrets, Face ID    |
+|                                                                      |
+|      you --- Ana        the trust map now draws its lines behind     |
+|       |                 each face and name, not through them         |
+|      Ben                                                             |
+|                                                                      |
+| WHERE    Home > Gallery > Published by sgit.ai                       |
+| TRY      Search "graph", open one, tap a file inside it              |
+| NOT YET  Looking only: these keys cannot change anything             |
++----------------------------------------------------------------------+
