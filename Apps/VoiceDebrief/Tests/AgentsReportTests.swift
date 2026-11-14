@@ -20,3 +20,13 @@ struct AgentsReportTests {
         #expect(report.messages.first?.replyTo == "m1")
     }
 }
+
+@Suite("Is an update waiting")
+struct UpdateWaitingTests {
+    @Test func comparesNumberByNumber() {
+        #expect(AppInfo.isNewer("0.1.90", than: "0.1.82"))
+        #expect(AppInfo.isNewer("0.2.0", than: "0.1.99"))
+        #expect(!AppInfo.isNewer("0.1.82", than: "0.1.82"))
+        #expect(!AppInfo.isNewer("0.1.9", than: "0.1.82"))
+    }
+}

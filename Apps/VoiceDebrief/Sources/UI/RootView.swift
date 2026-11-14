@@ -45,6 +45,10 @@ struct RootView: View {
             Tab(RootTab.agents.title, systemImage: RootTab.agents.symbol, value: RootTab.agents) {
                 AgentsView(book: book).tracked("agents")
             }
+            // The games, out of the Lab and onto the sidebar (the owner: "brilliant; make them a top-level item").
+            Tab(RootTab.play.title, systemImage: RootTab.play.symbol, value: RootTab.play) {
+                NavigationStack { GamePlayView() }.tracked("play")
+            }
             Tab(RootTab.guide.title, systemImage: RootTab.guide.symbol, value: RootTab.guide) {
                 GuideView().tracked("guide")
             }
