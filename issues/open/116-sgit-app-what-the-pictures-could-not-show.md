@@ -31,5 +31,5 @@ and "Try again" (the state issue 110 is about).
 dark appearance, the vault and the share sheet at a large accessibility text size.
 
 The dark pictures read well. The large-text pictures showed two faults: file names cut to "Gro....jpg" under the
-tiles, and the iPad's folder tree breaking "team" across two lines. Written, not yet compiled: at the
+tiles, and the iPad's folder tree breaking "team" across two lines. Fixed and seen in the pictures of `56778f3`: at the
 accessibility text sizes a folder is shown as a list, and the tree is wider.

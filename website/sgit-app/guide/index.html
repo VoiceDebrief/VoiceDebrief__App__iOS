@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The sgit app: a guide in pictures</title>
+<meta name="description" content="What the sgit app does today, screen by screen, with numbered callouts on each picture: vaults, creating one, browsing, adding, a refused upload, a file, sharing, history, and how it came to be.">
+<link rel="canonical" href="https://ios.app.voicedebrief.ai/sgit-app/guide/index.html">
+<meta property="og:url" content="https://ios.app.voicedebrief.ai/sgit-app/guide/index.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="VoiceDebrief for iOS">
+<meta property="og:title" content="The sgit app: a guide in pictures">
+<meta property="og:description" content="What the sgit app does today, screen by screen, with numbered callouts on each picture: vaults, creating one, browsing, adding, a refused upload, a file, sharing, history, and how it came to be.">
+<link rel="alternate" type="text/markdown" href="index.md" title="This page as markdown">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/vd-tokens.css">
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+
+<nav class="site"><div class="row">
+  <a class="brand" href="../../index.html">Voice<em>Debrief</em> <span>iOS</span></a>
+  <span class="beta" title="In development: there is nothing to install yet">IN DEVELOPMENT</span>
+  <a class="parent" href="https://voicedebrief.ai" title="A VoiceDebrief product">&#8599; part of <b>voicedebrief.ai</b></a>
+  <a class="ver" href="../../versions/index.html" title="Release history">dev</a>
+  <a class="nl" href="../../built/index.html">Built</a>
+  <a class="nl" href="../../architecture/index.html">How it works</a>
+  <a class="nl" href="../../design/index.html">Design</a>
+  <a class="nl" href="../../plan/index.html">Plan</a>
+  <a class="nl" href="../../articles/index.html">Articles</a>
+  <a class="nl" href="../../develop/index.html">Build</a>
+  <a class="gh" href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">&#9733; GitHub</a>
+</div></nav>
+
+<main class="doc">
+<div class="crumb"><a href="../../index.html">VoiceDebrief iOS</a> / sgit-app / guide</div>
+<h1 id="the-sgit-app-a-guide-in-pictures">The sgit app: a guide in pictures</h1>
+<p>What the sgit app (SGit Vaults) does today, screen by screen, with the things to press numbered on each picture. <a href="../built/index.html">What is built</a> is the reality file and says how each part was tested; <a href="../design/index.html">the design</a> is the intention; <a href="../reviews/round-1/index.html">the first review</a> is what three synthetic users made of it.</p>
+<p>Read this first, because it limits everything below: <strong>the pictures were taken by CI on a simulator, with an invented vault made by the app's own engine and no server.</strong> The app compiles, its tests pass, and builds go to TestFlight from every green push to <code>dev</code>. The owner has opened one build on a Mac and seen two screens. Nothing else here has been used by a person on a device, and the app has not yet spoken to the real server. Where a step has never been tried by hand, the text says so.</p>
+<h2 id="the-idea-in-four-sentences">The idea in four sentences</h2>
+<p>A vault is a folder of files with a history. Every file is encrypted on the device before it goes anywhere, so the server stores only ciphertext. Whoever holds the vault's key can open it, in this app, in the <code>sgit</code> command on a computer, or in the web Vault in a browser: it is one format. The app keeps nothing of ours: there is no account and no backend, only the vault server.</p>
+<h2 id="1-the-first-screen-your-vaults">1. The first screen: your vaults</h2>
+<p><img class="shot" src="img/vaults.png" alt="The list of vaults, with five numbered callouts" loading="lazy"></p>
+<ol>
+<li><strong>A vault, and where it stands.</strong> &quot;Shared: you can add and change&quot; means it is on the server and this device holds its full key. &quot;Only on this device&quot; means it has never been sent anywhere.</li>
+<li><strong>Gallery.</strong> A list of vaults to show somebody, each opened in the web Vault inside the app. It is empty until a showcase vault or links are given to it (issue 107).</li>
+<li><strong>Add a vault you were sent.</strong> Paste a vault key, a read key or a link, or scan a QR code.</li>
+<li><strong>Create a vault.</strong> Made on this device, with no account, no access key and no network.</li>
+<li><strong>Settings.</strong> The server, the access key, this device's signing key, the photo conversion switch and the cache.</li>
+</ol>
+<h2 id="2-creating-a-vault">2. Creating a vault</h2>
+<p><img class="shot" src="img/create.png" alt="The Create sheet, with three numbered callouts" loading="lazy"></p>
+<ol>
+<li><strong>The name is yours.</strong> It is kept on this device; anybody you share the vault with names it themselves.</li>
+<li><strong>Share it: put it on the server.</strong> Off for a person with no access key, so that creating a vault never stops at a wall. It can be sent to the server later, from its Share screen.</li>
+<li><strong>What that costs.</strong> Sending a vault to the server needs an access key, which is a pass given out by whoever runs the server. It is not a key to any vault.</li>
+</ol>
+<p>The vault's key is made here and kept in this device's Keychain. If the device is lost and the key was never given to anybody or written down, the vault cannot be opened again. The sheet says so.</p>
+<h2 id="3-inside-a-vault">3. Inside a vault</h2>
+<p><img class="shot" src="img/vault.png" alt="A vault's first folder, with six numbered callouts" loading="lazy"></p>
+<ol>
+<li><strong>Where everything stands.</strong> One line at the top of every folder: on the server and when that was last checked, on this device only, how many files are on their way in, or that some did not go in. Pull down to check again.</li>
+<li><strong>Add.</strong> Photos and videos from the library, files from Files, or a new folder. Each selection becomes one signed commit.</li>
+<li><strong>Share.</strong> Opens the sheet in section 6.</li>
+<li><strong>More.</strong> History, refresh, grid or list, and &quot;Save these N files to Files&quot;, which takes the whole folder out as the originals.</li>
+<li><strong>A folder.</strong> Its file count and size. Tap to go in.</li>
+<li><strong>A file.</strong> Tap to open it. On a Mac or an iPad with a pointer, files can be dragged out to the desktop and dropped in (written, never tried by hand).</li>
+</ol>
+<h3 id="on-an-ipad-or-a-mac">On an iPad or a Mac</h3>
+<p><img class="shot" src="img/ipad.png" alt="The same vault on an iPad in landscape, with three numbered callouts" loading="lazy"></p>
+<ol>
+<li><strong>The folder tree.</strong> As in the web Vault: the folders on the left choose what is shown on the right.</li>
+<li><strong>The open folder.</strong> The same grid or list as on a phone.</li>
+<li><strong>The same three buttons.</strong> The app is one codebase: iPhone, iPad and Mac show the same screens and can do the same things. What they do not do yet is keep each other up to date on their own: each device reads the vault from the server when it is opened or refreshed.</li>
+</ol>
+<h2 id="4-adding-files-and-what-happens-when-it-is-refused">4. Adding files, and what happens when it is refused</h2>
+<p>A selection is copied into the app first, so it is safe the moment the picker closes. It is then encrypted, sent, and committed. Files larger than 4 MB go up in parts and can carry on after an interruption. A file is never shown as in the vault before its commit has been pushed and read back.</p>
+<p><img class="shot" src="img/refused.png" alt="An upload that was refused, with three numbered callouts" loading="lazy"></p>
+<ol>
+<li><strong>The standing line turns red</strong> when something did not go in.</li>
+<li><strong>Why.</strong> Here, the server refused because this device has the vault key and no access key. This is the open question in issue 110: a teammate who is sent a vault key cannot add to the vault until they also have an access key. The owner decides how they should get one.</li>
+<li><strong>Try again.</strong> Nothing was lost: the file is kept in the app until it is in the vault, or until it is discarded.</li>
+</ol>
+<h2 id="5-a-file">5. A file</h2>
+<p><img class="shot" src="img/file.png" alt="A photograph opened from a vault, with three numbered callouts" loading="lazy"></p>
+<ol>
+<li><strong>Open.</strong> Full screen, with the system's viewer: images, video, PDF, text and whatever Quick Look can show.</li>
+<li><strong>Share.</strong> Hands over the original file, byte for byte as it was added.</li>
+<li><strong>Save to Photos.</strong> For images and video.</li>
+</ol>
+<p>Not built: editing a file in the app, and a preview of an HTML page as the web Vault shows it. Both are next (see the end of this page).</p>
+<h2 id="6-sharing-a-vault">6. Sharing a vault</h2>
+<p><img class="shot" src="img/share.png" alt="The share sheet with the vault key shown, with five numbered callouts" loading="lazy"></p>
+<ol>
+<li><strong>Send the way in.</strong> One message with the steps for the person receiving it, the key, and a link that opens the vault in a browser.</li>
+<li><strong>The warning.</strong> Whoever holds the vault key can read everything, add, change and delete, and it cannot be taken back. A read key, lower on the sheet, can only look.</li>
+<li><strong>The key itself</strong>, shown only when asked for.</li>
+<li><strong>Copy.</strong> The copy stays on this device and expires from the clipboard after two minutes.</li>
+<li><strong>A QR code</strong> of the key, for a device beside this one. Below it: a link for a browser, and the line to paste on a computer (<code>pip install sgit-ai &amp;&amp; sgit clone</code>) to get every file and the whole history.</li>
+</ol>
+<p>There is no way yet to give somebody access that can be taken back (issue 104), and no way to give &quot;may add, may not delete&quot;.</p>
+<h2 id="7-history">7. History</h2>
+<p><img class="shot" src="img/history.png" alt="A vault's history, with three numbered callouts" loading="lazy"></p>
+<ol>
+<li><strong>Grouped by day.</strong></li>
+<li><strong>Who.</strong> &quot;This device&quot; or &quot;Another device&quot;, told apart by the key that signed the commit. A device cannot yet carry a name (issue 112): that needs a decision on where a name lives in a vault.</li>
+<li><strong>The signature.</strong> Every commit this app makes is signed with a key that never leaves the device, and every commit it reads is checked.</li>
+</ol>
+<p>Tap a commit to see what it added, changed and removed.</p>
+<h2 id="how-it-came-to-be-in-order">How it came to be, in order</h2>
+<ol>
+<li><strong>13 November 2026.</strong> The owner asked for sgit as a native app, starting with photos, videos and large files for the team. The engine gained large files (streamed encryption, upload in parts, resume), proven against the <code>sgit</code> command in both directions in CI.</li>
+<li><strong>The first build</strong> reached TestFlight as 0.1.19. The owner opened it on a Mac and met a wall: creating a vault demanded an access token.</li>
+<li><strong>Local first.</strong> Creating a vault now needs nothing; sending it to a server is a later, separate step. Drag and drop and the folder tree were added at the owner's request.</li>
+<li><strong>Pictures.</strong> A CI job photographs every screen on an iPhone and an iPad. The first pictures showed two faults nobody had seen, which were fixed.</li>
+<li><strong>The gallery</strong> (0.1.39), at the owner's request.</li>
+<li><strong>The first review</strong> by three synthetic users, from the pictures, found seventeen things. Fixed since: the standing line, a visible Share that leads with the action, the Create sheet, rows in words, saving a folder out, history by day, the refusal's wording, large text. Left for the owner: issues 110, 104, 112.</li>
+<li><strong>Now: 22 pictures per device</strong>, including dark appearance, large text and a refused upload.</li>
+</ol>
+<h2 id="what-is-next">What is next</h2>
+<p>Asked for by the owner on 14 November 2026, none of it built yet:</p>
+<ul>
+<li>the whole web Vault opened inside the app on the vault you are looking at, so that everything it can do is one tap away;</li>
+<li>a simple edit of a text file, and an HTML preview, natively;</li>
+<li>a record of every action in the app, on every device, that the owner can send to the people building it;</li>
+<li>a button to speak a message to the people building it, and an inbox for the reply;</li>
+<li>a first use of Apple Intelligence;</li>
+<li>regular builds for external testers, each with a plain account of what is new.</li>
+</ul>
+</main>
+
+<footer class="site"><div class="cols">
+  <div>
+    <div class="brandline">Voice<em>Debrief</em> <span>iOS</span></div>
+    <p>The VoiceDebrief transcript and debrief as a native iPhone and iPad app, on Apple's own models, with the results in a vault you own. In development: there is nothing to install yet. Content CC BY 4.0; code Apache 2.0.</p>
+    <p class="partnote">This site is static and has no analytics.</p>
+    <p class="verline">site dev · <a href="index.md">this page as markdown</a> · <a href="../../llms.txt">llms.txt</a></p>
+  </div>
+  <div>
+    <h4>The app</h4>
+    <a href="../../built/index.html">What is built</a>
+    <a href="../../plan/index.html">The plan</a>
+    <a href="../../develop/index.html">Build and test</a>
+    <a href="../../versions/index.html">Release history</a>
+    <a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">GitHub</a>
+  </div>
+  <div>
+    <h4>VoiceDebrief</h4>
+    <a href="https://voicedebrief.ai">voicedebrief.ai</a>
+    <a href="https://meetscribe.chrome-extension.voicedebrief.ai">MeetScribe for Google Meet</a>
+  </div>
+  <div>
+    <h4>Built on</h4>
+    <a href="https://sgit.ai">sgit.ai</a>
+    <a href="https://pki.sgit.ai">pki.sgit.ai</a>
+    <a href="https://sgit.ai/security/index.html">The vault security model</a>
+  </div>
+</div></footer>
+</body>
+</html>
