@@ -8,10 +8,12 @@
 // 5. house style on the site: no em-dashes
 // 6. no script on any page: this site is static
 // 7. the version file is vMAJOR.MINOR.PATCH (CI writes it; nobody else does)
+// 8. release cards are plain ASCII, at most 72 columns (see cards.mjs)
 import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
+import { check as checkCard } from './cards.mjs';
 
 const SITE_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');   // website/
 const REPO_ROOT = resolve(SITE_ROOT, '..');
@@ -75,6 +77,11 @@ for (const f of site.filter(f => /\.(md|html|txt)$/.test(f))) {
   const s = readFileSync(f, 'utf8');
   if (s.includes('—')) fail(`${rel(f)}: em-dash (house style)`);
   if (f.endsWith('.html') && /<script/i.test(s)) fail(`${rel(f)}: a script on a static page`);
+}
+
+// 8. release cards (versions/next/*.txt and versions/<version>/*.txt): plain ASCII, at most 72 columns
+for (const f of site.filter((f) => /versions\/(next|v\d+\.\d+\.\d+)\/[^/]+\.txt$/.test(f))) {
+  for (const p of checkCard(readFileSync(f, 'utf8'))) fail(`${rel(f)}: ${p}`);
 }
 
 // 7

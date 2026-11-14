@@ -90,4 +90,12 @@ struct GuideTests {
         #expect(blocks == [.heading(level: 2, text: "A heading"), .paragraph("One line and the next."), .bullet("a point"),
                            .bullet("1. first"), .quote("quoted"), .bullet("A · B"), .bullet("x · y"), .code("code")])
     }
+
+    @Test func aReleaseCardKeepsItsRightEdge() {
+        let card = "| X {{version}}   |\n| d {{date}}                 |\n+----+"
+        let filled = ReleaseCard.fill(card, ["version": "v0.1.59", "date": "14 November 2026"])
+        #expect(filled == "| X v0.1.59       |\n| d 14 November 2026         |\n+----+")
+        let history = VersionHistory(next: ["A note."], versions: [], nextArt: ["| {{version}} |"])
+        #expect(history.all(current: "v1.2.3").first?.art == ["| v1.2.3      |"])
+    }
 }

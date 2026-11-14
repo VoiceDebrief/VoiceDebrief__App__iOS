@@ -37,6 +37,7 @@ struct WhatsNewView: View {
             }
             ForEach(all) { v in
                 Section {
+                    ForEach(Array((v.art ?? []).enumerated()), id: \.offset) { ReleaseCardView(text: $0.element) }
                     ForEach(Array(v.notes.enumerated()), id: \.offset) { Text($0.element).textSelection(.enabled) }
                     if let url = URL(string: v.url) {
                         Link(destination: url) {
@@ -70,5 +71,22 @@ struct WhatsNewView: View {
             if unseen == nil { unseen = fresh }
             lastSeen = current
         }
+    }
+}
+
+/// A release card: an ASCII box, shown in monospace at a size that fits 72 columns where it can,
+/// scrolling sideways where it cannot.
+struct ReleaseCardView: View {
+    let text: String
+
+    var body: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            Text(text)
+                .font(.system(size: 10.5, design: .monospaced))
+                .fixedSize()
+                .textSelection(.enabled)
+                .padding(.vertical, 4)
+        }
+        .accessibilityLabel(text.replacingOccurrences(of: #"[+|\-]{2,}|[|+]"#, with: " ", options: .regularExpression))
     }
 }

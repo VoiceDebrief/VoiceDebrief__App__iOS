@@ -1,0 +1,15 @@
++----------------------------------------------------------------------+
+| VOICEDEBRIEF + SGIT VAULTS                               {{version}} |
+| {{date}}                                                             |
++----------------------------------------------------------------------+
+| THE GUIDE: WHAT EXISTS, WHAT CHANGED, HOW TO USE IT                  |
+|                                                                      |
+| * Three picture guides for SGit Vaults: start, a vault, sharing      |
+| * Articles inside the app: the positions, briefs and journeys        |
+| * Every empty screen should say what to do next (issue 046)          |
+| * Release cards like this one, in What is new                        |
+|                                                                      |
+| WHERE    Guide tab > Articles; Guide > How to use it                 |
+| TRY      Guide > What is new: this card is at the top                |
+| NOT YET  SGit Vaults shows its own Guide when its session wires it   |
++----------------------------------------------------------------------+
