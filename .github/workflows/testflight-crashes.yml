@@ -1,0 +1,32 @@
+name: testflight crashes
+# Run by hand: prints the newest crash reports testers shared from TestFlight, into the job summary and
+# an artefact, so they can be read without App Store Connect.
+on:
+  workflow_dispatch:
+    inputs:
+      app:
+        description: "voicedebrief or sgit"
+        required: true
+        default: voicedebrief
+permissions:
+  contents: read
+jobs:
+  crashes:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch the crash reports
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_P8_BASE64: ${{ secrets.ASC_KEY_P8_BASE64 }}
+          APP: ${{ inputs.app }}
+        run: |
+          pip install -q pyjwt cryptography requests
+          if [ "$APP" = sgit ]; then B=ai.sgit.vaults.app; else B=ai.voicedebrief.app; fi
+          python3 .github/scripts/testflight_crashes.py --bundle "$B" --limit 5 | tee crashes.txt
+          { echo '```'; head -c 900000 crashes.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: crashes
+          path: crashes.txt

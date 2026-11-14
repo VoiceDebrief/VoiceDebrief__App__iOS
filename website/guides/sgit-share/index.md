@@ -6,6 +6,8 @@ Sharing gives somebody the vault's key. Whoever holds it can read everything in 
 
 ## 1. Share.
 
+Sharing gives someone the vault's key. Read the warning first: whoever holds the key can read everything in the vault, and it cannot be taken back.
+
 ![Share. Numbered arrows mark the parts described below.](../img/sgit-share-1.jpg)
 
 1. Send the way in: a message with the key, a link for a browser and the steps for the person receiving it. Send it only by a channel you trust.
@@ -14,6 +16,8 @@ Sharing gives somebody the vault's key. Whoever holds it can read everything in 
 4. The read key: read only.
 
 ## 2. Create a vault.
+
+A new vault is made on this device. Turn on Share it to put it on the server straight away; leave it off to keep it here until you choose to share.
 
 ![Create a vault. Numbered arrows mark the parts described below.](../img/sgit-share-2.jpg)
 

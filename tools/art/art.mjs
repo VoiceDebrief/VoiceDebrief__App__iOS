@@ -13,7 +13,7 @@ export const C = {
 export const T = {
   record: '#0E9E72', library: '#2F80ED', vaults: '#4F5BD5', recipients: '#E5577E', identity: '#8E5CF7',
   credit: '#D4A12A', lab: '#13A8C8', words: '#2BB39A', diagnostics: '#7B8DA3', status: '#12C08A',
-  settings: '#8A9BB0', guide: '#2BA3D9', agents: '#C94FD6', activity: '#F08A4B', contacts: '#E5577E', about: '#12C08A', gallery: '#E07A3F', share: '#E5577E', history: '#13A8C8', webVault: '#4F5BD5', inbox: '#2F80ED', secrets: '#8E5CF7', people: '#E5577E',
+  settings: '#8A9BB0', guide: '#2BA3D9', play: '#F28C28', agents: '#C94FD6', activity: '#F08A4B', contacts: '#E5577E', about: '#12C08A', gallery: '#E07A3F', share: '#E5577E', history: '#13A8C8', webVault: '#4F5BD5', inbox: '#2F80ED', secrets: '#8E5CF7', people: '#E5577E',
 };
 
 // A deterministic sequence, so a picture is the same every time it is drawn.
@@ -257,6 +257,35 @@ export const tiles = {
       <rect x="${x - 3}" y="${y - 58}" width="6" height="18" rx="3" fill="${lighten(T.agents, 0.35)}"/><circle cx="${x}" cy="${y - 60}" r="7" fill="${lighten(T.agents, 0.35)}"/>`).join('')}
     <g filter="url(#soft)"><circle cx="360" cy="250" r="56" fill="url(#acc)"/></g>
     <path d="M336 236 h48 a10 10 0 0 1 10 10 v14 a10 10 0 0 1 -10 10 h-28 l-14 12 v-12 h-6 a10 10 0 0 1 -10 -10 v-14 a10 10 0 0 1 10 -10 z" fill="#FFFFFF"/>`),
+
+  play: () => frame(W, H, T.play, `
+    <g filter="url(#soft)"><rect x="70" y="140" width="290" height="250" rx="24" fill="url(#card)"/></g>
+    ${Array.from({ length: 5 }, (_, c) => Array.from({ length: 4 }, (_, r) => {
+      const x = 92 + c * 50, y = 160 + r * 52;
+      const wall = [[1, 0], [1, 1], [3, 2], [3, 3], [0, 3]].some(([a, b]) => a === c && b === r);
+      return `<rect x="${x}" y="${y}" width="46" height="48" rx="8" fill="${wall ? C.navy3 : '#DCE6EF'}"/>`;
+    }).join('')).join('')}
+    ${[[142, 288], [242, 184], [292, 340]].map(([x, y]) => `<circle cx="${x + 23}" cy="${y + 24}" r="11" fill="${C.amber}" stroke="#B98500" stroke-width="3"/>`).join('')}
+    <rect x="94" y="162" width="42" height="44" rx="9" fill="${C.green}"/>
+    <circle cx="108" cy="180" r="5" fill="#FFFFFF"/><circle cx="122" cy="180" r="5" fill="#FFFFFF"/>
+    <circle cx="109" cy="181" r="2.5" fill="${C.navy}"/><circle cx="123" cy="181" r="2.5" fill="${C.navy}"/>
+    <rect x="296" y="336" width="38" height="48" rx="6" fill="${T.play}"/><circle cx="326" cy="362" r="3" fill="#FFFFFF"/>
+    <g stroke="#FFFFFF" stroke-opacity="0.85" stroke-width="7" stroke-linecap="round">
+      <line x1="460" y1="130" x2="460" y2="420"/><line x1="540" y1="130" x2="540" y2="420"/>
+      ${[160, 210, 260, 310, 360, 410].map(y => `<line x1="460" y1="${y}" x2="540" y2="${y}"/>`).join('')}
+    </g>
+    <circle cx="610" cy="120" r="34" fill="${C.amber}" fill-opacity="0.18"/>
+    <rect x="590" y="100" width="40" height="44" rx="10" fill="#6B7785"/><rect x="600" y="92" width="20" height="10" rx="4" fill="#6B7785"/>
+    <g transform="translate(500 300)">
+      <circle cx="0" cy="-58" r="17" fill="#F5D6B8"/>
+      <rect x="-16" y="-40" width="32" height="46" rx="12" fill="${C.green}"/>
+      <line x1="-8" y1="6" x2="-12" y2="38" stroke="${C.navy3}" stroke-width="9" stroke-linecap="round"/>
+      <line x1="8" y1="6" x2="14" y2="30" stroke="${C.navy3}" stroke-width="9" stroke-linecap="round"/>
+      <line x1="14" y1="-30" x2="44" y2="-46" stroke="#F5D6B8" stroke-width="8" stroke-linecap="round"/>
+      <circle cx="54" cy="-50" r="30" fill="${C.amber}" fill-opacity="0.3"/>
+      <rect x="44" y="-64" width="20" height="26" rx="6" fill="${C.amber}" stroke="#B98500" stroke-width="3"/>
+    </g>
+    ${bars(560, 250, 90, 46, 6, C.mint, 13, 7)}`),
 
   gallery: () => frame(W, H, T.gallery, [[-10, 180, 130], [4, 300, 110], [14, 400, 160]].map(([rot, x, y], i) => `
     <g transform="rotate(${rot} ${x + 100} ${y + 100})" filter="url(#soft)">

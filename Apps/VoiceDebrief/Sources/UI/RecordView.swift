@@ -12,6 +12,9 @@ struct RecordView: View {
     @AppStorage("vd.localeId") private var localeId = ""
     @State private var importing = false
     @State private var showingMessages = false
+    @Environment(\.horizontalSizeClass) private var sizeClass
+    /// iPad and Mac at full width: the two-column record screen.
+    private var wide: Bool { sizeClass == .regular }
     /// A picture added while recording (pasted or chosen) and a line, sent with the note when it goes.
     @State private var attached: UIImage?
     @State private var attachedLine = ""
@@ -52,18 +55,35 @@ struct RecordView: View {
     var body: some View {
         NavigationStack(path: $path) {
             ScrollViewReader { proxy in
-                ScrollView {
-                    VStack(spacing: 24) {
-                        // At the top when idle; while recording it is pinned above the growing words.
-                        if !isRecording { controls }
-                        content
-                        // The live words grow downwards: this is what the screen follows while recording.
-                        Color.clear.frame(height: 1).id(Self.bottomId)
+                Group {
+                    if wide {
+                        // iPad and Mac: what you do on the left, what came back on the right (the owner:
+                        // "on the iPad or laptop we can do better"). The control stays in the left column.
+                        RecordWideLayout {
+                            controls
+                            content
+                            Color.clear.frame(height: 1).id(Self.bottomId)
+                        } right: {
+                            recent
+                            ClaudeRepliesPanel(replies: (AgentsDesk.shared.report?.messages ?? []).filter { $0.from != "you" },
+                                               connected: !AgentsDesk.shared.vaultId.isEmpty)
+                            explore
+                        }
+                    } else {
+                        ScrollView {
+                            VStack(spacing: 24) {
+                                // At the top when idle; while recording it is pinned above the growing words.
+                                if !isRecording { controls }
+                                content
+                                // The live words grow downwards: this is what the screen follows while recording.
+                                Color.clear.frame(height: 1).id(Self.bottomId)
+                            }
+                            .frame(maxWidth: 560)
+                            .padding(.horizontal, 20)
+                            .padding(.top, 24)
+                            .frame(maxWidth: .infinity)
+                        }
                     }
-                    .frame(maxWidth: 560)
-                    .padding(.horizontal, 20)
-                    .padding(.top, 24)
-                    .frame(maxWidth: .infinity)
                 }
                 .onChange(of: session.liveSettled.count + session.liveVolatile.count) { _, _ in
                     guard isRecording else { return }
@@ -71,7 +91,7 @@ struct RecordView: View {
                 }
             }
             .safeAreaInset(edge: .top) {
-                if isRecording { controls.background(.bar) }
+                if isRecording && !wide { controls.background(.bar) }
             }
             .navigationTitle("VoiceDebrief")
             .navigationBarTitleDisplayMode(.inline)
@@ -243,8 +263,10 @@ struct RecordView: View {
                         .font(.callout)
                 }
             }
-            recent
-            explore
+            if !wide {
+                recent
+                explore
+            }
         }
     }
 

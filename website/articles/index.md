@@ -15,3 +15,4 @@ Most of these come from the owner's voice memos, written up by the agent working
 | [A private voice note, and a clinic](a-private-voice-note-and-a-clinic/index.md) | Idea, with corrections | The same workflow between a patient and a clinician: what is built, what was overstated, and what data protection still asks |
 | [People, messages and secrets](people-messages-and-secrets/index.md) | Architecture and brief | Every install is a person with keys and an inbox; cards by QR code, message or register; sealed messages and a secrets manager on top |
 | [Synthetic users](synthetic-users/index.md) | Brief | Invented users walking the screens, to find where a real one would get lost |
+| [A secrets app that keeps one file](secrets-app/index.md) | Research, design and plan | Ship SGit's Secrets as its own cheap app: the vault as one encrypted file in your iCloud Drive, merged after offline edits, opened by locks you choose |

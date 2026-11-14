@@ -6,6 +6,8 @@ SGit Vaults keeps photos, videos, large files and secrets in encrypted vaults th
 
 ## 1. The first screen.
 
+The first screen of SGit Vaults lists your vaults and everything else the app holds: secrets, questions from the people building it, the Guide and the gallery.
+
 ![The first screen. Numbered arrows mark the parts described below.](../img/sgit-start-1.jpg)
 
 1. A shared vault: on the server, and you can add and change.
@@ -16,6 +18,8 @@ SGit Vaults keeps photos, videos, large files and secrets in encrypted vaults th
 6. Gallery: vaults to show somebody, opened inside the app. Adding a vault you were sent and creating one are further down.
 
 ## 2. Add a vault you were sent.
+
+If someone sent you a vault, this is where it goes in. What you paste decides what you can do: a vault key can add and change, a read key can only look.
 
 ![Add a vault you were sent. Numbered arrows mark the parts described below.](../img/sgit-start-2.jpg)
 

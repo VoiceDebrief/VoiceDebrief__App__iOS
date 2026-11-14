@@ -418,3 +418,34 @@ struct GameMicrophoneTests {
         #expect(game.entries.isEmpty)
     }
 }
+
+@Suite("L03: what was heard")
+struct GameHeardTests {
+    static func entry(command: String? = nil, accepted: Bool? = nil, outcome: String? = nil, engine: String = "none",
+                      early: Bool = false) -> GameLogEntry {
+        var e = GameLogEntry(id: "t", game: .boxes, level: 1, words: "left", source: "spoken", endedAt: Date(), early: early, thermal: "nominal")
+        e.command = command
+        e.accepted = accepted
+        e.outcome = outcome
+        e.engine = engine
+        return e
+    }
+
+    @Test func eachHeardSentenceSaysWhatBecameOfIt() {
+        #expect(GameHeardWords.fate(Self.entry(command: "go left", accepted: true, engine: "phrases")) == "\u{2192} go left (the phrases)")
+        #expect(GameHeardWords.fate(Self.entry(command: "go left", accepted: true, engine: "phrases", early: true)) == "\u{2192} go left (the phrases, early)")
+        #expect(GameHeardWords.fate(Self.entry(command: "go up", accepted: false, engine: "model")) == "\u{2192} go up, refused (the model)")
+        #expect(GameHeardWords.fate(Self.entry()) == "\u{2192} asking the model\u{2026}")
+        #expect(GameHeardWords.fate(Self.entry(outcome: "Not understood.")) == "\u{2192} not understood")
+    }
+
+    @MainActor
+    @Test func onlyMicrophoneSentencesAreListedAsHeard() {
+        let game = GameController(kind: .boxes)
+        game.mode = .phrases
+        game.hear("right", source: "typed")
+        game.hear("down", source: "spoken")
+        #expect(game.heard.map(\.words) == ["down"])
+        #expect(game.hearingSettled.isEmpty && game.hearingVolatile.isEmpty)
+    }
+}

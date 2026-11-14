@@ -37,6 +37,16 @@ struct LabView: View {
                     }
                 }
                 NavigationLink { GamePlayView() } label: { VStack(alignment: .leading, spacing: 2) { Text("L03: Play"); Text("A small game played by voice. Each command is timed from the end of your words to the move, by the phrases or by the model.").font(.footnote).foregroundStyle(.secondary) } }
+                NavigationLink {
+                    LabLabelsView()
+                } label: {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("L04: Live labels")
+                        Text("While you speak, the model fills in who the note is for, its topic, title and urgency. What you say a label is, stands.")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                    }
+                }
             } header: {
                 Text("Experiments")
             } footer: {

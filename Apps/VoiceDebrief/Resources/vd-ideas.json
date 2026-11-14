@@ -29,8 +29,8 @@
  ],
  "counts": {
   "seen-working": 27,
-  "built-untried": 87,
-  "in-progress": 38,
+  "built-untried": 88,
+  "in-progress": 40,
   "proposed": 60,
   "parked": 6
  },
@@ -1078,6 +1078,35 @@
    "source": "The owner's voice note"
   },
   {
+   "id": "issue-048",
+   "kind": "issue",
+   "number": "048",
+   "app": "VoiceDebrief",
+   "title": "The lab, fourth experiment (L04): live labels",
+   "status": "in-progress",
+   "why": "The issue says: \"Built in the Lab as its own screen, with its own listening (the live words) and a field to type sentences into. Compiled and unit tested; no loop has been run...\"",
+   "summary": "While a note is being recorded, ask Apple's model every few seconds to fill a small set of labels from the transcript so far, and show them as a grid of chips that update live: who it is for (matched to contacts and agents, with their avatar), topic, title, urgency, and a couple of others from a list. The owner can override by voice in the middle of a recording, and the override sticks: the code...",
+   "detail": [
+    "While a note is being recorded, ask Apple's model every few seconds to fill a small set of labels from the transcript so far, and show them as a grid of chips that update live: who it is for (matched to contacts and agents, with their avatar), topic, title, urgency, and a couple of others from a list. The owner can override by voice in the middle of a recording, and the override sticks: the code owns the state, and the model proposes through function calls, one tool for each label, with no long history. Send a window of the transcript and measure whether sending all of it is fast enough. Show the timing of every loop.",
+    "Where it stands (14 November 2026)",
+    "Built in the Lab as its own screen, with its own listening (the live words) and a field to type sentences into. Compiled and unit tested; no loop has been run against a model.",
+    "What it does not do yet, and why",
+    "- It is not on the Record screen and labels do not travel with a note. The board of labels is a plain value that can be saved, with the matched recipient and the title ready to be read from it; putting it on RecordView and into a note belongs to the session that owns them. - It keeps no recording. The Lab's listening hears the words and nothing else. - The switches for which labels are on the L04 screen, not in Settings, which this session does not own. - Tokens are estimated at four characters each. Apple's framework has a token counter, but it is not known to be in the iOS 26.5 SDK that CI builds with. - A new session is made for every loop, tools and all. L03 keeps a session ready between requests; if the loops are slow, that is the first thing to try, and the log will say whether it is needed. - English only: the spoken phrases that set a label.",
+    "What to measure, from the log",
+    "Time to the first label and time in all, at each window size, on an iPhone, an iPad and a Mac. Whether the model calls the label tools at all. How often a label it offers is right, and how often it churns a label that was already right. Whether \"everything so far\" fails once a note is long."
+   ],
+   "statusLine": "Status: open. From the owner's five-minute voice note of 14 November 2026, 19:07, relayed by the parent session. See the articles \"The lab\" and \"Two decision engines\".",
+   "places": [
+    "Record tab",
+    "Settings: Recipients",
+    "Settings: Experiments, the Lab"
+   ],
+   "versions": [],
+   "features": [],
+   "url": "https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/048-lab-live-labels.md",
+   "source": "The owner's voice note"
+  },
+  {
    "id": "issue-100",
    "kind": "issue",
    "number": "100",
@@ -2021,6 +2050,31 @@
    ],
    "url": "https://ios.app.voicedebrief.ai/articles/people-messages-and-secrets/index.html",
    "source": "Kind: an architecture and a brief. From: the owner, 14 November 2026: \"anybody who installs the app has a public and private key straight away ... register..."
+  },
+  {
+   "id": "article-secrets-app",
+   "kind": "article",
+   "app": "Both",
+   "title": "A secrets app that keeps one file where you already keep things",
+   "status": "in-progress",
+   "why": "An article; work it names has begun: issue 006.",
+   "summary": "The idea in one line: a cheap password and secrets manager that just works, where the vault is one small encrypted file in your own iCloud Drive, rewritten on every change, opened by a key that never reaches us, with our server only ever an extra copy.",
+   "detail": [
+    "Kind: research, a storage design and a build plan. From: the owner's voice note of 14 November 2026, after trying the Secrets part of SGit Vaults: \"even just that is a crazy feature; we should just ship it\". Written up by the secrets-app research session the same day. Nothing on this page is built unless it says so. The only record of what exists is what is built (and, for SGit Vaults, its own reality file).",
+    "The idea in one line: a cheap password and secrets manager that just works, where the vault is one small encrypted file in your own iCloud Drive, rewritten on every change, opened by a key that never reaches us, with our server only ever an extra copy.",
+    "His words where they matter:",
+    "- Ship the Secrets screens as their own product: \"an easy, cheap password and secrets manager\" that \"just works\", on what exists: an encrypted, version-controlled vault, all cryptography on the device, a server that sees only ciphertext. - Do not depend on our server by default. \"Our services are not ready to provide that level of resilience; this becomes mission critical\", and a server connection \"breaks the whole model\". Keep the vault as one small encrypted file (a zip of the vault) in storage the person already has, above all iCloud Drive, rewritten on every change, with a few past versions kept, and refreshed when the app opens. - Several stores at once: iCloud Drive, a local file, a downloaded copy that the sgit command can open, and optionally SG/Send for online access. Never the server as the default. - Options for the key: today it is in iCloud Keychain; also a passkey wrapping...",
+    "Read on 14 November 2026. Labels as in the reality files: built is tested in CI, unverified is written and compiled but not yet proven on a device, proposed does not exist.",
+    "| Part | Where | Status | |---|---|---| | Secrets screens: kinds login, device passcode, Wi-Fi, card, note, token, vault key, read key, access key, recovery codes; each secret one encrypted JSON file (sgit.ai/secret/v1) in a vault's secrets/ folder, each change one signed commit; values behind Face ID, copied for two minutes; a strong-password maker; \"My secrets\" made on first use | Apps/SGit/Sources/Secrets/ (SecretEntry.swift, SecretsView.swift, VaultShelf+Secrets.swift) | Unverified | | Vaults on the device with no server: the server's own layout (bare/data, refs, indexes, keys) in a folder under Application Support | VaultBook, VaultShelf, Packages/SGitVault | Unverified (CI tests with folders) | | Vault keys and access keys in iCloud Keychain, one synchronisable item each, a switch to keep them on one device | Engine/SecretStore.swift in both apps | Unverified; iCloud Keychain...",
+    "Two things were checked for this article with the real sgit command (sgit-ai 0.27.0, from PyPI, in this session):"
+   ],
+   "places": [],
+   "issues": [
+    "003",
+    "006"
+   ],
+   "url": "https://ios.app.voicedebrief.ai/articles/secrets-app/index.html",
+   "source": "Kind: research, a storage design and a build plan. From: the owner's voice note of 14 November 2026, after trying the Secrets part of SGit Vaults: \"even just..."
   },
   {
    "id": "article-synthetic-users",
@@ -3289,7 +3343,7 @@
    "why": "The reality file, Built: unverified: written, not yet proven by a run.",
    "summary": "Sources/Game/ (GameWorld, GameRules, GameLevels, GamePhrases, GameTools, GameModelEngine, GameController, GameHints, GameLog, GameBoardView, GamePlayView), reached from Settings, Lab, L03: Play (issue 300). Two games on the same primitives, Boxes (top-down, three levels) and Lantern (side view with gravity, ladders and jumps, three levels), with gold, keys, doors, traps, lives, a move budget...",
    "detail": [
-    "Sources/Game/ (GameWorld, GameRules, GameLevels, GamePhrases, GameTools, GameModelEngine, GameController, GameHints, GameLog, GameBoardView, GamePlayView), reached from Settings, Lab, L03: Play (issue 300). Two games on the same primitives, Boxes (top-down, three levels) and Lantern (side view with gravity, ladders and jumps, three levels), with gold, keys, doors, traps, lives, a move budget, points and levels. A sentence (heard through the live words, typed) goes to the phrases, then, if they find nothing, to Apple's on-device model in a fresh session with only the tools this state allows, each described for the moment; the first tool call ends the request and is checked against the tools offered, then applied by the rules in code. The phrases can act on live words before they settle. Listening stops when the screen goes or the app goes to the background, never deactivates the audio...",
+    "Sources/Game/ (GameWorld, GameRules, GameLevels, GamePhrases, GameTools, GameModelEngine, GameController, GameHints, GameLog, GameBoardView, GamePlayView), reached from Settings, Lab, L03: Play (issue 300). Two games on the same primitives, Boxes (top-down, three levels) and Lantern (side view with gravity, ladders and jumps, three levels), with gold, keys, doors, traps, lives, a move budget, points and levels. A sentence (heard through the live words, typed) goes to the phrases, then, if they find nothing, to Apple's on-device model in a fresh session with only the tools this state allows, each described for the moment; the first tool call ends the request and is checked against the tools offered, then applied by the rules in code. The phrases can act on live words before they settle. While listening, a strip under the board shows the sentence being heard (settled, then unsettled in...",
     "Unit tests: every level parses and is won within its budget by a breadth-first planner over the rules without losing a life; the rules of both games; the tools offered per state and the check of a tool call; the phrases; the hidden things; the clue levels and the check of a model's clue; the voice player's script winning both games through the phrases, with and without its mistakes; listening refused while a note records; the estimates; a typed command through the controller and its JSON log. Never played on a device and never put to a model: whether the model calls the right tool, and how fast, is what the game is for"
    ],
    "places": [],
@@ -3311,11 +3365,32 @@
    "why": "The reality file, Built: unverified: written, not yet proven by a run.",
    "summary": "UI/LabControlView.swift, Engine/LabControlCentre.swift, Model/LabControl.swift, reached from Settings, Lab: a sentence comes in (heard through the live words, typed, or one of sixteen test sentences) and two engines each say which of eight actions it asks for, or none: a list of fixed phrases that can be seen and changed and is kept on the device, and Apple's on-device model, asked one sentence at...",
    "detail": [
-    "UI/LabControlView.swift, Engine/LabControlCentre.swift, Model/LabControl.swift, reached from Settings, Lab: a sentence comes in (heard through the live words, typed, or one of sixteen test sentences) and two engines each say which of eight actions it asks for, or none: a list of fixed phrases that can be seen and changed and is kept on the device, and Apple's on-device model, asked one sentence at a time through the model door with one tool for each action. Each proposal is a card with its state (asking, waiting for you, done, not this) and Do it, Not this and Edit; an action can be marked to go ahead without asking. A tally of how often each engine proposed the right action and how long the model took, and the log exported as JSON, word for word. Three confirmed actions are carried out: opening a section (through LabActionHost, a closure the app's shell sets, and has set); finding a...",
+    "UI/LabControlView.swift, Engine/LabControlCentre.swift, Model/LabControl.swift, reached from Settings, Lab: a sentence comes in (heard through the live words, typed, or one of sixteen test sentences) and two engines each say which of eight actions it asks for, or none: a list of fixed phrases that can be seen and changed and is kept on the device, and Apple's on-device model, asked one sentence at a time through the model door with one tool for each action. While it listens, a strip at the top shows the words as they are heard, those that may still change in grey. Every sentence, whether or not it led to an action, is a numbered card that follows it from the words to the action (heard, what the phrases made of it, what the model made of it and how long it took, what was proposed, what happened), with its state (asking, waiting for you, done, not this, no action) and Do it, Not this and...",
     "Unit tests: the phrases (arguments, refusals, the longest phrase), the states and what each button does, the judging and the tally, the phrase list and the automatic marks kept across a reopen, the test sentences through the phrases alone (11 of 16 right), the log's JSON; that nothing is opened before Do it, that it is opened once, what an unconnected shell or an unknown section says, and the search against a library in a temporary folder; that recording for someone cannot be made automatic, starts once, and shows the app's own refusal. No sentence has been put to a model, and listening has not been tried on a device: L01, which would show whether the model calls tools at all, has not been reported back either"
    ],
    "places": [
     "Settings: Experiments, the Lab"
+   ],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
+   "id": "feature.the.lab.experiment.l04.live.labels",
+   "kind": "feature",
+   "app": "VoiceDebrief",
+   "title": "The Lab, experiment L04: live labels",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "UI/LabLabelsView.swift, Engine/LabLabelsDesk.swift, Model/LabLabels.swift, reached from Lab: while you speak (the live words, or sentences typed in), Apple's on-device model is asked every 3, 5 or 10 seconds to fill in a small set of labels from a window of the words so far (the last 250, 500 or 1,000 tokens or so, or everything), in a new session each time, with one tool for each label: who it is...",
+   "detail": [
+    "UI/LabLabelsView.swift, Engine/LabLabelsDesk.swift, Model/LabLabels.swift, reached from Lab: while you speak (the live words, or sentences typed in), Apple's on-device model is asked every 3, 5 or 10 seconds to fill in a small set of labels from a window of the words so far (the last 250, 500 or 1,000 tokens or so, or everything), in a new session each time, with one tool for each label: who it is for, topic, title, urgency always, and kind, next action, people mentioned and project from a list of switches on the screen. The labels are a grid of chips that update as each loop returns; the one naming a person is matched to a contact or to an agent in the last agents report and shows their avatar, and only when the words mean exactly one of them. The code owns the labels: a label you set by saying so (this is a memo for, the topic is, the title is, this is urgent) or by tapping it is...",
+    "Unit tests: matching a name to one contact and refusing to guess between two, the board (tidying, choices, pins, handing a label back), the spoken phrases, the window, the prompt, a loop's outcomes and notice, an answer that arrives after a label was pinned, the choices kept across a reopen, the log's JSON. No loop has been run against a model: the timings the experiment exists to measure are unknown. Tokens are counted as four characters each, which is a rule of thumb, because the token counter in Apple's framework is not known to exist in the iOS 26.5 SDK that CI builds with. Listening uses the same rules as L02 and has not been tried on a device"
+   ],
+   "places": [
+    "Record tab",
+    "The repository: CI"
    ],
    "issues": [],
    "url": "https://ios.app.voicedebrief.ai/built/index.html",

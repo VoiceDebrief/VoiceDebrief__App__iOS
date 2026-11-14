@@ -45,8 +45,12 @@ struct RootView: View {
             Tab(RootTab.agents.title, systemImage: RootTab.agents.symbol, value: RootTab.agents) {
                 AgentsView(book: book).tracked("agents")
             }
+            // The games, out of the Lab and onto the sidebar (the owner: "brilliant; make them a top-level item").
+            Tab(RootTab.play.title, systemImage: RootTab.play.symbol, value: RootTab.play) {
+                NavigationStack { GamePlayView() }.tracked("play")
+            }
             Tab(RootTab.guide.title, systemImage: RootTab.guide.symbol, value: RootTab.guide) {
-                GuideView().tracked("guide")
+                GuideView(go: { tab = $0 }).tracked("guide")
             }
             TabSection("You") {
                 Tab(RootTab.identity.title, systemImage: RootTab.identity.symbol, value: RootTab.identity) {
@@ -80,7 +84,9 @@ struct RootView: View {
         .welcomeOnFirstLaunch()
         // Talk to Claude from every screen but Record, which has its own control.
         .overlay(alignment: .bottomTrailing) {
-            if tab != .record { TalkButton(session: session, book: book) }
+            // Not where the screen has its own microphone button (Play, the Lab) that the floating button
+            // would cover (seen in the screens session's pictures, 14 November 2026).
+            if ![.record, .play, .lab].contains(tab) { TalkButton(session: session, book: book) }
         }
         #if DEBUG
         .overlay(alignment: .topLeading) { LaunchMarker() }

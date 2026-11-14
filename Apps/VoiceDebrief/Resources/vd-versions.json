@@ -8,6 +8,142 @@
  ],
  "versions": [
   {
+   "version": "v0.1.106",
+   "date": "14 November 2026",
+   "notes": [
+    "The floating Talk to Claude button is no longer shown on Play and in the Lab, where it covered their own Listen buttons (seen in the screenshots)."
+   ],
+   "hasPage": true,
+   "url": "https://ios.app.voicedebrief.ai/versions/v0.1.106/index.html",
+   "pictures": 0,
+   "art": [],
+   "issues": []
+  },
+  {
+   "version": "v0.1.105",
+   "date": "14 November 2026",
+   "notes": [
+    "A fourth Lab experiment, L04, live labels, from the owner's voice note. While you speak, Apple's on-device model is asked every few seconds to fill in a small set of labels from the words so far: who the note is for (matched to a contact or an agent, with their avatar), its topic, title and urgency, and others you switch on. They appear as a grid of chips that update live. What you say a label is, stands: say this is a memo for the website conductor, or no, the topic is something else, and that label is pinned and the model can no longer move it; tapping a label does the same. After every loop a small notice says how long the model took to its first label and in all, about how many tokens were sent, and which labels changed, and every loop goes into a log that can be shared as JSON. You choose how often it asks and how many of the words it sends. The experiment keeps no recording and no note. In test: no loop has been run against a model, so its speed is not yet known."
+   ],
+   "hasPage": true,
+   "url": "https://ios.app.voicedebrief.ai/versions/v0.1.105/index.html",
+   "pictures": 0,
+   "art": [],
+   "issues": []
+  },
+  {
+   "version": "v0.1.104",
+   "date": "14 November 2026",
+   "notes": [
+    "The voice game shows what it hears, at the owner's request (\"the game is so cool\"): while Listen is on, a line under the board shows the sentence being said, black once settled and grey while it may still change, and the last four sentences with what each became (the command and which engine, refused, not understood, or asking the model) and its time; the command also sits beside the large time. The board takes the house palette, and Play as me puts your own avatar on the board in Boxes. Play opens on a landing page: the two games as large tiles with a picture of their first level, your best score and where you are, how to start, and how the last game went; a tile opens that game."
+   ],
+   "hasPage": true,
+   "url": "https://ios.app.voicedebrief.ai/versions/v0.1.104/index.html",
+   "pictures": 0,
+   "art": [],
+   "issues": []
+  },
+  {
+   "version": "v0.1.103",
+   "date": "14 November 2026",
+   "notes": [
+    "The Guide, after the owner found it had little to do on a wide Mac window: it opens on the latest release card, large, with Try buttons that open the sections the card names; on iPad and Mac it has two columns, the list on the left and the chosen card, guide or list on the right; every guide is a picture tile, and a guide shows each picture beside its numbered notes with an Open button for its section; the ideas are a count per status and what is in progress now. After the owner's second note: back and forward in the Guide as in a browser (two buttons, a sideways swipe, Command-[ and Command-]), a few lines before every picture saying what it shows and why it matters, a contents row at the top of each guide to jump to its parts, and wider pages."
+   ],
+   "hasPage": true,
+   "url": "https://ios.app.voicedebrief.ai/versions/v0.1.103/index.html",
+   "pictures": 0,
+   "art": [
+    "+----------------------------------------------------------------------+\n| VOICEDEBRIEF                                             v0.1.103    |\n| 14 November 2026                                                     |\n+----------------------------------------------------------------------+\n| THE GUIDE, LIKE A WEBSITE ON IPAD AND MAC                            |\n|                                                                      |\n| * Opens on the latest release card, large, with Try buttons          |\n| * Two columns: the list left, the chosen guide or card right         |\n| * Back and forward, as in a browser: buttons, swipe, Cmd-[ and ]     |\n| * Each picture has a few lines first: what it shows and why          |\n| * A guide has a contents row to jump to each part; wider pages       |\n|                                                                      |\n| WHERE    Guide, in the sidebar or the tab bar                        |\n| TRY      Open two guides, then swipe right and left to go back       |\n| NOT YET  Pictures of the Guide itself in the screens workflow        |\n+----------------------------------------------------------------------+"
+   ],
+   "issues": []
+  },
+  {
+   "version": "v0.1.102",
+   "date": "14 November 2026",
+   "notes": [
+    "The record screen on iPad and Mac is two columns, at the owner's request: on the left who it is for, the control, and while recording the live words and attachments; on the right your recent notes, Messages from Claude (from your agents vault) and Explore. iPhone keeps one column. Play has its own drawing.",
+    "A wide record screen for iPad and Mac, ready to be wired: two columns that scroll on their own, what you do on the left (who it is for, the control, the live words) and what came back on the right (recent notes, Claude's replies as a conversation), held to readable widths.",
+    "Two ways to talk says where a shared vault is used now: in VoiceDebrief, the Agents vault you share with Claude; in SGit Vaults, a vault shared with the people you choose (it had said shared vaults with people were still to come). The Play section has its own drawing: a board of squares beside a figure carrying a lantern up a ladder."
+   ],
+   "hasPage": true,
+   "url": "https://ios.app.voicedebrief.ai/versions/v0.1.102/index.html",
+   "pictures": 0,
+   "art": [],
+   "issues": []
+  },
+  {
+   "version": "v0.1.101",
+   "date": "14 November 2026",
+   "notes": [
+    "The secrets app article grows, after more from the owner: how the iCloud file stays whole when two devices or two people write at once (never replace a copy that has not been merged; a merge the app shows you), where that is weaker than the server and when the server is worth paying for; the comparison as positioning, including where 1Password, Bitwarden and Proton Pass already share with public keys; and pricing costed against what each operation costs, with a recommendation: credit only, a £5 starter that switches on a server copy charged per change, reading never charged. Read it."
+   ],
+   "hasPage": true,
+   "url": "https://ios.app.voicedebrief.ai/versions/v0.1.101/index.html",
+   "pictures": 0,
+   "art": [],
+   "issues": []
+  },
+  {
+   "version": "v0.1.100",
+   "date": "14 November 2026",
+   "notes": [
+    "A research article for a separate secrets app, from the owner's voice note: other password managers compared, the vault kept as one encrypted file in your own iCloud Drive with past copies and a merge after offline edits, several stores, who holds the key (iCloud Keychain, a passkey, a printed code), names and a build plan. Proposed, nothing built. Read it."
+   ],
+   "hasPage": true,
+   "url": "https://ios.app.voicedebrief.ai/versions/v0.1.100/index.html",
+   "pictures": 0,
+   "art": [],
+   "issues": []
+  },
+  {
+   "version": "v0.1.99",
+   "date": "14 November 2026",
+   "notes": [
+    "Fixes a crash on starting a recording (0.1.91 on the owner's iPhone, read from the TestFlight crash report): the live words' microphone tap is now put on cleanly, in the microphone's own format. And silent recordings: when no sound reaches the recorder for three seconds, the live words are stopped so the recording gets the microphone (every silent note so far was made while the live words ran). A new workflow reads the crash reports testers share."
+   ],
+   "hasPage": true,
+   "url": "https://ios.app.voicedebrief.ai/versions/v0.1.99/index.html",
+   "pictures": 0,
+   "art": [],
+   "issues": []
+  },
+  {
+   "version": "v0.1.97",
+   "date": "14 November 2026",
+   "notes": [
+    "The Lab's control centre shows more of what it is doing, after the owner tried it (\"really cool\") and asked to see everything being heard and to follow the flow. While it listens, a strip at the top shows the words as they arrive, the ones that may still change in grey. Below, every sentence heard has its own numbered card, newest first, whether or not it led to an action: what was heard, what the fixed phrases made of it and which phrase it was, what the model made of it and how long it took, what was proposed, and what happened."
+   ],
+   "hasPage": true,
+   "url": "https://ios.app.voicedebrief.ai/versions/v0.1.97/index.html",
+   "pictures": 0,
+   "art": [],
+   "issues": []
+  },
+  {
+   "version": "v0.1.95",
+   "date": "14 November 2026",
+   "notes": [
+    "External TestFlight: the newest build replaces any still waiting for Apple's Beta App Review (the waiting one is expired), at the owner's direction; a build already in review is left to finish."
+   ],
+   "hasPage": true,
+   "url": "https://ios.app.voicedebrief.ai/versions/v0.1.95/index.html",
+   "pictures": 0,
+   "art": [],
+   "issues": []
+  },
+  {
+   "version": "v0.1.94",
+   "date": "14 November 2026",
+   "notes": [
+    "Play is a section of its own in the sidebar (after Agents), with the voice games that were in the Lab as L03, at the owner's request (\"brilliant; make them a top-level item\"). L03 stays in the Lab too."
+   ],
+   "hasPage": true,
+   "url": "https://ios.app.voicedebrief.ai/versions/v0.1.94/index.html",
+   "pictures": 0,
+   "art": [],
+   "issues": []
+  },
+  {
    "version": "v0.1.93",
    "date": "14 November 2026",
    "notes": [

@@ -8,6 +8,10 @@ import FoundationModels
 final class ModelDoorRecorder: @unchecked Sendable {
     private let lock = NSLock()
     private var calls: [ModelDoorToolCall] = []
+    private let clock = ContinuousClock()
+    private let began: ContinuousClock.Instant
+
+    init() { began = clock.now }
 
     var toolCalls: [ModelDoorToolCall] {
         lock.lock()
@@ -17,16 +21,19 @@ final class ModelDoorRecorder: @unchecked Sendable {
 
     /// Runs a tool's work, times it, and records the call with what it returned.
     func measure(tool name: String, arguments: [String: String], _ work: () -> LabToolResult) -> String {
-        let clock = ContinuousClock()
         let start = clock.now
         let result = work()
-        let elapsed = clock.now - start
-        let ms = Double(elapsed.components.seconds) * 1000 + Double(elapsed.components.attoseconds) / 1e15
+        let ms = Self.ms(clock.now - start)
+        let at = Self.ms(start - began)
         lock.lock()
         calls.append(ModelDoorToolCall(order: calls.count + 1, name: name, arguments: arguments,
-                                       result: result.text, ok: result.ok, durationMs: ms))
+                                       result: result.text, ok: result.ok, durationMs: ms, atMs: at))
         lock.unlock()
         return result.text
+    }
+
+    private static func ms(_ time: Duration) -> Double {
+        Double(time.components.seconds) * 1000 + Double(time.components.attoseconds) / 1e15
     }
 }
 

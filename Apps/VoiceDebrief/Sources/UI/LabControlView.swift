@@ -14,6 +14,16 @@ struct LabControlView: View {
     var body: some View {
         @Bindable var centre = centre
         List {
+            if centre.listening || !centre.liveSettled.isEmpty || !centre.liveVolatile.isEmpty {
+                Section {
+                    LabLiveStrip(listening: centre.listening, settled: centre.liveSettled, volatile: centre.liveVolatile)
+                } header: {
+                    Text("Being heard")
+                } footer: {
+                    Text("Everything the microphone hears, as it is heard. Grey words may still change. Each piece that settles becomes one numbered sentence below.")
+                }
+            }
+
             Section {
                 Button {
                     Task {
@@ -21,13 +31,6 @@ struct LabControlView: View {
                     }
                 } label: {
                     Label(centre.listening ? "Stop listening" : "Listen", systemImage: centre.listening ? "stop.circle" : "mic.circle")
-                }
-                if centre.listening || !centre.liveSettled.isEmpty {
-                    Text(liveWords)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                        .lineLimit(3)
-                        .truncationMode(.head)
                 }
                 if let problem = centre.problem {
                     Label(problem, systemImage: "exclamationmark.triangle").font(.footnote).foregroundStyle(.orange)
@@ -47,9 +50,9 @@ struct LabControlView: View {
             }
 
             Section {
-                let cards = centre.entries.filter { $0.state != .nothing }
+                let cards = Array(centre.entries.prefix(LabControlView.cardLimit))
                 if cards.isEmpty {
-                    Text("No action proposed yet.").foregroundStyle(.secondary)
+                    Text("Nothing heard yet. Listen, type a sentence, or run the test sentences.").foregroundStyle(.secondary)
                 }
                 ForEach(cards) { entry in
                     LabControlCard(entry: entry,
@@ -58,9 +61,9 @@ struct LabControlView: View {
                                    edit: { editing = entry })
                 }
             } header: {
-                Text("Actions")
+                Text("From words to action")
             } footer: {
-                Text("Three actions are carried out once confirmed: opening a section, finding a note (which only reads), and starting a recording for someone. The others are recorded and nothing else happens.")
+                Text("One card for each sentence, newest first: what was heard, what the phrases made of it, what the model made of it, and what was proposed. Three actions are carried out once confirmed: opening a section, finding a note (which only reads), and starting a recording for someone. The others are recorded and nothing else happens.")
             }
 
             Section {
@@ -166,10 +169,8 @@ struct LabControlView: View {
         }
     }
 
-    private var liveWords: String {
-        let text = (centre.liveSettled + " " + centre.liveVolatile).trimmingCharacters(in: .whitespacesAndNewlines)
-        return text.isEmpty ? "Listening" : text
-    }
+    /// The newest sentences shown as cards. The log below holds them all.
+    static let cardLimit = 30
 
     private func sendTyped() {
         centre.hear(typed, source: "typed")
@@ -177,8 +178,34 @@ struct LabControlView: View {
     }
 }
 
-/// One proposed action in the pipeline: what was said, what is proposed and by which engine, and
-/// the three things the person can do about it.
+/// What the microphone is hearing right now: the words that have settled, then, in grey, the words
+/// that may still change. The end of the text is kept in view.
+struct LabLiveStrip: View {
+    let listening: Bool
+    let settled: String
+    let volatile: String
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(spacing: 6) {
+                Circle().fill(listening ? Color.red : Color.secondary).frame(width: 8, height: 8)
+                Text(listening ? "Listening" : "Stopped").font(.footnote.weight(.semibold))
+            }
+            if settled.isEmpty && volatile.isEmpty {
+                Text("Nothing heard yet.").foregroundStyle(.secondary)
+            } else {
+                Text("\(Text(settled))\(Text(volatile).foregroundStyle(.secondary))")
+                    .lineLimit(6)
+                    .truncationMode(.head)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+        }
+        .accessibilityElement(children: .combine)
+    }
+}
+
+/// One sentence followed from the words to the action: what was heard, what each engine made of
+/// it, what was proposed and where that stands, and the three things the person can do about it.
 struct LabControlCard: View {
     let entry: LabControlEntry
     let doIt: () -> Void
@@ -187,17 +214,19 @@ struct LabControlCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text(entry.words).font(.caption).foregroundStyle(.secondary).lineLimit(2)
             HStack {
-                Text(headline).font(.headline)
+                Text("Sentence \(entry.number) · \(entry.source) · \(entry.heardAt.formatted(date: .omitted, time: .standard))")
+                    .font(.caption.monospacedDigit())
+                    .foregroundStyle(.secondary)
                 Spacer()
                 Text(stateWords).font(.footnote.weight(.semibold)).foregroundStyle(stateColour)
             }
-            Text(LabControlWords.engines(entry)).font(.footnote.monospacedDigit()).foregroundStyle(.secondary)
+            step("ear", "Heard", entry.words, strong: true)
+            step("text.quote", "Phrases", LabControlWords.phrase(entry))
+            step("cpu", "Model", LabControlWords.model(entry))
+            step("arrow.turn.down.right", entry.state == .done ? "Action" : "Proposed", headline, strong: entry.state != .nothing)
             if let outcome = entry.outcome {
-                Label(outcome.words, systemImage: outcome.carriedOut ? "checkmark.circle" : "circle.dashed")
-                    .font(.footnote)
-                    .foregroundStyle(outcome.carriedOut ? Color.primary : Color.secondary)
+                step(outcome.carriedOut ? "checkmark.circle" : "circle.dashed", "Result", outcome.words)
             }
             if entry.state == .waiting, entry.proposal?.action == LabAction.recordTo.rawValue {
                 Text("Do it starts a recording for this person. The note is sent to them when you finish it.")
@@ -216,9 +245,25 @@ struct LabControlCard: View {
         .padding(.vertical, 2)
     }
 
+    /// One step of the flow: a symbol, what the step is, and what it came to.
+    private func step(_ symbol: String, _ label: String, _ value: String, strong: Bool = false) -> some View {
+        HStack(alignment: .firstTextBaseline, spacing: 8) {
+            Image(systemName: symbol).font(.footnote).foregroundStyle(.secondary).frame(width: 20)
+            Text(label).font(.footnote).foregroundStyle(.secondary).frame(width: 70, alignment: .leading)
+            Text(value)
+                .font(strong ? .callout.weight(.medium) : .footnote)
+                .foregroundStyle(strong ? Color.primary : Color.secondary)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
+    }
+
     private var headline: String {
-        if entry.state == .asking { return entry.phrase?.words ?? "Asking the model" }
-        return (entry.chosen ?? entry.proposal)?.words ?? "No action"
+        switch entry.state {
+        case .asking: return entry.phrase.map { "\($0.words), while the model is asked" } ?? "Waiting for the model"
+        case .nothing: return "No action"
+        case .notThis: return entry.proposal.map { "\($0.words), refused" } ?? "No action"
+        case .waiting, .done: return (entry.chosen ?? entry.proposal)?.words ?? "No action"
+        }
     }
 
     private var stateWords: String {
@@ -227,7 +272,7 @@ struct LabControlCard: View {
         case .waiting: return "Waiting for you"
         case .done: return entry.automatic ? "Done, without asking" : (entry.edited ? "Corrected" : "Done")
         case .notThis: return "Not this"
-        case .nothing: return "Nothing"
+        case .nothing: return "No action"
         }
     }
 
@@ -243,6 +288,21 @@ struct LabControlCard: View {
 }
 
 enum LabControlWords {
+    /// What the fixed phrases made of a sentence, naming the phrase that was heard.
+    static func phrase(_ entry: LabControlEntry) -> String {
+        guard let proposal = entry.phrase else { return "No phrase heard" }
+        return proposal.words + (entry.phraseMatched.map { ", from the phrase \($0)" } ?? "")
+    }
+
+    /// What the model made of a sentence, and how long it took.
+    static func model(_ entry: LabControlEntry) -> String {
+        guard entry.modelAsked else { return "Not asked" }
+        if entry.state == .asking { return "Being asked" }
+        if let error = entry.record?.error { return "Could not answer: \(error.words)" }
+        let time = entry.modelMs.map { ", in " + Timecode.duration(seconds: $0 / 1000) } ?? ""
+        return (entry.model?.words ?? "No action") + time
+    }
+
     /// What each engine proposed, on one line.
     static func engines(_ entry: LabControlEntry) -> String {
         let phrase = entry.phrase.map { "Phrase: \($0.words)" } ?? "Phrase: nothing"
