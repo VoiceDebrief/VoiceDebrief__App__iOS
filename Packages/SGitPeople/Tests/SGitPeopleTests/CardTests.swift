@@ -198,7 +198,13 @@ struct ContactBookTests {
         #expect(ana.isAgent)
         #expect(ana.sentMyCardAt == People.now)
         #expect(reopened.bundles.count == 2)
+        #expect(!ana.isMutual)
+        reopened.recordHeard(from: People.ana.bundle.signingFingerprint, at: People.now)
+        #expect(reopened.contact(People.ana.bundle.fingerprint)?.isMutual == true)
+        try reopened.setPhoto(People.ana.bundle.fingerprint, jpeg: Data([0xFF, 0xD8, 0xFF]))
+        #expect(ContactBook(file: file).photo(People.ana.bundle.fingerprint) == Data([0xFF, 0xD8, 0xFF]))
         reopened.remove(People.ana.bundle.fingerprint)
+        #expect(reopened.photo(People.ana.bundle.fingerprint) == nil)
         #expect(ContactBook(file: file).all.count == 1)
     }
 }
