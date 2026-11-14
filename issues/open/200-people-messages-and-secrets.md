@@ -28,7 +28,8 @@ each other, secrets included, is sealed to the recipient's key and dropped in th
 
 ## Next
 
-1. Prove the first-contact round trip against the live server (a throwaway vault, destroyed after).
+1. ~~Prove the first-contact round trip against the live server~~: done with `tools/people/people.py` on 14 November
+   2026 (see the reality file). Still to do: the same from Swift, which needs an access key where Swift runs.
 2. Screens in SGit Vaults: You, Contacts, Inbox, Secrets (with the sgit app session, which owns `Apps/SGit`).
 3. VoiceDebrief: its recipients become contacts; the record screen shows the inbox (the parent session's screens).
 4. A page on the site for `card/#sgc1…` and `sealed/#sgm1…` links, which shows what it holds and opens nothing.
@@ -46,3 +47,9 @@ A wrong append token, a missing or wrong enumeration key, and a vault that does 
 an HTML page: the client cannot tell them apart. The `inbox` a list returns is the append token itself, so a
 list must never be shown or logged as it comes. Whether configure needs the access key could not be checked
 from a cloud session, whose proxy adds it to every request; issue 110's notes say it does.
+
+## What the live round trip showed
+
+An invitation that carries the inviter's card is about 4,000 characters: fine as a link or a WhatsApp message,
+too dense for one QR code. In person, each should scan the other's card first; the invitation then need not
+carry the inviter's card and is about half the size. A card is 1,050 to 1,260 characters.

@@ -25,6 +25,28 @@ struct FirstContactTests {
         #expect(throws: FirstContact.Failure.notAnInvitation) { try FirstContact.open("hello", me: People.ben) }
     }
 
+    @Test func inPersonTheInvitationNeedNotCarryTheInvitersCard() async throws {
+        let benCard = try People.card(People.ben, "Ben", inbox: nil)
+        let anaCard = try People.card(People.ana, "Ana", inbox: People.anaInbox)
+        let small = try FirstContact.invitation(accessKey: accessKey, to: benCard, from: People.ana, myCard: nil, at: People.now)
+        let large = try FirstContact.invitation(accessKey: accessKey, to: benCard, from: People.ana, myCard: anaCard, at: People.now)
+        #expect(small.utf8.count < 2_600)
+        #expect(large.utf8.count > small.utf8.count + 1_000)
+        #expect(PeopleQR.image(small) != nil)
+        // Ben scanned Ana's card first: the invitation checks against it, and accept finds her there.
+        let benContacts = ContactBook(file: nil)
+        try benContacts.add(anaCard, met: .inPerson, at: People.now)
+        let invitation = try FirstContact.open(small, me: People.ben, contacts: benContacts.bundles)
+        #expect(invitation.opened.trust == .contact)
+        #expect(invitation.inviter == nil)
+        let http = ReplayLaneHTTP([("configure", 200, RecordedLane.configured), ("write", 200, RecordedLane.writeOK)])
+        _ = try await FirstContact.accept(invitation, name: "Ben", me: People.ben, secrets: SecretsStore(keychain: MemoryKeychain()),
+                                          contacts: benContacts,
+                                          maker: InboxMaker(client: LaneClient(http: http), writer: FolderVaultTransport(root: People.temporaryFolder(), perVaultSubfolder: "")),
+                                          client: LaneClient(http: http), signer: SoftwareCommitSigner(), how: .inPerson, at: People.now)
+        #expect(http.call(1).url.lastPathComponent == "anainbox")
+    }
+
     @Test func aMessageThatIsNotAnAccessKeyIsNotAnInvitation() throws {
         let note = PeopleMessage(kind: .text, from: People.ana.bundle.signingFingerprint, to: People.ben.bundle.fingerprint, text: "hi")
         let text = try note.sealedText(to: People.ben.bundle, from: People.ana)

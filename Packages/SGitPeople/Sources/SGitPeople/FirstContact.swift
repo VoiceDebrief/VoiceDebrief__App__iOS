@@ -28,11 +28,14 @@ public enum FirstContact {
     }
 
     /// Step 2, the inviter: the access key sealed to the newcomer's card, as `sgm1.` text.
-    public static func invitation(accessKey: SharedSecret, to newcomer: ContactCard, from me: PKIIdentity, myCard: ContactCard,
+    ///
+    /// With `myCard` it is about 4,000 characters: a link or a WhatsApp message. In person, when the newcomer has
+    /// already scanned the inviter's card, pass nil: about half that, which a QR code can hold.
+    public static func invitation(accessKey: SharedSecret, to newcomer: ContactCard, from me: PKIIdentity, myCard: ContactCard?,
                                   note: String? = nil, at date: Date = Date()) throws -> String {
         try newcomer.check()
         let message = PeopleMessage(kind: .secret, from: me.bundle.signingFingerprint, to: newcomer.fingerprint, sentAt: date,
-                                    card: try myCard.text(), text: note, secret: accessKey)
+                                    card: try myCard?.text(), text: note, secret: accessKey)
         return try message.sealedText(to: newcomer.bundle, from: me)
     }
 
@@ -40,7 +43,8 @@ public enum FirstContact {
     public struct Invitation: Equatable, Sendable {
         public var opened: OpenedMessage
         public var accessKey: SharedSecret
-        /// The inviter's card, checked, and signed by the same key as the invitation.
+        /// The inviter's card: the one inside, checked and signed by the same key as the invitation, or the
+        /// contact whose key signed it.
         public var inviter: ContactCard?
     }
 
@@ -50,8 +54,10 @@ public enum FirstContact {
         let opened = try PeopleMessage.open(envelope: envelope, me: me, contacts: contacts)
         guard opened.message.kind == .secret, let secret = opened.message.secret else { throw Failure.notAnInvitation }
         guard secret.kind == .accessKey else { throw Failure.noAccessKey }
-        let inviter = (opened.trust == .cardInside || opened.trust == .contact) && opened.card?.signingFingerprint == opened.signer
-            ? opened.card : nil
+        var inviter: ContactCard?
+        if (opened.trust == .cardInside || opened.trust == .contact), let card = opened.card, card.signingFingerprint == opened.signer {
+            inviter = card
+        }
         return Invitation(opened: opened, accessKey: secret, inviter: inviter)
     }
 
@@ -70,7 +76,8 @@ public enum FirstContact {
     public static func accept(_ invitation: Invitation, name: String, me: PKIIdentity, secrets: SecretsStore, contacts: ContactBook,
                               maker: InboxMaker, client: LaneClient, signer: any VaultCommitSigner, how: HowMet,
                               at date: Date = Date()) async throws -> ContactCard {
-        guard let inviter = invitation.inviter else { throw Failure.inviterHasNoInbox }
+        let known = invitation.opened.trust == .contact ? invitation.opened.signer.flatMap { contacts.contact(signingFingerprint: $0)?.card } : nil
+        guard let inviter = invitation.inviter ?? known else { throw Failure.inviterHasNoInbox }
         let sender = SecretHolder(fingerprint: inviter.fingerprint, name: inviter.name, at: date, version: invitation.accessKey.version)
         try secrets.receive(invitation.accessKey, from: sender, at: date)
         try contacts.add(inviter, met: how, at: date, myFingerprint: me.bundle.fingerprint)
