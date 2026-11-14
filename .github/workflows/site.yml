@@ -69,7 +69,7 @@ jobs:
             echo "$NEW" > version
             node website/admin/release.mjs "$NEW"     # next rows become this version's, and its own page
             sed -i "s/release-v[0-9]*\.[0-9]*\.[0-9]*/release-$NEW/" README.md
-            git add version README.md website Apps/VoiceDebrief/Resources   # the app's copies of the ideas and versions data
+            git add version README.md website Apps/VoiceDebrief/Resources Apps/SGit/Resources   # the apps' copies of the ideas and versions data
             git commit --quiet -m "Update release badge and version file"
             if git push --quiet origin HEAD:dev; then
               git tag "$NEW"

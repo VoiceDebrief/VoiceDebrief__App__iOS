@@ -42,7 +42,8 @@ One file per piece of work: `open/NNN-slug.md`, moved to `done/` when it is done
 | 043 | A send that can be seen, stopped and not lost | the main session |
 | 044 | Two symbols with no words at the top of the first screen | the main session; the credit session |
 | 045 | Two sentences that say the wrong thing | the main session; the vaults session |
-| 046 | The lab: the control centre (L02) | the owner, on a device |
+| 046 | Every empty screen says what to do next | each screen's session |
+| 047 | The lab: the control centre (L02) | the owner, on a device |
 | 100 | The sgit app, milestone one | a device and the live server |
 | 102 | Prove the sgit app's large files against the live server | 100 on a device |
 | 103 | The sgit app after milestone one | 100; 011 and 017 |

@@ -5,6 +5,39 @@
  ],
  "versions": [
   {
+   "version": "v0.1.59",
+   "date": "14 November 2026",
+   "notes": [
+    "Three guides for SGit Vaults, in VoiceDebrief's Guide and on the site's guides: getting started (open a vault you were sent, or make one), inside a vault and its history, and sharing, each a picture of the screen with numbered arrows."
+   ],
+   "hasPage": true,
+   "url": "https://ios.app.voicedebrief.ai/versions/v0.1.59/index.html",
+   "pictures": 0,
+   "issues": []
+  },
+  {
+   "version": "v0.1.58",
+   "date": "14 November 2026",
+   "notes": [
+    "The sgit app keeps a record of what you do in it (Settings, Your activity): every screen and how long it was open, and every action, with no file names, vault names or keys. A button sends it, encrypted, to the developer. Each device keeps its own. The whole web Vault opens inside the app on the vault or the file you are looking at (three dots, Open in the web Vault): folders, HTML preview, Markdown, editing. It opens looking only; Allow changes lets it save. Also new on the site: a guide to the app in pictures, with the things to press numbered"
+   ],
+   "hasPage": true,
+   "url": "https://ios.app.voicedebrief.ai/versions/v0.1.58/index.html",
+   "pictures": 0,
+   "issues": []
+  },
+  {
+   "version": "v0.1.57",
+   "date": "14 November 2026",
+   "notes": [
+    "Agents, a new section made for iPad: how many agents are working for you, waiting or idle; each with its role, what it is doing and what it waits for; and a conversation with each. It is drawn from a report the conductor (Claude) writes into a vault of yours: you choose the vault and give it to Claude, its key sealed on the device to Claude's key. Messages to an agent go over its lane, or through Claude when it has none; replies come back in the report. The app refreshes every two minutes while you are there."
+   ],
+   "hasPage": true,
+   "url": "https://ios.app.voicedebrief.ai/versions/v0.1.57/index.html",
+   "pictures": 0,
+   "issues": []
+  },
+  {
    "version": "v0.1.56",
    "date": "14 November 2026",
    "notes": [

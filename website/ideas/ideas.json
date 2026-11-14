@@ -29,9 +29,9 @@
  ],
  "counts": {
   "seen-working": 27,
-  "built-untried": 62,
+  "built-untried": 65,
   "in-progress": 34,
-  "proposed": 36,
+  "proposed": 39,
   "parked": 6
  },
  "ideas": [
@@ -1027,6 +1027,32 @@
    "kind": "issue",
    "number": "046",
    "app": "VoiceDebrief",
+   "title": "Every empty screen says what to do next",
+   "status": "proposed",
+   "why": "Open, with nothing built yet: \"Status: open. Asked for by the owner, 14 November 2026, through the Sherpa brief: \"an empty state for every screen that says what to do next\". From the Sherpa...\"",
+   "summary": "The rule, from SGit Vaults' own first screen, which already does it: an empty screen says what this place is for in one sentence, then the one thing to do, as a button where one fits. It does not only say that nothing is here.",
+   "detail": [
+    "The rule, from SGit Vaults' own first screen, which already does it: an empty screen says what this place is for in one sentence, then the one thing to do, as a button where one fits. It does not only say that nothing is here.",
+    "| Screen | Today | Proposed | |---|---|---| | VoiceDebrief, Record (record-empty) | Says what recording does; the button is there. | Holds. | | VoiceDebrief, Library (library-empty) | \"No notes yet. A note is kept here the moment its recording stops.\" Says what, not what to do. | \"No notes yet. Record one on the Record tab: it is kept here the moment you stop, then transcribed and debriefed on this device.\" With a button that opens Record, if the shell can be asked to change tab. | | VoiceDebrief, Vaults (vaults-empty) | \"None yet.\" in the list, then the Create form. | \"No vaults yet. A vault keeps your notes encrypted, on this device first; once you have one, every finished note is saved into it.\" Above the Create form, as SGit Vaults does it. | | VoiceDebrief, Recipients (recipients, with only the built-in one) | Says what sending does; the add form follows. | Holds: one line could say...",
+    "Done when each \"Proposed\" row is in the app, or its owner has said why not."
+   ],
+   "statusLine": "Status: open. Asked for by the owner, 14 November 2026, through the Sherpa brief: \"an empty state for every screen that says what to do next\". From the Sherpa session's reading of the empty pictures (screens.yml run 39, sgit-app-screens.yml run 19). Owner: each screen's own session; the Sherpa session writes the words.",
+   "owner": "each screen's own session; the Sherpa session writes the words",
+   "places": [
+    "Settings: Identity",
+    "Settings: Recipients",
+    "The repository: pictures of every screen"
+   ],
+   "versions": [],
+   "features": [],
+   "url": "https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/046-an-empty-state-that-says-what-to-do-next.md",
+   "source": "The owner"
+  },
+  {
+   "id": "issue-047",
+   "kind": "issue",
+   "number": "047",
+   "app": "VoiceDebrief",
    "title": "The lab, second experiment (L02): the control centre",
    "status": "in-progress",
    "why": "The issue says: \"Built and in the Lab: sentences in (spoken, typed, or fourteen test sentences); two engines, the fixed phrases and the on-device model with one tool for each of...\"",
@@ -1047,7 +1073,7 @@
    ],
    "versions": [],
    "features": [],
-   "url": "https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/046-lab-control-centre.md",
+   "url": "https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/047-lab-control-centre.md",
    "source": "The owner's voice note"
   },
   {
@@ -1421,6 +1447,60 @@
    "features": [],
    "url": "https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/116-sgit-app-what-the-pictures-could-not-show.md",
    "source": "A review by synthetic users"
+  },
+  {
+   "id": "issue-117",
+   "kind": "issue",
+   "number": "117",
+   "app": "SGit Vaults",
+   "title": "sgit app: a record of every action, on every device",
+   "status": "proposed",
+   "why": "Open, with nothing built yet: \"Status: open. Owner: the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB).\"",
+   "summary": "The owner, 14 November 2026: \"add a full-blown observability here so you capture every single action that happens on this app across my three devices\" (a laptop, an iPad and an iPhone), reusing what VoiceDebrief has.",
+   "detail": [
+    "The owner, 14 November 2026: \"add a full-blown observability here so you capture every single action that happens on this app across my three devices\" (a laptop, an iPad and an iPhone), reusing what VoiceDebrief has.",
+    "Compiles and its tests pass (14 November 2026, a4d6620); done when a report from a device has been read: VoiceDebrief's UsageLog, lane and lane encryption copied into the app; every screen is timed and about thirty actions are recorded; Settings, Your activity shows them and sends the report over the developer's lane as sgit/usage/v1, with the device model and a random install id so that three devices can be told apart. The developer reads it with tools/conductor/conductor.py drain.",
+    "Left:",
+    "- Nobody has sent a report from a device, and the reader has not been run on one. - Sending is by a button, on each device. To decide with the owner: a switch that sends on its own when the app opens (off by default), so that he does not have to remember on three devices. - What an action carried (how many files, how large, how long an upload took, which error) is not recorded, only that it happened. The vault engine's own log (VaultTrafficLog, Settings, Every step) has the requests and timings and is not in the report. - One copy of the lane code, in the shared package SGitPeople, when that lands; this app's copy then goes. - A picture of the screen."
+   ],
+   "statusLine": "Status: open. Owner: the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB).",
+   "owner": "the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB)",
+   "places": [
+    "SGit Vaults: Share",
+    "SGit Vaults: Settings"
+   ],
+   "versions": [],
+   "features": [],
+   "url": "https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/117-sgit-app-observability-across-devices.md",
+   "source": "The owner"
+  },
+  {
+   "id": "issue-118",
+   "kind": "issue",
+   "number": "118",
+   "app": "SGit Vaults",
+   "title": "sgit app: the web Vault inside the app, and its features natively",
+   "status": "proposed",
+   "why": "Open, with nothing built yet: \"Status: open. Owner: the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB).\"",
+   "summary": "The owner, 14 November 2026: recreate as much as possible of the web Vault's core here (navigate folders, open a file, edit a file, see the HTML preview), and \"allow me to open the full web interface here\", loading the vault by JavaScript as sgit.ai's embedding does, not by putting the key in the address.",
+   "detail": [
+    "The owner, 14 November 2026: recreate as much as possible of the web Vault's core here (navigate folders, open a file, edit a file, see the HTML preview), and \"allow me to open the full web interface here\", loading the vault by JavaScript as sgit.ai's embedding does, not by putting the key in the address.",
+    "Compiles and its tests pass (14 November 2026, a4d6620); done when it has been used on a device: UI/WebVaultView.swift. The protocol it uses was tried against the live page first, in Chromium, with a throwaway vault: see the reality file's row.",
+    "What the try showed, to keep:",
+    "- https://dev.vault.sgraph.ai/en-gb/vault/?embed=1, loaded as the page itself (no frame), posts {sg: 'vault-embed-ready'} to its own window; a posted {sg: 'vault-open', key, mode: 'vault', deepLink} opens the vault; it answers {sg: 'vault-ready', vaultName, fileCount}. A file's path as deepLink opens on that file. - The key is not stored by the page. sg-vault-recent is written to local storage; the app's web view keeps no storage after it closes. - An event vault-settings-access-key on <vault-shell> with the access key turns the page writable. This is the page's own internal event, not a documented interface: it may change. - vault.sgraph.ai (production) answered nothing. The app uses the dev host.",
+    "Left:",
+    "- Nobody has run it on a device. First things to look at: the page's layout on a phone, downloads (\"Save\"), and whether its HTML preview works in a web view. - With changes allowed, the web Vault's commits are unsigned and it pushes without checking that nobody else pushed first; it also rewrites a folder without the large mark. So: off by default, a warning, and not offered where a vault has large files. The proper fix is in the web Vault. - The vault's name is \"Untitled Vault\" there: the app's name for a vault is local. - Natively: a simple edit of a text file, and an HTML preview (a sandboxed web view fed from the vault). Not started; the web Vault inside the app covers both meanwhile. - A picture: the screen needs the network, which the picture harness does not have."
+   ],
+   "statusLine": "Status: open. Owner: the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB).",
+   "owner": "the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB)",
+   "places": [
+    "SGit Vaults: a vault",
+    "SGit Vaults: Settings"
+   ],
+   "versions": [],
+   "features": [],
+   "url": "https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/118-sgit-app-the-web-vault-inside-the-app.md",
+   "source": "The owner"
   },
   {
    "id": "issue-200",
@@ -2253,7 +2333,7 @@
    "why": "The reality file, Built: unverified: written, not yet proven by a run.",
    "summary": "UI/Guide/GuideView.swift, IdeasView.swift, WhatsNewView.swift, FeatureGuideView.swift, Model/GuideData.swift; data from website/admin/ideas.mjs, bundled as vd-ideas.json and vd-versions.json: every idea and request (issues, articles, rows of both reality files) with its status (seen working, built untried, in progress, proposed, parked) decided by written rules and the sentence that decided it...",
    "detail": [
-    "UI/Guide/GuideView.swift, IdeasView.swift, WhatsNewView.swift, FeatureGuideView.swift, Model/GuideData.swift; data from website/admin/ideas.mjs, bundled as vd-ideas.json and vd-versions.json: every idea and request (issues, articles, rows of both reality files) with its status (seen working, built untried, in progress, proposed, parked) decided by written rules and the sentence that decided it, searchable and filtered by status and app, with where it is in the app and the versions that named it; What is new lists every version newest first and marks those since the person last looked. The same list is the site's ideas page. Seven feature guides (record, a note, the library, vaults, sending, the briefing, settings), each a picture of the screen with numbered arrows and what each number is, written in website/guides/guides.json, drawn by website/admin/guides.py from a screens artifact as...",
+    "UI/Guide/GuideView.swift, IdeasView.swift, WhatsNewView.swift, FeatureGuideView.swift, Model/GuideData.swift; data from website/admin/ideas.mjs, bundled as vd-ideas.json and vd-versions.json: every idea and request (issues, articles, rows of both reality files) with its status (seen working, built untried, in progress, proposed, parked) decided by written rules and the sentence that decided it, searchable and filtered by status and app, with where it is in the app and the versions that named it; What is new lists every version newest first and marks those since the person last looked. The same list is the site's ideas page. Ten feature guides (for VoiceDebrief: record, a note, the library, vaults, sending, the briefing, settings; for SGit Vaults: getting started, inside a vault, sharing), each a picture of the screen with numbered arrows and what each number is, written in...",
     "Unit tests: the bundled data decodes, every status is known and explained, search, version order, since you last looked, every guide's pictures are in the app. The generator is checked by validate.mjs. Not reachable from the shell until it is given a place in the sidebar; not run on a device"
    ],
    "places": [
@@ -2334,6 +2414,24 @@
    "detail": [
     "UI/TalkButton.swift: a button on every screen but Record; tap to record, tap (or say the phrase) to send to Claude (developer); hold for Messages to Claude, with each note's state. No replies yet: they need the app's own inbox",
     "No test; not run on a device"
+   ],
+   "places": [],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
+   "id": "feature-agents",
+   "kind": "feature",
+   "app": "VoiceDebrief",
+   "title": "Agents",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "Model/AgentsReport.swift, Engine/AgentsDesk.swift, UI/AgentsView.swift: a split view (list, then the agent and its conversation); reads agents/agents.json and agents/overview.png from a vault you choose, pulled on opening, on pull-to-refresh and every two minutes; hands that vault's key to Claude (developer) over its lane (voicedebrief/vault-key/v1); sends messages as voicedebrief/agent-message/v1",
+   "detail": [
+    "Model/AgentsReport.swift, Engine/AgentsDesk.swift, UI/AgentsView.swift: a split view (list, then the agent and its conversation); reads agents/agents.json and agents/overview.png from a vault you choose, pulled on opening, on pull-to-refresh and every two minutes; hands that vault's key to Claude (developer) over its lane (voicedebrief/vault-key/v1); sends messages as voicedebrief/agent-message/v1",
+    "A unit test of the report's format. Not run on a device; no report has been written yet"
    ],
    "places": [],
    "issues": [],
@@ -3580,6 +3678,47 @@
    "places": [
     "SGit Vaults: a vault",
     "SGit Vaults: Share"
+   ],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
+   "id": "sgit-feature-the-web-vault-inside-the-app",
+   "kind": "feature",
+   "app": "SGit Vaults",
+   "title": "The web Vault inside the app",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "UI/WebVaultView.swift: \"Open in the web Vault\" on a vault's three dots and on a file. The page dev.vault.sgraph.ai/en-gb/vault/?embed=1 is loaded in a web view that keeps nothing, announces itself, and is handed the vault key by a posted message (the web Vault's embed protocol); the key is not in the address. It opens looking only. \"Allow changes\" hands the page this device's access key for the...",
+   "detail": [
+    "UI/WebVaultView.swift: \"Open in the web Vault\" on a vault's three dots and on a file. The page dev.vault.sgraph.ai/en-gb/vault/?embed=1 is loaded in a web view that keeps nothing, announces itself, and is handed the vault key by a posted message (the web Vault's embed protocol); the key is not in the address. It opens looking only. \"Allow changes\" hands the page this device's access key for the visit, after a warning; it is not offered for a vault that holds large files, because the web Vault rewrites a folder without the mark that says a file is large",
+    "The protocol was tried on 14 November 2026 against the live page in Chromium with a throwaway vault made by sgit: opened by message, HTML preview shown, a deep link to a file honoured, nothing of the key in the address or in storage, and the access-key event turned \"Read-only\" into \"Synced\". The production host vault.sgraph.ai did not answer the handshake. The Swift has unit tests for the words and the host rule; the web view itself has never run on a device or a simulator"
+   ],
+   "places": [
+    "SGit Vaults: a vault"
+   ],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
+   "id": "sgit-feature-your-activity",
+   "kind": "feature",
+   "app": "SGit Vaults",
+   "title": "Your activity",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "Engine/UsageLog.swift, Engine/DeveloperLane.swift, Engine/LaneCrypto.swift (all three copied from VoiceDebrief), UI/ActivityView.swift under Settings: every screen opened and for how long, and about thirty actions (create, add, forget, send to the server, pick, retry, discard, open, share, show a key, save out, refresh), kept in a file on the device; a button sends the report, encrypted to the...",
+   "detail": [
+    "Engine/UsageLog.swift, Engine/DeveloperLane.swift, Engine/LaneCrypto.swift (all three copied from VoiceDebrief), UI/ActivityView.swift under Settings: every screen opened and for how long, and about thirty actions (create, add, forget, send to the server, pick, retry, discard, open, share, show a key, save out, refresh), kept in a file on the device; a button sends the report, encrypted to the developer's key, over the developer's lane as sgit/usage/v1. Ids and times only: no file name, vault name or key",
+    "The log, the report's shape and the lane message have unit tests. Nothing has been sent from a device, and nothing is sent without the button. Each device keeps and sends its own log; they are told apart by a random install id"
+   ],
+   "places": [
+    "SGit Vaults: Share",
+    "SGit Vaults: Settings"
    ],
    "issues": [],
    "url": "https://ios.app.voicedebrief.ai/sgit-app/built/index.html",

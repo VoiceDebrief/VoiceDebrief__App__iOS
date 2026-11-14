@@ -1,4 +1,4 @@
-# 046: The lab, second experiment (L02): the control centre
+# 047: The lab, second experiment (L02): the control centre
 
 **Status:** open. From three voice notes the owner recorded while driving, 14 November 2026, relayed by the
 parent session. See the articles "The lab" and "Two decision engines".

@@ -183,6 +183,7 @@ struct LaunchedScreen: View {
         case .activity: return "Your activity"
         case .about: return "What this build does"
         case .guide: return "Guide"
+        case .agents: return "Agents"
         }
     }
 

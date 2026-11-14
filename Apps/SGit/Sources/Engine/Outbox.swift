@@ -164,6 +164,7 @@ final class Outbox {
         let job = UploadJob(id: id, vaultId: vault.id, vaultName: vault.name, folder: folder, createdAt: Date(),
                             message: VaultNaming.addMessage(items.map(\.name)), items: items)
         save(job)
+        UsageLog.shared.action("files.add")
         if starting { start(id, shelf: shelf) }
         return job
     }
@@ -194,6 +195,7 @@ final class Outbox {
     /// Stops a job and removes everything it holds. Objects already uploaded stay on the server unnamed;
     /// no commit refers to them.
     func discard(_ id: UUID) {
+        UsageLog.shared.action("upload.discard")
         tasks[id]?.cancel()
         tasks[id] = nil
         running.remove(id)
@@ -215,6 +217,7 @@ final class Outbox {
             // Discarded, or the app is closing: the record on disk says where to carry on.
         } catch {
             update(id) { $0.problem = VaultShelf.describe(error) }
+            UsageLog.shared.action("upload.failed")
         }
     }
 

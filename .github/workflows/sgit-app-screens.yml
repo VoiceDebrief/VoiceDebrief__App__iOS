@@ -13,6 +13,7 @@ on:
     paths:
       - 'Apps/SGit/Sources/UI/**'
       - 'Apps/SGit/Sources/App/**'
+      - 'Apps/SGit/Sources/People/**'
       - 'Apps/SGit/UITests/**'
       - 'Apps/SGit/SGit.xcodeproj/**'
       - '.github/workflows/sgit-app-screens.yml'

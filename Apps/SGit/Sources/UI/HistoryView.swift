@@ -18,6 +18,7 @@ struct HistoryView: View {
                ForEach(days[day] ?? []) { commit in
                 NavigationLink {
                     CommitView(shelf: shelf, vault: vault, commit: commit)
+                        .tracked("commit")
                 } label: {
                     VStack(alignment: .leading, spacing: 3) {
                         Text(commit.message.isEmpty ? "(no message)" : commit.message).lineLimit(2)
