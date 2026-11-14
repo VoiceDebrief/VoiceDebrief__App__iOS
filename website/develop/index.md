@@ -32,7 +32,7 @@ cd Packages/SGitVault && swift test          # the vault engine, on the Mac itse
 | `ios.yml` | A push to `dev` or to a `work/` branch, or a pull request, that touches `Apps/`, `Packages/` or the workflow. Only `dev` uploads to TestFlight | One Mac job: the vault engine's tests, a simulator build, a Release device build (unsigned), then the app's unit tests on an iPhone and an iPad simulator |
 | `ios-vault.yml` | A change to the vault write path, every Monday, or by hand | Swift writes vaults on a Mac; `sgit-ai` on Linux clones them, verifies every signature and compares every file |
 | `pki-interop.yml` | A change to the app's PKI files or `scripts/pki-interop/`, every Monday, or by hand | `sgit pki` and pki.sgit.ai's `keys.js` make keys, signatures, envelopes, a statement and a sign-in on Linux; the app's PKI files, compiled as a tool on a Mac, read them and make their own; sgit and `keys.js` read those |
-| `screens.yml` | By hand, or a push to `dev` or a `work/` branch that touches the screens | A screenshot of every screen on an iPhone and an iPad simulator, light and dark, from invented sample data: see below |
+| `screens.yml` | A push to `dev` that touches the screens; by hand on any branch | A screenshot of every screen on an iPhone and an iPad simulator, light and dark, from invented sample data: see below |
 | `site.yml` | Every push and pull request | The gate, then (on `dev`) the next version, its tag, and the site |
 
 Builds and tests are unsigned. The last step of `ios.yml` uploads to TestFlight on a green push to `dev`: `scripts/release/testflight.sh` archives unsigned, signs the app with its entitlements, and exports with automatic signing through the App Store Connect API key. It needs the secrets `ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_KEY_P8_BASE64` and the variable `APPLE_TEAM_ID`, and skips itself while any is missing.
@@ -41,7 +41,7 @@ Builds and tests are unsigned. The last step of `ios.yml` uploads to TestFlight 
 
 ## Seeing the screens
 
-Nobody who writes this app from a Linux container can run it, so CI takes a picture of every screen. `screens.yml` runs by hand, and on a push to `dev` or a `work/` branch that touches the app's `UI/` or `App/` sources, the UI tests or the project file.
+Nobody who writes this app from a Linux container can run it, so CI takes a picture of every screen. `screens.yml` runs on a push to `dev` that touches the app's `UI/` or `App/` sources, the UI tests or the project file, and by hand on any branch (the `workflow_dispatch` button, or `actions_run_trigger` with `run_workflow`): a `work/` branch does not run it on every push, because it takes two Macs for half an hour from a queue every session shares. A job still waiting for a Mac when a newer push arrives is replaced by the newer one, so a version pushed in quick succession can be left without a full set.
 
 **How a picture is made.** `Apps/VoiceDebrief/UITests/ScreensTests.swift` has one test per picture. Each launches the app with two launch arguments, read by `Sources/App/LaunchOptions.swift` in debug builds only:
 
@@ -76,6 +76,14 @@ The longest side is 1600 px. The ids: `record`, `record-empty`, `record.recordin
 Where the `gh` command is set up, one line does steps 3 and 4: `gh api repos/VoiceDebrief/VoiceDebrief__App__iOS/actions/artifacts/<artifact id>/zip > screens.zip`.
 
 Both ways were followed from a Linux container on 13 November 2026 (`work/screens`: 68 pictures from the first run, 100 from the fourth). A person can download the same artifact from the run's page on GitHub.
+
+**Pictures on a version's page.** Every push to `dev` gets a page, `website/versions/<version>/index.md`, written by CI. After `screens.yml` has run on `dev` for that version, the screens session adds the pictures of what changed: download that run's artifact and the one for the version before, then
+
+```
+python3 .github/scripts/release-pictures.py <new folder> <old folder> website/versions/<version>
+```
+
+It compares the light iPhone and iPad pictures screen by screen, writes one small JPEG (the two side by side) for each of the most changed screens, and prints the markdown to paste into the page with `CAPTION` where the one line saying what is new goes. Somebody looks at the pictures and writes those lines: the script knows that a screen changed, not what the change is. This is a step run per release, not part of the workflow, because committing to `dev` from a workflow is a second writer of `dev`.
 
 **What the pictures are for.** Besides letting a session see its own work, they are read in rounds by synthetic users: see [Reviews](../reviews/index.md).
 
