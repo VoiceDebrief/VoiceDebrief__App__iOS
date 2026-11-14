@@ -82,6 +82,8 @@ const PAGES = [
     description: 'Every idea and request for the two apps, from the issues, the articles and the reality files, with its status (seen working, built untried, in progress, proposed, parked), where it lives in the app and the versions that brought it. Generated, not written by hand.' },
   { path: 'guides', nav: 'Guides', title: 'Guides to every feature of VoiceDebrief for iOS',
     description: 'A page per feature, with pictures of the screens and numbered arrows: recording, a note, the library, vaults, sending, the briefing and settings.' },
+  { path: 'journeys', nav: null, title: 'Journeys through VoiceDebrief and SGit Vaults: the owner, a new tester, a teammate',
+    description: 'Three people arriving at the apps for different reasons: what each wants, the way through as the apps are today, where they get lost, and what the Guide does about it.' },
   { path: 'versions', nav: null,       title: 'VoiceDebrief for iOS release history',
     description: 'Every release of the VoiceDebrief iOS repository, with what changed.' },
 ];

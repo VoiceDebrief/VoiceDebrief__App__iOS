@@ -5,7 +5,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | Status | Meaning | How many |
 |---|---|---|
 | Seen working | Built, and a run proved it: CI, a device or a server. | 26 |
-| Built, untried | In the app or the repository, but not yet proven by a run on a device. | 54 |
+| Built, untried | In the app or the repository, but not yet proven by a run on a device. | 55 |
 | In progress | Begun: part of it is built or a release has touched it. | 32 |
 | Proposed | Asked for or described; nothing of it is built. | 36 |
 | Parked | Waiting: on the owner, on Apple, or scheduled for later. | 6 |
@@ -72,6 +72,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | Play a recording | Feature | VoiceDebrief | A note: the player |   | [reality file](../built/index.md) |
 | A briefing on opening | Feature | VoiceDebrief | Record tab; Record tab: the briefing card |   | [reality file](../built/index.md) |
 | The Guide: ideas, what is new, feature guides | Feature | VoiceDebrief | Library tab; Record tab: the briefing card |   | [reality file](../built/index.md) |
+| A welcome on the first launch | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
 | Where the work happens | Feature | VoiceDebrief | Record tab; Settings: Identity; Settings: Recipients |   | [reality file](../built/index.md) |
 | Record a note for someone | Feature | VoiceDebrief | Record tab; Settings: Recipients |   | [reality file](../built/index.md) |
 | A send that is not lost | Feature | VoiceDebrief | Record tab; Record tab: the briefing card; Settings: Recipients |   | [reality file](../built/index.md) |

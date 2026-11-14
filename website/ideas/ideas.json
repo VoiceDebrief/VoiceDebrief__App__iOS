@@ -29,7 +29,7 @@
  ],
  "counts": {
   "seen-working": 26,
-  "built-untried": 54,
+  "built-untried": 55,
   "in-progress": 32,
   "proposed": 36,
   "parked": 6
@@ -2198,6 +2198,24 @@
     "Library tab",
     "Record tab: the briefing card"
    ],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
+   "id": "feature-a-welcome-on-the-first-launch",
+   "kind": "feature",
+   "app": "VoiceDebrief",
+   "title": "A welcome on the first launch",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "UI/Guide/WelcomeView.swift: three pages (what the app does, what to try first, where things are), once, never in a sample launch; the modifier welcomeOnFirstLaunch()",
+   "detail": [
+    "UI/Guide/WelcomeView.swift: three pages (what the app does, what to try first, where things are), once, never in a sample launch; the modifier welcomeOnFirstLaunch()",
+    "No test; not shown until the shell attaches the modifier"
+   ],
+   "places": [],
    "issues": [],
    "url": "https://ios.app.voicedebrief.ai/built/index.html",
    "source": "The reality file",

@@ -43,6 +43,8 @@ Every page has a markdown twin: replace index.html with index.md.
 - https://ios.app.voicedebrief.ai/guides/index.html : a guide per feature (record, a note, the library, vaults,
   sending, the briefing, settings), each with pictures of the screens and numbered arrows. Content in
   guides/guides.json; pictures drawn by website/admin/guides.py from a screens.yml artifact.
+- https://ios.app.voicedebrief.ai/journeys/index.html : three journeys (the owner after a night of builds, a
+  new tester, a teammate sent a vault): the way through as the apps are today and where each gets lost.
 - https://ios.app.voicedebrief.ai/versions/index.html : release history. Each released version also has its
   own page at versions/ plus the version and /index.html (for example versions/v0.1.28/index.html), written by CI;
   the app's version badge opens it.
