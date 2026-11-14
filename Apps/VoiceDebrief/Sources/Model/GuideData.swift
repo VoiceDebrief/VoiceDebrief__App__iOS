@@ -149,6 +149,8 @@ struct FeatureGuide: Codable, Hashable, Identifiable, Sendable {
     let id: String
     let title: String
     let app: String
+    /// Where this guide's pictures came from, when not the book's own line.
+    let pictures: String?
     let intro: String
     /// Ideas (ids in vd-ideas.json) this guide is about: where each one stands.
     let ideas: [String]
