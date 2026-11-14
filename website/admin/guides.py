@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 """Draws the feature guides' pictures: numbered callouts with arrows on pictures of the screens.
 
-    python3 website/admin/guides.py <folder of screens>
+    python3 website/admin/guides.py <VoiceDebrief screens> [<SGit Vaults screens>]
 
-The folder is an unzipped artifact of screens.yml (files iphone-light-<screen>.png). Reads
+Each folder is an unzipped artifact: of screens.yml, and of sgit-app-screens.yml for the guides whose app
+is SGit Vaults (files iphone-light-<screen>.png). Without the second folder those guides are left as they are. Reads
 website/guides/guides.json and writes, for each step of each guide, one small JPEG at display size:
     website/guides/img/<guide>-<step>.jpg
     Apps/VoiceDebrief/Resources/vd-guide-<guide>-<step>.jpg   (the app's copy; resource names are unique)
+    Apps/SGit/Resources/sg-guide-<guide>-<step>.jpg            (SGit Vaults' copy, for its own guides)
 Run by hand when the pictures change, like release-pictures.py: the screens are not in the repository.
 Needs Pillow. Content is in guides.json; this script is only the drawing.
 """
@@ -56,17 +58,22 @@ def draw(src, callouts):
     return im.resize((WIDTH, round(H * WIDTH / W)), Image.LANCZOS)
 
 def main():
-    if len(sys.argv) != 2: sys.exit(__doc__)
-    shots = Path(sys.argv[1])
+    if len(sys.argv) not in (2, 3): sys.exit(__doc__)
+    folders = {'VoiceDebrief': Path(sys.argv[1]), 'SGit Vaults': Path(sys.argv[2]) if len(sys.argv) == 3 else None}
     spec = json.loads((REPO / 'website/guides/guides.json').read_text())
     out_site, out_app = REPO / 'website/guides/img', REPO / 'Apps/VoiceDebrief/Resources'
     out_site.mkdir(parents=True, exist_ok=True)
     for g in spec['guides']:
+        shots = folders.get(g['app'])
+        if shots is None: continue
         for i, step in enumerate(g['steps'], 1):
             src = shots / f"iphone-light-{step['screen']}.png"
             if not src.exists(): sys.exit(f'missing {src}')
             im = draw(src, step['callouts'])
-            for p in (out_site / f"{g['id']}-{i}.jpg", out_app / f"vd-guide-{g['id']}-{i}.jpg"):
+            outs = [out_site / f"{g['id']}-{i}.jpg", out_app / f"vd-guide-{g['id']}-{i}.jpg"]
+            if g['app'] == 'SGit Vaults':
+                outs.append(REPO / 'Apps/SGit/Resources' / f"sg-guide-{g['id']}-{i}.jpg")
+            for p in outs:
                 im.save(p, 'JPEG', quality=72, optimize=True, progressive=True)
             print(f"{g['id']}-{i}.jpg  {p.stat().st_size // 1024} KB")
 

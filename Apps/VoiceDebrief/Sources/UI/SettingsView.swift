@@ -11,6 +11,7 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             Form {
+                SectionBannerRow(tab: .settings)
                 Section {
                     LabeledContent("Language spoken") {
                         LanguageMenu()

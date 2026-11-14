@@ -60,8 +60,8 @@ struct GuideHome: View {
             Section("How to use it") {
                 if let guides, !guides.guides.isEmpty {
                     ForEach(guides.guides) { g in
-                        NavigationLink { FeatureGuideView(guide: g, ideas: ideas, pictures: guides.pictures) } label: {
-                            Label(g.title, systemImage: "book.pages")
+                        NavigationLink { FeatureGuideView(guide: g, ideas: ideas, pictures: g.pictures ?? guides.pictures) } label: {
+                            Label(g.title, systemImage: g.app == "SGit Vaults" ? "externaldrive.badge.icloud" : "book.pages")
                         }
                     }
                 } else {

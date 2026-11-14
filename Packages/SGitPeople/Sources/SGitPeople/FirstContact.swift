@@ -7,7 +7,7 @@ import SGitVault
 ///
 ///   1. The newcomer shows their card: name and public keys, no inbox (`ContactCard.make(… inbox: nil)`).
 ///   2. The inviter adds it, and seals the access key to it, signed, with the inviter's own card inside:
-///      `invitation(…)`, a `sgm1.` text for a QR code or a WhatsApp message. Only the newcomer's key opens it.
+///      `invitation(…)`, pki.sgit.ai's `m1.` code for a QR code or a WhatsApp message. Only the newcomer's key opens it.
 ///   3. The newcomer opens it (`open(…)`), keeps the access key, adds the inviter, makes an inbox on a new vault
 ///      of their own, and sends their full card to the inviter's inbox: `accept(…)` does all of that.
 ///   4. The inviter's next inbox check finds the card, signed by the key they already hold, and the contact
@@ -17,26 +17,43 @@ public enum FirstContact {
         case notAnInvitation
         case noAccessKey
         case inviterHasNoInbox
+        case expired
 
         public var errorDescription: String? {
             switch self {
             case .notAnInvitation: "This is not an invitation."
             case .noAccessKey: "The invitation does not carry an access key."
             case .inviterHasNoInbox: "Whoever invited you has no inbox to reply to."
+            case .expired: "This invitation has expired: ask for a new one."
             }
         }
     }
 
-    /// Step 2, the inviter: the access key sealed to the newcomer's card, as `sgm1.` text.
+    /// Step 2, the inviter: the access key sealed to the newcomer's card, as pki.sgit.ai's `m1.` code.
     ///
     /// With `myCard` it is about 4,000 characters: a link or a WhatsApp message. In person, when the newcomer has
-    /// already scanned the inviter's card, pass nil: about half that, which a QR code can hold.
+    /// already scanned the inviter's card, pass nil: about half that, which a QR code can hold. It expires after
+    /// `days`, so that a code shown again later is refused.
     public static func invitation(accessKey: SharedSecret, to newcomer: ContactCard, from me: PKIIdentity, myCard: ContactCard?,
-                                  note: String? = nil, at date: Date = Date()) throws -> String {
+                                  note: String? = nil, days: Int = 7, at date: Date = Date()) throws -> String {
         try newcomer.check()
-        let message = PeopleMessage(kind: .secret, from: me.bundle.signingFingerprint, to: newcomer.fingerprint, sentAt: date,
-                                    card: try myCard?.text(), text: note, secret: accessKey)
-        return try message.sealedText(to: newcomer.bundle, from: me)
+        return try invitation(accessKey: accessKey, to: newcomer.bundle, from: me, myCard: myCard, note: note, days: days, at: date)
+    }
+
+    /// The same, to a bare key: pki.sgit.ai's `k1.` code (`PKI.parseKeyCode`), for a newcomer who shows that.
+    public static func invitation(accessKey: SharedSecret, to newcomer: PKIBundle, from me: PKIIdentity, myCard: ContactCard?,
+                                  note: String? = nil, days: Int = 7, at date: Date = Date()) throws -> String {
+        let message = PeopleMessage(kind: .secret, from: me.bundle.signingFingerprint, to: newcomer.signingFingerprint, sentAt: date,
+                                    card: try myCard?.text(), text: note, secret: accessKey,
+                                    expires: date.addingTimeInterval(Double(days) * 86_400))
+        return try message.sealedText(to: newcomer, from: me)
+    }
+
+    /// The newcomer's card or key in `text`: an `sgc1.` card (signed, may name an inbox) or a `k1.` key code.
+    public static func newcomerKey(in text: String) throws -> (bundle: PKIBundle, card: ContactCard?) {
+        if let card = try? ContactCard.parse(text) { return (card.bundle, card) }
+        if let bundle = PKI.parseKeyCode(text) { return (bundle, nil) }
+        throw ContactCard.Failure.noCard
     }
 
     /// What the newcomer finds in an invitation.
@@ -48,12 +65,13 @@ public enum FirstContact {
         public var inviter: ContactCard?
     }
 
-    /// Step 3, the newcomer: opens the `sgm1.` text with their own key.
-    public static func open(_ text: String, me: PKIIdentity, contacts: [PKIBundle] = []) throws -> Invitation {
+    /// Step 3, the newcomer: opens the `m1.` code with their own key.
+    public static func open(_ text: String, me: PKIIdentity, contacts: [PKIBundle] = [], now: Date = Date()) throws -> Invitation {
         guard let envelope = SealedText.envelope(in: text) else { throw Failure.notAnInvitation }
-        let opened = try PeopleMessage.open(envelope: envelope, me: me, contacts: contacts)
+        let opened = try PeopleMessage.open(envelope: envelope, me: me, contacts: contacts, now: now)
         guard opened.message.kind == .secret, let secret = opened.message.secret else { throw Failure.notAnInvitation }
         guard secret.kind == .accessKey else { throw Failure.noAccessKey }
+        guard !opened.expired else { throw Failure.expired }
         var inviter: ContactCard?
         if (opened.trust == .cardInside || opened.trust == .contact), let card = opened.card, card.signingFingerprint == opened.signer {
             inviter = card
@@ -65,7 +83,7 @@ public enum FirstContact {
     public static func cardMessage(_ myCard: ContactCard, to contact: ContactCard, from me: PKIIdentity,
                                    at date: Date = Date()) throws -> (address: InboxAddress, payload: String) {
         guard let address = contact.inbox else { throw Failure.inviterHasNoInbox }
-        let message = PeopleMessage(kind: .card, from: me.bundle.signingFingerprint, to: contact.fingerprint, sentAt: date,
+        let message = PeopleMessage(kind: .card, from: me.bundle.signingFingerprint, to: contact.signingFingerprint, sentAt: date,
                                     card: try myCard.text())
         return (address, try message.lanePayload(to: contact.bundle, from: me))
     }

@@ -16,7 +16,9 @@ each other, secrets included, is sealed to the recipient's key and dropped in th
 - `ContactBook`: contacts with how each was met; a later card from the same keys updates, other keys under a
   known fingerprint are refused.
 - `PeopleMessage`: sealed and signed in sgit's envelope; kinds text, voice-note reference, secret, vault
-  invitation, card; `from` and `to` inside the seal are checked on opening. `sgm1.` text for a sealed message
+  invitation, card; `from` and `to` inside the seal are checked on opening. The message is pki.sgit.ai's own
+  (`pki.sgit.ai/message/v1`, signed inside and out) with this package's fields added, and pki.sgit.ai's `m1.` code is
+  the text for a sealed message
   handed over without an inbox.
 - `LaneClient`: write, list, fetch, mark processed, configure, against answers recorded from dev.send.sgraph.ai.
 - `InboxCheck` (list, fetch only when something waits, keep on disk, then mark processed), `MessageStore`,
@@ -34,7 +36,7 @@ each other, secrets included, is sealed to the recipient's key and dropped in th
 3. VoiceDebrief: its recipients become contacts; the record screen shows the inbox (the parent session's screens).
 4. Devices (the owner, via the parent): your devices by their vouching statements in `identity/devices/`, name,
    kind, device key fingerprint, last seen; remove one, which withdraws its statement. After contacts and first contact.
-5. A page on the site for `card/#sgc1…` and `sealed/#sgm1…` links, which shows what it holds and opens nothing.
+5. A page on the site for `card/#sgc1…` links (sealed messages use pki.sgit.ai's own `m/#m1…` page), which shows what it holds and opens nothing.
 
 ## Assumed, for the owner to confirm (the article's four decisions)
 
@@ -42,6 +44,16 @@ each other, secrets included, is sealed to the recipient's key and dropped in th
 2. The card is a new signed statement in pki.sgit.ai's form, compatible with its key bundle.
 3. Each person's inbox is a lane on a vault of their own.
 4. Publishing to pki.sgit.ai is optional and off by default (nothing publishes yet).
+
+## Aligned with pki.sgit.ai (14 November 2026)
+
+Messages are pki.sgit.ai's own (`message.js`): `pki.sgit.ai/message/v1`, `to` and `from` as signing fingerprints, an
+inner signature over the canonical bytes, `grant` for an access key, `expires`; handed over as its `m1.` code
+(`https://pki.sgit.ai/m/#m1…`, and its QR object for agents). SGitPeople's fields (`type`, `id`, `reply_to`,
+`card`, `secret`, `voice_note`, `vault`) ride inside the signature. A newcomer may show pki.sgit.ai's `k1.` key code
+instead of a card. Checked against `message.js` by `people-interop.yml` (Swift) and `scripts/people-interop` (Python).
+Still from the sgit app session's note, not yet done: an animated multi-frame QR for a long secret; "vouched by
+<root> / not vouched" from the register's chain with the pinned root; a raw key never shown as a QR.
 
 ## What the live server showed (14 November 2026)
 

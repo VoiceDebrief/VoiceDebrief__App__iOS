@@ -162,6 +162,7 @@ struct GlossaryView: View {
 
     var body: some View {
         Form {
+            SectionBannerRow(tab: .words)
             Section {
                 TextField("A word or name you use", text: $word)
                     .autocorrectionDisabled()

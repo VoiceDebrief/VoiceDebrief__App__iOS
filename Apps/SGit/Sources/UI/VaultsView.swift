@@ -15,8 +15,13 @@ struct VaultsView: View {
         List {
             if shelf.vaults.isEmpty {
                 Section {
+                    SGSectionHero(section: .vaults, title: "No vaults yet",
+                                  line: "Encrypted here, before anything leaves this device",
+                                  height: 200, image: "SGArt-hero")
+                        .listRowInsets(EdgeInsets())
+                }
+                Section {
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("No vaults yet").font(.headline)
                         Text("A vault is a folder of files with a history, encrypted on this device before anything leaves it. Whoever holds its key can open it; the server that stores it cannot.")
                             .foregroundStyle(.secondary)
                         Text("Add a vault somebody gave you by its key, or create one.")
@@ -84,8 +89,12 @@ struct VaultsView: View {
                     GalleryView(shelf: shelf)
                         .tracked("gallery")
                 } label: {
-                    Label("Gallery", systemImage: "square.grid.2x2")
+                    sectionRow(.gallery)
                 }
+                Button { showSettings = true } label: {
+                    sectionRow(.settings)
+                }
+                .buttonStyle(.plain)
             } footer: {
                 Text("Vaults to show somebody, each opened in the web Vault inside the app.")
             }
@@ -123,6 +132,50 @@ struct VaultsView: View {
             NavigationStack { SettingsView(shelf: shelf) }
                 .tracked("settings")
         }
+    }
+}
+
+extension VaultsView {
+    /// A part of the app as a row: its drawing as a thumbnail, its icon, name and line.
+    func sectionRow(_ section: SGSection) -> some View {
+        SGSectionRow(section: section)
+    }
+}
+
+/// A part of the app as a row: its drawing as a thumbnail, its icon, name and line. At the
+/// accessibility text sizes the thumbnail goes and every word wraps, so nothing is cut.
+struct SGSectionRow: View {
+    let section: SGSection
+    @Environment(\.dynamicTypeSize) private var typeSize
+
+    var body: some View {
+        HStack(spacing: DS.Space.s) {
+            if !typeSize.isAccessibilitySize {
+                Image(section.art)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 72, height: 54)
+                    .clipShape(RoundedRectangle(cornerRadius: DS.Radius.control, style: .continuous))
+                    .accessibilityHidden(true)
+            }
+            VStack(alignment: .leading, spacing: 2) {
+                Label {
+                    Text(section.title)
+                        .font(.body.weight(.semibold))
+                        .fixedSize(horizontal: false, vertical: true)
+                } icon: {
+                    SGSectionIcon(section: section, size: 20)
+                }
+                Text(section.line)
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .padding(.vertical, 2)
+        .contentShape(Rectangle())
+        .accessibilityElement(children: .combine)
     }
 }
 

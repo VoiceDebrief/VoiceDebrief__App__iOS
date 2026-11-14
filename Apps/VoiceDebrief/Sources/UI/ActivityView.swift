@@ -8,6 +8,7 @@ struct ActivityView: View {
 
     var body: some View {
         List {
+            SectionBannerRow(tab: .activity)
             Section {
                 LabeledContent("Last used", value: log.lastUsed?.formatted(date: .abbreviated, time: .shortened) ?? "Never")
                 LabeledContent("Events kept", value: "\(log.events.count)")
