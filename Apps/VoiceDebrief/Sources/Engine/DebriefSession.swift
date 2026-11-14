@@ -336,6 +336,15 @@ final class DebriefSession {
         started = Date()
         current.steps.append(StepRecord(name: "Debrief", outcome: .running, seconds: 0, note: ""))
         publish()
+        // A note made for someone (a contact, an agent) goes as soon as its transcript is ready: they read
+        // the transcript, and the debrief more than doubled the wait (the owner, 14 November 2026: "it is
+        // taking too long, breaking the mojo, and you don't need it").
+        if let recipient = store.note(noteId)?.pendingSend {
+            finish(&current, outcome: .degraded, since: started,
+                   note: "Not written: the note was for \(recipient.name), who reads the transcript.")
+            publish(finished: true)
+            return
+        }
         let words = DebriefPrompt.wordCount(transcript.lines)
         if words < DebriefPrompt.minimumWords {
             finish(&current, outcome: .degraded, since: started,
