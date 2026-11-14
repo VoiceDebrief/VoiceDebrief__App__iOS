@@ -18,6 +18,8 @@ struct RecordView: View {
 
     private static let bottomId = "record-bottom"
     @State private var confirmingDiscard = false
+    /// The recipient the last note was finished and sent to with one press, to say so on this screen.
+    @State private var queuedFor: String?
 
     var body: some View {
         NavigationStack(path: $path) {
@@ -122,6 +124,13 @@ struct RecordView: View {
                     Button("Dismiss") { session.clearFailure() }
                 }
             }
+            if let name = queuedFor {
+                card {
+                    Label("Your last note will be sent to \(name) as soon as it is written up. You can record the next one now.", systemImage: "paperplane.fill")
+                        .font(.callout)
+                    Button("Dismiss") { queuedFor = nil }
+                }
+            }
             if let notice = session.notice {
                 card {
                     Label(notice, systemImage: "info.circle.fill")
@@ -222,6 +231,30 @@ struct RecordView: View {
             Text(caption)
                 .font(.caption)
                 .foregroundStyle(.secondary)
+
+            // Finish and send in one press, then stay here to record the next (issue 026). Only the
+            // person's own recipients: the developer of the test build always asks first.
+            if isRecording, !RecipientStore.shared.added.isEmpty {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        ForEach(RecipientStore.shared.added) { recipient in
+                            Button {
+                                Task {
+                                    if let id = await session.stopRecording() {
+                                        session.send(noteId: id, to: recipient)
+                                        queuedFor = recipient.name
+                                    }
+                                }
+                            } label: {
+                                Label("Finish and send to \(recipient.name)", systemImage: "paperplane.fill")
+                            }
+                            .buttonStyle(.borderedProminent)
+                            .buttonBorderShape(.capsule)
+                        }
+                    }
+                    .padding(.horizontal, 16)
+                }
+            }
 
             if !isRecording {
                 Button {
@@ -333,6 +366,7 @@ struct NoteRow: View {
         var parts = [day + time]
         if let seconds = note.run.audioSeconds { parts.append(Timecode.duration(seconds: seconds)) }
         if let working { parts.append(working) } else if note.stateLine != "On this device" { parts.append(note.stateLine) }
+        if working == nil, let sent = note.sends?.last { parts.append("Sent to \(sent.to)") }
         return parts.joined(separator: " · ")
     }
 }
