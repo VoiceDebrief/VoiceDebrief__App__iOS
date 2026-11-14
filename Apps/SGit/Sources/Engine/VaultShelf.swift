@@ -56,7 +56,7 @@ enum VaultShelfError: LocalizedError {
 
     var errorDescription: String? {
         switch self {
-        case .noToken: return "The server takes changes only from people it knows, so writing to it needs an access key. Add one in Settings."
+        case .noToken: return "The server takes changes only from people it knows, so adding to this vault needs an access key as well as the vault key. Ask whoever sent you the vault, then enter it in Settings."
         case .readOnly: return "This is a read key: it can open the vault but not change it."
         case .alreadyThere: return "That vault is already in the list."
         case .nameTaken(let name): return "There is already a file called \(name) in this folder."

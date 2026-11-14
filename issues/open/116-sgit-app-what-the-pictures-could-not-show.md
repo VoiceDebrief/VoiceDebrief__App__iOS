@@ -23,6 +23,6 @@ A second round should follow the fixes for issues 110 to 115, with the same thre
 **Left:** the menus open; a failed upload and its retry; a video opened; the errors; dark and the largest text;
 round 2 of the review.
 
-**Written after that (14 November 2026, not yet compiled):** an eighteenth picture, `vault.adding-refused`: a
+**Done after that (14 November 2026, green on `d2cb5ce` and looked at):** an eighteenth picture, `vault.adding-refused`: a
 file added by somebody with the vault key and no access key, refused by the app's own check, with what it says
 and "Try again" (the state issue 110 is about).
