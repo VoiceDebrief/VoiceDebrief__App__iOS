@@ -4,6 +4,7 @@ Every release of this repository. Every push to `dev` is a release: CI works out
 
 | Version | Date | What changed |
 |---|---|---|
+| next | 14 November 2026 | The sgit app plays videos: a play mark on each video, a Play button that decrypts and plays it with sound (even on silent), full screen, and a picture from the video on its tile once it has been played |
 | next | 14 November 2026 | The sgit app has a Guide on its home list: what is new in each version, a guide with numbered pictures for each part (getting started, inside a vault, sharing, secrets), and every idea with where it stands |
 | v0.1.63 | 14 November 2026 | "Send this now" from the owner's test of 0.1.55: it took two tries. The pause before it acts is no longer restarted each time the recogniser repeats or settles the same words; only words that undo it cancel it. |
 | v0.1.62 | 14 November 2026 | The sgit app becomes a secrets manager, first part. Secrets on the home list: passwords, device passcodes, Wi-Fi, cards, tokens and keys, each kept as one encrypted file in a vault, hidden values behind Face ID, a strong-password maker. Questions for you: the people building the app ask, and you answer by choosing, typing or speaking. The design, with drawings, is on the site. Your iPhone, iPad and Mac now open the same vaults with nothing to set up: vault keys and the access key are kept in iCloud Keychain (a switch in Settings), and vaults from your other devices appear when the app comes to the front. Sharing with people comes next |

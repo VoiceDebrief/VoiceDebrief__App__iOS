@@ -29,7 +29,7 @@
  ],
  "counts": {
   "seen-working": 27,
-  "built-untried": 71,
+  "built-untried": 72,
   "in-progress": 37,
   "proposed": 43,
   "parked": 6
@@ -3848,6 +3848,26 @@
    "places": [
     "SGit Vaults: a vault",
     "SGit Vaults: Share"
+   ],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
+   "id": "sgit-feature-playing-a-video",
+   "kind": "feature",
+   "app": "SGit Vaults",
+   "title": "Playing a video",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "UI/FileView.swift, UI/VaultView.swift: a play mark on every video tile; a video's screen opens on a Play button that decrypts it (with progress) and plays it with sound even on silent, with a full-screen button; a frame of the video becomes its tile picture once it has been decrypted, or straight away for videos up to 25 MB. Asked for by the owner on 14 November 2026 after adding videos from his...",
+   "detail": [
+    "UI/FileView.swift, UI/VaultView.swift: a play mark on every video tile; a video's screen opens on a Play button that decrypts it (with progress) and plays it with sound even on silent, with a full-screen button; a frame of the video becomes its tile picture once it has been decrypted, or straight away for videos up to 25 MB. Asked for by the owner on 14 November 2026 after adding videos from his iPhone",
+    "Not yet compiled when written. A video plays only once it is wholly decrypted to this device: 112 MB takes a few seconds on the device, longer from the server; playing while it downloads is not built"
+   ],
+   "places": [
+    "SGit Vaults: a vault"
    ],
    "issues": [],
    "url": "https://ios.app.voicedebrief.ai/sgit-app/built/index.html",
