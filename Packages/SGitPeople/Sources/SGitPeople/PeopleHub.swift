@@ -224,7 +224,12 @@ public final class PeopleHub {
         defer { checking = false }
         do {
             let new = try await InboxCheck(client: client).run(keys: inbox, me: identity, contacts: book.bundles, store: store)
-            for message in new { book.absorbCard(from: message, myFingerprint: identity.bundle.fingerprint) }
+            for message in new {
+                book.absorbCard(from: message, myFingerprint: identity.bundle.fingerprint)
+                if message.trust == .contact || message.trust == .cardInside, let signer = message.signer {
+                    book.recordHeard(from: signer, at: message.receivedAt)
+                }
+            }
             problem = nil
             lastCheck = Date()
             schedule.note(.checked(newMessages: new.count), at: Date())
