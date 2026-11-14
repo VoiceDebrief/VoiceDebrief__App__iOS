@@ -1730,7 +1730,9 @@
     "SGit Vaults: History",
     "SGit Vaults: Share"
    ],
-   "versions": [],
+   "versions": [
+    "v0.1.80"
+   ],
    "features": [
     "The Lab, experiment L03: a game played by voice"
    ],
@@ -3277,7 +3279,9 @@
    ],
    "url": "https://ios.app.voicedebrief.ai/built/index.html",
    "source": "The reality file",
-   "versions": []
+   "versions": [
+    "v0.1.80"
+   ]
   },
   {
    "id": "feature.the.lab.experiment.l02.the.control.centre",
