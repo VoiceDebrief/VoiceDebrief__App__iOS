@@ -120,10 +120,20 @@ final class NoteStore {
         write(notes[index])
     }
 
-    /// Records that a note was sent to a recipient.
+    /// Records that a note was sent to a recipient; the send is no longer waiting and nothing failed.
     func recordSend(_ id: String, to name: String, at date: Date = Date()) {
         guard let index = notes.firstIndex(where: { $0.id == id }) else { return }
         notes[index].sends = (notes[index].sends ?? []) + [NoteSend(to: name, at: date)]
+        notes[index].pendingSend = nil
+        notes[index].sendProblem = nil
+        write(notes[index])
+    }
+
+    /// A send that is waiting (or nil once it is done or cancelled), and why the last one failed.
+    func setPendingSend(_ id: String, _ recipient: Recipient?, problem: String? = nil) {
+        guard let index = notes.firstIndex(where: { $0.id == id }) else { return }
+        notes[index].pendingSend = recipient
+        notes[index].sendProblem = problem
         write(notes[index])
     }
 

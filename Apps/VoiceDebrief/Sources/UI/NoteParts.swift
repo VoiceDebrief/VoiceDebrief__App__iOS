@@ -196,9 +196,9 @@ struct PlayerSection: View {
 struct VersionBadge: View {
     var body: some View {
         Link(destination: AppInfo.notes()) {
-            Label(AppInfo.shortVersion(), systemImage: "sparkles")
-                .labelStyle(.titleAndIcon)
+            Text(AppInfo.shortVersion())
                 .font(.caption.weight(.semibold).monospacedDigit())
+                .fixedSize()
         }
         .accessibilityLabel("Version \(AppInfo.versionLine()). Opens what is new in it.")
     }

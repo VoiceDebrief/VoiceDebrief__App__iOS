@@ -54,7 +54,7 @@ enum Roadmap {
               status: .testing),
         Stage(id: "keep",
               title: "Keeping a debrief in a vault",
-              detail: "Create a vault, save a debrief into it as one signed commit, and look inside. The vault's key is kept on this device only.",
+              detail: "Create a vault, save a debrief into it as one signed commit, and look inside. Vault keys are kept in iCloud Keychain by default, so your other devices can open your vaults; a switch keeps them on this device only.",
               status: .testing),
         Stage(id: "credit",
               title: "Credit that counts down",

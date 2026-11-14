@@ -1,5 +1,7 @@
 # 044: Two symbols with no words at the top of the first screen
 
+**Built (untried on a device): the counter and the badge are text ("Test credit £4.85", "v0.1.x"), not labels that the bar shows as symbols; Discard is on the right while recording, the language menu hidden then.**
+
 **Status:** open. From review round 3 (14 November 2026, `website/reviews/round-3/index.md`). **Owner:** the main session (`RecordView`, `LibraryView`, `VersionBadge`); the credit session (`CreditCounter`).
 
 New finding 4. Screens `record`, `record.recording`, `library`. Found by all five users.

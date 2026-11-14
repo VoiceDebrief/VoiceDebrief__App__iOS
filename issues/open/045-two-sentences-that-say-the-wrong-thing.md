@@ -1,5 +1,7 @@
 # 045: Two sentences that say the wrong thing
 
+**Fixed: Settings says an interrupted recording is always kept and goes to the vault once transcribed; the status screen says vault keys are in iCloud Keychain by default.**
+
 **Status:** open. From review round 3 (14 November 2026, `website/reviews/round-3/index.md`). **Owner:** the main session (`SettingsView`, `Roadmap`); the vaults session for the wording about keys.
 
 New findings 5 and 6. Screens `settings`, `about-end`.

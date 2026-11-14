@@ -1,5 +1,7 @@
 # 043: A send that can be seen, stopped and not lost
 
+**Built (untried on a device): pendingSend and sendProblem kept on the note on disk; waiting sends resumed at launch and when the note is ready; Do not send on the card; rows say waiting, not sent or sent with a time; the briefing says could not be sent; an already-sent recipient asks first.**
+
 **Status:** open. From review round 3 (14 November 2026, `website/reviews/round-3/index.md`). **Owner:** the main session (`RecordView`, `SendBar`, `DebriefSession`, `NoteRow`, `Briefing`).
 
 New findings 1, 2, 3, 7 and 13. Screens `record.recording`, `record.working`, `library`, `record-briefing`,
