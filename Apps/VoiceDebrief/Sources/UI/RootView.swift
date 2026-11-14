@@ -101,6 +101,8 @@ struct RootView: View {
             }
             // Lab L02 may start a recording for a named contact, only after Do it (issue 047). The match
             // is exact, ignoring case, with "claude" for Claude (developer); anything else is refused.
+            // The Lab will not listen while a voice note records (it would leave the note silent).
+            LabActionHost.shared.isRecording = { [session] in session.recordingNote != nil }
             LabActionHost.shared.startRecording = { [session] spoken in
                 let wanted = spoken.trimmingCharacters(in: .whitespaces).lowercased()
                 let all = RecipientStore.shared.all
