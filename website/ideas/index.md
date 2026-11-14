@@ -7,7 +7,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | Seen working | Built, and a run proved it: CI, a device or a server. | 27 |
 | Built, untried | In the app or the repository, but not yet proven by a run on a device. | 61 |
 | In progress | Begun: part of it is built or a release has touched it. | 33 |
-| Proposed | Asked for or described; nothing of it is built. | 36 |
+| Proposed | Asked for or described; nothing of it is built. | 37 |
 | Parked | Waiting: on the owner, on Apple, or scheduled for later. | 6 |
 
 ## Seen working
@@ -156,6 +156,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | Several vaults and several lanes, by name (build C of the design) | Issue | VoiceDebrief |   |   | [014](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/014-vaults-and-lanes-register.md) |
 | Show the flow as it happens | Issue | VoiceDebrief |   |   | [020](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/020-show-the-flow.md) |
 | Analyse while recording: a semantic graph, a title, pictures | Issue | VoiceDebrief |   |   | [021](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/021-analysis-while-recording.md) |
+| Every empty screen says what to do next | Issue | VoiceDebrief | Settings: Identity; Settings: Recipients; The repository: pictures of every screen |   | [046](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/046-an-empty-state-that-says-what-to-do-next.md) |
 | Prove the app's large-file exchange against the live server | Issue | SGit Vaults | SGit Vaults: a vault |   | [102](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/102-sgit-app-live-server.md) |
 | "Send to vault" from Photos and Files (a share extension) | Issue | SGit Vaults | SGit Vaults: a vault; SGit Vaults: Share |   | [105](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/105-sgit-app-share-extension.md) |
 | A viewer for chat-archive results, as a separate app | Issue | SGit Vaults | SGit Vaults: Gallery |   | [106](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/106-chat-archive-viewer.md) |
