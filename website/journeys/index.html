@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Journeys through VoiceDebrief and SGit Vaults: the owner, a new tester, a teammate</title>
+<meta name="description" content="Three people arriving at the apps for different reasons: what each wants, the way through as the apps are today, where they get lost, and what the Guide does about it.">
+<link rel="canonical" href="https://ios.app.voicedebrief.ai/journeys/index.html">
+<meta property="og:url" content="https://ios.app.voicedebrief.ai/journeys/index.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="VoiceDebrief for iOS">
+<meta property="og:title" content="Journeys through VoiceDebrief and SGit Vaults: the owner, a new tester, a teammate">
+<meta property="og:description" content="Three people arriving at the apps for different reasons: what each wants, the way through as the apps are today, where they get lost, and what the Guide does about it.">
+<link rel="alternate" type="text/markdown" href="index.md" title="This page as markdown">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/vd-tokens.css">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+
+<nav class="site"><div class="row">
+  <a class="brand" href="../index.html">Voice<em>Debrief</em> <span>iOS</span></a>
+  <span class="beta" title="In development: there is nothing to install yet">IN DEVELOPMENT</span>
+  <a class="parent" href="https://voicedebrief.ai" title="A VoiceDebrief product">&#8599; part of <b>voicedebrief.ai</b></a>
+  <a class="ver" href="../versions/index.html" title="Release history">dev</a>
+  <a class="nl" href="../built/index.html">Built</a>
+  <a class="nl" href="../architecture/index.html">How it works</a>
+  <a class="nl" href="../design/index.html">Design</a>
+  <a class="nl" href="../plan/index.html">Plan</a>
+  <a class="nl" href="../articles/index.html">Articles</a>
+  <a class="nl" href="../develop/index.html">Build</a>
+  <a class="nl" href="../ideas/index.html">Ideas</a>
+  <a class="nl" href="../guides/index.html">Guides</a>
+  <a class="gh" href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">&#9733; GitHub</a>
+</div></nav>
+
+<main class="doc">
+<div class="crumb"><a href="../index.html">VoiceDebrief iOS</a> / journeys</div>
+<h1 id="journeys-three-people-from-opening-the-app-to-knowing-where-things-are">Journeys: three people, from opening the app to knowing where things are</h1>
+<p>Three people arrive at the apps for different reasons. For each: what they want, the way through as the apps are today, where they get lost, and what the Guide does about it. Written by the Sherpa session, 14 November 2026. What exists is the <a href="../built/index.html">reality file</a>; where each idea stands is <a href="../ideas/index.html">Ideas</a>; how each screen works is in the <a href="../guides/index.html">guides</a>.</p>
+<h2 id="1-the-owner-after-a-night-of-builds">1. The owner, after a night of builds</h2>
+<p><strong>Wants:</strong> to wake up, open the app and know what was made overnight, what to try, and where each of the ideas spoken into voice notes now stands. In the owner's words: &quot;I wake up and I go, okay, what has been created? I just do not know where to go.&quot;</p>
+<p><strong>The way through, today:</strong></p>
+<ol>
+<li>Install the new build from TestFlight and open it. The Record tab shows the briefing card: &quot;Updated to this version: see what is new&quot;, and what happened to the notes since the last opening (<a href="../guides/briefing/index.html">guide</a>).</li>
+<li>Open <strong>Guide</strong> (written; reachable once it has its place in the sidebar), then <strong>What is new</strong>. Every version since the last look is marked New, newest first, each with its notes and a link to its page with pictures of what changed.</li>
+<li>Back in Guide, the status counts: seen working, built untried, in progress, proposed, parked. <strong>Built, untried</strong> is the morning's list: things that exist and wait for a person on a device.</li>
+<li>Search <strong>Ideas</strong> for a word from a voice note (&quot;inbox&quot;, &quot;QR&quot;, &quot;speaker&quot;): each idea says its status, the sentence that decided it, where it is in the app and which versions named it.</li>
+<li>Open the guide for a feature to find the button: a picture of the screen with numbered arrows.</li>
+</ol>
+<p><strong>Where it can still go wrong:</strong> the statuses are only as current as the issues and the reality file when the build was made; a session that builds something and does not update its issue leaves the idea a step behind. The rule is the repository's own: the reality file is updated in the same commit as the code.</p>
+<h2 id="2-a-new-tester-sent-a-testflight-invitation">2. A new tester, sent a TestFlight invitation</h2>
+<p><strong>Wants:</strong> to know in a minute what the app does, try the one thing it is for, and not lose anything.</p>
+<p><strong>The way through, today:</strong></p>
+<ol>
+<li>First launch: the welcome (written, and shown once it is attached to the app's shell) says what the app does (a voice note in, a transcript and a short debrief out, on this device), what to try first (record ten seconds and finish) and where things are (four tabs and the Guide).</li>
+<li>Choose the language spoken, if it is not the one shown (the globe on the Record tab, or Settings).</li>
+<li>Tap the record button, speak, tap again. The note opens and fills in: transcript, then the debrief (<a href="../guides/record/index.html">guide</a>).</li>
+<li>Open the note: play it, read the debrief, share the recording (<a href="../guides/note/index.html">guide</a>).</li>
+<li>Optional, for later: a vault, a recipient, the identity. Each has a guide, and each idea's status says whether anyone has seen it work.</li>
+</ol>
+<p><strong>Where they get lost:</strong> the top bar's balance (test credit, no money is taken), the word vault before anyone has explained it (issue 037), and sending to the developer, which is built into a test build. The welcome names the first two; the recipients guide names the third.</p>
+<h2 id="3-a-teammate-who-was-sent-a-vault">3. A teammate who was sent a vault</h2>
+<p><strong>Wants:</strong> to open what a colleague shared and, often, to add to it. They were sent one string and have never heard of sgit.</p>
+<p><strong>The way through, today:</strong></p>
+<ol>
+<li>Install SGit Vaults, paste or scan what they were sent: the vault opens and can be read.</li>
+<li>Adding a photo to a vault that lives on a server also needs an access key, separate from the vault key. The app says so when a write is refused, and who to ask (v0.1.45). How a teammate should get that right is the owner's decision (<a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/110-sgit-app-a-teammate-cannot-add-without-an-access-key.md">issue 110</a>, parked).</li>
+<li>Whether a file has arrived is said on every folder (issue 111, in progress).</li>
+</ol>
+<p><strong>Where they get lost:</strong> at the first photo, without an access key; and at the word key, of which there are four. The sgit app's own <a href="../sgit-app/reviews/round-1/index.html">review</a> found both. The Guide for SGit Vaults is the next piece of this work: the same Ideas list already covers its issues (filter by app).</p>
+<h2 id="what-the-guide-is-for-in-one-line-each">What the Guide is for, in one line each</h2>
+<div class="tablewrap"><table>
+<thead><tr><th>Who</th><th>First screen</th><th>Then</th></tr></thead>
+<tbody>
+<tr><td>The owner</td><td>Guide, What is new</td><td>Ideas, filtered to built untried</td></tr>
+<tr><td>A new tester</td><td>The welcome</td><td>The record guide</td></tr>
+<tr><td>A teammate sent a vault</td><td>SGit Vaults' own first screen</td><td>Ideas, filtered to SGit Vaults</td></tr>
+</tbody></table></div>
+</main>
+
+<footer class="site"><div class="cols">
+  <div>
+    <div class="brandline">Voice<em>Debrief</em> <span>iOS</span></div>
+    <p>The VoiceDebrief transcript and debrief as a native iPhone and iPad app, on Apple's own models, with the results in a vault you own. In development: there is nothing to install yet. Content CC BY 4.0; code Apache 2.0.</p>
+    <p class="partnote">This site is static and has no analytics.</p>
+    <p class="verline">site dev · <a href="index.md">this page as markdown</a> · <a href="../llms.txt">llms.txt</a></p>
+  </div>
+  <div>
+    <h4>The app</h4>
+    <a href="../built/index.html">What is built</a>
+    <a href="../plan/index.html">The plan</a>
+    <a href="../develop/index.html">Build and test</a>
+    <a href="../versions/index.html">Release history</a>
+    <a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">GitHub</a>
+  </div>
+  <div>
+    <h4>VoiceDebrief</h4>
+    <a href="https://voicedebrief.ai">voicedebrief.ai</a>
+    <a href="https://meetscribe.chrome-extension.voicedebrief.ai">MeetScribe for Google Meet</a>
+  </div>
+  <div>
+    <h4>Built on</h4>
+    <a href="https://sgit.ai">sgit.ai</a>
+    <a href="https://pki.sgit.ai">pki.sgit.ai</a>
+    <a href="https://sgit.ai/security/index.html">The vault security model</a>
+  </div>
+</div></footer>
+</body>
+</html>
