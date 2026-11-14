@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>What changed in VoiceDebrief for iOS v0.1.29</title>
+<meta name="description" content="The release notes for v0.1.29: what changed in the app and the repository.">
+<link rel="canonical" href="https://ios.app.voicedebrief.ai/versions/v0.1.29/index.html">
+<meta property="og:url" content="https://ios.app.voicedebrief.ai/versions/v0.1.29/index.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="VoiceDebrief for iOS">
+<meta property="og:title" content="What changed in VoiceDebrief for iOS v0.1.29">
+<meta property="og:description" content="The release notes for v0.1.29: what changed in the app and the repository.">
+<link rel="alternate" type="text/markdown" href="index.md" title="This page as markdown">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/vd-tokens.css">
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+
+<nav class="site"><div class="row">
+  <a class="brand" href="../../index.html">Voice<em>Debrief</em> <span>iOS</span></a>
+  <span class="beta" title="In development: there is nothing to install yet">IN DEVELOPMENT</span>
+  <a class="parent" href="https://voicedebrief.ai" title="A VoiceDebrief product">&#8599; part of <b>voicedebrief.ai</b></a>
+  <a class="ver" href="../../versions/index.html" title="Release history">dev</a>
+  <a class="nl" href="../../built/index.html">Built</a>
+  <a class="nl" href="../../architecture/index.html">How it works</a>
+  <a class="nl" href="../../design/index.html">Design</a>
+  <a class="nl" href="../../plan/index.html">Plan</a>
+  <a class="nl" href="../../articles/index.html">Articles</a>
+  <a class="nl" href="../../develop/index.html">Build</a>
+  <a class="gh" href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">&#9733; GitHub</a>
+</div></nav>
+
+<main class="doc">
+<div class="crumb"><a href="../../index.html">VoiceDebrief iOS</a> / versions / v0.1.29</div>
+<h1 id="what-changed-in-v0-1-29">What changed in v0.1.29</h1>
+<p>Released 14 November 2026. Every push to the repository's <code>dev</code> branch is a release; this page was written by CI from the notes that came with it. <a href="../index.html">Every version</a> · <a href="../../built/index.html">What is built</a></p>
+<p>A version badge at the top of the record and library screens, beside the balance, opens this version's own page of what changed. CI now writes that page for every release from the notes headed <code>next</code>.</p>
+<p>After review round 2: a recording can be shared or saved to Files from its note (039); deleting a note, throwing away a recording and sending to the developer ask with an alert that always shows how to say no (040); Diagnostics no longer offers a lane link that nothing used (041); the balance reads &quot;Test credit&quot; and says recording never stops (032); the send bar is shorter; a time reads 00:03, not 0:03; a note never transcribed offers &quot;Transcribe and debrief&quot;.</p>
+<p>Review round 1, the rest of this session's findings: a recording can start while the last note is still being written up; notes wait their turn and say so (issue 030). States say what to do: an interrupted note says to open it and run it again, a note with no debrief says why, an untranscribed note is no longer titled Recording, and the record screen promises it saves as you speak before you start (issue 036).</p>
+<p>After the first review by synthetic users (round 1): a note opens with its one sentence as the heading and the date beneath; the clean text experiment moves below the transcript; every note with audio has a player, and tapping a transcript line plays from there; the send bar appears only when there is something to send, lists your own recipients first, names the built-in one as the developer of this test build, and says what goes; lists hold a readable width on iPad; Recent says the day; a cut title ends with an ellipsis; the toolbar says the language rather than its code; one line, not 1 lines.</p>
+<p>Pictures of every screen (issue 016). A debug build launched with <code>-VDSampleData</code> is given invented notes in a temporary folder, a vault book in memory with one invented vault in the same folder, and no network, never the real library or Keychain, and <code>-VDScreen</code> opens a named screen; none of it is compiled into a release build. A UI test target takes one screenshot per screen, and a new workflow, <code>screens.yml</code>, runs it on an iPhone and an iPad simulator in light and dark and keeps the PNGs, with a contact sheet per set, as an artifact named by commit. <a href="../../develop/index.html">Build, test and release</a> says how to fetch them from a Linux container. Nothing a user sees has changed.</p>
+<p>Identity (issues 005 and 018). <code>PKIKit</code>: the sgit key bundle in Swift (RSA-OAEP 4096 and ECDSA P-256, fingerprints, PKCS#8, keys under a passphrase, the <code>k1</code> key code, detached signatures, statements, the signed envelope), proven in a new workflow where <code>sgit pki</code> and pki.sgit.ai's own <code>keys.js</code> read what Swift makes and Swift reads what they make. In the app, under Settings, an Identity screen: a key pair that says who you are, kept in iCloud Keychain so it reaches your other devices; a second key that says which device, kept in the Secure Enclave where there is one and ended by deleting the app; a statement, signed by the first and kept in a vault, that vouches for the second; and, optionally, a delegation from an identity at pki.sgit.ai, with the answer pasted back in. In test: none of it has run on a device, and debriefs are not yet signed by the device key.</p>
+<p>Pictures of the screens are added to this page when the screens workflow has taken them for this version.</p>
+</main>
+
+<footer class="site"><div class="cols">
+  <div>
+    <div class="brandline">Voice<em>Debrief</em> <span>iOS</span></div>
+    <p>The VoiceDebrief transcript and debrief as a native iPhone and iPad app, on Apple's own models, with the results in a vault you own. In development: there is nothing to install yet. Content CC BY 4.0; code Apache 2.0.</p>
+    <p class="partnote">This site is static and has no analytics.</p>
+    <p class="verline">site dev · <a href="index.md">this page as markdown</a> · <a href="../../llms.txt">llms.txt</a></p>
+  </div>
+  <div>
+    <h4>The app</h4>
+    <a href="../../built/index.html">What is built</a>
+    <a href="../../plan/index.html">The plan</a>
+    <a href="../../develop/index.html">Build and test</a>
+    <a href="../../versions/index.html">Release history</a>
+    <a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">GitHub</a>
+  </div>
+  <div>
+    <h4>VoiceDebrief</h4>
+    <a href="https://voicedebrief.ai">voicedebrief.ai</a>
+    <a href="https://meetscribe.chrome-extension.voicedebrief.ai">MeetScribe for Google Meet</a>
+  </div>
+  <div>
+    <h4>Built on</h4>
+    <a href="https://sgit.ai">sgit.ai</a>
+    <a href="https://pki.sgit.ai">pki.sgit.ai</a>
+    <a href="https://sgit.ai/security/index.html">The vault security model</a>
+  </div>
+</div></footer>
+</body>
+</html>
