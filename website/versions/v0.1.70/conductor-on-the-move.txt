@@ -1,0 +1,17 @@
++----------------------------------------------------------------------+
+| VOICEDEBRIEF                                             v0.1.70     |
+| 14 November 2026                                                     |
++----------------------------------------------------------------------+
+| SENDING ON THE MOVE, AND CLAUDE'S REPLIES                            |
+|                                                                      |
+| * A failed send tries 5 times, and again when iOS says you are back  |
+| * A big green "Sent to ... at ..." once it has gone                  |
+| * Notes for someone go straight after the transcript (no debrief)    |
+| * Paste a screenshot or choose a picture, add a line, Send           |
+| * Claude's replies under each note, from your agents vault           |
+| * Calmer level bars, in the app's colour                             |
+|                                                                      |
+| WHERE    Record screen: picture buttons, bubbles in the top bar      |
+| TRY      Agents > give a vault to Claude, then open the bubbles      |
+| NOT YET  Replies in a real inbox (sealed to your key)                |
++----------------------------------------------------------------------+

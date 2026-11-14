@@ -80,7 +80,7 @@ struct RootView: View {
         .welcomeOnFirstLaunch()
         // Talk to Claude from every screen but Record, which has its own control.
         .overlay(alignment: .bottomTrailing) {
-            if tab != .record { TalkButton(session: session) }
+            if tab != .record { TalkButton(session: session, book: book) }
         }
         #if DEBUG
         .overlay(alignment: .topLeading) { LaunchMarker() }

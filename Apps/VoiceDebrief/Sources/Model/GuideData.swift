@@ -85,13 +85,35 @@ struct VersionEntry: Codable, Hashable, Identifiable, Sendable {
     let hasPage: Bool
     let pictures: Int
     let issues: [String]
+    /// Release cards: ASCII boxes at most 72 columns wide (website/admin/cards.mjs).
+    var art: [String]? = nil
     var id: String { version }
+}
+
+/// Filling a release card's placeholders, as website/admin/cards.mjs does at release: a line that ends in
+/// a box edge keeps the edge in its column.
+enum ReleaseCard {
+    static func fill(_ text: String, _ values: [String: String]) -> String {
+        text.components(separatedBy: "\n").map { line in
+            var out = line
+            for (k, v) in values { out = out.replacingOccurrences(of: "{{\(k)}}", with: v) }
+            let trimmedLine = line.replacingOccurrences(of: #"\s+$"#, with: "", options: .regularExpression)
+            guard out != line, let last = trimmedLine.last, last == "|" || last == "+" else { return out }
+            let edge = trimmedLine.count - 1
+            let trimmedOut = out.replacingOccurrences(of: #"\s+$"#, with: "", options: .regularExpression)
+            let body = String(trimmedOut.dropLast()).replacingOccurrences(of: #"\s+$"#, with: "", options: .regularExpression)
+            guard body.count < edge else { return out }
+            return body + String(repeating: " ", count: edge - body.count) + String(last)
+        }.joined(separator: "\n")
+    }
 }
 
 struct VersionHistory: Codable, Sendable {
     /// Notes of a build that had no number yet when it was made: the running build's, if it is not listed.
     let next: [String]
     let versions: [VersionEntry]
+    /// Release cards for the running build, placeholders unfilled.
+    var nextArt: [String]? = nil
 
     static let resource = "vd-versions"
 
@@ -105,8 +127,9 @@ struct VersionHistory: Codable, Sendable {
     /// build was written before the build had its number.
     func all(current: String) -> [VersionEntry] {
         guard !next.isEmpty, !versions.contains(where: { $0.version == current }) else { return versions }
+        let art = (nextArt ?? []).map { ReleaseCard.fill($0, ["version": current, "date": "this build"]) }
         let own = VersionEntry(version: current, date: "", notes: next, url: AppInfo.notes(for: current).absoluteString,
-                               hasPage: true, pictures: 0, issues: [])
+                               hasPage: true, pictures: 0, issues: [], art: art)
         return [own] + versions
     }
 

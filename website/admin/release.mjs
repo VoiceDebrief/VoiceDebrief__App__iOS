@@ -3,8 +3,11 @@
 // 1. The rows headed `next` in the release history become rows of this version.
 // 2. This version gets its own page, versions/<version>/index.md, with what changed. The app's version
 //    badge opens that page, so every released version has one, even when no notes were written.
-// 3. The site is rebuilt, so the committed pages stay current.
-import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
+// 3. The release cards in versions/next/ (ASCII boxes, see cards.mjs) move into versions/<version>/, with
+//    {{version}} and {{date}} filled in, and are added to the version's page. None is fine.
+// 4. The site is rebuilt, so the committed pages stay current. Run twice, it changes nothing the second time.
+import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync, unlinkSync } from 'node:fs';
+import { fill } from './cards.mjs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
@@ -43,5 +46,20 @@ ${body}
 Pictures of the screens are added to this page when the screens workflow has taken them for this version.
 `);
 }
+// 3. release cards
+const nextDir = join(SITE, 'versions/next');
+const cards = existsSync(nextDir) ? readdirSync(nextDir).filter((f) => f.endsWith('.txt')).sort() : [];
+for (const f of cards) {
+  const text = fill(readFileSync(join(nextDir, f), 'utf8'), { version, date });
+  writeFileSync(join(SITE, 'versions', version, f), text);
+  unlinkSync(join(nextDir, f));
+}
+const versionCards = readdirSync(join(SITE, 'versions', version)).filter((f) => f.endsWith('.txt')).sort();
+let pageText = readFileSync(page, 'utf8');
+for (const f of versionCards) {
+  const text = readFileSync(join(SITE, 'versions', version, f), 'utf8').replace(/\s+$/, '');
+  if (!pageText.includes(text)) pageText = pageText.replace(/\s*$/, `\n\n\`\`\`text\n${text}\n\`\`\`\n`);
+}
+writeFileSync(page, pageText);
 execFileSync(process.execPath, [join(SITE, 'admin/build.mjs')], { stdio: 'inherit' });
-console.log(`${version}: ${notes.length} note(s) moved; page versions/${version}/`);
+console.log(`${version}: ${notes.length} note(s) and ${cards.length} card(s) moved; page versions/${version}/`);

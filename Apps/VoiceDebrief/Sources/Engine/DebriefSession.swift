@@ -20,6 +20,8 @@ final class DebriefSession {
         case idle
         case sending(Int, Int)
         case sent(Int)
+        /// A try failed; the next is at `next` (sooner if the network comes back).
+        case retrying(attempt: Int, of: Int, next: Date, why: String)
         case failed(String)
     }
 
@@ -174,9 +176,19 @@ final class DebriefSession {
         }
     }
 
+    /// The level display, calmer (the owner, twice: too sensitive, "very noisy"): room noise below a small
+    /// threshold shows as nothing, a rise is followed half way per sample and a fall a fifth of the way, so
+    /// the bars move with the voice rather than with every sample.
+    nonisolated static func smoothed(previous: Double, next: Double) -> Double {
+        let target = next < 0.06 ? 0 : next
+        let rate = target > previous ? 0.5 : 0.2
+        let value = previous + (target - previous) * rate
+        return value < 0.01 ? 0 : value
+    }
+
     private func pushLevel() {
         guard recordingSince != nil else { return }
-        levels.append(recorder.level())
+        levels.append(Self.smoothed(previous: levels.last ?? 0, next: recorder.level()))
         if levels.count > Self.levelCount { levels.removeFirst(levels.count - Self.levelCount) }
     }
 
@@ -324,6 +336,15 @@ final class DebriefSession {
         started = Date()
         current.steps.append(StepRecord(name: "Debrief", outcome: .running, seconds: 0, note: ""))
         publish()
+        // A note made for someone (a contact, an agent) goes as soon as its transcript is ready: they read
+        // the transcript, and the debrief more than doubled the wait (the owner, 14 November 2026: "it is
+        // taking too long, breaking the mojo, and you don't need it").
+        if let recipient = store.note(noteId)?.pendingSend {
+            finish(&current, outcome: .degraded, since: started,
+                   note: "Not written: the note was for \(recipient.name), who reads the transcript.")
+            publish(finished: true)
+            return
+        }
         let words = DebriefPrompt.wordCount(transcript.lines)
         if words < DebriefPrompt.minimumWords {
             finish(&current, outcome: .degraded, since: started,
@@ -465,6 +486,15 @@ final class DebriefSession {
     }
 
     private var outbox: [(noteId: String, lane: DeveloperLane, name: String)] = []
+    private var watchingNetwork = false
+    private var tryNowAsked = false
+
+    /// While a send waits for its next try: try now instead. After the last try has failed: send again.
+    func tryAgainNow(_ noteId: String) {
+        if case .retrying = sharing(for: noteId) { tryNowAsked = true; return }
+        guard let recipient = store.note(noteId)?.pendingSend else { return }
+        send(noteId: noteId, to: recipient)
+    }
     private var draining = false
 
     /// Who is being sent to over the network right now, for the screen that shows where work happens.
@@ -475,26 +505,59 @@ final class DebriefSession {
         sendingTo = name.isEmpty ? "lane \(lane.vault)" : name
         defer { sendingTo = nil }
         sharingNoteId = noteId
-        sharing = .sending(0, 0)
-        do {
-            let audio = try Data(contentsOf: url)
-            let messages = try DeveloperLane.messages(audio: audio, audioName: url.lastPathComponent, run: note.run, clean: note.clean,
-                                                      noteId: noteId, app: AppInfo.versionLine(), at: Date())
-            try await lane.send(messages) { done, total in
-                Task { @MainActor [weak self] in self?.sharing = .sending(done, total) }
+        // Up to five tries, further apart each time, and at once when the network comes back: a send made
+        // while driving through poor signal goes when the signal returns (the owner, 14 November 2026).
+        var attempt = 1
+        while true {
+            sharing = .sending(0, 0)
+            do {
+                let audio = try Data(contentsOf: url)
+                let messages = try DeveloperLane.messages(audio: audio, audioName: url.lastPathComponent, run: note.run, clean: note.clean,
+                                                          noteId: noteId, app: AppInfo.versionLine(), at: Date())
+                try await lane.send(messages) { done, total in
+                    Task { @MainActor [weak self] in self?.sharing = .sending(done, total) }
+                }
+                sharing = .sent(messages.count)
+                store.recordSend(noteId, to: name.isEmpty ? "lane \(lane.vault)" : name)
+                CreditLedger.shared.charge(.send, noteId: noteId)
+                UsageLog.shared.action("send.sent.try\(attempt)")
+                return
+            } catch {
+                var why = error.localizedDescription
+                if why.hasSuffix(".") { why.removeLast() }
+                guard let wait = SendRetry.wait(before: attempt + 1), store.note(noteId)?.pendingSend != nil else {
+                    let problem = attempt > 1 ? "not sent after \(attempt) tries (\(why))" : why
+                    sharing = .failed(problem)
+                    // Kept on the note, so the row and the briefing can say it did not go; it goes again
+                    // when the network next comes back or the app next opens.
+                    store.setPendingSend(noteId, store.note(noteId)?.pendingSend, problem: problem)
+                    UsageLog.shared.action("send.gave-up")
+                    return
+                }
+                let failedAt = Date()
+                sharing = .retrying(attempt: attempt + 1, of: SendRetry.attempts, next: failedAt.addingTimeInterval(wait), why: why)
+                UsageLog.shared.action("send.retry\(attempt + 1)")
+                // Wait, one second at a time, until the next try is due or the network has come back.
+                let net = NetworkWatch.shared
+                while Date() < failedAt.addingTimeInterval(wait) {
+                    if let back = net.backOnlineAt, back > failedAt, net.online { break }
+                    if store.note(noteId)?.pendingSend == nil { break }   // "Do not send" was pressed
+                    if tryNowAsked { tryNowAsked = false; break }
+                    try? await Task.sleep(for: .seconds(1))
+                }
+                attempt += 1
             }
-            sharing = .sent(messages.count)
-            store.recordSend(noteId, to: name.isEmpty ? "lane \(lane.vault)" : name)
-            CreditLedger.shared.charge(.send, noteId: noteId)
-        } catch {
-            sharing = .failed(error.localizedDescription)
-            // Kept on the note, so the row and the briefing can say it did not go.
-            store.setPendingSend(noteId, store.note(noteId)?.pendingSend, problem: error.localizedDescription)
         }
     }
 
     private func resumePendingSends() {
+        if !watchingNetwork {
+            watchingNetwork = true
+            NetworkWatch.shared.onBackOnline.append { [weak self] in self?.resumePendingSends() }
+        }
         for note in store.notes where note.pendingSend != nil && !note.processing {
+            // Not one that is being sent or waiting its turn already.
+            guard note.id != sharingNoteId || !draining, !outbox.contains(where: { $0.noteId == note.id }) else { continue }
             if let recipient = note.pendingSend, let lane = recipient.lane {
                 Task { await share(noteId: note.id, lane: lane, to: recipient.name) }
             }

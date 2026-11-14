@@ -3,7 +3,7 @@ import Foundation
 /// Somebody a note can be sent to: a person, another device, an agent session. A recipient is a
 /// name and a lane link. The link holds where the lane is, a token that can only write, and the
 /// recipient's public key: safe to pass around, useless for reading.
-struct Recipient: Codable, Equatable, Sendable, Identifiable {
+struct Recipient: Codable, Hashable, Sendable, Identifiable {
     var name: String
     var link: String
 

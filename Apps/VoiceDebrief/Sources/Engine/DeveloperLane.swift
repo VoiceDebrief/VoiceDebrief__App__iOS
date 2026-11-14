@@ -64,6 +64,8 @@ struct DeveloperLane: Equatable, Sendable {
         static let audioKind = "voicedebrief/audio/v1"
         static let runKind = "voicedebrief/run/v1"
         static let cleanKind = "voicedebrief/clean/v1"
+        static let imageKind = "voicedebrief/image/v1"
+        static let textKind = "voicedebrief/text/v1"
     }
 
     /// A file's bytes cut into pieces of at most `size`. An empty file has no pieces.
@@ -116,6 +118,28 @@ struct DeveloperLane: Equatable, Sendable {
             let cleanHeader = Header(kind: Header.cleanKind, note: noteId, part: 1, of: 1, name: "clean.json",
                                      size: cleanJSON.count, sha256: sha256Hex(cleanJSON), app: app, sentAt: sentAt)
             out.append(try message(header: cleanHeader, body: cleanJSON))
+        }
+        return out
+    }
+
+    /// A picture (a screenshot, pasted or chosen) and what was typed with it, as messages of their own,
+    /// filed under `id` by the receiver: the picture in parts, then the text if there is any.
+    static func imageMessages(image: Data, imageName: String, caption: String, id: String, app: String, at date: Date) throws -> [Data] {
+        let sentAt = ISO8601DateFormatter().string(from: date)
+        let pieces = parts(of: image)
+        let digest = sha256Hex(image)
+        var out: [Data] = []
+        for (index, piece) in pieces.enumerated() {
+            let header = Header(kind: Header.imageKind, note: id, part: index + 1, of: pieces.count, name: imageName,
+                                size: image.count, sha256: digest, app: app, sentAt: sentAt)
+            out.append(try message(header: header, body: piece))
+        }
+        let text = caption.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !text.isEmpty {
+            let body = Data(text.utf8)
+            let header = Header(kind: Header.textKind, note: id, part: 1, of: 1, name: "message.txt",
+                                size: body.count, sha256: sha256Hex(body), app: app, sentAt: sentAt)
+            out.append(try message(header: header, body: body))
         }
         return out
     }

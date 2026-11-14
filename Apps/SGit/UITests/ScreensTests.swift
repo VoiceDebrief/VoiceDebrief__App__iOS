@@ -14,7 +14,8 @@ final class ScreensTests: XCTestCase {
                         "file", "share", "history", "commit", "settings", "gallery",
                         "create-nokey", "vault.local", "vault.adding-adding", "share.key",
                         "vault.adding-refused", "vault-dark", "share.key-dark", "vault-large", "share-large",
-                        "secrets", "secret", "questions", "guide"]
+                        "secrets", "secret", "questions", "guide",
+                        "people-empty", "people-home", "people-you", "people-contacts", "people-inbox", "keys-and-access"]
 
     @MainActor func test01_vaults() { shoot("vaults") }
     @MainActor func test02_vaults_empty() { shoot("vaults", set: "empty") }
@@ -45,9 +46,16 @@ final class ScreensTests: XCTestCase {
     @MainActor func test24_secret() { shoot("secret", wait: 8) }
     @MainActor func test25_questions() { shoot("questions") }
     @MainActor func test26_guide() { shoot("guide") }
+    // People, from the shared SGitPeople package (the people session's screens).
+    @MainActor func test27_people_empty() { shoot("people-empty") }
+    @MainActor func test28_people_home() { shoot("people-home", wait: 6) }
+    @MainActor func test29_people_you() { shoot("people-you", wait: 6) }
+    @MainActor func test30_people_contacts() { shoot("people-contacts", wait: 6) }
+    @MainActor func test31_people_inbox() { shoot("people-inbox", wait: 6) }
+    @MainActor func test32_keys_and_access() { shoot("keys-and-access", wait: 6) }
 
     func testTheListMatchesTheTestMethods() {
-        XCTAssertEqual(Self.shots.count, 26)
+        XCTAssertEqual(Self.shots.count, 32)
         XCTAssertEqual(Set(Self.shots).count, Self.shots.count)
     }
 

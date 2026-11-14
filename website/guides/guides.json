@@ -1066,6 +1066,206 @@
      ]
     }
    ]
+  },
+  {
+   "id": "sgit-secrets",
+   "title": "SGit Vaults: secrets, kept in a vault",
+   "app": "SGit Vaults",
+   "set": "sgit-run-43592618173",
+   "pictures": "SGit Vaults: iPhone, light, from sgit-app-screens.yml run 43592618173 (work/sgit-app at 6b13fcb, landed on dev as 9ea9212, 14 November 2026), before the design session's restyle.",
+   "ideas": [
+    "design.sgit.app.secrets.secrets.as.files.in.vaults",
+    "design.sgit.app.secrets.questions.for.the.owner.by.voice"
+   ],
+   "intro": "A secret is a password, a Wi-Fi network, a server or a card, kept as one encrypted file in a vault, behind Face ID. A secret in a shared vault is seen by everyone who holds that vault's key, and each change is a signed commit.",
+   "steps": [
+    {
+     "screen": "secrets",
+     "caption": "The Secrets list.",
+     "callouts": [
+      {
+       "n": 1,
+       "at": [
+        0.3,
+        0.267
+       ],
+       "label": [
+        0.94,
+        0.2
+       ],
+       "text": "Your own secrets, in a vault of your own."
+      },
+      {
+       "n": 2,
+       "at": [
+        0.3,
+        0.5
+       ],
+       "label": [
+        0.94,
+        0.44
+       ],
+       "text": "Each kind has its own fields: a device, a website login, a Wi-Fi network, a server."
+      },
+      {
+       "n": 3,
+       "at": [
+        0.5,
+        0.654
+       ],
+       "label": [
+        0.94,
+        0.62
+       ],
+       "text": "Who can see them: every device and person with this vault's key."
+      },
+      {
+       "n": 4,
+       "at": [
+        0.3,
+        0.755
+       ],
+       "label": [
+        0.94,
+        0.8
+       ],
+       "text": "A team vault's secrets, listed under its name."
+      },
+      {
+       "n": 5,
+       "at": [
+        0.3,
+        0.94
+       ],
+       "label": [
+        0.06,
+        0.87
+       ],
+       "text": "Search by name, website or user."
+      },
+      {
+       "n": 6,
+       "at": [
+        0.905,
+        0.096
+       ],
+       "label": [
+        0.8,
+        0.15
+       ],
+       "text": "Add a secret."
+      }
+     ]
+    },
+    {
+     "screen": "secret",
+     "caption": "One secret.",
+     "callouts": [
+      {
+       "n": 1,
+       "at": [
+        0.3,
+        0.232
+       ],
+       "label": [
+        0.94,
+        0.16
+       ],
+       "text": "Each field, with a button to copy it."
+      },
+      {
+       "n": 2,
+       "at": [
+        0.3,
+        0.315
+       ],
+       "label": [
+        0.06,
+        0.26
+       ],
+       "text": "Hidden values stay masked."
+      },
+      {
+       "n": 3,
+       "at": [
+        0.4,
+        0.376
+       ],
+       "label": [
+        0.06,
+        0.43
+       ],
+       "text": "Show hidden values, after Face ID."
+      },
+      {
+       "n": 4,
+       "at": [
+        0.85,
+        0.56
+       ],
+       "label": [
+        0.94,
+        0.48
+       ],
+       "text": "Which vault it is kept in, when it changed and by which device."
+      },
+      {
+       "n": 5,
+       "at": [
+        0.25,
+        0.72
+       ],
+       "label": [
+        0.94,
+        0.68
+       ],
+       "text": "Delete it: a commit like any other, so the vault's history keeps the earlier versions."
+      }
+     ]
+    },
+    {
+     "screen": "questions",
+     "caption": "Questions for you.",
+     "callouts": [
+      {
+       "n": 1,
+       "at": [
+        0.4,
+        0.25
+       ],
+       "label": [
+        0.94,
+        0.17
+       ],
+       "text": "Questions from the people building the app. Answer by choosing, typing or speaking; answers are encrypted to the developers' key."
+      },
+      {
+       "n": 2,
+       "at": [
+        0.2,
+        0.369
+       ],
+       "label": [
+        0.06,
+        0.33
+       ],
+       "text": "How many are waiting."
+      },
+      {
+       "n": 3,
+       "at": [
+        0.4,
+        0.422
+       ],
+       "label": [
+        0.94,
+        0.44
+       ],
+       "text": "Tap one to answer it."
+      }
+     ]
+    }
+   ]
   }
  ],
  "pictures_sgit": "SGit Vaults: iPhone, light, from sgit-app-screens.yml run 19 on dev (commit e62bf68, 14 November 2026)."

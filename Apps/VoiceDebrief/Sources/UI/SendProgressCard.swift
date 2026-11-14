@@ -18,14 +18,21 @@ struct SendProgressCard: View {
         return nil
     }
     private var sentAt: Date? { note?.sends?.last(where: { $0.to == to })?.at }
-    private var failed: String? { note?.sendProblem }
+    /// Without its own full stop, so the sentence around it does not end in two ("lost.. Open").
+    private var failed: String? {
+        note?.sendProblem.map { $0.hasSuffix(".") ? String($0.dropLast()) : $0 }
+    }
+    private var retrying: (attempt: Int, of: Int, next: Date)? {
+        if case .retrying(let attempt, let of, let next, _) = session.sharing(for: noteId) { return (attempt, of, next) }
+        return nil
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
                 Text(sentAt != nil ? "Sent to \(to)" : "Sending to \(to)").font(.headline)
                 Spacer()
-                if sentAt == nil, sendingPart == nil, failed == nil {
+                if sentAt == nil, sendingPart == nil, failed == nil, retrying == nil {
                     Button("Do not send", role: .destructive) {
                         session.cancelQueuedSend(noteId)
                         onDone()
@@ -37,10 +44,30 @@ struct SendProgressCard: View {
             step(writingUp ? (session.workingText(for: noteId) ?? "Writing up") : "Written up", "text.quote",
                  state: writingUp ? .active : .done)
             step(sendLabel, "lock.fill",
-                 state: failed != nil ? .failed : sentAt != nil ? .done : sendingPart != nil ? .active : .waiting)
+                 state: failed != nil && retrying == nil ? .failed : sentAt != nil ? .done : sendingPart != nil ? .active
+                     : retrying != nil ? .failed : .waiting)
             if let materials { Text(materials).font(.caption).foregroundStyle(.secondary) }
-            if let failed {
-                Text("Not sent: \(failed). Open the note to try again.").font(.footnote).foregroundStyle(.red)
+            if let retrying {
+                HStack(spacing: 8) {
+                    Image(systemName: "wifi.exclamationmark").foregroundStyle(.orange)
+                    Text("No connection. Trying again \(Text(retrying.next, style: .relative)) (try \(retrying.attempt) of \(retrying.of)), or as soon as the signal is back.")
+                        .font(.footnote)
+                }
+                Button("Try now") { session.tryAgainNow(noteId) }.buttonStyle(.bordered)
+            } else if let failed {
+                Text("Not sent: \(failed). It goes again when the signal is back or the app next opens.")
+                    .font(.footnote).foregroundStyle(.red)
+                Button("Send again") { session.tryAgainNow(noteId) }.buttonStyle(.borderedProminent)
+            }
+            if let sentAt {
+                // Unmissable once it has gone (the owner: "way more visible that it has been sent").
+                Label("Sent to \(to) at \(sentAt.formatted(date: .omitted, time: .shortened))", systemImage: "checkmark.circle.fill")
+                    .font(.title3.weight(.semibold))
+                    .foregroundStyle(.white)
+                    .padding(.vertical, 10).padding(.horizontal, 14)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(Color.green, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+                    .transition(.scale.combined(with: .opacity))
             }
         }
         .padding(16)
@@ -48,15 +75,18 @@ struct SendProgressCard: View {
         .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
         .animation(.snappy, value: writingUp)
         .animation(.snappy, value: sentAt)
+        .sensoryFeedback(.success, trigger: sentAt)
         .onChange(of: sentAt) { _, sent in
             guard sent != nil, !clearing else { return }
             clearing = true
-            Task { try? await Task.sleep(for: .seconds(6)); onDone() }
+            Task { try? await Task.sleep(for: .seconds(10)); onDone() }
         }
     }
 
     private var sendLabel: String {
         if let sentAt { return "Encrypted and sent, \(sentAt.formatted(date: .omitted, time: .shortened))" }
+        if retrying != nil { return "Not sent yet: waiting for a connection" }
+        if failed != nil { return "Not sent" }
         if let (done, total) = sendingPart, total > 0 { return "Encrypting and sending, part \(done) of \(total)" }
         if sendingPart != nil { return "Encrypting" }
         return "Encrypted and sent when written up"

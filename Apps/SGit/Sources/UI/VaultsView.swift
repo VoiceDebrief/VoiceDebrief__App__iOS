@@ -1,4 +1,5 @@
 import SGitVault
+import SGitPeople
 import SwiftUI
 import VisionKit
 
@@ -6,6 +7,7 @@ import VisionKit
 struct VaultsView: View {
     let shelf: VaultShelf
     let outbox: Outbox
+    let people: PeopleModel
     @State private var adding = false
     @State private var creating = false
     @State private var showSettings = false
@@ -70,10 +72,17 @@ struct VaultsView: View {
             }
             Section {
                 NavigationLink {
-                    SecretsView(shelf: shelf)
+                    SecretsView(shelf: shelf, people: people)
                         .tracked("secrets")
                 } label: {
                     sectionRow(.secrets)
+                }
+                NavigationLink {
+                    PeopleHome(model: people)
+                        .tracked("people")
+                } label: {
+                    sectionRow(.people)
+                        .badge(people.unreadCount)
                 }
                 NavigationLink {
                     QuestionsView()
@@ -90,7 +99,7 @@ struct VaultsView: View {
                     Label("Guide and what is new", systemImage: "book.pages")
                 }
             } footer: {
-                Text("Passwords, passcodes, Wi-Fi and keys, kept in vaults. Questions are from the people building this app, answered by typing or speaking. The Guide shows what changed in each version and how each part works.")
+                Text("Passwords, passcodes, Wi-Fi and keys, kept in vaults. People are those you have swapped cards with, and your inbox. Questions are from the people building this app, answered by typing or speaking. The Guide shows what changed in each version and how each part works.")
             }
             Section {
                 NavigationLink {

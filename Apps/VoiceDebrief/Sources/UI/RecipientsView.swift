@@ -306,6 +306,14 @@ struct SendBar: View {
                     .font(.footnote)
                     .foregroundStyle(.green)
                     .padding(.horizontal, 16)
+            case .retrying(let attempt, let of, let next, _):
+                HStack(spacing: 8) {
+                    Image(systemName: "wifi.exclamationmark").foregroundStyle(.orange)
+                    Text("No connection. Try \(attempt) of \(of) \(Text(next, style: .relative))").font(.footnote)
+                    Spacer()
+                    Button("Try now") { session.tryAgainNow(noteId) }.font(.footnote)
+                }
+                .padding(.horizontal, 16)
             case .failed(let why):
                 Label(why, systemImage: "exclamationmark.triangle")
                     .font(.footnote)
