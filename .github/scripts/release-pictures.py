@@ -17,8 +17,8 @@ the script cannot know what is new, only that something is. Needs Pillow.
 import pathlib, sys
 from PIL import Image, ImageChops
 
-args = [a for a in sys.argv[1:] if not a.startswith("--")]
 opts = sys.argv[1:]
+args = [a for n, a in enumerate(opts) if not a.startswith("--") and not (n and opts[n - 1].startswith("--"))]
 def opt(name, default):
     return type(default)(opts[opts.index(name) + 1]) if name in opts else default
 if len(args) != 3:

@@ -42,7 +42,25 @@
 <p>After the first review by synthetic users (round 1): a note opens with its one sentence as the heading and the date beneath; the clean text experiment moves below the transcript; every note with audio has a player, and tapping a transcript line plays from there; the send bar appears only when there is something to send, lists your own recipients first, names the built-in one as the developer of this test build, and says what goes; lists hold a readable width on iPad; Recent says the day; a cut title ends with an ellipsis; the toolbar says the language rather than its code; one line, not 1 lines.</p>
 <p>Pictures of every screen (issue 016). A debug build launched with <code>-VDSampleData</code> is given invented notes in a temporary folder, a vault book in memory with one invented vault in the same folder, and no network, never the real library or Keychain, and <code>-VDScreen</code> opens a named screen; none of it is compiled into a release build. A UI test target takes one screenshot per screen, and a new workflow, <code>screens.yml</code>, runs it on an iPhone and an iPad simulator in light and dark and keeps the PNGs, with a contact sheet per set, as an artifact named by commit. <a href="../../develop/index.html">Build, test and release</a> says how to fetch them from a Linux container. Nothing a user sees has changed.</p>
 <p>Identity (issues 005 and 018). <code>PKIKit</code>: the sgit key bundle in Swift (RSA-OAEP 4096 and ECDSA P-256, fingerprints, PKCS#8, keys under a passphrase, the <code>k1</code> key code, detached signatures, statements, the signed envelope), proven in a new workflow where <code>sgit pki</code> and pki.sgit.ai's own <code>keys.js</code> read what Swift makes and Swift reads what they make. In the app, under Settings, an Identity screen: a key pair that says who you are, kept in iCloud Keychain so it reaches your other devices; a second key that says which device, kept in the Secure Enclave where there is one and ended by deleting the app; a statement, signed by the first and kept in a vault, that vouches for the second; and, optionally, a delegation from an identity at pki.sgit.ai, with the answer pasted back in. In test: none of it has run on a device, and debriefs are not yet signed by the device key.</p>
-<p>Pictures of the screens are added to this page when the screens workflow has taken them for this version.</p>
+<h2 id="pictures">Pictures</h2>
+<p>The screens that changed most, on an iPhone and an iPad, from the pictures CI took of this version (commit <code>9d61979</code>, which is this version's app). They are compared with the first set of pictures there was (13 November, commit <code>fb0c548</code>), because this page's notes reach back that far. Everything shown is invented sample data.</p>
+<p><strong>A note opens with its one sentence as the heading, and has a player that shows the recording's length and size.</strong></p>
+<p><img class="shot" src="note.finished.jpg" alt="A finished note on iPhone and iPad" loading="lazy"></p>
+<p><strong>The record control stays live while earlier notes are written up, and says how many are waiting.</strong></p>
+<p><img class="shot" src="record.working.jpg" alt="The record screen while two notes are being processed" loading="lazy"></p>
+<p><strong>The record screen promises &quot;Saved as you speak&quot; before recording; Recent says the day; a row says what to do next. Two symbols in the top bar stand where the balance in pounds was.</strong></p>
+<p><img class="shot" src="record.jpg" alt="The record screen with recent notes" loading="lazy"></p>
+<p><strong>A send pressed before a note is finished waits, and says so.</strong></p>
+<p><img class="shot" src="note.queued.jpg" alt="A note still being written up, with a send waiting" loading="lazy"></p>
+<p><strong>Deleting a note asks with an alert that shows Cancel.</strong></p>
+<p><img class="shot" src="note.finished-delete.jpg" alt="The alert before deleting a note" loading="lazy"></p>
+<p><strong>Throwing a recording away asks first, with &quot;Keep recording&quot; beside it.</strong></p>
+<p><img class="shot" src="record.recording-discard.jpg" alt="The alert before discarding a recording" loading="lazy"></p>
+<p><strong>The end of a note: the clean text experiment is below the transcript, and the send bar is one quieter row that says what goes.</strong></p>
+<p><img class="shot" src="note.finished-end.jpg" alt="The end of a finished note" loading="lazy"></p>
+<p><strong>Identity, new under Settings, here with no identity made yet.</strong></p>
+<p><img class="shot" src="identity.jpg" alt="The Identity screen" loading="lazy"></p>
+<p>Also changed: <code>note.transcript</code>, <code>note.interrupted</code>, <code>note.working</code>, <code>library</code>, <code>settings</code>, <code>credit</code>, <code>diagnostics</code>, <code>about</code>. The alert before sending is not pictured for this version: the test that taps the send control looked for its old name.</p>
 </main>
 
 <footer class="site"><div class="cols">

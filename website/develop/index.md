@@ -32,7 +32,7 @@ cd Packages/SGitVault && swift test          # the vault engine, on the Mac itse
 | `ios.yml` | A push to `dev` or to a `work/` branch, or a pull request, that touches `Apps/`, `Packages/` or the workflow. Only `dev` uploads to TestFlight | One Mac job: the vault engine's tests, a simulator build, a Release device build (unsigned), then the app's unit tests on an iPhone and an iPad simulator |
 | `ios-vault.yml` | A change to the vault write path, every Monday, or by hand | Swift writes vaults on a Mac; `sgit-ai` on Linux clones them, verifies every signature and compares every file |
 | `pki-interop.yml` | A change to the app's PKI files or `scripts/pki-interop/`, every Monday, or by hand | `sgit pki` and pki.sgit.ai's `keys.js` make keys, signatures, envelopes, a statement and a sign-in on Linux; the app's PKI files, compiled as a tool on a Mac, read them and make their own; sgit and `keys.js` read those |
-| `screens.yml` | By hand, or a push to `dev` or a `work/` branch that touches the screens | A screenshot of every screen on an iPhone and an iPad simulator, light and dark, from invented sample data: see below |
+| `screens.yml` | A push to `dev` that touches the screens; by hand on any branch | A screenshot of every screen on an iPhone and an iPad simulator, light and dark, from invented sample data: see below |
 | `site.yml` | Every push and pull request | The gate, then (on `dev`) the next version, its tag, and the site |
 
 Builds and tests are unsigned. The last step of `ios.yml` uploads to TestFlight on a green push to `dev`: `scripts/release/testflight.sh` archives unsigned, signs the app with its entitlements, and exports with automatic signing through the App Store Connect API key. It needs the secrets `ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_KEY_P8_BASE64` and the variable `APPLE_TEAM_ID`, and skips itself while any is missing.
@@ -41,7 +41,7 @@ Builds and tests are unsigned. The last step of `ios.yml` uploads to TestFlight 
 
 ## Seeing the screens
 
-Nobody who writes this app from a Linux container can run it, so CI takes a picture of every screen. `screens.yml` runs by hand, and on a push to `dev` or a `work/` branch that touches the app's `UI/` or `App/` sources, the UI tests or the project file.
+Nobody who writes this app from a Linux container can run it, so CI takes a picture of every screen. `screens.yml` runs on a push to `dev` that touches the app's `UI/` or `App/` sources, the UI tests or the project file, and by hand on any branch (the `workflow_dispatch` button, or `actions_run_trigger` with `run_workflow`): a `work/` branch does not run it on every push, because it takes two Macs for half an hour from a queue every session shares. A job still waiting for a Mac when a newer push arrives is replaced by the newer one, so a version pushed in quick succession can be left without a full set.
 
 **How a picture is made.** `Apps/VoiceDebrief/UITests/ScreensTests.swift` has one test per picture. Each launches the app with two launch arguments, read by `Sources/App/LaunchOptions.swift` in debug builds only:
 
