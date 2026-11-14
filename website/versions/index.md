@@ -4,6 +4,7 @@ Every release of this repository. Every push to `dev` is a release: CI works out
 
 | Version | Date | What changed |
 |---|---|---|
+| next | 14 November 2026 | The record screen shows who a note is from and who it goes to: your face, an arrow, and the chosen contact's (Claude drawn as the conductor), at the owner's request. Choose your own photo or another generated look under Identity. |
 | next | 14 November 2026 | Avatars, at the owner's request: every person and agent has a face, a photo if one is set (kept on the device) or a character generated from their key or id, the same on every device. Kinds have frames: green for you, gold with a baton for a conductor, indigo for a session, dashed for a sub-agent. A route picture (you, an arrow, who the note goes to, or several) and a "How you look" section are ready to be placed on the record and Identity screens. |
 | next | 14 November 2026 | Design, second batch: a note's row carries at most one mark, as a pill in words and its colour: what is working now, a send or a save that did not happen (red), a note that was interrupted or had no words (amber), or the vault it was saved to (indigo). The note screen's state lines take the same symbols and colours. The Lab's experiments have icons; colours in the note parts, the Lab and Contacts are the house palette. |
 | v0.1.74 | 14 November 2026 | The sgit app plays videos: a play mark on each video, a Play button that decrypts and plays it with sound (even on silent), full screen, and a picture from the video on its tile once it has been played |

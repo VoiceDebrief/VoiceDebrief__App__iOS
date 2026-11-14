@@ -29,6 +29,12 @@ struct RecordView: View {
     /// True while the Talk to Claude button owns the recording, so this screen leaves it alone.
     @AppStorage("vd.talking") private var talking = false
 
+    /// The chosen recipient as a face for the route strip; Claude (developer) is drawn as the conductor.
+    private var routeTo: [AvatarSubject] {
+        guard let to = addresseeRecipient else { return [] }
+        return [AvatarSubject(id: to.link, name: to.name, kind: to.name == RecipientStore.builtInName ? .conductor : .person)]
+    }
+
     private var addresseeRecipient: Recipient? {
         addressee.isEmpty ? nil : RecipientStore.shared.all.first { $0.link == addressee }
     }
@@ -346,6 +352,10 @@ struct RecordView: View {
             if !isRecording {
                 Text("Record a voice note")
                     .font(.title2.weight(.semibold))
+                // Who it is from and who it goes to, at a glance (the owner: "me on the left, an arrow, who
+                // I'm sending it to").
+                SendRoute(from: MyLook.shared.subject(id: "me"), to: routeTo, size: 44)
+                    .padding(.vertical, 4)
                 Text("Record a note for")
                     .font(.caption)
                     .foregroundStyle(.secondary)
