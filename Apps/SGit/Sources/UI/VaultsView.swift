@@ -73,7 +73,7 @@ struct VaultsView: View {
                     SecretsView(shelf: shelf)
                         .tracked("secrets")
                 } label: {
-                    Label("Secrets", systemImage: "key.viewfinder")
+                    sectionRow(.secrets)
                 }
                 NavigationLink {
                     QuestionsView()
