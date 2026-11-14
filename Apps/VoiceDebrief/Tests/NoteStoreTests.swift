@@ -143,3 +143,31 @@ struct NoteSendTests {
         #expect(reopened.sends?.map(\.to) == ["Maria", "Indi"])
     }
 }
+
+@Suite("A send that is waiting")
+@MainActor
+struct PendingSendTests {
+    @Test func aWaitingSendIsKeptOnDiskAndClearedWhenItGoes() throws {
+        let root = NoteStoreTests.temporaryRoot()
+        let store = NoteStore(root: root)
+        let note = try #require(store.create(audioAt: try NoteStoreTests.audioFile(), source: "Recorded here", localeId: "en-GB"))
+        let maria = Recipient(name: "Maria", link: DeveloperLane.builtInLink)
+        store.setPendingSend(note.id, maria)
+        #expect(NoteStore(root: root).note(note.id)?.pendingSend == maria)
+        store.setPendingSend(note.id, maria, problem: "The lane refused the note (status 500).")
+        #expect(NoteStore(root: root).note(note.id)?.sendProblem != nil)
+        store.recordSend(note.id, to: "Maria")
+        let reopened = try #require(NoteStore(root: root).note(note.id))
+        #expect(reopened.pendingSend == nil)
+        #expect(reopened.sendProblem == nil)
+        #expect(reopened.wasSent(to: "Maria"))
+        #expect(!reopened.wasSent(to: "Indi"))
+    }
+
+    @Test func theBriefingSaysWhenANoteCouldNotBeSent() {
+        var note = BriefingTests.note("a", at: 50)
+        note.sendProblem = "No network"
+        let b = Briefing.make(notes: [note], since: Date(timeIntervalSince1970: 100), lastVersion: "v1", version: "v1")
+        #expect(b.lines == ["1 note could not be sent: open it to try again."])
+    }
+}

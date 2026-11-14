@@ -17,3 +17,6 @@ iPhone and iPad. Then synthetic users walking them. The screenshots are also how
   six in part, six unchanged; two of four users changed their minds; twelve new findings, issues 039 to 041.
 - The Lab's two screens (`lab`, `lab.prompt`) were added when the Lab reached `dev`. Adding a screen is four
   small edits, listed on the develop page.
+- **Round 3 done** (14 November 2026): `website/reviews/round-3/index.md`. 35 pictures per set; a fifth user who
+  sends memos to a colleague. Of round 2's twelve new findings three fixed, four in part, four unchanged; fifteen
+  new findings, issues 043 to 045.

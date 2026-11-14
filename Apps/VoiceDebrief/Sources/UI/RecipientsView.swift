@@ -208,6 +208,7 @@ struct SendBar: View {
     let session: DebriefSession
     private let recipients = RecipientStore.shared
     @State private var confirmingBuiltIn = false
+    @State private var sendingAgain: Recipient?
 
     private var sending: Bool {
         if case .sending = session.sharing(for: noteId) { return true }
@@ -221,10 +222,11 @@ struct SendBar: View {
                 HStack(spacing: 8) {
                     // A person's own recipients first; the one built into this test build last, and quieter.
                     ForEach(recipients.added) { recipient in
+                        let sent = session.store.note(noteId)?.wasSent(to: recipient.name) ?? false
                         Button {
-                            session.send(noteId: noteId, to: recipient)
+                            if sent { sendingAgain = recipient } else { session.send(noteId: noteId, to: recipient) }
                         } label: {
-                            Label("Send to \(recipient.name)", systemImage: "paperplane.fill")
+                            Label(sent ? "Sent to \(recipient.name)" : "Send to \(recipient.name)", systemImage: sent ? "checkmark" : "paperplane.fill")
                         }
                         .buttonStyle(.borderedProminent)
                         .buttonBorderShape(.capsule)
@@ -234,7 +236,7 @@ struct SendBar: View {
                         Button {
                             confirmingBuiltIn = true
                         } label: {
-                            Label("Send to the developer (test)", systemImage: "paperplane")
+                            Label("Developer (test)", systemImage: "paperplane")
                         }
                         .buttonStyle(.bordered)
                         .buttonBorderShape(.capsule)
@@ -250,7 +252,7 @@ struct SendBar: View {
                 }
                 .padding(.horizontal, 16)
             }
-            Text("Audio, transcript and debrief, encrypted to the recipient. The developer asks first.")
+            Text("Sends the audio, transcript and debrief, encrypted. Sending to the developer asks you first.")
                 .lineLimit(1)
                 .minimumScaleFactor(0.8)
                 .font(.caption2)
@@ -260,6 +262,15 @@ struct SendBar: View {
         .padding(.vertical, 6)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(.bar)
+        .alert("Send this note again?", isPresented: Binding(get: { sendingAgain != nil }, set: { if !$0 { sendingAgain = nil } })) {
+            Button("Send again") {
+                if let recipient = sendingAgain { session.send(noteId: noteId, to: recipient) }
+                sendingAgain = nil
+            }
+            Button("Cancel", role: .cancel) { sendingAgain = nil }
+        } message: {
+            Text("It was already sent to \(sendingAgain?.name ?? "them"). Sending it again sends another copy, and is charged again.")
+        }
         .alert("Send this note to the developer of this test build?", isPresented: $confirmingBuiltIn) {
             Button("Send the audio, transcript and debrief") {
                 if let recipient = recipients.builtIn { session.send(noteId: noteId, to: recipient) }
@@ -274,7 +285,7 @@ struct SendBar: View {
     private var status: some View {
         if let name = session.queuedSends[noteId] {
             HStack(spacing: 8) {
-                Label("Will be sent to \(name) as soon as it is finished", systemImage: "clock")
+                Label("Will be sent to \(name == RecipientStore.builtInName ? "the developer" : name) as soon as it is finished", systemImage: "clock")
                     .font(.footnote)
                 Spacer()
                 Button("Cancel") { session.cancelQueuedSend(noteId) }
@@ -300,7 +311,12 @@ struct SendBar: View {
                     .foregroundStyle(.red)
                     .padding(.horizontal, 16)
             case .idle:
-                EmptyView()
+                if let why = session.store.note(noteId)?.sendProblem {
+                    Label("Not sent: \(why)", systemImage: "exclamationmark.triangle")
+                        .font(.footnote)
+                        .foregroundStyle(.red)
+                        .padding(.horizontal, 16)
+                }
             }
         }
     }

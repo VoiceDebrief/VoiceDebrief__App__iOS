@@ -56,6 +56,8 @@ final class DebriefSession {
 
     init(store: NoteStore) {
         self.store = store
+        // Sends asked for before the app was closed, on notes that are already finished, go now.
+        Task { @MainActor [weak self] in self?.resumePendingSends() }
         // A phone call, or another app taking the microphone, ends the recording. Keep what there is.
         NotificationCenter.default.addObserver(forName: AVAudioSession.interruptionNotification, object: nil, queue: .main) { [weak self] notification in
             guard let raw = notification.userInfo?[AVAudioSessionInterruptionTypeKey] as? UInt,
@@ -388,6 +390,7 @@ final class DebriefSession {
     /// sent the moment it is finished, so the button can be pressed at once and the phone put away.
     func send(noteId: String, to recipient: Recipient) {
         guard let lane = recipient.lane, let note = store.note(noteId) else { return }
+        store.setPendingSend(noteId, recipient)
         if note.processing || isBusyWith(noteId) || compressing.contains(noteId) {
             queuedLanes[noteId] = lane
             queuedSends[noteId] = recipient.name
@@ -397,6 +400,7 @@ final class DebriefSession {
     }
 
     func cancelQueuedSend(_ noteId: String) {
+        store.setPendingSend(noteId, nil)
         queuedLanes[noteId] = nil
         queuedSends[noteId] = nil
     }
@@ -407,6 +411,9 @@ final class DebriefSession {
         let name = queuedSends.removeValue(forKey: noteId) ?? ""
         if let lane = queuedLanes.removeValue(forKey: noteId) {
             Task { await share(noteId: noteId, lane: lane, to: name) }
+        } else if let waiting = store.note(noteId)?.pendingSend, let lane = waiting.lane {
+            // Asked for before the app was last closed: send it now that the note is ready.
+            Task { await share(noteId: noteId, lane: lane, to: waiting.name) }
         }
         onNoteReady?(noteId)
     }
@@ -451,6 +458,16 @@ final class DebriefSession {
             CreditLedger.shared.charge(.send, noteId: noteId)
         } catch {
             sharing = .failed(error.localizedDescription)
+            // Kept on the note, so the row and the briefing can say it did not go.
+            store.setPendingSend(noteId, store.note(noteId)?.pendingSend, problem: error.localizedDescription)
+        }
+    }
+
+    private func resumePendingSends() {
+        for note in store.notes where note.pendingSend != nil && !note.processing {
+            if let recipient = note.pendingSend, let lane = recipient.lane {
+                Task { await share(noteId: note.id, lane: lane, to: recipient.name) }
+            }
         }
     }
 

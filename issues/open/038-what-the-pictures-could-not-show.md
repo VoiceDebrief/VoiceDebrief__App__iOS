@@ -21,3 +21,5 @@ Finding 15, and the artefacts 16 to 20. Round 1 was limited by its own pictures.
   fixed from a picture.
 
 Round 2 done: the confirmations, a queued send, a queue of notes, recordings of the length they claim, and a note being made on the Record tab are pictured. Still to do: one sample world per run, the Lab after a run, a vault with a server, a recipient added by hand, an identity, portrait on iPad, the largest text size, and settings in UserDefaults.
+
+Round 3 done: finish and send, the two lines of where the work happens in four states, the briefing, a sent note and the alerts are pictured. Added to what is still to do: the record screen just after "Finish and send" (its card), a send that failed, and a note saved to a vault by the app rather than by the sample.

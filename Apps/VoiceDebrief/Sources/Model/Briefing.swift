@@ -35,6 +35,10 @@ struct Briefing: Equatable, Sendable {
         if !saved.isEmpty {
             lines.append("Saved \(saved.count == 1 ? "1 note" : "\(saved.count) notes") to your vault.")
         }
+        let unsent = notes.filter { $0.sendProblem != nil }
+        if !unsent.isEmpty {
+            lines.append(unsent.count == 1 ? "1 note could not be sent: open it to try again." : "\(unsent.count) notes could not be sent: open them to try again.")
+        }
         let unsaved = notes.filter { $0.saveProblem != nil }
         if !unsaved.isEmpty {
             lines.append(unsaved.count == 1 ? "1 note could not be saved to a vault: open it to see why." : "\(unsaved.count) notes could not be saved to a vault: open them to see why.")

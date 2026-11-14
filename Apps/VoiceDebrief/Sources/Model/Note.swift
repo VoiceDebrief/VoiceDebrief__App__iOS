@@ -16,6 +16,12 @@ struct Note: Codable, Identifiable, Equatable, Sendable {
     var saves: [NoteSave]? = nil
     /// Each time this note was sent to a recipient, newest last.
     var sends: [NoteSend]? = nil
+    /// A send asked for and not yet done: kept on disk, so closing the app does not forget it (issue 043).
+    var pendingSend: Recipient? = nil
+    /// Why the last send did not go, in plain words.
+    var sendProblem: String? = nil
+
+    func wasSent(to name: String) -> Bool { sends?.contains { $0.to == name } ?? false }
     /// Why the last automatic save did not happen, in plain words.
     var saveProblem: String? = nil
 

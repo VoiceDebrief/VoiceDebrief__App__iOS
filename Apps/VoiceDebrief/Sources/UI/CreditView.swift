@@ -13,13 +13,9 @@ struct CreditCounter: View {
         } label: {
             // Marked as test credit where it is shown: three users read a bare amount as paying per memo
             // (review rounds 1 and 2, issue 032). Recording never stops for credit.
-            Label {
-                Text("Test credit " + Credit.money(ledger.balance))
-            } icon: {
-                Image(systemName: "testtube.2")
-            }
-            .labelStyle(.titleAndIcon)
+            Text("Test credit " + Credit.money(ledger.balance))
                 .font(.caption.weight(.semibold).monospacedDigit())
+                .fixedSize()
                 .foregroundStyle(ledger.isBelowZero ? Color.orange : Color.primary)
                 .contentTransition(.numericText(value: Double(ledger.balance)))
                 .animation(.snappy, value: ledger.balance)

@@ -20,6 +20,7 @@ struct RecordView: View {
     @State private var confirmingDiscard = false
     /// The recipient the last note was finished and sent to with one press, to say so on this screen.
     @State private var queuedFor: String?
+    @State private var queuedNoteId: String?
     /// What is new since the app was last opened, worked out once when the screen first appears (issue 025).
     @State private var briefing: Briefing?
     @AppStorage("vd.lastOpened") private var lastOpened: Double = 0
@@ -50,13 +51,15 @@ struct RecordView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) { CreditCounter() }
                 ToolbarItem(placement: .topBarLeading) { VersionBadge() }
-                ToolbarItem(placement: .topBarTrailing) {
-                    LanguageMenu()
-                        .disabled(session.isBusy)
+                if !isRecording {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        LanguageMenu()
+                            .disabled(session.isBusy)
+                    }
                 }
                 // Throwing a recording away is kept far from the thumb and takes two presses.
                 if isRecording {
-                    ToolbarItem(placement: .topBarLeading) {
+                    ToolbarItem(placement: .topBarTrailing) {
                         Button("Discard", role: .destructive) { confirmingDiscard = true }
                             .font(.footnote)
                             .alert("Throw this recording away?", isPresented: $confirmingDiscard) {
@@ -148,7 +151,7 @@ struct RecordView: View {
                                 .font(.callout.weight(.semibold))
                         }
                     }
-                    ForEach(briefing.lines, id: \.self) { line in
+                    ForEach(Array(briefing.lines.prefix(3)), id: \.self) { line in
                         Text(line).font(.callout)
                     }
                     Button("Dismiss") { self.briefing = nil }
@@ -158,7 +161,15 @@ struct RecordView: View {
                 card {
                     Label("Your last note will be sent to \(name) as soon as it is written up. You can record the next one now.", systemImage: "paperplane.fill")
                         .font(.callout)
-                    Button("Dismiss") { queuedFor = nil }
+                    HStack {
+                        Button("Do not send", role: .destructive) {
+                            if let id = queuedNoteId { session.cancelQueuedSend(id) }
+                            queuedFor = nil
+                            queuedNoteId = nil
+                        }
+                        Spacer()
+                        Button("OK") { queuedFor = nil; queuedNoteId = nil }
+                    }
                 }
             }
             if let notice = session.notice {
@@ -274,6 +285,7 @@ struct RecordView: View {
                                     if let id = await session.stopRecording() {
                                         session.send(noteId: id, to: recipient)
                                         queuedFor = recipient.name
+                                        queuedNoteId = id
                                     }
                                 }
                             } label: {
@@ -397,7 +409,11 @@ struct NoteRow: View {
         var parts = [day + time]
         if let seconds = note.run.audioSeconds { parts.append(Timecode.duration(seconds: seconds)) }
         if let working { parts.append(working) } else if note.stateLine != "On this device" { parts.append(note.stateLine) }
-        if working == nil, let sent = note.sends?.last { parts.append("Sent to \(sent.to)") }
+        if working == nil {
+            if note.sendProblem != nil, let to = note.pendingSend?.name { parts.append("Not sent to \(to)") }
+            else if let to = note.pendingSend?.name { parts.append("Waiting to send to \(to)") }
+            else if let sent = note.sends?.last { parts.append("Sent to \(sent.to) \(sent.at.formatted(.dateTime.hour(.twoDigits(amPM: .abbreviated)).minute(.twoDigits)))") }
+        }
         return parts.joined(separator: " · ")
     }
 }
