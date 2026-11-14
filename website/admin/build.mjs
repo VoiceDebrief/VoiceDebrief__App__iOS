@@ -15,7 +15,7 @@ const CHECK   = process.argv.includes('--check');
 // issues, the articles, the reality files and the release history, so its page is current when it is built.
 // The feature guides' pages come next, from guides/guides.json (they name ideas, so they follow them).
 try {
-  for (const script of ['ideas.mjs', 'guides.mjs'])
+  for (const script of ['ideas.mjs', 'guides.mjs', 'l03.mjs'])
     execFileSync(process.execPath, [join(ROOT, 'admin', script), ...(CHECK ? ['--check'] : [])], { stdio: ['ignore', 'ignore', 'inherit'] });
 } catch { process.exit(1); }
 // CI owns the version: it is stamped in when the site is deployed (SITE_VERSION). The pages committed
@@ -94,6 +94,8 @@ const PAGES = [
     description: 'Three people arriving at the apps for different reasons: what each wants, the way through as the apps are today, where they get lost, and what the Guide does about it.' },
   { path: 'versions', nav: null,       title: 'VoiceDebrief for iOS release history',
     description: 'Every release of the VoiceDebrief iOS repository, with what changed.' },
+  { path: 'lab/l03', nav: null, title: 'L03, the voice game: results from the devices',
+    description: 'Lab experiment L03: a small game played by voice, the fixed phrases against Apple\'s on-device model with only the tools of the moment. Latency from the end of speaking to the move, time to the tool call, agreement, estimated tokens and energy, from the logs the app exports.' },
 ];
 // One page per feature guide, from guides/guides.json (written by admin/guides.mjs). Found here, not listed by hand.
 for (const g of JSON.parse(readFileSync(join(ROOT, 'guides/guides.json'), 'utf8')).guides) {
