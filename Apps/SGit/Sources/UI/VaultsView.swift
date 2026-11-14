@@ -73,7 +73,7 @@ struct VaultsView: View {
                 Text("Vaults to show somebody, each opened in the web Vault inside the app.")
             }
             Section {
-                Button("Add a vault by its key", systemImage: "key") { adding = true }
+                Button("Add a vault you were sent", systemImage: "key") { adding = true }
                 Button("Create a vault", systemImage: "plus.square") { creating = true }
             } footer: {
                 Text("A vault you create is kept on this device and needs no account, no access key and no network. It goes to a server when you choose to share it.")

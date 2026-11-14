@@ -30,3 +30,7 @@ device").
 **Left:** one line for each of the four keys where it first appears and another word for the access key; words
 on the plus and the three dots (Share is out of the dots, History is not); "Remove the access key"; the
 conversion switch; iPad widths; the small things.
+
+**Written after that (14 November 2026, not yet compiled):** "Add a vault you were sent" in place of "by its
+key"; Settings says what the access key is (a pass from whoever runs the server, which opens no vault) and what
+removing it does; the conversion switch is "Make photos and videos open in any browser".
