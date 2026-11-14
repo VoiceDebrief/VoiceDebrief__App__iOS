@@ -27,5 +27,9 @@ round 2 of the review.
 file added by somebody with the vault key and no access key, refused by the app's own check, with what it says
 and "Try again" (the state issue 110 is about).
 
-**Written after that (14 November 2026, not yet compiled):** four more, 22 in all: the vault and the shown key in
+**Done after that (14 November 2026, green on `b1f6638` and looked at):** four more, 22 in all: the vault and the shown key in
 dark appearance, the vault and the share sheet at a large accessibility text size.
+
+The dark pictures read well. The large-text pictures showed two faults: file names cut to "Gro....jpg" under the
+tiles, and the iPad's folder tree breaking "team" across two lines. Written, not yet compiled: at the
+accessibility text sizes a folder is shown as a list, and the tree is wider.
