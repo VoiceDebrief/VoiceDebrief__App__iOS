@@ -148,6 +148,7 @@ final class DebriefSession {
             levels = []
             silentSince = nil
             microphoneSilent = false
+            liveStoppedForSilence = false
             failure = nil
             recordingSince = Date()
             RemoteControl.begin(title: "Recording a voice note") { [weak self] in self?.finishRequests += 1 }
@@ -193,6 +194,7 @@ final class DebriefSession {
     /// True when nothing at all has reached the microphone for three seconds: another app (a call,
     /// FaceTime, Siri, a car) may hold it. Three notes of pure silence came from build 0.1.72, unnoticed.
     private(set) var microphoneSilent = false
+    private var liveStoppedForSilence = false
 
     private func pushLevel() {
         guard recordingSince != nil else { return }
@@ -203,6 +205,16 @@ final class DebriefSession {
         else if let since = silentSince, Date().timeIntervalSince(since) > 3, !microphoneSilent {
             microphoneSilent = true
             UsageLog.shared.action("record.silent-microphone")
+            // The recording matters more than the preview. Every silent note so far was made while the live
+            // words were running (en-US, the owner's iPhone): the preview's audio engine may hold the input
+            // the recorder needs. Stop the preview and keep recording; if sound comes back, the warning goes.
+            if !liveStoppedForSilence {
+                liveStoppedForSilence = true
+                Task { [live] in await live.stop() }
+                liveNote = "Live words stopped so that the recording gets the microphone."
+                liveSettled = ""; liveVolatile = ""
+                UsageLog.shared.action("record.live-stopped-for-silence")
+            }
         }
         levels.append(Self.smoothed(previous: levels.last ?? 0, next: raw))
         if levels.count > Self.levelCount { levels.removeFirst(levels.count - Self.levelCount) }

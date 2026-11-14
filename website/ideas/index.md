@@ -6,7 +6,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 |---|---|---|
 | Seen working | Built, and a run proved it: CI, a device or a server. | 27 |
 | Built, untried | In the app or the repository, but not yet proven by a run on a device. | 86 |
-| In progress | Begun: part of it is built or a release has touched it. | 38 |
+| In progress | Begun: part of it is built or a release has touched it. | 39 |
 | Proposed | Asked for or described; nothing of it is built. | 60 |
 | Parked | Waiting: on the owner, on Apple, or scheduled for later. | 6 |
 
@@ -175,6 +175,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | People, messages and secrets (the SGitPeople package) | Issue | SGit Vaults | SGit Vaults | [v0.1.54](../versions/v0.1.54/index.md) | [200](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/200-people-messages-and-secrets.md) |
 | L03, a game played by voice, with Apple's model as one of its engines | Issue | SGit Vaults | SGit Vaults: History; SGit Vaults: Share | [v0.1.80](../versions/v0.1.80/index.md) | [300](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/300-the-voice-game.md) |
 | People, messages and secrets: the layer under both apps | Article | Both |   |   | [article](../articles/people-messages-and-secrets/index.md) |
+| A secrets app that keeps one file where you already keep things | Article | Both |   |   | [article](../articles/secrets-app/index.md) |
 
 ## Proposed
 

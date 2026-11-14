@@ -207,6 +207,8 @@ enum LabControlState: String, Codable, Sendable {
 /// person chose, and how long the model took.
 struct LabControlEntry: Codable, Equatable, Sendable, Identifiable {
     let id: String
+    /// Its place among the sentences heard since the log was last cleared, from 1. Shown on its card.
+    var number = 0
     let heardAt: Date
     let words: String
     /// spoken, typed or test.

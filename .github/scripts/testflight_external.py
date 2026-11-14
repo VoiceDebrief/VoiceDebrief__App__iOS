@@ -69,6 +69,14 @@ def main():
         sys.exit(f'build {a.build} did not finish processing in 30 minutes')
     build_id = build['id']
 
+    # The newest build replaces any still queued (the owner, 14 November 2026: "if there is a build in the
+    # queue, add the new one and stop the one queued"). A build waiting for Beta App Review is expired, which
+    # takes it out of the queue and out of TestFlight; one already being reviewed is left to finish.
+    waiting = call('GET', f'/builds?filter[app]={app}&filter[betaAppReviewSubmission.betaReviewState]=WAITING_FOR_REVIEW&limit=20')['data']
+    for old in (b for b in waiting if b['id'] != build_id):
+        call('PATCH', f'/builds/{old["id"]}', json={'data': {'type': 'builds', 'id': old['id'], 'attributes': {'expired': True}}})
+        print(f'stopped build {old["attributes"].get("version", "?")}: it was waiting for review, and this newer one replaces it')
+
     if build['attributes'].get('usesNonExemptEncryption') is None:
         call('PATCH', f'/builds/{build_id}', json={'data': {'type': 'builds', 'id': build_id, 'attributes': {'usesNonExemptEncryption': False}}})
 

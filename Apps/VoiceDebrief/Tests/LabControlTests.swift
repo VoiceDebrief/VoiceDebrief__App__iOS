@@ -534,3 +534,38 @@ struct LabControlListeningTests {
         #expect(centre.entries.isEmpty)
     }
 }
+
+@Suite("Lab L02: a card says how the words became the action")
+@MainActor
+struct LabControlFlowTests {
+    @Test func sentencesAreNumberedInTheOrderTheyWereHeard() {
+        let centre = LabControlActionTests.centre(host: LabActionHost())
+        centre.hear("Open the library.", source: "typed")
+        centre.hear("I think the meeting went well.", source: "typed")
+        centre.hear("Cancel that.", source: "typed")
+        #expect(centre.entries.map(\.number) == [3, 2, 1])
+        centre.clear()
+        centre.hear("Cancel that.", source: "typed")
+        #expect(centre.entries.map(\.number) == [1])
+    }
+
+    @Test func eachEngineIsDescribedInWords() {
+        let heard = LabControlEntryTests.entry("Go to the vaults.")
+        #expect(LabControlWords.phrase(heard) == "Open a section: vaults, from the phrase go to the")
+        #expect(LabControlWords.model(heard) == "Not asked")
+        #expect(LabControlWords.phrase(LabControlEntryTests.entry("I think the meeting went well.")) == "No phrase heard")
+
+        var asked = LabControlEntryTests.entry("Go to the vaults.", askModel: true)
+        #expect(LabControlWords.model(asked) == "Being asked")
+        asked.receive(LabControlEntryTests.record(calling: "openSection", arguments: ["section": "vaults"]), automatic: [])
+        #expect(LabControlWords.model(asked) == "Open a section: vaults, in 0.8 s")
+
+        var silent = LabControlEntryTests.entry("Go to the vaults.", askModel: true)
+        silent.receive(LabControlEntryTests.record(calling: nil), automatic: [])
+        #expect(LabControlWords.model(silent) == "No action, in 0.8 s")
+
+        var failed = LabControlEntryTests.entry("Go to the vaults.", askModel: true)
+        failed.receive(LabControlEntryTests.record(calling: nil, error: ModelDoorError(kind: "unavailable", words: "Apple Intelligence is switched off in Settings.", raw: "")), automatic: [])
+        #expect(LabControlWords.model(failed) == "Could not answer: Apple Intelligence is switched off in Settings.")
+    }
+}
