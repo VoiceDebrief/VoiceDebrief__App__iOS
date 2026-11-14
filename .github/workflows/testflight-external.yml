@@ -1,0 +1,71 @@
+name: testflight external
+
+# Puts a build in front of external testers (the public TestFlight links), for both apps.
+# When: a dev build of an app has uploaded to TestFlight and EITHER its commit message says [external],
+# OR its version's last number is a multiple of 10, OR this is run by hand. Not every build: each one
+# sent to external testers may wait for Beta App Review.
+on:
+  workflow_run:
+    workflows: ["ios", "sgit app"]
+    types: [completed]
+    branches: [dev]
+  workflow_dispatch:
+    inputs:
+      app:
+        description: "voicedebrief or sgit"
+        required: true
+        default: voicedebrief
+      build:
+        description: "The build number (the CI run number shown in TestFlight)"
+        required: true
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  external:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: dev
+          fetch-depth: 0
+      - name: Decide
+        id: decide
+        env:
+          EVENT: ${{ github.event_name }}
+          WF: ${{ github.event.workflow_run.name }}
+          RUN: ${{ github.event.workflow_run.run_number }}
+          SHA: ${{ github.event.workflow_run.head_sha }}
+          MSG: ${{ github.event.workflow_run.head_commit.message }}
+          IN_APP: ${{ github.event.inputs.app }}
+          IN_BUILD: ${{ github.event.inputs.build }}
+        run: |
+          set -euo pipefail
+          git fetch --quiet --tags
+          if [ "$EVENT" = "workflow_dispatch" ]; then app="$IN_APP"; build="$IN_BUILD"; go=yes; tag=$(git tag --list 'v*' | sort -V | tail -1)
+          else
+            [ "$WF" = "sgit app" ] && app=sgit || app=voicedebrief
+            build="$RUN"
+            tag=$(git tag --contains "$SHA" 2>/dev/null | sort -V | head -1); [ -n "$tag" ] || tag=$(git tag --list 'v*' | sort -V | tail -1)
+            patch=${tag##*.}; go=no
+            if printf '%s' "$MSG" | grep -qi '\[external\]'; then go=yes; fi
+            if [ $((patch % 10)) -eq 0 ]; then go=yes; fi
+          fi
+          [ "$app" = sgit ] && bundle=ai.sgit.vaults.app || bundle=ai.voicedebrief.app
+          echo "app=$app bundle=$bundle build=$build tag=$tag go=$go" | tee -a "$GITHUB_STEP_SUMMARY"
+          { echo "go=$go"; echo "bundle=$bundle"; echo "build=$build"; echo "tag=$tag"; } >> "$GITHUB_OUTPUT"
+      - name: Send to external testers
+        if: steps.decide.outputs.go == 'yes'
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_P8_BASE64: ${{ secrets.ASC_KEY_P8_BASE64 }}
+        run: |
+          pip install -q pyjwt cryptography requests
+          python3 .github/scripts/testflight_external.py --bundle "${{ steps.decide.outputs.bundle }}" \
+            --build "${{ steps.decide.outputs.build }}" --notes "website/versions/${{ steps.decide.outputs.tag }}/index.md" \
+            | tee -a "$GITHUB_STEP_SUMMARY"

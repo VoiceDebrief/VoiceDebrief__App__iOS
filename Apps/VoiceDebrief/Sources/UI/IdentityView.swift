@@ -3,6 +3,7 @@ import CoreImage
 import CoreImage.CIFilterBuiltins
 import SwiftUI
 import UIKit
+import SGitPeople
 
 /// Who you are, which device this is, and what links the two. Built to show where each key lives.
 struct IdentityView: View {

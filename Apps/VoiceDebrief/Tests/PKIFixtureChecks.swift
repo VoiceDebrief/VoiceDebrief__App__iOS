@@ -3,6 +3,9 @@ import Foundation
 #if canImport(VoiceDebrief)
 @testable import VoiceDebrief
 #endif
+#if canImport(SGitPeople)
+import SGitPeople
+#endif
 
 /// What Swift must be able to read of what sgit and pki.sgit.ai's keys.js make. One set of checks, run twice:
 /// by `scripts/pki-interop` in `pki-interop.yml`, against files those tools made minutes earlier in the same

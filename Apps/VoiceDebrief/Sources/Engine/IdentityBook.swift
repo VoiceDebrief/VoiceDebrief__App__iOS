@@ -2,6 +2,7 @@ import Foundation
 import Observation
 import Security
 import SGitVault
+import SGitPeople
 
 /// The identity this app holds, and what it does with it.
 ///

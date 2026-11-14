@@ -4,6 +4,7 @@ name: ios
 # so every push that touches the app or a package is built and tested here, on one Mac.
 #
 #   1. SGitVault      swift test on the Mac itself (no simulator): the vault engine and its vectors
+#      SGitPeople     the same for the people layer: cards, contacts, messages, the inbox, secrets
 #   2. build          build-for-testing for the generic iOS Simulator, unsigned, nothing booted
 #   3. test           the app's unit tests on one iPhone simulator, then one iPad simulator
 #   4. release build  Release for a generic iOS device, unsigned: what an archive would compile
@@ -80,6 +81,10 @@ jobs:
       - name: SGitVault tests (on the Mac, no simulator)
         working-directory: Packages/SGitVault
         run: ../../.github/scripts/run-and-summarize.sh "SGitVault swift test" "$RUNNER_TEMP/logs/sgitvault.log" -- swift test
+
+      - name: SGitPeople tests (on the Mac, no simulator)
+        working-directory: Packages/SGitPeople
+        run: ../../.github/scripts/run-and-summarize.sh "SGitPeople swift test" "$RUNNER_TEMP/logs/sgitpeople.log" -- swift test
 
       - name: Build for testing (Debug, iOS Simulator, unsigned)
         run: |

@@ -4,9 +4,9 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 
 | Status | Meaning | How many |
 |---|---|---|
-| Seen working | Built, and a run proved it: CI, a device or a server. | 26 |
-| Built, untried | In the app or the repository, but not yet proven by a run on a device. | 59 |
-| In progress | Begun: part of it is built or a release has touched it. | 32 |
+| Seen working | Built, and a run proved it: CI, a device or a server. | 27 |
+| Built, untried | In the app or the repository, but not yet proven by a run on a device. | 61 |
+| In progress | Begun: part of it is built or a release has touched it. | 33 |
 | Proposed | Asked for or described; nothing of it is built. | 36 |
 | Parked | Waiting: on the owner, on Apple, or scheduled for later. | 6 |
 
@@ -21,6 +21,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | Send a note to the developer | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
 | Create a vault | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
 | Save a debrief to a vault | Feature | VoiceDebrief | Vaults tab |   | [reality file](../built/index.md) |
+| The people layer in Python, people.py | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
 | A conductor's inbox | Feature | VoiceDebrief | The repository: tools/conductor |   | [reality file](../built/index.md) |
 | The key bundle, PKIKit | Feature | VoiceDebrief | Settings: Identity |   | [reality file](../built/index.md) |
 | The About screen | Feature | VoiceDebrief | Settings: What this build does |   | [reality file](../built/index.md) |
@@ -78,6 +79,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | Talk to Claude | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
 | Every section in plain sight | Feature | VoiceDebrief | Record tab |   | [reality file](../built/index.md) |
 | Your activity | Feature | VoiceDebrief | The repository: tools/conductor |   | [reality file](../built/index.md) |
+| A note's journey after Finish | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
 | Record a note for someone | Feature | VoiceDebrief | Record tab; Settings: Recipients |   | [reality file](../built/index.md) |
 | A send that is not lost | Feature | VoiceDebrief | Record tab; Record tab: the briefing card; Settings: Recipients |   | [reality file](../built/index.md) |
 | Finish and send in one press | Feature | VoiceDebrief | Record tab; Settings: Recipients |   | [reality file](../built/index.md) |
@@ -88,6 +90,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | A clean text, with questions | Feature | VoiceDebrief | A note: Clean text; Library, then a note |   | [reality file](../built/index.md) |
 | Credit that counts down, with a simulated top-up | Feature | VoiceDebrief | The balance in the top bar; Settings: Recipients |   | [reality file](../built/index.md) |
 | A finished note saves itself to a vault | Feature | VoiceDebrief | Record tab; Settings: Save to a vault; Settings tab |   | [reality file](../built/index.md) |
+| The people layer, SGitPeople | Feature | VoiceDebrief | Settings: Recipients | [v0.1.54](../versions/v0.1.54/index.md) | [reality file](../built/index.md) |
 | The user's key pair | Feature | VoiceDebrief | Settings: Identity |   | [reality file](../built/index.md) |
 | The device's key pair | Feature | VoiceDebrief | Vaults tab; Settings: Identity |   | [reality file](../built/index.md) |
 | Vouching for a device | Feature | VoiceDebrief | Settings: Identity |   | [reality file](../built/index.md) |
@@ -140,6 +143,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | sgit app: getting a folder out, at full quality | Issue | SGit Vaults | SGit Vaults: a vault; SGit Vaults: Share | [v0.1.44](../versions/v0.1.44/index.md) | [114](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/114-sgit-app-getting-files-out.md) |
 | sgit app: the Create sheet, the four keys, and smaller things | Issue | SGit Vaults | SGit Vaults: the Create sheet; SGit Vaults: a vault; SGit Vaults: History | [v0.1.44](../versions/v0.1.44/index.md) | [115](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/115-sgit-app-the-create-sheet-and-the-words.md) |
 | sgit app: what the pictures could not show | Issue | SGit Vaults | SGit Vaults: the Create sheet; SGit Vaults: a vault; SGit Vaults: Share | [v0.1.44](../versions/v0.1.44/index.md) | [116](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/116-sgit-app-what-the-pictures-could-not-show.md) |
+| People, messages and secrets (the SGitPeople package) | Issue | SGit Vaults | SGit Vaults | [v0.1.54](../versions/v0.1.54/index.md) | [200](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/200-people-messages-and-secrets.md) |
 | People, messages and secrets: the layer under both apps | Article | Both |   |   | [article](../articles/people-messages-and-secrets/index.md) |
 
 ## Proposed

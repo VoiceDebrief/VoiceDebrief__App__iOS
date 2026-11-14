@@ -28,9 +28,9 @@
   }
  ],
  "counts": {
-  "seen-working": 26,
-  "built-untried": 59,
-  "in-progress": 32,
+  "seen-working": 27,
+  "built-untried": 61,
+  "in-progress": 33,
   "proposed": 36,
   "parked": 6
  },
@@ -1395,6 +1395,38 @@
    "source": "A review by synthetic users"
   },
   {
+   "id": "issue-200",
+   "kind": "issue",
+   "number": "200",
+   "app": "SGit Vaults",
+   "title": "People, messages and secrets (the SGitPeople package)",
+   "status": "in-progress",
+   "why": "Open, and the reality file lists for it: The people layer, SGitPeople.",
+   "summary": "From: the owner, 14 November 2026 (the brief in the article). Session: the people session, branch work/people.",
+   "detail": [
+    "From: the owner, 14 November 2026 (the brief in the article). Session: the people session, branch work/people.",
+    "Every install is a person with keys and an inbox; people meet by exchanging signed cards; everything they send each other, secrets included, is sealed to the recipient's key and dropped in their inbox. One Swift package, Packages/SGitPeople, used by both apps.",
+    "Done in the package (first slice)",
+    "- PKIKit.swift and LaneCrypto.swift moved in from VoiceDebrief, made public, nothing else changed; pki-interop.yml compiles them from there. - ContactCard: a pki.sgit.ai statement (type: card, registry: sgit.ai/people) carrying the name, the sgit key bundle and the inbox; as sgc1. text (about 1,200 characters for a 4096-bit key), a link, a QR code. - ContactBook: contacts with how each was met; a later card from the same keys updates, other keys under a known fingerprint are refused. - PeopleMessage: sealed and signed in sgit's envelope; kinds text, voice-note reference, secret, vault invitation, card; from and to inside the seal are checked on opening. sgm1. text for a sealed message handed over without an inbox. - LaneClient: write, list, fetch, mark processed, configure, against answers recorded from dev.send.sgraph.ai. - InboxCheck (list, fetch only when something waits, keep on...",
+    "Next",
+    "1. ~~Prove the first-contact round trip against the live server~~: done with tools/people/people.py on 14 November 2026 (see the reality file). Still to do: the same from Swift, which needs an access key where Swift runs. 2. Screens in SGit Vaults: You, Contacts, Inbox, Secrets (with the sgit app session, which owns Apps/SGit). 3. VoiceDebrief: its recipients become contacts; the record screen shows the inbox (the parent session's screens). 4. Devices (the owner, via the parent): your devices by their vouching statements in identity/devices/, name, kind, device key fingerprint, last seen; remove one, which withdraws its statement. After contacts and first contact. 5. A page on the site for card/#sgc1… and sealed/#sgm1… links, which shows what it holds and opens nothing.",
+    "Assumed, for the owner to confirm (the article's four decisions)",
+    "1. The access key is given in the first exchange (section 5), sealed to the newcomer's card. 2. The card is a new signed statement in pki.sgit.ai's form, compatible with its key bundle. 3. Each person's inbox is a lane on a vault of their own. 4. Publishing to pki.sgit.ai is optional and off by default (nothing publishes yet)."
+   ],
+   "statusLine": "",
+   "places": [
+    "SGit Vaults"
+   ],
+   "versions": [
+    "v0.1.54"
+   ],
+   "features": [
+    "The people layer, SGitPeople"
+   ],
+   "url": "https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/200-people-messages-and-secrets.md",
+   "source": "The project"
+  },
+  {
    "id": "issue-004",
    "kind": "issue",
    "number": "004",
@@ -1972,9 +2004,9 @@
    "title": "Send a note to the developer",
    "status": "seen-working",
    "why": "The reality file, Built: built: in the repository and proven by a run.",
-   "summary": "Engine/DeveloperLane.swift, LaneCrypto.swift (copied from PrompTugal__App__iOS): with an sgi1. lane link pasted in, a button after a run sends the audio in parts and the run as JSON to an sgit append lane on dev.send.sgraph.ai, each message encrypted to the link's RSA key with sgit's hybrid envelope. A lane is built into the test build (a vault id, a write-only token and a public key, committed on...",
+   "summary": "Engine/DeveloperLane.swift, LaneCrypto.swift (copied from PrompTugal__App__iOS; now in Packages/SGitPeople): with an sgi1. lane link pasted in, a button after a run sends the audio in parts and the run as JSON to an sgit append lane on dev.send.sgraph.ai, each message encrypted to the link's RSA key with sgit's hybrid envelope. A lane is built into the test build (a vault id, a write-only token...",
    "detail": [
-    "Engine/DeveloperLane.swift, LaneCrypto.swift (copied from PrompTugal__App__iOS): with an sgi1. lane link pasted in, a button after a run sends the audio in parts and the run as JSON to an sgit append lane on dev.send.sgraph.ai, each message encrypted to the link's RSA key with sgit's hybrid envelope. A lane is built into the test build (a vault id, a write-only token and a public key, committed on purpose); a pasted link takes its place. Nothing is sent without the button",
+    "Engine/DeveloperLane.swift, LaneCrypto.swift (copied from PrompTugal__App__iOS; now in Packages/SGitPeople): with an sgi1. lane link pasted in, a button after a run sends the audio in parts and the run as JSON to an sgit append lane on dev.send.sgraph.ai, each message encrypted to the link's RSA key with sgit's hybrid envelope. A lane is built into the test build (a vault id, a write-only token and a public key, committed on purpose); a pasted link takes its place. Nothing is sent without the button",
     "Unit tests: the link, the parts, the message format, and a round trip through the encryption with a throwaway key. First note sent and received, 13 November 2026, build 0.1.5 (10) on a Mac: the audio (187 KB, one part, hash intact) and the run arrived, were decrypted by the developer session and matched what the app showed"
    ],
    "places": [],
@@ -2322,6 +2354,24 @@
    "versions": []
   },
   {
+   "id": "feature-a-note-s-journey-after-finish",
+   "kind": "feature",
+   "app": "VoiceDebrief",
+   "title": "A note's journey after Finish",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "UI/SendProgressCard.swift: recorded, written up, encrypted and sent (with the part being sent), what goes, a failure if any; clears itself six seconds after the note has gone; Do not send until sending starts",
+   "detail": [
+    "UI/SendProgressCard.swift: recorded, written up, encrypted and sent (with the part being sent), what goes, a failure if any; clears itself six seconds after the note has gone; Do not send until sending starts",
+    "No test; not run on a device"
+   ],
+   "places": [],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
    "id": "feature-record-a-note-for-someone",
    "kind": "feature",
    "app": "VoiceDebrief",
@@ -2469,6 +2519,24 @@
    "versions": []
   },
   {
+   "id": "feature-the-people-layer-in-python-people-py",
+   "kind": "feature",
+   "app": "VoiceDebrief",
+   "title": "The people layer in Python, people.py",
+   "status": "seen-working",
+   "why": "The reality file, Built: built: in the repository and proven by a run.",
+   "summary": "tools/people/people.py: cards, sealed and signed messages, the inbox and the first contact in the same formats as SGitPeople, so that an agent can be a contact; keys and tokens in a folder outside the repository",
+   "detail": [
+    "tools/people/people.py: cards, sealed and signed messages, the inbox and the first contact in the same formats as SGitPeople, so that an agent can be a contact; keys and tokens in a folder outside the repository",
+    "Run on 14 November 2026 against dev.send.sgraph.ai from a cloud session: an inviter with an inbox, a newcomer with none; the access key sealed to the newcomer's card; the newcomer accepted, made an inbox on a new vault and sent the full card, which the inviter's check opened as from a contact and took the inbox from; then a text each way, each opened as from a contact. Both vaults destroyed afterwards. The access key it carried was a placeholder: the session's proxy adds the real one to every request"
+   ],
+   "places": [],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
    "id": "feature-a-conductor-s-inbox",
    "kind": "feature",
    "app": "VoiceDebrief",
@@ -2561,9 +2629,9 @@
    "title": "The key bundle, PKIKit",
    "status": "seen-working",
    "why": "The reality file, Built: built: in the repository and proven by a run.",
-   "summary": "Engine/PKIKit.swift: one sgit-compatible identity. RSA-OAEP 4096 and ECDSA P-256 generation, the public bundle sgit pki export prints, fingerprints, PKCS#8 out and in, private keys under a passphrase (PBES2, as sgit's key store keeps them), the k1 key code, detached signatures, the register's statement form, and the signed envelope",
+   "summary": "Packages/SGitPeople/Sources/SGitPeople/PKIKit.swift (moved from the app's Engine/ on 14 November 2026, unchanged but made public): one sgit-compatible identity. RSA-OAEP 4096 and ECDSA P-256 generation, the public bundle sgit pki export prints, fingerprints, PKCS#8 out and in, private keys under a passphrase (PBES2, as sgit's key store keeps them), the k1 key code, detached signatures, the...",
    "detail": [
-    "Engine/PKIKit.swift: one sgit-compatible identity. RSA-OAEP 4096 and ECDSA P-256 generation, the public bundle sgit pki export prints, fingerprints, PKCS#8 out and in, private keys under a passphrase (PBES2, as sgit's key store keeps them), the k1 key code, detached signatures, the register's statement form, and the signed envelope",
+    "Packages/SGitPeople/Sources/SGitPeople/PKIKit.swift (moved from the app's Engine/ on 14 November 2026, unchanged but made public): one sgit-compatible identity. RSA-OAEP 4096 and ECDSA P-256 generation, the public bundle sgit pki export prints, fingerprints, PKCS#8 out and in, private keys under a passphrase (PBES2, as sgit's key store keeps them), the k1 key code, detached signatures, the register's statement form, and the signed envelope",
     "pki-interop.yml, both ways, on keys made in the run: sgit pki imports, verifies, decrypts and signs with what Swift made, and pki.sgit.ai's own keys.js reads it; Swift reads what both made. Unit tests on a simulator, with the public half of one such run as fixtures and the register's real root key"
    ],
    "places": [
@@ -2573,6 +2641,30 @@
    "url": "https://ios.app.voicedebrief.ai/built/index.html",
    "source": "The reality file",
    "versions": []
+  },
+  {
+   "id": "feature-the-people-layer-sgitpeople",
+   "kind": "feature",
+   "app": "VoiceDebrief",
+   "title": "The people layer, SGitPeople",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "Packages/SGitPeople/: a package for both apps (Apple SDK and the local SGitVault). ContactCard: a signed card (a pki.sgit.ai statement: name, the sgit key bundle, the inbox) as sgc1. text, a link and a QR code; ContactBook: contacts and how each was met; PeopleMessage: sealed to the recipient and signed by the sender in sgit's envelope, kinds text, voice-note reference, secret, vault invitation...",
+   "detail": [
+    "Packages/SGitPeople/: a package for both apps (Apple SDK and the local SGitVault). ContactCard: a signed card (a pki.sgit.ai statement: name, the sgit key bundle, the inbox) as sgc1. text, a link and a QR code; ContactBook: contacts and how each was met; PeopleMessage: sealed to the recipient and signed by the sender in sgit's envelope, kinds text, voice-note reference, secret, vault invitation and card; LaneClient, InboxCheck, MessageStore, InboxSchedule, InboxMaker: the inbox on an append lane; SecretsStore: secrets in the Keychain (iCloud Keychain by default), each remembering who gave it and who holds which version; FirstContact: the access key sealed to a newcomer's card (issue 200). On no screen yet",
+    "Unit tests (swift test in ios.yml), the lane's answers replayed as recorded from dev.send.sgraph.ai on 14 November 2026; the first contact end to end with a folder for the vault server; a card made by people.py is read. Not yet against the live server from Swift; never run on a device"
+   ],
+   "places": [
+    "Settings: Recipients"
+   ],
+   "issues": [
+    "200"
+   ],
+   "url": "https://ios.app.voicedebrief.ai/built/index.html",
+   "source": "The reality file",
+   "versions": [
+    "v0.1.54"
+   ]
   },
   {
    "id": "feature-the-user-s-key-pair",
