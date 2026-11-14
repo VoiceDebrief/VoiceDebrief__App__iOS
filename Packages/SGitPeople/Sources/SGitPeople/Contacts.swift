@@ -39,9 +39,12 @@ public struct Contact: Codable, Equatable, Identifiable, Sendable {
     public var sentMyCardAt: Date?
     /// The card this one replaced, when a later card from the same keys changed the name or the inbox.
     public var updatedAt: Date?
+    /// When a message signed by them last arrived in this device's inbox. They could only have written to the
+    /// inbox with this person's card, so it says the link runs both ways.
+    public var lastHeardAt: Date?
 
     public init(card: ContactCard, met: HowMet, metAt: Date = Date(), nickname: String? = nil, verifiedAt: Date? = nil,
-                isAgent: Bool = false, sentMyCardAt: Date? = nil, updatedAt: Date? = nil) {
+                isAgent: Bool = false, sentMyCardAt: Date? = nil, updatedAt: Date? = nil, lastHeardAt: Date? = nil) {
         self.card = card
         self.met = met
         self.metAt = metAt
@@ -50,6 +53,7 @@ public struct Contact: Codable, Equatable, Identifiable, Sendable {
         self.isAgent = isAgent
         self.sentMyCardAt = sentMyCardAt
         self.updatedAt = updatedAt
+        self.lastHeardAt = lastHeardAt
     }
 
     public var name: String {
@@ -59,6 +63,9 @@ public struct Contact: Codable, Equatable, Identifiable, Sendable {
 
     /// Whether a message can be sent to them: their card names an inbox.
     public var canReceive: Bool { card.inbox != nil }
+
+    /// Both hold the other's card: this device has theirs, and a message signed by them has arrived here.
+    public var isMutual: Bool { lastHeardAt != nil }
 }
 
 /// The contacts on this device, in a JSON file. Nothing in it is secret (public keys, names, inbox addresses),
@@ -178,7 +185,30 @@ public final class ContactBook: @unchecked Sendable {
         change(fingerprint) { $0.sentMyCardAt = date }
     }
 
+    public func recordHeard(from signingFingerprint: String, at date: Date = Date()) {
+        guard let id = contact(signingFingerprint: signingFingerprint)?.id else { return }
+        change(id) { $0.lastHeardAt = max($0.lastHeardAt ?? .distantPast, date) }
+    }
+
+    // MARK: Photos, on this device only
+
+    /// A picture of the person, kept beside the contacts file (never in the card, never sent). Nil removes it.
+    public func setPhoto(_ fingerprint: String, jpeg: Data?) throws {
+        guard let url = photoURL(fingerprint) else { return }
+        if let jpeg { try PeopleFiles.write(jpeg, to: url) } else { try? FileManager.default.removeItem(at: url) }
+    }
+
+    public func photo(_ fingerprint: String) -> Data? {
+        photoURL(fingerprint).flatMap { try? Data(contentsOf: $0) }
+    }
+
+    private func photoURL(_ fingerprint: String) -> URL? {
+        file?.deletingLastPathComponent().appendingPathComponent("photos")
+            .appendingPathComponent(fingerprint.replacingOccurrences(of: ":", with: "-") + ".jpg")
+    }
+
     public func remove(_ fingerprint: String) {
+        try? setPhoto(fingerprint, jpeg: nil)
         lock.lock()
         contacts.removeAll { $0.id == fingerprint }
         lock.unlock()
