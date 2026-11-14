@@ -20,6 +20,10 @@ struct RecordView: View {
     @State private var confirmingDiscard = false
     /// The recipient the last note was finished and sent to with one press, to say so on this screen.
     @State private var queuedFor: String?
+    /// What is new since the app was last opened, worked out once when the screen first appears (issue 025).
+    @State private var briefing: Briefing?
+    @AppStorage("vd.lastOpened") private var lastOpened: Double = 0
+    @AppStorage("vd.lastVersion") private var lastVersion = ""
 
     var body: some View {
         NavigationStack(path: $path) {
@@ -82,6 +86,17 @@ struct RecordView: View {
                 Task { @MainActor in UIApplication.shared.isIdleTimerDisabled = recording }
             }
             .sensoryFeedback(.impact, trigger: isRecording)
+            .task {
+                // Once per launch: what changed since the last time, then remember this time.
+                guard briefing == nil else { return }
+                let version = AppInfo.shortVersion()
+                briefing = Briefing.make(notes: session.store.notes,
+                                         since: lastOpened > 0 ? Date(timeIntervalSince1970: lastOpened) : nil,
+                                         lastVersion: lastVersion.isEmpty ? nil : lastVersion,
+                                         version: version)
+                lastOpened = Date().timeIntervalSince1970
+                lastVersion = version
+            }
         }
     }
 
@@ -123,6 +138,20 @@ struct RecordView: View {
                         .foregroundStyle(.red)
                         .font(.callout)
                     Button("Dismiss") { session.clearFailure() }
+                }
+            }
+            if let briefing, !briefing.isEmpty {
+                card {
+                    if let version = briefing.upgradedTo {
+                        Link(destination: AppInfo.notes(for: version)) {
+                            Label("Updated to \(version): see what is new", systemImage: "sparkles")
+                                .font(.callout.weight(.semibold))
+                        }
+                    }
+                    ForEach(briefing.lines, id: \.self) { line in
+                        Text(line).font(.callout)
+                    }
+                    Button("Dismiss") { self.briefing = nil }
                 }
             }
             if let name = queuedFor {
