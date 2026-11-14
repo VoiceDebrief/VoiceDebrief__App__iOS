@@ -120,6 +120,13 @@ final class NoteStore {
         write(notes[index])
     }
 
+    /// Records that a note was sent to a recipient.
+    func recordSend(_ id: String, to name: String, at date: Date = Date()) {
+        guard let index = notes.firstIndex(where: { $0.id == id }) else { return }
+        notes[index].sends = (notes[index].sends ?? []) + [NoteSend(to: name, at: date)]
+        write(notes[index])
+    }
+
     /// Records that a note was saved into a vault, or why it was not.
     func recordSave(_ id: String, save: NoteSave?, problem: String?) {
         guard let index = notes.firstIndex(where: { $0.id == id }) else { return }
