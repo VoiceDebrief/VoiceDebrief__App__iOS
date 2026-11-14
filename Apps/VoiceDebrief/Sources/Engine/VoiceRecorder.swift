@@ -47,10 +47,12 @@ final class VoiceRecorder {
         return VoiceRecorder.level(decibels: Double(recorder.averagePower(forChannel: 0)))
     }
 
-    /// The meter's decibels (0 is full scale, about -50 is a quiet room) as 0 to 1.
+    /// The meter's decibels (0 is full scale, about -55 is a quiet room) as 0 to 1, on a curve, so that
+    /// ordinary speech sits in the middle instead of near the top (the owner: "it almost looks maxed out").
     nonisolated static func level(decibels: Double) -> Double {
         guard decibels.isFinite else { return 0 }
-        return min(1, max(0, (decibels + 50) / 50))
+        let linear = min(1, max(0, (decibels + 55) / 55))
+        return linear * linear
     }
 
     /// Stops and closes the file.

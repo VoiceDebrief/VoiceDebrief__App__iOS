@@ -2262,9 +2262,9 @@
    "title": "Where the work happens",
    "status": "built-untried",
    "why": "The reality file, Built: unverified: written, not yet proven by a run.",
-   "summary": "WhereWorkHappens in UI/NoteParts.swift, on the record screen: \"On this device\" (listening, transcribing, writing the debrief) and \"Network\" (sending to a recipient, part by part, encrypted), each green while busy",
+   "summary": "WorkStatusIcons and WorkLog in UI/NoteParts.swift (two icons in the record screen's bar, a sheet with what each means and what happened; computed by WhereWorkHappens): \"On this device\" (listening, transcribing, writing the debrief) and \"Network\" (sending to a recipient, part by part, encrypted), each green while busy",
    "detail": [
-    "WhereWorkHappens in UI/NoteParts.swift, on the record screen: \"On this device\" (listening, transcribing, writing the debrief) and \"Network\" (sending to a recipient, part by part, encrypted), each green while busy",
+    "WorkStatusIcons and WorkLog in UI/NoteParts.swift (two icons in the record screen's bar, a sheet with what each means and what happened; computed by WhereWorkHappens): \"On this device\" (listening, transcribing, writing the debrief) and \"Network\" (sending to a recipient, part by part, encrypted), each green while busy",
     "Not covered yet: a vault pushed to or pulled from a server, the identity's sign-in with pki.sgit.ai, and Apple's own downloads of a speech model. No test; not run on a device"
    ],
    "places": [
