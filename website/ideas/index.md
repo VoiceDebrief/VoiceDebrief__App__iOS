@@ -5,7 +5,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | Status | Meaning | How many |
 |---|---|---|
 | Seen working | Built, and a run proved it: CI, a device or a server. | 27 |
-| Built, untried | In the app or the repository, but not yet proven by a run on a device. | 70 |
+| Built, untried | In the app or the repository, but not yet proven by a run on a device. | 71 |
 | In progress | Begun: part of it is built or a release has touched it. | 37 |
 | Proposed | Asked for or described; nothing of it is built. | 43 |
 | Parked | Waiting: on the owner, on Apple, or scheduled for later. | 6 |
@@ -113,6 +113,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | Ask this vault, an experiment | Feature | SGit Vaults | SGit Vaults: a vault; SGit Vaults: History |   | [reality file](../sgit-app/built/index.md) |
 | Secrets | Feature | SGit Vaults | SGit Vaults: a vault |   | [reality file](../sgit-app/built/index.md) |
 | Questions for you | Feature | SGit Vaults | SGit Vaults: Settings |   | [reality file](../sgit-app/built/index.md) |
+| Guide and what is new | Feature | SGit Vaults | SGit Vaults |   | [reality file](../sgit-app/built/index.md) |
 | The same vaults on every device | Feature | SGit Vaults | SGit Vaults: Settings |   | [reality file](../sgit-app/built/index.md) |
 | Sharing a vault | Feature | SGit Vaults | SGit Vaults: Share |   | [reality file](../sgit-app/built/index.md) |
 | History | Feature | SGit Vaults | SGit Vaults: History |   | [reality file](../sgit-app/built/index.md) |
