@@ -256,6 +256,9 @@ final class VaultBook {
     static func newRemoteId() -> String { String(UUID().uuidString.lowercased().prefix(8)) }
     static func tokenName(_ remoteId: String) -> String { tokenPrefix + remoteId }
 
+    /// The access key the web Vault needs to save changes into this vault, if this device has one.
+    func accessKeyForTheWebVault(_ vault: SavedVault) -> String? { current(vault).remoteId.flatMap { token(for: $0) } }
+
     private func token(for remoteId: String) -> String? {
         guard let data = shelf.get(Self.tokenName(remoteId)), let text = String(data: data, encoding: .utf8), !text.isEmpty else { return nil }
         return text

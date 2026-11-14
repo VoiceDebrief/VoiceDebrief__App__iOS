@@ -119,6 +119,18 @@
 <tr><td>A sub-agent</td><td>The same head</td><td>A dashed ring</td></tr>
 </tbody></table></div>
 <p><code>SendRoute</code> draws who a note goes from and to: you, an arrow, then the recipient, or several recipients overlapping with &quot;Sam, Ana and 3 more&quot; beneath; with none, &quot;This device&quot;. On the Identity screen, &quot;How you look&quot; offers a photo or another look.</p>
+<h2 id="two-ways-to-talk">Two ways to talk</h2>
+<p>Every note, picture and message travels one of two ways, and says which with a <code>ChannelBadge</code>.</p>
+<div class="tablewrap"><table>
+<thead><tr><th></th><th>Lane</th><th>Shared vault</th></tr></thead>
+<tbody>
+<tr><td>Direction</td><td>One way</td><td>Both ways</td></tr>
+<tr><td>How</td><td>Sealed on your device to their key and dropped in their inbox; you can add to it but not read it back; the server sees only ciphertext</td><td>Both of you hold the vault's key and read and write the same encrypted files</td></tr>
+<tr><td>Used for</td><td>Voice notes, pictures, messages to agents, handing over a vault's key</td><td>The Agents screen and Claude's replies; shared vaults with people are still to come</td></tr>
+<tr><td>Colour and symbol</td><td>Green, <code>envelope.fill</code></td><td>Indigo, <code>lock.shield.fill</code></td></tr>
+<tr><td>Drawing</td><td>A sealed envelope travels one way into their inbox, with no way back</td><td>One vault between two faces, arrows both ways, files arriving from each side</td></tr>
+</tbody></table></div>
+<p><code>ChannelDiagram(kind:me:them:large:)</code> animates each, and stands still when Reduce Motion is on; <code>TwoWaysToTalkView</code> shows both with two sentences each, side by side on iPad and Mac, one above the other on iPhone.</p>
 <h2 id="type-spacing-and-corners">Type, spacing and corners</h2>
 <ul>
 <li><strong>Type.</strong> Apple's system font throughout, so Dynamic Type and every language work. Display text, titles and numbers use the rounded design (<code>DS.TypeScale.display</code>, <code>.title</code>, <code>.number</code>): the timer, a section's banner, the balance. Body text is the plain system font.</li>

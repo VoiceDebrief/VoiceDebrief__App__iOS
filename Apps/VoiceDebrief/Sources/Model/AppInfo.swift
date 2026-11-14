@@ -10,6 +10,24 @@ enum AppInfo {
         return "\(version) (\(build))"
     }
 
+    /// True when `other` ("0.1.90") is a later version than `mine` ("0.1.82"), compared number by number.
+    static func isNewer(_ other: String, than mine: String) -> Bool {
+        let a = other.split(separator: ".").map { Int($0) ?? 0 }, b = mine.split(separator: ".").map { Int($0) ?? 0 }
+        for i in 0..<max(a.count, b.count) {
+            let x = i < a.count ? a[i] : 0, y = i < b.count ? b[i] : 0
+            if x != y { return x > y }
+        }
+        return false
+    }
+
+    /// The version alone, "0.1.82".
+    static func version(info: [String: Any]? = Bundle.main.infoDictionary) -> String {
+        info?["CFBundleShortVersionString"] as? String ?? "0.0.0"
+    }
+
+    /// Opens the TestFlight app, where an update is installed.
+    static let testFlight = URL(string: "itms-beta://")!
+
     /// The release history on the project's site.
     static let releaseNotes = URL(string: "https://ios.app.voicedebrief.ai/versions/index.html")!
 

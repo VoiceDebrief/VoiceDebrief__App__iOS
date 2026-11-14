@@ -90,6 +90,20 @@ Every person and every agent has a face, so that "if I want to talk to the condu
 
 `SendRoute` draws who a note goes from and to: you, an arrow, then the recipient, or several recipients overlapping with "Sam, Ana and 3 more" beneath; with none, "This device". On the Identity screen, "How you look" offers a photo or another look.
 
+## Two ways to talk
+
+Every note, picture and message travels one of two ways, and says which with a `ChannelBadge`.
+
+| | Lane | Shared vault |
+|---|---|---|
+| Direction | One way | Both ways |
+| How | Sealed on your device to their key and dropped in their inbox; you can add to it but not read it back; the server sees only ciphertext | Both of you hold the vault's key and read and write the same encrypted files |
+| Used for | Voice notes, pictures, messages to agents, handing over a vault's key | The Agents screen and Claude's replies; shared vaults with people are still to come |
+| Colour and symbol | Green, `envelope.fill` | Indigo, `lock.shield.fill` |
+| Drawing | A sealed envelope travels one way into their inbox, with no way back | One vault between two faces, arrows both ways, files arriving from each side |
+
+`ChannelDiagram(kind:me:them:large:)` animates each, and stands still when Reduce Motion is on; `TwoWaysToTalkView` shows both with two sentences each, side by side on iPad and Mac, one above the other on iPhone.
+
 ## Type, spacing and corners
 
 - **Type.** Apple's system font throughout, so Dynamic Type and every language work. Display text, titles and numbers use the rounded design (`DS.TypeScale.display`, `.title`, `.number`): the timer, a section's banner, the balance. Body text is the plain system font.

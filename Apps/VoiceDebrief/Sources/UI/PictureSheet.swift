@@ -15,12 +15,17 @@ struct PictureSheet: View {
         NavigationStack {
             Form {
                 Section {
+                    SendRoute(from: MyLook.shared.subject(id: "me"), to: [AvatarSubject(recipient: recipient)], size: 44)
+                        .padding(.vertical, DS.Space.xxs)
+                }
+                Section {
                     Image(uiImage: image)
                         .resizable()
                         .scaledToFit()
                         .frame(maxHeight: 360)
                         .frame(maxWidth: .infinity)
-                        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                        .clipShape(RoundedRectangle(cornerRadius: DS.Radius.card, style: .continuous))
+                        .overlay(RoundedRectangle(cornerRadius: DS.Radius.card, style: .continuous).strokeBorder(DS.Palette.hairline, lineWidth: 0.5))
                 }
                 Section("With it") {
                     TextField("A line about it (optional)", text: $caption, axis: .vertical)
@@ -39,6 +44,7 @@ struct PictureSheet: View {
                 ToolbarItem(placement: .cancellationAction) { Button("Close") { dismiss() } }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Send") { Task { await sender.send(image, caption: caption, to: recipient) } }
+                        .keyboardShortcut(.return, modifiers: .command)   // Cmd+Return sends (the owner)
                         .disabled(busy)
                 }
             }
@@ -65,17 +71,17 @@ struct PictureSheet: View {
             HStack { ProgressView(); Text("Sending, part \(done) of \(total)").font(.footnote) }
         case .retrying(let attempt, let of, let next):
             HStack {
-                Image(systemName: "wifi.exclamationmark").foregroundStyle(.orange)
+                Image(systemName: "wifi.exclamationmark").foregroundStyle(DS.Palette.amber)
                 Text("No connection. Trying again \(Text(next, style: .relative)) (try \(attempt) of \(of))").font(.footnote)
                 Spacer()
                 Button("Try now") { sender.tryNow() }.font(.footnote)
             }
         case .sent(let at):
-            Label("Sent to \(recipient.name) at \(at.formatted(date: .omitted, time: .shortened))", systemImage: "checkmark.circle.fill")
-                .font(.headline).foregroundStyle(.green)
+            Label("Sent to \(recipient.name) at \(at.formatted(date: .omitted, time: .shortened))", systemImage: Icon.done)
+                .font(.headline).foregroundStyle(DS.Palette.green)
         case .failed(let why):
             VStack(alignment: .leading, spacing: 8) {
-                Text("Not sent: \(why)").font(.footnote).foregroundStyle(.red)
+                Label("Not sent: \(why)", systemImage: Icon.failed).font(.footnote).foregroundStyle(DS.Palette.red)
                 Button("Send again") { Task { await sender.send(image, caption: caption, to: recipient) } }
             }
         }

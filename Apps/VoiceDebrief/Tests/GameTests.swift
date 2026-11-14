@@ -401,3 +401,20 @@ struct GamePlayerScriptTests {
         #expect(GameToolScope.check(tool: "showClue", arguments: [:], offered: [GameHints.clueTool]) == .refused("A clue is not a move."))
     }
 }
+
+@Suite("L03: the microphone")
+struct GameMicrophoneTests {
+    @Test func listeningIsRefusedWhileANoteIsRecording() {
+        #expect(GameController.refusal(localeId: "en_GB", noteRecording: true)?.hasPrefix("A voice note is being recorded") == true)
+        #expect(GameController.refusal(localeId: "", noteRecording: false) == "Choose the language spoken in Settings first.")
+        #expect(GameController.refusal(localeId: "en_GB", noteRecording: false) == nil)
+    }
+
+    @MainActor
+    @Test func stoppingWhenNotListeningIsHarmless() async {
+        let game = GameController(kind: .boxes)
+        await game.stopListening()
+        #expect(!game.listening)
+        #expect(game.entries.isEmpty)
+    }
+}

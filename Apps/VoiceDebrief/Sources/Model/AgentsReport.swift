@@ -23,10 +23,15 @@ struct AgentsReport: Codable, Equatable, Sendable {
         var at: Date
         var text: String
         var replyTo: String?
+        /// What it answers, in your words (the start of your note's transcript), so the reply makes sense on its own.
+        var quote: String? = nil
     }
 
     var v: Int
     var made: Date
+    /// The newest build in TestFlight, as the conductor last saw it ("0.1.90"), so the app can say an update
+    /// is waiting (the owner: "is there a way to know from here if there are new updates?").
+    var latestBuild: String? = nil
     var conductor: String           // the id of the agent that wrote this
     var agents: [Agent]
     var links: [Link]
