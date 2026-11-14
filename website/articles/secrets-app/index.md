@@ -61,26 +61,42 @@ What the file-based ones teach, because they are closest to the owner's idea:
 - **KeePass merges at the entry level.** KeePassXC and Strongbox can merge two databases using each entry's modification time and its own history. That is good, but it is a merge by timestamp of a whole entry; there is no common ancestor, so an entry changed on both sides keeps the later one and puts the other in its history.
 - **Enpass proves people will choose their own cloud** to avoid trusting a vendor's servers.
 
-## 4. Where an sgit vault is genuinely different, and where it is not
+## 4. Positioning: where others already use keys, and where this is different
 
-**Not different, and we should say so:**
+The owner, 14 November 2026: competition is fine ("there could be multiple competing password managers"); what he wants, every person and device with a key pair, sharing by key exchange, sealed messages, is "not really embraced" by the existing ones. So this section is positioning, not a case against building. It has to be accurate, because several of them do use public keys underneath.
 
-- **Apple Passwords is free, built in, fills passwords and passkeys everywhere, and syncs with no thought.** For one person who lives on Apple devices and never needs a file, a history or a non-Apple share, it is enough. We do not beat it on convenience; AutoFill alone is a capability we have not switched on.
-- **Strongbox already keeps an encrypted file in iCloud Drive**, with Face ID, AutoFill, history per entry and a merge. KeePass history exists too.
+### 4.1 Key-based sharing in the others
+
+| Product | Keys per person? | How sharing works | Who vouches for the other person's key | Can the person see or use their keys? |
+|---|---|---|---|---|
+| 1Password | Yes: each user has a key pair (RSA-OAEP) made on their device | A vault key is encrypted to each member's public key | 1Password's server hands out members' public keys | No: hidden inside the account |
+| Bitwarden | Yes: an RSA key pair per user | An organisation's key is encrypted to each member's public key; an admin confirms new members, optionally by fingerprint phrase | Bitwarden's server, with the optional fingerprint check | Only as a fingerprint phrase |
+| Proton Pass | Yes: Proton's PGP keys | A vault key is encrypted to the invitee's key; the invitation is signed with the sender's key | Proton's Key Transparency log makes swapped keys detectable | No, though the keys are standard PGP underneath |
+| Apple Passwords (shared groups) | Apple handles keys for each Apple Account | Members added by the group owner through iCloud Keychain | Apple | No |
+| KeePass, Strongbox, Enpass | None | Share the file and its password | Nobody | n/a |
+
+So "end-to-end encrypted sharing with public keys" is not new: 1Password, Bitwarden and Proton do it. What they share is that **the key is theirs to manage and their server introduces you to the other person**. Proton's Key Transparency is the strongest answer among them to a server that lies; the 2026 ETH Zurich study showed what happens without one (see the [opportunity brief](../../sgit-app/secrets/opportunity/index.md)).
+
+### 4.2 Where this one is different
+
+1. **Keys the person sees and owns.** Your key pair is yours: shown as a card, exportable to `sgit`'s own key store, the same pki.sgit.ai format, usable without our app.
+2. **Met in person, or by any message.** Cards are swapped by QR code face to face, or pasted from WhatsApp or mail, and the contact remembers which. No directory introduces anyone; nothing depends on our server being honest.
+3. **One key for everything.** The same key receives sealed messages, opens shared vaults, receives a single secret, and signs (through the device keys it vouches for) every commit. A secret, a message and a vault invitation are the same act: seal to a card.
+4. **Agents are people too.** An AI session has a card and an inbox, and can be given exactly one secret, with a record.
+5. **A merge with a common ancestor, not a timestamp.** Each copy of the vault is a commit graph; two devices that changed different secrets merge with no question, and one secret changed on both is shown with the version both started from. KeePass merges by time; iCloud alone drops one side.
+6. **The file cannot be half-merged into nonsense.** Objects are named by the hash of their ciphertext, so two copies join by plain union; only the two heads need merging.
+7. **Signed history of every change**, kept in the format rather than per entry.
+8. **Secrets and files together**, in one vault: a passport scan, an SSH key file, a recovery sheet.
+9. **One format, several stores, no lock-in.** iCloud Drive, a Mac folder, a USB stick and SG/Send at once; the open `sgit` command reads any of them.
+
+### 4.3 Where it is not different, said plainly
+
+- **Apple Passwords is free, built in, fills passwords and passkeys everywhere, and syncs with no thought.** We do not beat it on convenience until AutoFill is switched on.
+- **Strongbox already keeps an encrypted file in iCloud Drive**, with Face ID, AutoFill, history per entry and a merge.
 - **Enpass already lets you choose your own cloud.**
 - **Encryption on the device and a server that sees only ciphertext** is what every serious manager claims.
 
-**Genuinely different:**
-
-1. **A merge with a common ancestor, not a timestamp.** Each copy of the vault is a commit graph. Two devices that changed different secrets merge with no question; one secret changed on both is shown side by side, with the version both started from. KeePass guesses by time; iCloud alone drops one side.
-2. **The file cannot be half-merged into nonsense.** Objects are named by the hash of their ciphertext, so two copies of the file join by plain union: the same name is always the same bytes. Only the two heads need merging.
-3. **Signed history of every change**: which device changed the Wi-Fi password and when, with the earlier value one step back, kept in the format itself rather than per entry.
-4. **Secrets and files together.** A secret is a file in a vault; the same vault can hold the scan of a passport, a recovery sheet, an SSH key file, a 300 MB backup.
-5. **One format, several stores, no lock-in.** The same vault can be a file in iCloud Drive, a folder on a Mac, a copy on a USB stick and a remote on SG/Send, all at once, and the open `sgit` command reads any of them.
-6. **Sharing by key exchange that no server takes part in.** The key you seal to comes from a card you scanned in person, not from a vendor's directory: the weakness behind the 2026 ETH Zurich attacks on Bitwarden, LastPass and Dashlane (see the brief).
-7. **Agents.** An AI session has a card and an inbox in this design; it can be given one secret, sealed to it, with a record.
-
-The honest summary: the first product competes with Strongbox and Enpass on "your file, your cloud", and adds a real merge, history and a path to sharing. It does not compete with Apple Passwords on convenience until AutoFill is in.
+The positioning in one line: **the first secrets manager where your keys are yours, the people you share with are people you met, and the same keys carry your messages, vaults and agents**, with a vault that lives in your own iCloud as one file. The first version competes with Strongbox and Enpass on "your file, your cloud"; the keys and sharing are what nobody else offers in this form.
 
 ## 5. The storage design
 
@@ -102,7 +118,7 @@ A consequence that matters for "mission critical": **a write that iCloud loses i
 ```
 
 - **The container.** The app's own ubiquity container, with `NSUbiquitousContainerIsDocumentScopePublic` so the folder shows in Files and on a Mac's iCloud Drive. It needs the iCloud capability with iCloud Documents and a container identifier registered in the developer portal: an owner step.
-- **What the file is.** A zip of the vault's `bare/` folder (compression helps little: the objects are already encrypted), plus a small cleartext header file naming the format and holding the wrapped copies of the vault key (5.6). It is already encrypted object by object; zipping it adds no secrecy and needs none.
+- **What the file is.** A zip of the vault's `bare/` folder (compression helps little: the objects are already encrypted), plus a small cleartext header file naming the format and holding the wrapped copies of the vault key (5.7) and the head it holds (5.4). It is already encrypted object by object; zipping it adds no secrecy and needs none.
 - **Writing.** After each commit: build the new zip in a temporary file, then `NSFileCoordinator.coordinate(writingItemAt:options: .forReplacing)` and `FileManager.replaceItemAt` so that iCloud sees one atomic replacement, never a half-written file. Before replacing, move the previous file into `.versions/` and remove the oldest beyond five.
 - **Reading.** On launch and on coming to the front: an `NSMetadataQuery` on the container finds the file; if it is not downloaded, `startDownloadingUbiquitousItem(at:)`; read it with a coordinated read; unpack into a temporary folder; treat it as a remote and merge (5.3). While the app is open, an `NSFilePresenter` hears of changes from other devices.
 - **Conflicts.** When two devices replaced the file while apart, iCloud keeps one as current and the others as `NSFileVersion.unresolvedConflictVersionsOfItem(at:)`. The app merges each into the current one, writes the result, marks each conflict version resolved and calls `removeOtherVersionsOfItem`. Nothing is chosen by time.
@@ -136,7 +152,34 @@ A consequence that matters for "mission critical": **a write that iCloud loses i
 
 Because each secret is its own file, step 3 almost never finds a conflict. When it does, the app keeps both values (one under a conflict name) and shows them side by side with the value both started from, and the person picks. Exactly this ran in sgit 0.27 in this session; in Swift, the merge is the main piece of new engine work (issue 006 lists it among the vault engine's gaps).
 
-### 5.4 Stores B, C and D
+### 5.4 Two writers at the same moment *(proposed)*
+
+The owner's requirement: two people or two devices writing the same vault file at once must never corrupt it. **The server already has this property**: a push moves the branch with compare-and-swap, so a write based on a stale head is refused and the writer pulls, merges and tries again; nothing is ever overwritten. iCloud Drive has no compare-and-swap across devices, so the file store has to get the same guarantee another way.
+
+The rules:
+
+1. **Every file written contains everything in the file it replaces.** Inside one coordinated block (`NSFileCoordinator.coordinate(readingItemAt:options:writingItemAt:options:)`, which is exclusive between processes on this device, the app and any extension), the app reads the current file, unions its objects with the device's vault and merges its head, and only then writes. A write can add history; it can never remove it. That is the file-store form of compare-and-swap: never replace a copy you have not merged.
+2. **The header names the heads.** The file's small header lists the head commit it holds. Before replacing, the app checks that head is in its own history; if not, it merges first (rule 1). If the file changed while the app was merging, it reads and merges again before writing.
+3. **Across devices, a collision becomes two versions, never a torn file.** The replacement is atomic, so another device sees the old file or the new one. When two devices replace it while apart, iCloud keeps one and offers the other as an `NSFileVersion` conflict version. The app merges each conflict version and **removes a version only once its head is reachable from what it has just written**, so a late conflict version is never thrown away unread.
+4. **Every device is a whole copy.** Even if iCloud lost a version, the device that wrote it still holds its commits and its next write carries them.
+5. **Past copies.** Five earlier files in `.versions/`, each named by time and device, as a last resort against a bug in the app itself.
+6. **The person sees it.** A merge is a commit like any other, signed by the device that made it, and the app says so: "Merged changes from the iPad (2 secrets), 09:14" on the store's line and in the history. A conflict on one secret is a question, not a silent choice.
+
+**Where the file store is weaker than the server**, and when the server is worth paying for:
+
+| | iCloud file | SG/Send server |
+|---|---|---|
+| A stale write | Becomes a conflict version, merged later | Refused at once; the writer merges first |
+| How fast the other device sees a change | Seconds to minutes, sometimes hours; order not guaranteed | As soon as it pulls |
+| Two people | Only through a shared iCloud folder between two Apple Accounts, slower and more prone to conflicts | Designed for it |
+| Someone without an Apple device, or a browser | No | Yes |
+| A write-only inbox (a contractor drops a secret in) | No | Yes: append lanes |
+| A copy outside Apple | No | Yes |
+| Cost to us | Nothing: the person's own iCloud | Small, per push (section 9) |
+
+So the file store is right for one person on their own Apple devices, which is the first version. The server is worth paying for once a vault is **shared between people**, needs to be **seen in a browser**, must take **secrets from outside**, or the person wants **a copy that does not depend on Apple**.
+
+### 5.5 Stores B, C and D
 
 | Store | What it is | Written | Read | Status |
 |---|---|---|---|---|
@@ -158,11 +201,11 @@ The vault key is shown in the app behind Face ID, or derived from the recovery c
 
 **The server, if switched on**, adds a browser view and a copy that is not Apple's, and it is the only store that can reach someone outside the person's own Apple account. It is never needed to open, read or change a secret.
 
-### 5.5 Multiple stores, one rule
+### 5.6 Multiple stores, one rule
 
 Every store is a remote; the device's vault is the only working copy. On open the app reads every store it can reach, unions objects, and merges heads, in a fixed order (this device, iCloud, the server, any copy folder). After a change it writes to every store that is switched on, and shows one line per store: "iCloud: saved 09:12", "Server: not switched on", "Copy on USB: last saved 3 days ago". A store that fails is retried and said, never silent; a store that is behind is simply written again.
 
-### 5.6 Who holds the key: custody options
+### 5.7 Who holds the key: custody options
 
 The vault key opens everything, so the design separates **the file** from **the locks that open it**, the way disk encryption keeps several key slots. The file's header holds the vault key wrapped once for each lock the person has set up; any one lock opens it.
 
@@ -175,7 +218,7 @@ The vault key opens everything, so the design separates **the file** from **the 
 
 **Recommended default:** lock 1 on, so that it "just works" on every Apple device; lock 3 offered at setup and again after the tenth secret, until it is done; lock 2 as the choice for people who want the key away from Apple, ideally on a hardware key. The app always shows which locks exist ("This vault opens with: iCloud Keychain, recovery code").
 
-### 5.7 Threat model, store by store
+### 5.8 Threat model, store by store
 
 | Who | Gets | Can read secrets? | Notes |
 |---|---|---|---|
@@ -186,7 +229,7 @@ The vault key opens everything, so the design separates **the file** from **the 
 | Someone who finds the USB copy | The file | Not without a lock | The same as Apple's position |
 | Someone who finds the printed code | A lock | Only with a copy of the file too | Keep the paper away from the computer |
 | The SG/Send server, if switched on | The objects and the hash of the write key | No | It can refuse or delete, so it is never the only store. It cannot substitute keys for sharing, because keys come from cards |
-| Two devices writing at once | Two versions | n/a | Merged; nothing chosen by time; past copies kept |
+| Two devices writing at once | Two versions | n/a | Merged; nothing chosen by time; past copies kept (5.4) |
 | A corrupt or truncated file | One bad version | n/a | Each object checked against its hash before use; the five past copies and every device's own copy remain |
 
 ## 6. Sharing and collaboration, later
@@ -255,19 +298,46 @@ AutoFill in Safari and other apps (until the capability is switched on, the app 
 
 ## 9. Pricing
 
-Per use, in the same honesty-box model as VoiceDebrief's [credit](../../credit/index.md): a balance in micro-credits (a penny is 10,000), charged after something is done, never blocking. One rule above all for a secrets manager: **reading, searching, copying and opening a vault are never charged and never blocked**, even below zero, in the way VoiceDebrief never charges or stops a recording. A person must always be able to reach their own passwords.
+The owner, 14 November 2026: the usage model, "I don't like that rent model", with credit bought in advance as in VoiceDebrief. The ledger is VoiceDebrief's [credit](../../credit/index.md): a balance in micro-credits (a penny is 10,000), prices in whole pence, charged after something is done, never blocking. One rule above all for a secrets manager: **reading, searching, copying, opening and exporting are never charged and never blocked**, even below zero, in the way VoiceDebrief never charges or stops a recording. A person must always be able to reach their own passwords.
 
-| What | Placeholder |
-|---|---|
-| Reading, copying, searching, opening, exporting a copy, the recovery code | Free, always |
-| Adding or changing a secret | 1p |
-| Merging two devices' changes | Free (it is the app's job) |
-| A second or further vault | 10p, as creating a vault in VoiceDebrief |
-| Keeping a copy on the SG/Send server (later) | 1p a day while switched on, or per push; to be measured |
-| Sharing a vault with a person (later) | 10p |
-| Starting credit | £2.00, a placeholder |
+### 9.1 What the operations cost us
 
-Someone who adds or changes twenty secrets a month spends 20p, against £3 to £4 a month for the paid plans in section 3. Top-ups go through the App Store in packs (Apple takes its share, which is one reason for packs and not single pennies); until the owner switches the purchase on, top-ups are simulated, as in VoiceDebrief.
+Estimates, not measurements: our server's real costs are not known to this session. Public object-storage list prices are used as a stand-in (about $0.023 a GB a month to store, $0.005 per thousand writes, $0.0004 per thousand reads), with a margin for the API in front.
+
+| Operation | What happens | Cost to us, roughly |
+|---|---|---|
+| Add or change a secret, iCloud and device only | A commit on the device; one file rewritten in the person's own iCloud | Nothing |
+| Read, search, copy, open | On the device | Nothing |
+| Merge two devices | On the device | Nothing |
+| Push one change to the server | Three or four small objects in one batch, and a compare-and-swap on the ref: two or three requests, a few KB | About a thousandth of a penny |
+| Keep a vault on the server | A few MB for a vault of secrets | About a hundredth of a penny a month |
+| Read from the server on open | A handful of requests | Well under a tenth of a penny a month for daily use |
+| Share a vault with a person | A sealed message to their inbox: one append | About a thousandth of a penny |
+| A large file on the server | Its size | About 0.002p per MB a month; the one thing that could cost something |
+| Apple's share of a top-up | 15% under the App Store Small Business Program, else 30% | 75p of a £5 pack |
+
+The honest conclusion: **apart from Apple's share and large files, nothing a person does costs us a measurable amount.** Prices are what the product is worth and what feels fair, not a pass-through of costs.
+
+### 9.2 Three options, costed for three people
+
+Prices for options A and B: a change 1p; a push to the server 1p (only when the server copy is on); a further vault 10p; sharing a vault with a person 10p; a large file 1p per 10 MB uploaded; changes and pushes **capped at £1 a month**, so a heavy user never pays more than a rival's subscription.
+
+| A year of | Light: 5 changes a month, no server | Typical: 20 changes a month, server on | Heavy (a family): 150 changes a month, server on, 4 people shared |
+|---|---|---|---|
+| A. Credit only, packs of £2 and £5 | 60p | £4.80 | £12.40 (cap reached each month) |
+| B. A £5 starter: the server copy switched on for one vault, and £5 of credit, then credit as A | £5 once; lasts about 8 years | £5 once; lasts about a year | £5, then about £7.40 more |
+| C. A free month, then a subscription (about £2 a month) | £22 | £22 | £22 |
+| For comparison | Apple Passwords £0; Bitwarden Premium $19.80; 1Password about $48; Proton Pass Plus about $24 to $36 | | |
+
+### 9.3 Recommendation: B, which is A with a clear first purchase
+
+- **One ledger, one product type** (a consumable pack of credit), as VoiceDebrief already has. No subscription, no rent, no free month that ends.
+- **The first thing on offer is the £5 starter**: £5 of credit, and buying it switches on the server copy of the person's vault as an extra layer. The server is then charged by use like everything else (1p a push), not by the month. This is the owner's "£5 gives you a vault plus credit", without a promise of storage forever at a fixed price: the vault stays as long as the person wants it, and its pushes draw on credit.
+- **Starting credit of £1** for everyone, so the app is usable from the first minute without buying anything; the iCloud file and the device are enough for one person, and they cost us nothing.
+- **Below zero, nothing is blocked**: reading and copying never; changes keep working and the balance turns a warmer colour, as in VoiceDebrief. The only thing that stops at a negative balance is new pushes to the server, which says so and keeps the change on the device and in iCloud.
+- **Option C is not recommended**: the owner dislikes it, it charges a light user thirty times what they use, and a lapsed subscription that blocks access to passwords would break the first rule.
+
+Until the owner switches the App Store purchase on, top-ups are simulated, as in VoiceDebrief. Every figure here is a placeholder in one place in the code, as `PriceList` is.
 
 ## 10. Questions for the owner
 
@@ -275,7 +345,8 @@ Someone who adds or changes twenty secrets a month spends 20p, against £3 to £
 2. **The default locks**: iCloud Keychain on, the recovery code strongly offered, the passkey optional (recommended), or the passkey as the default?
 3. **One file per vault or one file for everything?** Proposed: one file per vault, so that a later shared vault can live in a different store from "My secrets".
 4. **Should the first version include the server as an option**, or leave it for later (proposed: later)?
-5. **Prices**: are 1p per change and free reading right?
+5. **Pricing**: the £5 starter (credit, with the server copy switched on and charged per push), £1 of starting credit, 1p a change, a £1 monthly cap, reading always free? Or credit packs only, with no starter?
+6. **Shared vaults between two people**: through the server only (recommended), or also through a shared iCloud folder?
 
 ## Sources
 
@@ -283,6 +354,7 @@ Someone who adds or changes twenty secrets a month spends 20p, against £3 to £
 - Enpass storage and pricing: [PanicVault review](https://www.panicvault.org/password-managers/enpass-review/), [Gaurav Tiwari review](https://gauravtiwari.org/enpass-review).
 - Prices: [1Password increase, March 2026](https://vpnoverview.com/news/1password-price-increase-march-27/), [Bitwarden 2026 changes](https://alternativeto.net/news/2026/1/bitwarden-enhances-premium-and-families-plans-with-more-security-features-and-raises-prices), [Proton Pass and 1Password](https://password-manager.cybernews.com/proton-pass-vs-1password/), and the [opportunity brief](../../sgit-app/secrets/opportunity/index.md) for Keeper and Dashlane.
 - Apple Account recovery: [Apple Platform Security: recovery contacts](https://support.apple.com/guide/security/secafa525057/web), [recovery key](https://support.apple.com/109345), [recovery contact](https://support.apple.com/en-al/102641).
+- Key-based sharing in other managers: [1Password security design](https://1passwordstatic.com/files/security/1password-white-paper.pdf), [Bitwarden security whitepaper](https://bitwarden.com/help/bitwarden-security-white-paper/), [Proton Pass security model](https://proton.me/blog/proton-pass-security-model).
 - Passkey PRF on Apple platforms: [ASAuthorizationPublicKeyCredentialPRFAssertionInput](https://developer.apple.com/documentation/authenticationservices/asauthorizationpublickeycredentialprfassertioninput-swift.struct), [the PRF output bug, fixed in 18.4](https://developer.apple.com/forums/thread/764730).
 - Names: App Store listings for [strong room](https://apps.apple.com/us/app/strong-room/id945235429), [Coffre Noir](https://apps.apple.com/us/app/coffre-noir-password-manager/id1473071687), [SealPass](https://apps.apple.com/us/app/sealpass-password-manager/id1573117747), [Secrets 4](https://apps.apple.com/app/id1591056366); domains from rdap.org.
 - sgit: sgit-ai 0.27.0 from PyPI, run in this session (`clone --transport local`, `pull` with merge and conflicts).
@@ -295,4 +367,5 @@ Someone who adds or changes twenty secrets a month spends 20p, against £3 to £
 - **Open your vault on any computer** [[proposed]]: the exported file opens with the open `sgit` command (`--transport local`), no app and no account.
 - **Locks you can see** [[proposed]]: the vault key wrapped once per lock (iCloud Keychain, a passkey, a printed code), and the app says which locks open it.
 - **A passkey on a hardware key as the lock** [[proposed]]: the vault key away from the Apple Account, opened by a security key's PRF.
+- **A merge you can see** [[proposed]]: when two devices or two people wrote at once, the app says "Merged changes from the iPad, 09:14", signed, and asks only when the same secret changed on both.
 - **Reading is never charged** [[proposed]]: per-use pricing in pennies where opening and copying your own passwords is always free, even below zero.
