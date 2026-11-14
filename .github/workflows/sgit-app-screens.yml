@@ -1,0 +1,118 @@
+name: sgit app screens
+
+# A picture of every screen of the sgit app, so that whoever writes it can see it without a Mac.
+# The approach is screens.yml's (issue 016), for Apps/SGit: the UI tests in Apps/SGit/UITests launch
+# the app once per screen on an invented vault (-SGScreen, -SGSampleData) and keep a screenshot.
+# Light appearance only, to keep it to two Mac jobs: one iPhone, one iPad in landscape.
+#
+# Files in the artifact sgit-screens-<device>: <iphone|ipad>-light-<screen id>.png.
+on:
+  workflow_dispatch:
+  push:
+    branches: [dev, 'work/sgit-app*']
+    paths:
+      - 'Apps/SGit/Sources/UI/**'
+      - 'Apps/SGit/Sources/App/**'
+      - 'Apps/SGit/UITests/**'
+      - 'Apps/SGit/SGit.xcodeproj/**'
+      - '.github/workflows/sgit-app-screens.yml'
+
+permissions:
+  contents: read
+
+env:
+  PROJECT: Apps/SGit/SGit.xcodeproj
+  SCHEME: SGitScreens
+  # One per entry in ScreensTests.shots. Update both together.
+  SHOTS: vaults,vaults-empty,create,add,vault,vault.folder,vault.list,file,share,history,commit,settings
+
+jobs:
+  shoot:
+    name: Screens (${{ matrix.device }})
+    strategy:
+      fail-fast: false
+      matrix:
+        device: [iPhone, iPad]
+    runs-on: macos-26
+    timeout-minutes: 40
+    concurrency:
+      group: sgit-screens-${{ matrix.device }}-${{ github.ref }}
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Select Xcode
+        run: .github/scripts/select-xcode.sh
+
+      - name: Pick and boot an ${{ matrix.device }} simulator
+        id: sim
+        timeout-minutes: 8
+        run: |
+          u=$(.github/scripts/pick-simulator.py "${{ matrix.device }}")
+          echo "udid=$u" >> "$GITHUB_OUTPUT"
+          .github/scripts/boot-simulator.sh "$u"
+
+      - name: Build the app and the screen tests
+        run: |
+          .github/scripts/run-and-summarize.sh "Build for screens (${{ matrix.device }})" "$RUNNER_TEMP/logs/screens-build.log" -- \
+            xcodebuild build-for-testing -project "$PROJECT" -scheme "$SCHEME" -configuration Debug \
+              -destination "id=${{ steps.sim.outputs.udid }}" -derivedDataPath "$RUNNER_TEMP/dd" \
+              CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
+
+      - name: Take the screenshots
+        timeout-minutes: 20
+        run: |
+          u="${{ steps.sim.outputs.udid }}"
+          device=$(echo "${{ matrix.device }}" | tr '[:upper:]' '[:lower:]')
+          xcrun simctl status_bar "$u" override --time "9:41" --batteryState charged --batteryLevel 100 \
+            --cellularMode active --cellularBars 4 --wifiBars 3 || true
+          xcrun simctl ui "$u" appearance light
+          status=0
+          result="$RUNNER_TEMP/Screens.xcresult"
+          .github/scripts/run-and-summarize.sh "Screens (${{ matrix.device }})" "$RUNNER_TEMP/logs/screens.log" -- \
+            xcodebuild test-without-building -project "$PROJECT" -scheme "$SCHEME" -configuration Debug \
+              -destination "id=$u" -derivedDataPath "$RUNNER_TEMP/dd" -resultBundlePath "$result" \
+              -parallel-testing-enabled NO \
+              CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO || status=1
+          # Export whatever was taken, even after a failed test.
+          .github/scripts/export-screens.py "$result" "$RUNNER_TEMP/screens" "$device-light" || status=1
+          xcrun simctl shutdown "$u" 2>/dev/null || true
+          exit $status
+
+      - name: Make the PNGs upright and at most 1600 px
+        if: always()
+        run: |
+          shopt -s nullglob
+          for f in "$RUNNER_TEMP"/screens/*.png; do
+            o=$(python3 .github/scripts/png-normalize.py --orientation "$f")
+            python3 .github/scripts/png-normalize.py "$f" >/dev/null
+            case "$o" in
+              3) sips -r 180 "$f" >/dev/null ;;
+              6) sips -r 90 "$f" >/dev/null ;;
+              8) sips -r 270 "$f" >/dev/null ;;
+            esac
+            sips -Z 1600 "$f" >/dev/null
+          done
+          files=("$RUNNER_TEMP"/screens/*.png)
+          want=$(echo "$SHOTS" | tr ',' '\n' | wc -l | tr -d ' ')
+          echo "${#files[@]} screenshots for ${{ matrix.device }} (expected $want)" | tee -a "$GITHUB_STEP_SUMMARY"
+          [ "${#files[@]}" -eq "$want" ] || { echo "::error::${#files[@]} screenshots for ${{ matrix.device }}, expected $want"; exit 1; }
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sgit-screens-${{ matrix.device }}
+          path: ${{ runner.temp }}/screens/
+          if-no-files-found: warn
+          retention-days: 3
+
+      - name: Keep the logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sgit-screens-logs-${{ matrix.device }}
+          path: ${{ runner.temp }}/logs/
+          if-no-files-found: ignore
+          retention-days: 3
