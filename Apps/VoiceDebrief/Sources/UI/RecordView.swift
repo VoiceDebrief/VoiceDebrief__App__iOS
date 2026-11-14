@@ -334,6 +334,7 @@ struct RecordView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 addresseeChips
+                PictureButtons(recipient: addresseeRecipient)
             } else {
                 if let to = addresseeRecipient {
                     Label("For \(to.name): sent when you finish", systemImage: "paperplane.fill")

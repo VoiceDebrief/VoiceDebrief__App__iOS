@@ -29,7 +29,7 @@
  ],
  "counts": {
   "seen-working": 27,
-  "built-untried": 71,
+  "built-untried": 72,
   "in-progress": 37,
   "proposed": 43,
   "parked": 6
@@ -2307,6 +2307,27 @@
     "Unit test: the schedule. Not run on a device"
    ],
    "places": [],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
+   "id": "feature-send-a-picture",
+   "kind": "feature",
+   "app": "VoiceDebrief",
+   "title": "Send a picture",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "Engine/PictureSender.swift, UI/PictureSheet.swift, DeveloperLane.imageMessages: on the record screen, \"Paste screenshot\" (the clipboard) and \"Choose picture\" (Photos) open a sheet with the picture, a line to go with it and who it is for (the chosen contact, else Claude (developer)); Send encrypts it to their key and sends it over their lane as voicedebrief/image/v1 (a JPEG at most 2048 px, in...",
+   "detail": [
+    "Engine/PictureSender.swift, UI/PictureSheet.swift, DeveloperLane.imageMessages: on the record screen, \"Paste screenshot\" (the clipboard) and \"Choose picture\" (Photos) open a sheet with the picture, a line to go with it and who it is for (the chosen contact, else Claude (developer)); Send encrypts it to their key and sends it over their lane as voicedebrief/image/v1 (a JPEG at most 2048 px, in parts) and voicedebrief/text/v1, with the same five tries. Not kept in the library",
+    "Unit tests: the messages, parts and text. Not run on a device"
+   ],
+   "places": [
+    "Library tab",
+    "Record tab"
+   ],
    "issues": [],
    "url": "https://ios.app.voicedebrief.ai/built/index.html",
    "source": "The reality file",
