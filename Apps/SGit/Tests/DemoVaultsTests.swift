@@ -14,7 +14,7 @@ struct DemoVaultsTests {
 
     @Test func theRowsAreReadEvenWithABarInTheSummary() {
         let rows = DemoCatalog.rows(fromIndex: index)
-        #expect(rows.map(\\.number) == [54, 46])
+        #expect(rows.map(\.number) == [54, 46])
         #expect(rows[0].vault == "bg1opz3c")
         #expect(rows[0].category == "Analysis")
         #expect(rows[0].page == "https://sgit.ai/demos/vaults/newsroom-synthetic-users/index.html")
@@ -24,7 +24,7 @@ struct DemoVaultsTests {
     }
 
     @Test func onlyAPublicReadKeyForThatVaultIsTaken() {
-        let page = "Read key: `sgit_public_read_\\(String(repeating: "ab", count: 32)):bg1opz3c` and another `sgit_public_read_\\(String(repeating: "cd", count: 32)):other123`"
+        let page = "Read key: `sgit_public_read_\(String(repeating: "ab", count: 32)):bg1opz3c` and another `sgit_public_read_\(String(repeating: "cd", count: 32)):other123`"
         #expect(DemoCatalog.readKey(inPage: page, vault: "bg1opz3c")?.hasSuffix(":bg1opz3c") == true)
         #expect(DemoCatalog.readKey(inPage: page, vault: "missing1") == nil)
         #expect(DemoCatalog.readKey(inPage: "sgit_private_vault_x:bg1opz3c", vault: "bg1opz3c") == nil)
@@ -45,8 +45,8 @@ struct DemoVaultsTests {
         #expect(merged.count == 2)
         #expect(merged.first { $0.vault == "bg1opz3c" }?.readKey == "sgit_public_read_key:bg1opz3c")
         #expect(merged.first { $0.vault == "wz9dw0m5" }?.readKey == nil)
-        #expect(DemoCatalog.grouped(merged, search: "").map(\\.category) == ["Analysis", "Reference"])
-        #expect(DemoCatalog.grouped(merged, search: "rules").map(\\.category) == ["Reference"])
+        #expect(DemoCatalog.grouped(merged, search: "").map(\.category) == ["Analysis", "Reference"])
+        #expect(DemoCatalog.grouped(merged, search: "rules").map(\.category) == ["Reference"])
         #expect(bundled.merged(withLive: []) == bundled.vaults)
     }
 }
