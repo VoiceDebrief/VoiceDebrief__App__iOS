@@ -4,7 +4,9 @@
     python3 website/admin/guides.py <VoiceDebrief screens> [<SGit Vaults screens>]
 
 Each folder is an unzipped artifact: of screens.yml, and of sgit-app-screens.yml for the guides whose app
-is SGit Vaults (files iphone-light-<screen>.png). Without the second folder those guides are left as they are. Reads
+is SGit Vaults (files iphone-light-<screen>.png). Without the second folder those guides are left as they are.
+A guide with a "set" draws from the folder given as <set>=<folder>, e.g. sgit-run-43592618173=/tmp/shots;
+a guide whose folder is not given is left as it is. Reads
 website/guides/guides.json and writes, for each step of each guide, one small JPEG at display size:
     website/guides/img/<guide>-<step>.jpg
     Apps/VoiceDebrief/Resources/vd-guide-<guide>-<step>.jpg   (the app's copy; resource names are unique)
@@ -58,13 +60,16 @@ def draw(src, callouts):
     return im.resize((WIDTH, round(H * WIDTH / W)), Image.LANCZOS)
 
 def main():
-    if len(sys.argv) not in (2, 3): sys.exit(__doc__)
-    folders = {'VoiceDebrief': Path(sys.argv[1]), 'SGit Vaults': Path(sys.argv[2]) if len(sys.argv) == 3 else None}
+    plain = [a for a in sys.argv[1:] if '=' not in a]
+    named = dict(a.split('=', 1) for a in sys.argv[1:] if '=' in a)
+    if not plain and not named: sys.exit(__doc__)
+    folders = {'VoiceDebrief': plain[0] if plain else None, 'SGit Vaults': plain[1] if len(plain) > 1 else None, **named}
+    folders = {k: Path(v) for k, v in folders.items() if v}
     spec = json.loads((REPO / 'website/guides/guides.json').read_text())
     out_site, out_app = REPO / 'website/guides/img', REPO / 'Apps/VoiceDebrief/Resources'
     out_site.mkdir(parents=True, exist_ok=True)
     for g in spec['guides']:
-        shots = folders.get(g['app'])
+        shots = folders.get(g.get('set', g['app']))
         if shots is None: continue
         for i, step in enumerate(g['steps'], 1):
             src = shots / f"iphone-light-{step['screen']}.png"

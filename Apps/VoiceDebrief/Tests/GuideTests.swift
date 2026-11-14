@@ -78,4 +78,24 @@ struct GuideTests {
             }
         }
     }
+
+    @Test func theBundledArticlesDecodeAndParse() throws {
+        let book = try #require(ArticleBook.bundled())
+        #expect(!book.articles.isEmpty)
+        for a in book.articles { #expect(!ArticleBlock.parse(a.markdown).isEmpty, "\(a.id) has no blocks") }
+    }
+
+    @Test func markdownIsCutIntoBlocks() {
+        let blocks = ArticleBlock.parse("## A heading\n\nOne line\nand the next.\n\n- a point\n1. first\n> quoted\n\n| A | B |\n|---|---|\n| x | y |\n\n```\ncode\n```")
+        #expect(blocks == [.heading(level: 2, text: "A heading"), .paragraph("One line and the next."), .bullet("a point"),
+                           .bullet("1. first"), .quote("quoted"), .bullet("A · B"), .bullet("x · y"), .code("code")])
+    }
+
+    @Test func aReleaseCardKeepsItsRightEdge() {
+        let card = "| X {{version}}   |\n| d {{date}}                 |\n+----+"
+        let filled = ReleaseCard.fill(card, ["version": "v0.1.59", "date": "14 November 2026"])
+        #expect(filled == "| X v0.1.59       |\n| d 14 November 2026         |\n+----+")
+        let history = VersionHistory(next: ["A note."], versions: [], nextArt: ["| {{version}} |"])
+        #expect(history.all(current: "v1.2.3").first?.art == ["| v1.2.3      |"])
+    }
 }

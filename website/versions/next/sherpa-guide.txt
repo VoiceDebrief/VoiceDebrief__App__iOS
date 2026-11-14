@@ -1,0 +1,14 @@
++----------------------------------------------------------------------+
+| VOICEDEBRIEF + SGIT VAULTS                               {{version}} |
+| {{date}}                                                             |
++----------------------------------------------------------------------+
+| READ THE PROJECT INSIDE THE APP                                      |
+|                                                                      |
+| * Articles: every position, brief and journey, searchable            |
+| * Design pages can list ideas; the ideas tracker picks them up       |
+| * Release cards like this one, at the top of What is new             |
+|                                                                      |
+| WHERE    Guide > Articles; Guide > What is new                       |
+| TRY      Search the articles for "vault" or "secret"                 |
+| NOT YET  SGit Vaults shows these once its session wires the Guide    |
++----------------------------------------------------------------------+

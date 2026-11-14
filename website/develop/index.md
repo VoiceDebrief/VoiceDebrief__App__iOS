@@ -77,6 +77,8 @@ Where the `gh` command is set up, one line does steps 3 and 4: `gh api repos/Voi
 
 Both ways were followed from a Linux container on 13 November 2026 (`work/screens`: 68 pictures from the first run, 100 from the fourth). A person can download the same artifact from the run's page on GitHub.
 
+**Release cards.** A change can carry an ASCII card, the owner's release note at a glance: a text file in `website/versions/next/` (any name ending `.txt`), a box at most 72 columns wide in plain printable ASCII, with the app, `{{version}}` and `{{date}}` (filled in at release, the box edge kept in its column), a title, three to five headline lines, then `WHERE`, `TRY` and `NOT YET` lines. Several cards per version are fine, one per app or session. When CI gives a push its version, `website/admin/release.mjs` moves each card into `website/versions/<version>/` and adds it to that version's page; the apps show it at the top of that version in What is new (the running build's own cards come from `next/`). `validate.mjs` checks the width and the characters; `website/admin/cards.mjs` holds the rules.
+
 **Pictures on a version's page.** Every push to `dev` gets a page, `website/versions/<version>/index.md`, written by CI. After `screens.yml` has run on `dev` for that version, the screens session adds the pictures of what changed: download that run's artifact and the one for the version before, then
 
 ```

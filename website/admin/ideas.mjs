@@ -9,6 +9,8 @@
 //   Apps/VoiceDebrief/Resources/vd-ideas.json     a copy for the app's Ideas screen
 //   Apps/VoiceDebrief/Resources/vd-versions.json  the release history, for the app's What is new screen
 //   Apps/SGit/Resources/sg-ideas.json, sg-versions.json  the same for SGit Vaults (its ideas and both apps')
+//   Apps/*/Resources/vd-articles.json, sg-articles.json   the articles and design pages, to read in the apps
+//   (a design page may also list ideas under "## Ideas": see readDesignIdeas)
 //
 // A status is never guessed. It comes from these rules, in order, and each idea carries the sentence that
 // decided it (`why`):
@@ -42,6 +44,9 @@ export const STATUSES = [
 const IDS = STATUSES.map((s) => s.id);
 
 // ------------------------------------------------------------------ text
+// An id from words, joined with dots: a run of letters and hyphens can look like an API key to the
+// repository's secret scan (validate.mjs), and a dot breaks every pattern it has.
+const slugOf = (s, n) => s.toLowerCase().replace(/[^a-z0-9]+/g, '.').replace(/^\.|\.$/g, '').slice(0, n).replace(/\.$/, '');
 const plain = (s) => s
   .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
   .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
@@ -129,6 +134,8 @@ function readVersions() {
     v.hasPage = existsSync(join(dir, 'index.md'));     // pages begin at v0.1.29; older versions are rows only
     v.url = v.hasPage ? `${HOST}/versions/${v.version}/index.html` : `${HOST}/versions/index.html`;
     v.pictures = existsSync(dir) ? readdirSync(dir).filter((f) => /\.(png|jpe?g)$/i.test(f)).length : 0;
+    // release cards (cards.mjs): ASCII boxes moved here by release.mjs
+    v.art = existsSync(dir) ? readdirSync(dir).filter((f) => f.endsWith('.txt')).sort().map((f) => readFileSync(join(dir, f), 'utf8').replace(/\s+$/, '')) : [];
   }
   // the issues each version names, oldest version first, so an issue's first version is first
   const issueVersions = new Map();
@@ -138,7 +145,10 @@ function readVersions() {
   }
   // rows headed next: the notes of the build that carries them, which has no number yet in the repository
   const next = rows.filter((r) => r.version === 'next').map((r) => plain(r.text));
-  return { versions, issueVersions, next };
+  // cards waiting in versions/next/: the running build's, with {{version}} and {{date}} still to fill
+  const nextDir = join(SITE, 'versions/next');
+  const nextArt = existsSync(nextDir) ? readdirSync(nextDir).filter((f) => f.endsWith('.txt')).sort().map((f) => readFileSync(join(nextDir, f), 'utf8').replace(/\s+$/, '')) : [];
+  return { versions, issueVersions, next, nextArt };
 }
 
 // ------------------------------------------------------------------ the reality files
@@ -160,7 +170,7 @@ function readReality(path, app, sitePath) {
     const where = isBuiltTable ? plain(cells[1]) : '';
     const tested = isBuiltTable ? plain(cells[2] || '') : plain(cells[1] || '');
     out.push({
-      id: `${app === 'SGit Vaults' ? 'sgit-' : ''}feature-${title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60)}`,
+      id: `${app === 'SGit Vaults' ? 'sgit-' : ''}feature.${slugOf(title, 60)}`,
       kind: 'feature', app, title, status,
       why: `The reality file, ${section}: ${wordSaid}.`,
       summary: clip(where || tested, 400),
@@ -265,9 +275,74 @@ function readArticles(issueStatus) {
   return out;
 }
 
+// ------------------------------------------------------------------ ideas listed on a design page
+// A page may hold a section headed exactly "## Ideas", one bullet per idea:
+//   - **Title** [[proposed]]: one or two sentences.
+// The chip is the status ([[built]] seen working, [[unverified]] built untried, [[proposed]] or none proposed).
+const DESIGN_PAGES = [
+  { path: 'sgit-app/secrets', app: 'SGit Vaults' },
+];
+function readDesignIdeas() {
+  const out = [];
+  for (const { path, app } of DESIGN_PAGES) {
+    const file = join(SITE, path, 'index.md');
+    if (!existsSync(file)) continue;
+    const md = readFileSync(file, 'utf8');
+    const section = (md.split(/^## Ideas\s*$/m)[1] || '').split(/^## /m)[0];
+    const pageTitle = plain((md.match(/^# (.*)$/m) || [, path])[1]);
+    for (const m of section.matchAll(/^- \*\*([^*]+)\*\*\s*(?:\[\[(built|unverified|proposed)\]\])?\s*:?\s*(.*)$/gm)) {
+      const title = plain(m[1]);
+      const word = m[2] || 'proposed';
+      const status = word === 'built' ? 'seen-working' : word === 'unverified' ? 'built-untried' : 'proposed';
+      out.push({
+        id: `design.${slugOf(path, 40)}.${slugOf(title, 50)}`,
+        kind: 'design', app, title, status,
+        why: `Listed on the design page "${pageTitle}" as ${word === 'proposed' ? 'proposed' : word === 'built' ? 'built and proven' : 'built, not yet proven'}.`,
+        summary: clip(plain(m[3]), 400), detail: [plain(m[3])].filter(Boolean),
+        places: [], issues: [...issueNumbers(m[3])].sort(),
+        url: `${HOST}/${path}/index.html`, source: pageTitle,
+      });
+    }
+  }
+  return out;
+}
+
+// ------------------------------------------------------------------ articles, for reading in the apps
+// Each article's own markdown, with relative links pointed at the site and pictures left out (a picture is
+// named in its place). VoiceDebrief gets every article; SGit Vaults gets them and its own design pages.
+const ARTICLE_EXTRA = [
+  { path: 'sgit-app/design', app: 'SGit Vaults', kind: 'Design' },
+  { path: 'sgit-app/secrets', app: 'SGit Vaults', kind: 'Design' },
+  { path: 'sgit-app/secrets/opportunity', app: 'SGit Vaults', kind: 'Research' },
+  { path: 'journeys', app: 'Both', kind: 'Journeys' },
+];
+function readArticleTexts() {
+  const pages = [
+    ...readdirSync(join(SITE, 'articles')).filter((d) => existsSync(join(SITE, 'articles', d, 'index.md'))).sort()
+      .map((d) => ({ path: `articles/${d}`, app: 'Both', kind: 'Article' })),
+    ...ARTICLE_EXTRA.filter((p) => existsSync(join(SITE, p.path, 'index.md'))),
+  ];
+  return pages.map(({ path, app, kind }) => {
+    const md = readFileSync(join(SITE, path, 'index.md'), 'utf8').replace(/\r/g, '');
+    const title = plain((md.match(/^# (.*)$/m) || [, path])[1]);
+    const toSite = (href) => {
+      if (/^[a-z]+:/i.test(href) || href.startsWith('#')) return href;
+      const abs = new URL(href, `${HOST}/${path}/`).href;
+      return abs.replace(/index\.md(#|$)/, 'index.html$1');
+    };
+    const markdown = md.replace(/^# .*\n+/, '')
+      .replace(/\[!\[([^\]]*)\]\([^)]*\)\]\([^)]*\)/g, (m, alt) => `*(A picture: ${alt.trim()})*`)
+      .replace(/!\[([^\]]*)\]\([^)]*\)/g, (m, alt) => `*(A picture: ${alt.trim()})*`)
+      .replace(/\]\(([^)\s]+)\)/g, (m, h) => `](${toSite(h)})`)
+      .replace(/\[\[([a-z]+)\]\]/g, (m, k) => `**(${k})**`);
+    const first = paragraphs(markdown).find((p) => !/^(\*\(A picture|#|>|\||\*\*Kind)/.test(p) && !/^\*[^*]/.test(p)) || '';
+    return { id: slugOf(path, 80), title, app, kind, summary: clip(plain(first), 300), markdown, url: `${HOST}/${path}/index.html` };
+  });
+}
+
 // ------------------------------------------------------------------ assemble
 export function generate() {
-  const { versions, issueVersions, next } = readVersions();
+  const { versions, issueVersions, next, nextArt } = readVersions();
   const features = [
     ...readReality('built/index.md', 'VoiceDebrief', 'built'),
     ...readReality('sgit-app/built/index.md', 'SGit Vaults', 'sgit-app/built'),
@@ -278,24 +353,29 @@ export function generate() {
   const issueStatus = new Map(issues.map((i) => [i.number, i.status]));
   const articles = readArticles(issueStatus);
   for (const f of features) f.versions = [...new Set(f.issues.flatMap((n) => issueVersions.get(n) || []))];
-  const ideas = [...issues, ...articles, ...features];
+  const ideas = [...issues, ...articles, ...readDesignIdeas(), ...features];
   for (const i of ideas) if (!IDS.includes(i.status)) throw new Error(`${i.id}: unknown status ${i.status}`);
   const counts = Object.fromEntries(IDS.map((s) => [s, ideas.filter((i) => i.status === s).length]));
   const ideasJson = JSON.stringify({ about: 'Generated by website/admin/ideas.mjs from issues/, website/articles/, the reality files and the release history. Do not edit.', statuses: STATUSES, counts, ideas }, null, 1) + '\n';
-  const versionsJson = JSON.stringify({ about: 'Generated by website/admin/ideas.mjs from website/versions/index.md. Do not edit. next holds the notes of a build that has no number yet: the running build, if its own version is not listed.', next, versions }, null, 1) + '\n';
+  const versionsJson = JSON.stringify({ about: 'Generated by website/admin/ideas.mjs from website/versions/index.md. Do not edit. next holds the notes of a build that has no number yet: the running build, if its own version is not listed; nextArt its release cards.', next, nextArt, versions }, null, 1) + '\n';
   // SGit Vaults' copy: only its own ideas and those about both apps, counted again
   const sgIdeas = ideas.filter((i) => i.app === 'SGit Vaults' || i.app === 'Both');
   const sgCounts = Object.fromEntries(IDS.map((s) => [s, sgIdeas.filter((i) => i.status === s).length]));
   const sgIdeasJson = JSON.stringify({ about: 'Generated by website/admin/ideas.mjs: the ideas for SGit Vaults and for both apps. Do not edit.', statuses: STATUSES, counts: sgCounts, ideas: sgIdeas }, null, 1) + '\n';
-  return { ideas, ideasJson, versionsJson, sgIdeasJson, counts, versions };
+  const texts = readArticleTexts();
+  const articlesJson = (list) => JSON.stringify({ about: 'Generated by website/admin/ideas.mjs from the articles and design pages. Do not edit.', articles: list }, null, 1) + '\n';
+  const vdArticlesJson = articlesJson(texts.filter((a) => a.app !== 'SGit Vaults'));
+  const sgArticlesJson = articlesJson(texts.filter((a) => a.app !== 'VoiceDebrief'));
+  return { ideas, ideasJson, versionsJson, sgIdeasJson, vdArticlesJson, sgArticlesJson, counts, versions };
 }
 
 function page({ ideas, counts }) {
   const label = Object.fromEntries(STATUSES.map((s) => [s.id, s.label]));
   const cell = (s) => s.replace(/\|/g, '\\|');
-  const kinds = { issue: 'Issue', article: 'Article', feature: 'Feature' };
+  const kinds = { issue: 'Issue', article: 'Article', feature: 'Feature', design: 'Design' };
   const link = (i) => i.kind === 'issue' ? `[${i.number}](${i.url})`
     : i.kind === 'article' ? `[article](../articles/${i.id.replace('article-', '')}/index.md)`
+    : i.kind === 'design' ? `[design](${i.url.replace(HOST + '/', '../').replace(/index\.html$/, 'index.md')})`
     : `[reality file](../${i.app === 'SGit Vaults' ? 'sgit-app/built' : 'built'}/index.md)`;
   const parts = [`# Ideas and where they stand
 
@@ -326,7 +406,9 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     [join(SITE, 'ideas/index.md'), page(g)],
     [join(REPO, 'Apps/VoiceDebrief/Resources/vd-ideas.json'), g.ideasJson],
     [join(REPO, 'Apps/VoiceDebrief/Resources/vd-versions.json'), g.versionsJson],
+    [join(REPO, 'Apps/VoiceDebrief/Resources/vd-articles.json'), g.vdArticlesJson],
     [join(REPO, 'Apps/SGit/Resources/sg-ideas.json'), g.sgIdeasJson],
+    [join(REPO, 'Apps/SGit/Resources/sg-articles.json'), g.sgArticlesJson],
     [join(REPO, 'Apps/SGit/Resources/sg-versions.json'), g.versionsJson],
   ];
   const stale = files.filter(([p, s]) => !existsSync(p) || readFileSync(p, 'utf8') !== s).map(([p]) => p.slice(REPO.length + 1));

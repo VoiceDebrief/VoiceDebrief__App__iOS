@@ -29,9 +29,9 @@
  ],
  "counts": {
   "seen-working": 7,
-  "built-untried": 16,
+  "built-untried": 19,
   "in-progress": 15,
-  "proposed": 22,
+  "proposed": 32,
   "parked": 1
  },
  "ideas": [
@@ -886,7 +886,215 @@
    "source": "A position and a brief. From the owner's voice memos of 13 November 2026, written up by the agent. Decided by the owner the same day. None of it is built unless..."
   },
   {
-   "id": "sgit-feature-files-over-4-mb-in-the-vault-engine",
+   "id": "design.sgit.app.secrets.a.team.with.no.admin.and.no.account",
+   "kind": "design",
+   "app": "SGit Vaults",
+   "title": "A team with no admin and no account",
+   "status": "proposed",
+   "why": "Listed on the design page \"A secrets manager made of people and vaults\" as proposed.",
+   "summary": "five people swap cards and confirm each other, then share a vault, with no sign-up, invoice or IT person.",
+   "detail": [
+    "five people swap cards and confirm each other, then share a vault, with no sign-up, invoice or IT person."
+   ],
+   "places": [],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/secrets/index.html",
+   "source": "A secrets manager made of people and vaults"
+  },
+  {
+   "id": "design.sgit.app.secrets.sharing.a.server.cannot.redirect",
+   "kind": "design",
+   "app": "SGit Vaults",
+   "title": "Sharing a server cannot redirect",
+   "status": "proposed",
+   "why": "Listed on the design page \"A secrets manager made of people and vaults\" as proposed.",
+   "summary": "the key a secret is sealed to comes from a card confirmed in person, never from the server, which shuts out the key-swapping attacks found in other managers in 2026.",
+   "detail": [
+    "the key a secret is sealed to comes from a card confirmed in person, never from the server, which shuts out the key-swapping attacks found in other managers in 2026."
+   ],
+   "places": [],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/secrets/index.html",
+   "source": "A secrets manager made of people and vaults"
+  },
+  {
+   "id": "design.sgit.app.secrets.one.secret.for.one.agent",
+   "kind": "design",
+   "app": "SGit Vaults",
+   "title": "One secret for one agent",
+   "status": "proposed",
+   "why": "Listed on the design page \"A secrets manager made of people and vaults\" as proposed.",
+   "summary": "give an AI session exactly one API key, sealed to its key, with a record of when and to whom.",
+   "detail": [
+    "give an AI session exactly one API key, sealed to its key, with a record of when and to whom."
+   ],
+   "places": [],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/secrets/index.html",
+   "source": "A secrets manager made of people and vaults"
+  },
+  {
+   "id": "design.sgit.app.secrets.signed.history.of.every.secret",
+   "kind": "design",
+   "app": "SGit Vaults",
+   "title": "Signed history of every secret",
+   "status": "proposed",
+   "why": "Listed on the design page \"A secrets manager made of people and vaults\" as proposed.",
+   "summary": "who changed the router password and when, signed by their device, with the earlier version one tap away.",
+   "detail": [
+    "who changed the router password and when, signed by their device, with the earlier version one tap away."
+   ],
+   "places": [],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/secrets/index.html",
+   "source": "A secrets manager made of people and vaults"
+  },
+  {
+   "id": "design.sgit.app.secrets.ask.someone.outside.the.team.for.a.secret",
+   "kind": "design",
+   "app": "SGit Vaults",
+   "title": "Ask someone outside the team for a secret",
+   "status": "proposed",
+   "why": "Listed on the design page \"A secrets manager made of people and vaults\" as proposed.",
+   "summary": "a contractor drops the Wi-Fi or a server key into your inbox; they get no way to read anything back.",
+   "detail": [
+    "a contractor drops the Wi-Fi or a server key into your inbox; they get no way to read anything back."
+   ],
+   "places": [],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/secrets/index.html",
+   "source": "A secrets manager made of people and vaults"
+  },
+  {
+   "id": "design.sgit.app.secrets.rotation.on.a.branch",
+   "kind": "design",
+   "app": "SGit Vaults",
+   "title": "Rotation on a branch",
+   "status": "proposed",
+   "why": "Listed on the design page \"A secrets manager made of people and vaults\" as proposed.",
+   "summary": "change a key, test it, then merge, so the team is never half on the old one and half on the new.",
+   "detail": [
+    "change a key, test it, then merge, so the team is never half on the old one and half on the new."
+   ],
+   "places": [],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/secrets/index.html",
+   "source": "A secrets manager made of people and vaults"
+  },
+  {
+   "id": "design.sgit.app.secrets.recovery.through.people.you.trust",
+   "kind": "design",
+   "app": "SGit Vaults",
+   "title": "Recovery through people you trust",
+   "status": "proposed",
+   "why": "Listed on the design page \"A secrets manager made of people and vaults\" as proposed.",
+   "summary": "lose every device and get back in with three of five people each holding a sealed part; no company reset.",
+   "detail": [
+    "lose every device and get back in with three of five people each holding a sealed part; no company reset."
+   ],
+   "places": [],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/secrets/index.html",
+   "source": "A secrets manager made of people and vaults"
+  },
+  {
+   "id": "design.sgit.app.secrets.leaving.someone.out.honestly",
+   "kind": "design",
+   "app": "SGit Vaults",
+   "title": "Leaving someone out, honestly",
+   "status": "proposed",
+   "why": "Listed on the design page \"A secrets manager made of people and vaults\" as proposed.",
+   "summary": "removing a member makes a new vault key and shows the checklist of secrets they saw, with a change action for each.",
+   "detail": [
+    "removing a member makes a new vault key and shows the checklist of secrets they saw, with a change action for each."
+   ],
+   "places": [],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/secrets/index.html",
+   "source": "A secrets manager made of people and vaults"
+  },
+  {
+   "id": "design.sgit.app.secrets.a.spotted.secret",
+   "kind": "design",
+   "app": "SGit Vaults",
+   "title": "A spotted secret",
+   "status": "proposed",
+   "why": "Listed on the design page \"A secrets manager made of people and vaults\" as proposed.",
+   "summary": "Apple's on-device model notices a key pasted into a note or a file and offers to move it into a secret.",
+   "detail": [
+    "Apple's on-device model notices a key pasted into a note or a file and offers to move it into a secret."
+   ],
+   "places": [],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/secrets/index.html",
+   "source": "A secrets manager made of people and vaults"
+  },
+  {
+   "id": "design.sgit.app.secrets.the.trust.map",
+   "kind": "design",
+   "app": "SGit Vaults",
+   "title": "The trust map",
+   "status": "proposed",
+   "why": "Listed on the design page \"A secrets manager made of people and vaults\" as proposed.",
+   "summary": "a drawing of the people you have met, with their photos, solid where both confirmed and dashed where one side only.",
+   "detail": [
+    "a drawing of the people you have met, with their photos, solid where both confirmed and dashed where one side only."
+   ],
+   "places": [],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/secrets/index.html",
+   "source": "A secrets manager made of people and vaults"
+  },
+  {
+   "id": "design.sgit.app.secrets.the.same.vaults.on.every.device",
+   "kind": "design",
+   "app": "SGit Vaults",
+   "title": "The same vaults on every device",
+   "status": "built-untried",
+   "why": "Listed on the design page \"A secrets manager made of people and vaults\" as built, not yet proven.",
+   "summary": "vault keys in iCloud Keychain, one item each, so an iPhone, iPad and Mac open the same vaults with nothing to set up.",
+   "detail": [
+    "vault keys in iCloud Keychain, one item each, so an iPhone, iPad and Mac open the same vaults with nothing to set up."
+   ],
+   "places": [],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/secrets/index.html",
+   "source": "A secrets manager made of people and vaults"
+  },
+  {
+   "id": "design.sgit.app.secrets.secrets.as.files.in.vaults",
+   "kind": "design",
+   "app": "SGit Vaults",
+   "title": "Secrets as files in vaults",
+   "status": "built-untried",
+   "why": "Listed on the design page \"A secrets manager made of people and vaults\" as built, not yet proven.",
+   "summary": "each entry one encrypted JSON file, behind Face ID, with a strong-password maker.",
+   "detail": [
+    "each entry one encrypted JSON file, behind Face ID, with a strong-password maker."
+   ],
+   "places": [],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/secrets/index.html",
+   "source": "A secrets manager made of people and vaults"
+  },
+  {
+   "id": "design.sgit.app.secrets.questions.for.the.owner.by.voice",
+   "kind": "design",
+   "app": "SGit Vaults",
+   "title": "Questions for the owner, by voice",
+   "status": "built-untried",
+   "why": "Listed on the design page \"A secrets manager made of people and vaults\" as built, not yet proven.",
+   "summary": "the people building the app ask, and the owner answers by choosing, typing or speaking.",
+   "detail": [
+    "the people building the app ask, and the owner answers by choosing, typing or speaking."
+   ],
+   "places": [],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/secrets/index.html",
+   "source": "A secrets manager made of people and vaults"
+  },
+  {
+   "id": "sgit-feature.files.over.4.mb.in.the.vault.engine",
    "kind": "feature",
    "app": "SGit Vaults",
    "title": "Files over 4 MB in the vault engine",
@@ -906,7 +1114,7 @@
    "versions": []
   },
   {
-   "id": "sgit-feature-the-app-builds-and-its-tests-pass",
+   "id": "sgit-feature.the.app.builds.and.its.tests.pass",
    "kind": "feature",
    "app": "SGit Vaults",
    "title": "The app builds and its tests pass",
@@ -926,7 +1134,7 @@
    "versions": []
   },
   {
-   "id": "sgit-feature-adding-files-underneath-the-screens",
+   "id": "sgit-feature.adding.files.underneath.the.screens",
    "kind": "feature",
    "app": "SGit Vaults",
    "title": "Adding files, underneath the screens",
@@ -946,7 +1154,7 @@
    "versions": []
   },
   {
-   "id": "sgit-feature-testflight-upload",
+   "id": "sgit-feature.testflight.upload",
    "kind": "feature",
    "app": "SGit Vaults",
    "title": "TestFlight upload",
@@ -967,7 +1175,7 @@
    "versions": []
   },
   {
-   "id": "sgit-feature-a-vault-made-on-this-device",
+   "id": "sgit-feature.a.vault.made.on.this.device",
    "kind": "feature",
    "app": "SGit Vaults",
    "title": "A vault made on this device",
@@ -987,7 +1195,7 @@
    "versions": []
   },
   {
-   "id": "sgit-feature-the-access-key-on-the-create-screen",
+   "id": "sgit-feature.the.access.key.on.the.create.screen",
    "kind": "feature",
    "app": "SGit Vaults",
    "title": "The access key on the Create screen",
@@ -1007,7 +1215,7 @@
    "versions": []
   },
   {
-   "id": "sgit-feature-drag-and-drop",
+   "id": "sgit-feature.drag.and.drop",
    "kind": "feature",
    "app": "SGit Vaults",
    "title": "Drag and drop",
@@ -1027,7 +1235,7 @@
    "versions": []
   },
   {
-   "id": "sgit-feature-a-folder-tree-on-a-wide-screen",
+   "id": "sgit-feature.a.folder.tree.on.a.wide.screen",
    "kind": "feature",
    "app": "SGit Vaults",
    "title": "A folder tree on a wide screen",
@@ -1047,7 +1255,7 @@
    "versions": []
   },
   {
-   "id": "sgit-feature-a-picture-of-every-screen",
+   "id": "sgit-feature.a.picture.of.every.screen",
    "kind": "feature",
    "app": "SGit Vaults",
    "title": "A picture of every screen",
@@ -1069,7 +1277,7 @@
    "versions": []
   },
   {
-   "id": "sgit-feature-a-gallery-of-vaults",
+   "id": "sgit-feature.a.gallery.of.vaults",
    "kind": "feature",
    "app": "SGit Vaults",
    "title": "A gallery of vaults",
@@ -1089,7 +1297,7 @@
    "versions": []
   },
   {
-   "id": "sgit-feature-vaults-on-the-device",
+   "id": "sgit-feature.vaults.on.the.device",
    "kind": "feature",
    "app": "SGit Vaults",
    "title": "Vaults on the device",
@@ -1109,7 +1317,7 @@
    "versions": []
   },
   {
-   "id": "sgit-feature-adding-photos-videos-and-files-the-screens",
+   "id": "sgit-feature.adding.photos.videos.and.files.the.screens",
    "kind": "feature",
    "app": "SGit Vaults",
    "title": "Adding photos, videos and files, the screens",
@@ -1129,7 +1337,7 @@
    "versions": []
   },
   {
-   "id": "sgit-feature-browsing",
+   "id": "sgit-feature.browsing",
    "kind": "feature",
    "app": "SGit Vaults",
    "title": "Browsing",
@@ -1150,7 +1358,7 @@
    "versions": []
   },
   {
-   "id": "sgit-feature-saving-a-folder-out",
+   "id": "sgit-feature.saving.a.folder.out",
    "kind": "feature",
    "app": "SGit Vaults",
    "title": "Saving a folder out",
@@ -1171,7 +1379,7 @@
    "versions": []
   },
   {
-   "id": "sgit-feature-the-web-vault-inside-the-app",
+   "id": "sgit-feature.the.web.vault.inside.the.app",
    "kind": "feature",
    "app": "SGit Vaults",
    "title": "The web Vault inside the app",
@@ -1191,7 +1399,7 @@
    "versions": []
   },
   {
-   "id": "sgit-feature-your-activity",
+   "id": "sgit-feature.your.activity",
    "kind": "feature",
    "app": "SGit Vaults",
    "title": "Your activity",
@@ -1212,7 +1420,7 @@
    "versions": []
   },
   {
-   "id": "sgit-feature-ask-this-vault-an-experiment",
+   "id": "sgit-feature.ask.this.vault.an.experiment",
    "kind": "feature",
    "app": "SGit Vaults",
    "title": "Ask this vault, an experiment",
@@ -1233,7 +1441,7 @@
    "versions": []
   },
   {
-   "id": "sgit-feature-secrets",
+   "id": "sgit-feature.secrets",
    "kind": "feature",
    "app": "SGit Vaults",
    "title": "Secrets",
@@ -1257,7 +1465,7 @@
    "versions": []
   },
   {
-   "id": "sgit-feature-questions-for-you",
+   "id": "sgit-feature.questions.for.you",
    "kind": "feature",
    "app": "SGit Vaults",
    "title": "Questions for you",
@@ -1277,7 +1485,7 @@
    "versions": []
   },
   {
-   "id": "sgit-feature-the-same-vaults-on-every-device",
+   "id": "sgit-feature.the.same.vaults.on.every.device",
    "kind": "feature",
    "app": "SGit Vaults",
    "title": "The same vaults on every device",
@@ -1297,7 +1505,7 @@
    "versions": []
   },
   {
-   "id": "sgit-feature-sharing-a-vault",
+   "id": "sgit-feature.sharing.a.vault",
    "kind": "feature",
    "app": "SGit Vaults",
    "title": "Sharing a vault",
@@ -1317,7 +1525,7 @@
    "versions": []
   },
   {
-   "id": "sgit-feature-history",
+   "id": "sgit-feature.history",
    "kind": "feature",
    "app": "SGit Vaults",
    "title": "History",
@@ -1337,7 +1545,7 @@
    "versions": []
   },
   {
-   "id": "sgit-feature-local-first-vaults-and-named-remotes-keys-in-icloud-keychain",
+   "id": "sgit-feature.local.first.vaults.and.named.remotes.keys.in.icloud.keychain",
    "kind": "feature",
    "app": "SGit Vaults",
    "title": "Local-first vaults and named remotes; keys in iCloud Keychain",
@@ -1361,7 +1569,7 @@
    ]
   },
   {
-   "id": "sgit-feature-a-share-extension-background-uploads",
+   "id": "sgit-feature.a.share.extension.background.uploads",
    "kind": "feature",
    "app": "SGit Vaults",
    "title": "A share extension; background uploads",
@@ -1378,7 +1586,7 @@
    "versions": []
   },
   {
-   "id": "sgit-feature-a-merge-for-colliding-edits-branches",
+   "id": "sgit-feature.a.merge.for.colliding.edits.branches",
    "kind": "feature",
    "app": "SGit Vaults",
    "title": "A merge for colliding edits; branches",
@@ -1395,7 +1603,7 @@
    "versions": []
   },
   {
-   "id": "sgit-feature-a-read-only-token-that-can-be-revoked",
+   "id": "sgit-feature.a.read.only.token.that.can.be.revoked",
    "kind": "feature",
    "app": "SGit Vaults",
    "title": "A read-only token that can be revoked",
@@ -1414,7 +1622,7 @@
    "versions": []
   },
   {
-   "id": "sgit-feature-video-thumbnails-streaming-a-video-without-fetching-it-whole",
+   "id": "sgit-feature.video.thumbnails.streaming.a.video.without.fetching.it.whole",
    "kind": "feature",
    "app": "SGit Vaults",
    "title": "Video thumbnails; streaming a video without fetching it whole",
