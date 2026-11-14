@@ -156,6 +156,38 @@ enum VaultNaming {
         return fragment.removingPercentEncoding ?? fragment
     }
 
+    /// A vault's standing, in words a person needs: where it is and what this device may do with it.
+    static func standing(canWrite: Bool, onDevice: Bool) -> String {
+        if onDevice { return "Only on this device" }
+        return canWrite ? "Shared: you can add and change" : "Shared: you can look, not change"
+    }
+
+    /// Where a vault's contents stand, for the line at the top of its screen.
+    static func arrival(onDevice: Bool, server: String, pendingFiles: Int, failed: Bool, checked: Date?, now: Date = Date()) -> String {
+        if failed { return "Some files did not go in. They are kept here: try again below." }
+        if pendingFiles > 0 {
+            return "\(pendingFiles) file\(pendingFiles == 1 ? "" : "s") on \(pendingFiles == 1 ? "its" : "their") way in. Keep the app open."
+        }
+        if onDevice { return "Everything here is on this device only." }
+        guard let checked else { return "On \(server)." }
+        let seconds = Int(now.timeIntervalSince(checked))
+        let when = seconds < 90 ? "just now" : seconds < 3_600 ? "\(seconds / 60) minutes ago" : "more than an hour ago"
+        return "Everything here is on \(server). Checked \(when)."
+    }
+
+    /// What is sent to somebody being given a vault: the steps, then the key, then a link for a browser.
+    static func invitation(name: String, keyText: String, readOnly: Bool, server: String) -> String {
+        var lines = ["\(name): a vault of files, encrypted so that only people with its key can open it.", "",
+                     "To open it in the sgit app: choose \"Add a vault by its key\" and paste this key.", "", keyText]
+        if let link = webLink(keyText: keyText) {
+            lines += ["", "Or open it in a browser:", link]
+        }
+        lines += ["", readOnly ? "This key lets you look and not change anything."
+                               : "This key lets you add, change and delete. To add files you also need an access key for \(server): ask me for one.",
+                  "Keep the key to yourself: whoever has it can open the vault, and it cannot be taken back."]
+        return lines.joined(separator: "\n")
+    }
+
     /// The link that opens a vault in the web Vault UI. The key is in the fragment, which a browser
     /// does not send to the server.
     static func webLink(keyText: String) -> String? {

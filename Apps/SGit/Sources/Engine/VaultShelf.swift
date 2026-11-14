@@ -122,6 +122,8 @@ final class VaultShelf {
     private(set) var problem: String?
     /// The latest contents read for each vault, by vault id.
     private(set) var contents: [String: VaultContents] = [:]
+    /// When each vault was last read from where it lives, by vault id.
+    private(set) var checkedAt: [String: Date] = [:]
     /// Bytes received so far for a file being fetched, by blob id.
     private(set) var fetchedBytes: [String: Int] = [:]
 
@@ -359,6 +361,7 @@ final class VaultShelf {
         let branches = await handle.branches
         let read = VaultContents(head: head, files: files, history: history, branches: branches)
         contents[vault.id] = read
+        checkedAt[vault.id] = Date()
         return read
     }
 
