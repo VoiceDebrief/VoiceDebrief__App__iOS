@@ -31,7 +31,7 @@
   "seen-working": 27,
   "built-untried": 65,
   "in-progress": 33,
-  "proposed": 39,
+  "proposed": 45,
   "parked": 6
  },
  "ideas": [
@@ -1473,6 +1473,141 @@
    "versions": [],
    "features": [],
    "url": "https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/119-sgit-app-apple-intelligence.md",
+   "source": "The owner"
+  },
+  {
+   "id": "issue-120",
+   "kind": "issue",
+   "number": "120",
+   "app": "SGit Vaults",
+   "title": "sgit app: questions for the owner, answered by typing or by voice",
+   "status": "proposed",
+   "why": "Open, with nothing built yet: \"Status: open. Owner: the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB).\"",
+   "summary": "The owner, 14 November 2026: \"you need a way that you can start to ask questions from me throughout the app, so I can answer them even with voice\".",
+   "detail": [
+    "The owner, 14 November 2026: \"you need a way that you can start to ask questions from me throughout the app, so I can answer them even with voice\".",
+    "To do: Settings, Questions. Each question has an id, the words, why it matters, and proposed answers. The owner answers by choosing one, typing, or dictating (the keyboard's microphone: speech to text on the device). The answer goes to the developers over the developer lane, sealed to their key, as sgit/answer/v1; the app remembers what was answered. The questions ship with the app as a resource, written by the developers. Later: a recorded voice answer (VoiceDebrief's recorder), and questions that arrive in the inbox instead of with a build."
+   ],
+   "statusLine": "Status: open. Owner: the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB).",
+   "owner": "the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB)",
+   "places": [
+    "SGit Vaults: Settings"
+   ],
+   "versions": [],
+   "features": [],
+   "url": "https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/120-sgit-app-questions-for-the-owner.md",
+   "source": "The owner"
+  },
+  {
+   "id": "issue-121",
+   "kind": "issue",
+   "number": "121",
+   "app": "SGit Vaults",
+   "title": "sgit app: secrets, kept as files in vaults",
+   "status": "proposed",
+   "why": "Open, with nothing built yet: \"Status: open. Owner: the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB). Design: website/sgit-app/secrets/index.md.\"",
+   "summary": "To do: a Secrets section listing the entries of every vault that has a secrets/ folder, grouped by vault (\"My secrets\", \"Team: devices\"); kinds login, device, Wi-Fi, card, note, token, vault key, read key, access key, recovery code; add, edit, delete, each as one signed commit of one JSON file; values behind Face ID, copied for two minutes, hidden in the app switcher; a secret's history from the...",
+   "detail": [
+    "To do: a Secrets section listing the entries of every vault that has a secrets/ folder, grouped by vault (\"My secrets\", \"Team: devices\"); kinds login, device, Wi-Fi, card, note, token, vault key, read key, access key, recovery code; add, edit, delete, each as one signed commit of one JSON file; values behind Face ID, copied for two minutes, hidden in the app switcher; a secret's history from the vault's commits; \"My secrets\" made on first use as a vault on this device. Not in this issue: sync (122), sharing (124), AutoFill (125)."
+   ],
+   "statusLine": "Status: open. Owner: the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB). Design: website/sgit-app/secrets/index.md.",
+   "owner": "the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB)",
+   "places": [
+    "SGit Vaults: a vault",
+    "SGit Vaults: History"
+   ],
+   "versions": [],
+   "features": [],
+   "url": "https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/121-sgit-app-secrets-in-vaults.md",
+   "source": "The owner"
+  },
+  {
+   "id": "issue-122",
+   "kind": "issue",
+   "number": "122",
+   "app": "SGit Vaults",
+   "title": "sgit app: the same vaults on every device, without setting anything up",
+   "status": "proposed",
+   "why": "Open, with nothing built yet: \"Status: open. Owner: the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB).\"",
+   "summary": "The owner: \"the synchronisation between devices ... has to be completely transparent and straightforward\".",
+   "detail": [
+    "The owner: \"the synchronisation between devices ... has to be completely transparent and straightforward\".",
+    "To do: the list of vaults and their keys, and the access key, in iCloud Keychain (synchronisable items, as VoiceDebrief did in issue 017), with a switch to keep them on this device only; pull when the app opens and comes to the front, push after each change, and say so on the vault's standing line. Each secret is its own file, so two devices changing different secrets do not conflict; the same secret changed on two devices keeps both and asks. Needs an access key to reach the server; without one a vault stays on the device it was made on, and the app says so. Mac, iPad and iPhone are the same app."
+   ],
+   "statusLine": "Status: open. Owner: the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB).",
+   "owner": "the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB)",
+   "places": [
+    "SGit Vaults"
+   ],
+   "versions": [],
+   "features": [],
+   "url": "https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/122-sgit-app-sync-between-my-devices.md",
+   "source": "The owner"
+  },
+  {
+   "id": "issue-123",
+   "kind": "issue",
+   "number": "123",
+   "app": "SGit Vaults",
+   "title": "sgit app: the trust map, from one person to a team",
+   "status": "proposed",
+   "why": "Open, with nothing built yet: \"Status: open. Owner: the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB), on the people session's SGitPeople (contacts, cards, confirmations).\"",
+   "summary": "To do: a drawing of people (with the photo taken when you met) and the links between them: solid when both confirmed, dashed when one side only, labelled with how they met; agents drawn as agents; tap a person for their fingerprint, the vaults you share and the secrets given. Suggestions for missing links. Computed on the device, never published. A short onboarding story for one person, two, five...",
+   "detail": [
+    "To do: a drawing of people (with the photo taken when you met) and the links between them: solid when both confirmed, dashed when one side only, labelled with how they met; agents drawn as agents; tap a person for their fingerprint, the vaults you share and the secrets given. Suggestions for missing links. Computed on the device, never published. A short onboarding story for one person, two, five, shown the first time."
+   ],
+   "statusLine": "Status: open. Owner: the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB), on the people session's SGitPeople (contacts, cards, confirmations).",
+   "owner": "the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB), on the people session's SGitPeople (contacts, cards, confirmations)",
+   "places": [
+    "SGit Vaults: Share"
+   ],
+   "versions": [],
+   "features": [],
+   "url": "https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/123-sgit-app-the-trust-map.md",
+   "source": "The owner"
+  },
+  {
+   "id": "issue-124",
+   "kind": "issue",
+   "number": "124",
+   "app": "SGit Vaults",
+   "title": "sgit app: a shared vault for chosen people",
+   "status": "proposed",
+   "why": "Open, with nothing built yet: \"Status: open. Owner: the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB), on SGitPeople's sendVault (a vault invitation sealed to a contact).\"",
+   "summary": "To do: on the trust map or in a vault's Share, choose people and send them the vault, each copy sealed to their key and dropped in their inbox; on their side, the invitation opens the vault in one tap and it appears with its members. The vault keeps a member list file so each member's app can draw who is in it. For now a member holds the vault key and can do everything (the owner: \"for now, the...",
+   "detail": [
+    "To do: on the trust map or in a vault's Share, choose people and send them the vault, each copy sealed to their key and dropped in their inbox; on their side, the invitation opens the vault in one tap and it appears with its members. The vault keeps a member list file so each member's app can draw who is in it. For now a member holds the vault key and can do everything (the owner: \"for now, the shared vault means you share the vault key, which is okay\"). The share sheet stops showing a raw vault key as a QR code once this exists."
+   ],
+   "statusLine": "Status: open. Owner: the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB), on SGitPeople's sendVault (a vault invitation sealed to a contact).",
+   "owner": "the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB), on SGitPeople's sendVault (a vault invitation sealed to a contact)",
+   "places": [
+    "SGit Vaults: Share"
+   ],
+   "versions": [],
+   "features": [],
+   "url": "https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/124-sgit-app-shared-vaults-for-people.md",
+   "source": "The owner"
+  },
+  {
+   "id": "issue-125",
+   "kind": "issue",
+   "number": "125",
+   "app": "SGit Vaults",
+   "title": "sgit app: AutoFill, passwords and passkeys in other apps and in Safari",
+   "status": "proposed",
+   "why": "Open, with nothing built yet: \"Status: open, needs the owner. Owner: the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB).\"",
+   "summary": "iOS lets a third-party app fill passwords and passkeys elsewhere only as an AutoFill credential provider: an app extension (ASCredentialProviderViewController) with the AutoFill Credential Provider capability, which the account holder switches on for ai.sgit.vaults.app in the developer portal, plus an App Group shared with the extension (the same one issue 105 waits for). Until then, the app...",
+   "detail": [
+    "iOS lets a third-party app fill passwords and passkeys elsewhere only as an AutoFill credential provider: an app extension (ASCredentialProviderViewController) with the AutoFill Credential Provider capability, which the account holder switches on for ai.sgit.vaults.app in the developer portal, plus an App Group shared with the extension (the same one issue 105 waits for). Until then, the app records which passkeys exist and where."
+   ],
+   "statusLine": "Status: open, needs the owner. Owner: the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB).",
+   "owner": "the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB)",
+   "places": [
+    "SGit Vaults: Share"
+   ],
+   "versions": [],
+   "features": [],
+   "url": "https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/125-sgit-app-autofill-passwords-and-passkeys.md",
    "source": "The owner"
   },
   {
