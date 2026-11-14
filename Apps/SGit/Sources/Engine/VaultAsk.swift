@@ -158,7 +158,6 @@ enum VaultAsk {
     static func ask(_ question: String, about facts: VaultFacts) async -> AskRecord {
         var record = AskRecord(question: question)
         let started = Date()
-        defer { record.seconds = Date().timeIntervalSince(started) }
         if let why = unavailable {
             record.problem = why
             return record
@@ -178,6 +177,7 @@ enum VaultAsk {
         }
         record.calls = recorder.calls
         #endif
+        record.seconds = Date().timeIntervalSince(started)
         return record
     }
 }
