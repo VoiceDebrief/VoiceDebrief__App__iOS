@@ -15,7 +15,7 @@ const sgAssets = join(root, 'Apps/SGit/Resources/Assets.xcassets');
 const site = join(root, 'website/assets/art');
 
 // One per RootTab, plus diagnostics (inside Settings). Keep in step with Sources/UI/Design/Sections.swift.
-const vdTiles = ['record', 'library', 'contacts', 'vaults', 'guide', 'identity', 'credit', 'activity', 'lab', 'words', 'about', 'settings', 'diagnostics'];
+const vdTiles = ['record', 'library', 'contacts', 'vaults', 'agents', 'guide', 'identity', 'credit', 'activity', 'lab', 'words', 'about', 'settings', 'diagnostics'];
 // One per SGSection (Apps/SGit/Sources/UI/Design/Sections.swift).
 const sgTiles = ['vaults', 'gallery', 'share', 'history', 'settings', 'webVault', 'activity', 'people', 'you', 'contacts', 'inbox', 'secrets'];
 

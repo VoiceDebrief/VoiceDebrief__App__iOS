@@ -13,7 +13,7 @@ export const C = {
 export const T = {
   record: '#0E9E72', library: '#2F80ED', vaults: '#4F5BD5', recipients: '#E5577E', identity: '#8E5CF7',
   credit: '#D4A12A', lab: '#13A8C8', words: '#2BB39A', diagnostics: '#7B8DA3', status: '#12C08A',
-  settings: '#8A9BB0', guide: '#2BA3D9', activity: '#F08A4B', contacts: '#E5577E', about: '#12C08A', gallery: '#E07A3F', share: '#E5577E', history: '#13A8C8', webVault: '#4F5BD5', inbox: '#2F80ED', secrets: '#8E5CF7', people: '#E5577E',
+  settings: '#8A9BB0', guide: '#2BA3D9', agents: '#C94FD6', activity: '#F08A4B', contacts: '#E5577E', about: '#12C08A', gallery: '#E07A3F', share: '#E5577E', history: '#13A8C8', webVault: '#4F5BD5', inbox: '#2F80ED', secrets: '#8E5CF7', people: '#E5577E',
 };
 
 // A deterministic sequence, so a picture is the same every time it is drawn.
@@ -248,6 +248,15 @@ export const tiles = {
       <path d="M0 -38 L12 -6 L0 38 L-12 -6 Z" fill="#FFFFFF"/>
       <path d="M0 38 L-12 -6 L0 2 Z" fill="${C.navy}" fill-opacity="0.35"/>
     </g>`),
+
+  agents: () => frame(W, H, T.agents, `
+    <path d="M360 250 L200 360 M360 250 L520 360 M360 250 L360 120" stroke="${C.mint}" stroke-opacity="0.5" stroke-width="4" stroke-dasharray="4 12" stroke-linecap="round"/>
+    ${[[200, 360], [520, 360], [360, 120]].map(([x, y]) => `<g filter="url(#soft)"><rect x="${x - 50}" y="${y - 40}" width="100" height="80" rx="24" fill="url(#deep)" stroke="${lighten(T.agents, 0.35)}" stroke-width="3"/></g>
+      <circle cx="${x - 18}" cy="${y - 4}" r="8" fill="#FFFFFF"/><circle cx="${x + 18}" cy="${y - 4}" r="8" fill="#FFFFFF"/>
+      <rect x="${x - 20}" y="${y + 16}" width="40" height="6" rx="3" fill="#FFFFFF" fill-opacity="0.5"/>
+      <rect x="${x - 3}" y="${y - 58}" width="6" height="18" rx="3" fill="${lighten(T.agents, 0.35)}"/><circle cx="${x}" cy="${y - 60}" r="7" fill="${lighten(T.agents, 0.35)}"/>`).join('')}
+    <g filter="url(#soft)"><circle cx="360" cy="250" r="56" fill="url(#acc)"/></g>
+    <path d="M336 236 h48 a10 10 0 0 1 10 10 v14 a10 10 0 0 1 -10 10 h-28 l-14 12 v-12 h-6 a10 10 0 0 1 -10 -10 v-14 a10 10 0 0 1 10 -10 z" fill="#FFFFFF"/>`),
 
   gallery: () => frame(W, H, T.gallery, [[-10, 180, 130], [4, 300, 110], [14, 400, 160]].map(([rot, x, y], i) => `
     <g transform="rotate(${rot} ${x + 100} ${y + 100})" filter="url(#soft)">

@@ -18,7 +18,11 @@ enum VoiceCommand: Equatable, Sendable {
         for phrase in phrases where tail.hasSuffix(phrase) {
             // The whole phrase, not the end of a longer word ("resend now" is not "send now").
             let pw = phrase.split(separator: " ").map(String.init)
-            if Array(words.suffix(pw.count)) == pw { return .finish }
+            guard Array(words.suffix(pw.count)) == pw else { continue }
+            // "don't send it now" is not a command (the owner, driving, 14 November 2026).
+            let before = words.dropLast(pw.count).suffix(2)
+            if before.contains("not") || before.contains("never") || before.last == "t" && before.first == "don" || before.last == "dont" { return nil }
+            return .finish
         }
         return nil
     }

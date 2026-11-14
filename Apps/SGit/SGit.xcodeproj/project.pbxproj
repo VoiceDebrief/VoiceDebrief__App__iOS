@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		A1B2C3D4E5F60718293A4B5C /* SGitVault in Frameworks */ = {isa = PBXBuildFile; productRef = B2C3D4E5F60718293A4B5C6D /* SGitVault */; };
+		A7B8C9D0E1F20718293A4B5C /* SGitPeople in Frameworks */ = {isa = PBXBuildFile; productRef = B7C8D9E0F1A20718293A4B5C /* SGitPeople */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,6 +64,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A1B2C3D4E5F60718293A4B5C /* SGitVault in Frameworks */,
+				A7B8C9D0E1F20718293A4B5C /* SGitPeople in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -127,6 +129,7 @@
 			name = SGit;
 			packageProductDependencies = (
 				B2C3D4E5F60718293A4B5C6D /* SGitVault */,
+				B7C8D9E0F1A20718293A4B5C /* SGitPeople */,
 			);
 			productName = SGit;
 			productReference = 610642B90E8AA3738B598607;
@@ -213,6 +216,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				C3D4E5F60718293A4B5C6D7E /* XCLocalSwiftPackageReference "../../Packages/SGitVault" */,
+				C7D8E9F0A1B20718293A4B5C /* XCLocalSwiftPackageReference "../../Packages/SGitPeople" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = BA0D98B62092BE1F80CD54D3 /* Products */;
@@ -336,6 +340,7 @@
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSCameraUsageDescription = "sgit uses the camera to scan the QR code of a vault key.";
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "Face ID shows a secret only to you: it is asked for before a password, key or token is revealed.";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "sgit saves a photo or video from a vault to your photo library when you ask it to.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -366,6 +371,7 @@
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSCameraUsageDescription = "sgit uses the camera to scan the QR code of a vault key.";
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "Face ID shows a secret only to you: it is asked for before a password, key or token is revealed.";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "sgit saves a photo or video from a vault to your photo library when you ask it to.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -486,6 +492,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../Packages/SGitVault;
 		};
+		C7D8E9F0A1B20718293A4B5C /* XCLocalSwiftPackageReference "../../Packages/SGitPeople" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../Packages/SGitPeople;
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -493,6 +503,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = C3D4E5F60718293A4B5C6D7E /* XCLocalSwiftPackageReference "../../Packages/SGitVault" */;
 			productName = SGitVault;
+		};
+		B7C8D9E0F1A20718293A4B5C /* SGitPeople */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C7D8E9F0A1B20718293A4B5C /* XCLocalSwiftPackageReference "../../Packages/SGitPeople" */;
+			productName = SGitPeople;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -66,6 +66,7 @@ struct RecordView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) { CreditCounter() }
                 ToolbarItem(placement: .topBarLeading) { VersionBadge() }
+                ToolbarItem(placement: .topBarTrailing) { WorkStatusIcons(session: session) }
                 if !isRecording {
                     ToolbarItem(placement: .topBarTrailing) {
                         LanguageMenu()
@@ -133,16 +134,12 @@ struct RecordView: View {
                     .foregroundStyle(.red)
                 Text(since, style: .timer)
                     .font(.system(.largeTitle, design: .rounded).monospacedDigit())
-                Text("Saved to this device as you speak. To finish without a tap, say \"send this now\", or press play/pause on your headphones.")
+                Text("Saved to this device as you speak.")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
             }
-            LevelBars(levels: session.levels, height: 72, barWidth: 4)
-                .accessibilityElement(children: .ignore)
-                .accessibilityLabel("Microphone level")
             liveCard
-            WhereWorkHappens(session: session)
         } else {
             if session.store.notes.isEmpty {
                 // The first visit: below the control, what happens, in a picture and one line.
@@ -203,7 +200,6 @@ struct RecordView: View {
                         .font(.callout)
                 }
             }
-            WhereWorkHappens(session: session)
             recent
             explore
         }
@@ -338,10 +334,15 @@ struct RecordView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 addresseeChips
-            } else if let to = addresseeRecipient {
-                Label("For \(to.name): sent when you finish", systemImage: "paperplane.fill")
-                    .font(.footnote.weight(.semibold))
-                    .foregroundStyle(Color.accentColor)
+            } else {
+                if let to = addresseeRecipient {
+                    Label("For \(to.name): sent when you finish", systemImage: "paperplane.fill")
+                        .font(.footnote.weight(.semibold))
+                        .foregroundStyle(Color.accentColor)
+                }
+                LevelBars(levels: session.levels, height: 44, barWidth: 4)
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel("Microphone level")
             }
             Button {
                 Task { await toggle() }
@@ -372,6 +373,13 @@ struct RecordView: View {
             Text(caption)
                 .font(.caption)
                 .foregroundStyle(.secondary)
+            if isRecording {
+                // The words that act, in plain sight (the owner: "if I had a list of the keywords").
+                Text("Say \"send this now\" or \"stop recording\" at the end, then pause. Headphone play/pause also finishes.")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+            }
 
             // Finish and send in one press, then stay here to record the next (issue 026). Only the
             // person's own recipients: the developer of the test build always asks first.

@@ -38,6 +38,7 @@ VoiceDebrief's parts, in the order of the sidebar. The tab bar, the sidebar, the
 | ![Library](../../assets/art/vd-library.jpg) | Library | `tray.full` | `#2F80ED` | Every note, by day |
 | ![Contacts](../../assets/art/vd-contacts.jpg) | Contacts | `person.2` | `#E5577E` | Who notes go to; add one by QR code |
 | ![Vaults](../../assets/art/vd-vaults.jpg) | Vaults | `lock.shield` | `#4F5BD5` | Encrypted copies that you own |
+| ![Agents](../../assets/art/vd-agents.jpg) | Agents | `person.3` | `#C94FD6` | Who is working for you; talk to them |
 | ![Guide](../../assets/art/vd-guide.jpg) | Guide | `book` | `#2BA3D9` | What is new, every idea, how things work |
 | ![Identity](../../assets/art/vd-identity.jpg) | Identity | `person.badge.key` | `#8E5CF7` | Your keys and your devices |
 | ![Credit](../../assets/art/vd-credit.jpg) | Credit | `sterlingsign.circle` | `#D4A12A` | What each thing costs |

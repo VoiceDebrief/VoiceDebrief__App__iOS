@@ -68,6 +68,8 @@ const PAGES = [
     description: 'sgit as a native app: put photos, videos and large files in an encrypted vault, browse them, share the vault and read its history. The jobs, the decisions, the screens, the share mechanisms and the limits.' },
   { path: 'sgit-app/reviews/round-1', nav: null, title: 'The sgit app, review round 1: three people who were sent a key',
     description: 'The first reading of the sgit app\'s screens by synthetic users: a teammate adding photos, an editor getting them onto a Mac, and someone who has never heard of a vault. Seventeen findings.' },
+  { path: 'sgit-app/guide', nav: null, title: 'The sgit app: a guide in pictures',
+    description: 'What the sgit app does today, screen by screen, with numbered callouts on each picture: vaults, creating one, browsing, adding, a refused upload, a file, sharing, history, and how it came to be.' },
   { path: 'sgit-app/built', nav: null, title: 'What is built in the sgit app',
     description: 'The reality file for the sgit app: what exists, how it is tested, and what does not exist yet.' },
   { path: 'reviews', nav: null, title: 'Reviews of the VoiceDebrief iOS screens',

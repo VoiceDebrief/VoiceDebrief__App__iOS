@@ -100,9 +100,9 @@ struct DeveloperLaneTests {
 struct RecordingLevelTests {
     @Test func decibelsBecomeZeroToOne() {
         #expect(VoiceRecorder.level(decibels: 0) == 1)
-        #expect(VoiceRecorder.level(decibels: -50) == 0)
+        #expect(VoiceRecorder.level(decibels: -55) == 0)
         #expect(VoiceRecorder.level(decibels: -160) == 0)
-        #expect(VoiceRecorder.level(decibels: -25) == 0.5)
+        #expect(VoiceRecorder.level(decibels: -27.5) == 0.25)
         #expect(VoiceRecorder.level(decibels: 6) == 1)
         #expect(VoiceRecorder.level(decibels: -.infinity) == 0)
     }

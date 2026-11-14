@@ -20,6 +20,7 @@ struct FileView: View {
     @State private var newName = ""
     @State private var confirmingDelete = false
     @State private var working = false
+    @State private var inWebVault = false
     @Environment(\.dismiss) private var dismiss
 
     /// Files up to this size are fetched as soon as the screen opens; larger ones wait to be asked.
@@ -62,7 +63,10 @@ struct FileView: View {
 
             Section {
                 if let local {
-                    Button("Open", systemImage: "arrow.up.left.and.arrow.down.right") { quickLook = local }
+                    Button("Open", systemImage: "arrow.up.left.and.arrow.down.right") {
+                        UsageLog.shared.action("file.open")
+                        quickLook = local
+                    }
                     ShareLink(item: local) { Label("Share", systemImage: "square.and.arrow.up") }
                     if kind == .image || kind == .video {
                         Button("Save to Photos", systemImage: "square.and.arrow.down") { Task { await saveToPhotos(local) } }
@@ -73,6 +77,17 @@ struct FileView: View {
             } footer: {
                 if local != nil {
                     Text("Open and Share hand over the original file, byte for byte as it was added. A copy of it is kept on this device so that it opens quickly; Settings can remove the copies.")
+                }
+            }
+
+            if !shelf.current(vault).onDevice {
+                Section {
+                    Button("Open in the web Vault", systemImage: "globe") {
+                        UsageLog.shared.action("web-vault.open-file")
+                        inWebVault = true
+                    }
+                } footer: {
+                    Text("The web Vault shows an HTML page as a page, renders Markdown and can edit text. It opens here, inside the app, on this file.")
                 }
             }
 
@@ -101,6 +116,9 @@ struct FileView: View {
         .navigationTitle(name)
         .navigationBarTitleDisplayMode(.inline)
         .quickLookPreview($quickLook)
+        .fullScreenCover(isPresented: $inWebVault) {
+            WebVaultScreen(shelf: shelf, vault: vault, path: file.path).tracked("web-vault")
+        }
         .task {
             if shelf.isCached(file, in: vault) || file.size <= Self.fetchUnasked { await fetch() }
         }
@@ -140,6 +158,7 @@ struct FileView: View {
     }
 
     private func saveToPhotos(_ url: URL) async {
+        UsageLog.shared.action("file.save-to-photos")
         notice = nil
         do {
             try await PhotoLibrary.save(url, isVideo: kind == .video)

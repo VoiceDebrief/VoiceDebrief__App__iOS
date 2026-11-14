@@ -5,9 +5,9 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | Status | Meaning | How many |
 |---|---|---|
 | Seen working | Built, and a run proved it: CI, a device or a server. | 27 |
-| Built, untried | In the app or the repository, but not yet proven by a run on a device. | 62 |
+| Built, untried | In the app or the repository, but not yet proven by a run on a device. | 65 |
 | In progress | Begun: part of it is built or a release has touched it. | 33 |
-| Proposed | Asked for or described; nothing of it is built. | 36 |
+| Proposed | Asked for or described; nothing of it is built. | 38 |
 | Parked | Waiting: on the owner, on Apple, or scheduled for later. | 6 |
 
 ## Seen working
@@ -77,6 +77,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | Where the work happens | Feature | VoiceDebrief | Record tab; Settings: Identity; Settings: Recipients |   | [reality file](../built/index.md) |
 | Finish by voice or by a button off the screen | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
 | Talk to Claude | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
+| Agents | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
 | Every section in plain sight | Feature | VoiceDebrief | Record tab |   | [reality file](../built/index.md) |
 | Your activity | Feature | VoiceDebrief | The repository: tools/conductor |   | [reality file](../built/index.md) |
 | A note's journey after Finish | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
@@ -106,6 +107,8 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | Adding photos, videos and files, the screens | Feature | SGit Vaults | SGit Vaults: a vault |   | [reality file](../sgit-app/built/index.md) |
 | Browsing | Feature | SGit Vaults | SGit Vaults: a vault; SGit Vaults: Share |   | [reality file](../sgit-app/built/index.md) |
 | Saving a folder out | Feature | SGit Vaults | SGit Vaults: a vault; SGit Vaults: Share |   | [reality file](../sgit-app/built/index.md) |
+| The web Vault inside the app | Feature | SGit Vaults | SGit Vaults: a vault |   | [reality file](../sgit-app/built/index.md) |
+| Your activity | Feature | SGit Vaults | SGit Vaults: Share; SGit Vaults: Settings |   | [reality file](../sgit-app/built/index.md) |
 | Sharing a vault | Feature | SGit Vaults | SGit Vaults: Share |   | [reality file](../sgit-app/built/index.md) |
 | History | Feature | SGit Vaults | SGit Vaults: History |   | [reality file](../sgit-app/built/index.md) |
 
@@ -160,6 +163,8 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | Prove the app's large-file exchange against the live server | Issue | SGit Vaults | SGit Vaults: a vault |   | [102](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/102-sgit-app-live-server.md) |
 | "Send to vault" from Photos and Files (a share extension) | Issue | SGit Vaults | SGit Vaults: a vault; SGit Vaults: Share |   | [105](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/105-sgit-app-share-extension.md) |
 | A viewer for chat-archive results, as a separate app | Issue | SGit Vaults | SGit Vaults: Gallery |   | [106](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/106-chat-archive-viewer.md) |
+| sgit app: a record of every action, on every device | Issue | SGit Vaults | SGit Vaults: Share; SGit Vaults: Settings |   | [117](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/117-sgit-app-observability-across-devices.md) |
+| sgit app: the web Vault inside the app, and its features natively | Issue | SGit Vaults | SGit Vaults: a vault; SGit Vaults: Settings |   | [118](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/118-sgit-app-the-web-vault-inside-the-app.md) |
 | A harness inside the app | Article | Both |   |   | [article](../articles/a-harness-inside-the-app/index.md) |
 | A private voice note, and what it would take to use it in a clinic | Article | Both |   |   | [article](../articles/a-private-voice-note-and-a-clinic/index.md) |
 | Synthetic users | Article | Both |   |   | [article](../articles/synthetic-users/index.md) |

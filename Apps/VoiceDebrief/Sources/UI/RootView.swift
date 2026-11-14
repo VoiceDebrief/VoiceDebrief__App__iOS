@@ -42,6 +42,9 @@ struct RootView: View {
             Tab(RootTab.vaults.title, systemImage: RootTab.vaults.symbol, value: RootTab.vaults) {
                 launched(.vaults) { VaultsView(book: book) }.tracked("vaults")
             }
+            Tab(RootTab.agents.title, systemImage: RootTab.agents.symbol, value: RootTab.agents) {
+                AgentsView(book: book).tracked("agents")
+            }
             Tab(RootTab.guide.title, systemImage: RootTab.guide.symbol, value: RootTab.guide) {
                 GuideView().tracked("guide")
             }

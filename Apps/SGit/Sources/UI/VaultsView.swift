@@ -71,6 +71,7 @@ struct VaultsView: View {
             Section {
                 NavigationLink {
                     GalleryView(shelf: shelf)
+                        .tracked("gallery")
                 } label: {
                     sectionRow(.gallery)
                 }
@@ -109,10 +110,11 @@ struct VaultsView: View {
                 Text("The vault stays on the server. This device forgets its key: to open it again you will need the key from somewhere else.")
             }
         }
-        .sheet(isPresented: $adding) { AddVaultSheet(shelf: shelf) }
-        .sheet(isPresented: $creating) { CreateVaultSheet(shelf: shelf) }
+        .sheet(isPresented: $adding) { AddVaultSheet(shelf: shelf).tracked("add") }
+        .sheet(isPresented: $creating) { CreateVaultSheet(shelf: shelf).tracked("create") }
         .sheet(isPresented: $showSettings) {
             NavigationStack { SettingsView(shelf: shelf) }
+                .tracked("settings")
         }
     }
 }

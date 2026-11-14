@@ -109,6 +109,7 @@ struct GalleryView: View {
     }
 
     private func open(_ entry: GalleryEntry) {
+        UsageLog.shared.action("gallery.open")
         notice = nil
         guard let url = Gallery.webAddress(of: entry.link) else {
             shelf.clearProblem()
