@@ -27,4 +27,4 @@ Sharing gives somebody the vault's key. Whoever holds it can read everything in 
 - sgit app: the Create sheet, the four keys, and smaller things: **In progress**. Open, and named by the release notes of v0.1.44.
 - A read-only share that can be taken back: **Parked**. The issue's status: "Status: open. A question for the owner."
 
-*Pictures: SGit Vaults: iPhone, light, from sgit-app-screens.yml run 19 on dev (commit e62bf68, 14 November 2026).*
+*Pictures: SGit Vaults: iPhone, light, from sgit-app-screens.yml run 43606971217 on work/sherpa at 0f2e6f8 (the same tree as dev, 14 November 2026), after the design session's restyle.*
