@@ -29,7 +29,7 @@
  ],
  "counts": {
   "seen-working": 27,
-  "built-untried": 86,
+  "built-untried": 87,
   "in-progress": 38,
   "proposed": 60,
   "parked": 6
@@ -4293,6 +4293,26 @@
    "detail": [
     "Model/Gallery.swift, UI/GalleryView.swift: a list of vaults to show somebody, by topic, with a search; each opens in the web Vault in the system's browser inside the app; one that carries a key can be added to the device's vaults. The list is what was added on the device (kept in the Keychain) and showcase.json from any vault on it. It ships empty",
     "Compiles, and its unit tests pass on the simulators (sgit-app.yml on f7dd58e): the file in both shapes, the links, the grouping, reading it from a vault, keeping an added entry. Opening a real vault in the in-app browser has never been tried, and the screen has not been pictured"
+   ],
+   "places": [
+    "SGit Vaults: Gallery"
+   ],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
+   "id": "sgit-feature.published.vaults.in.the.gallery",
+   "kind": "feature",
+   "app": "SGit Vaults",
+   "title": "Published vaults in the gallery",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "Model/DemoVaults.swift, UI/GalleryView.swift, Resources/sg-demo-vaults.json (written by scripts/sgit-app/demo_vaults.py): a \"Published by sgit.ai\" part of the Gallery listing the vaults at sgit.ai/demos/vaults (54 on 14 November 2026), grouped by kind and searchable, each opening in the web Vault inside the app with the read key its maker published on purpose (sgit_public_read_, so looking only...",
+   "detail": [
+    "Model/DemoVaults.swift, UI/GalleryView.swift, Resources/sg-demo-vaults.json (written by scripts/sgit-app/demo_vaults.py): a \"Published by sgit.ai\" part of the Gallery listing the vaults at sgit.ai/demos/vaults (54 on 14 November 2026), grouped by kind and searchable, each opening in the web Vault inside the app with the read key its maker published on purpose (sgit_public_read_, so looking only: \"Allow changes\" is never offered). The list is read live from the page's Markdown twin when the gallery opens; a vault new since this build has its key read from its own page when tapped; without a network the copy in the app is used, and the screen says which",
+    "Unit tests for reading the rows (one has a bar in its summary), taking only a public read key for the right vault, merging the live list with the bundled keys, and that the bundled copy holds only public read keys; not yet compiled when written"
    ],
    "places": [
     "SGit Vaults: Gallery"

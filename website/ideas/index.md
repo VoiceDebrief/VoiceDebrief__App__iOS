@@ -5,7 +5,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | Status | Meaning | How many |
 |---|---|---|
 | Seen working | Built, and a run proved it: CI, a device or a server. | 27 |
-| Built, untried | In the app or the repository, but not yet proven by a run on a device. | 86 |
+| Built, untried | In the app or the repository, but not yet proven by a run on a device. | 87 |
 | In progress | Begun: part of it is built or a release has touched it. | 38 |
 | Proposed | Asked for or described; nothing of it is built. | 60 |
 | Parked | Waiting: on the owner, on Apple, or scheduled for later. | 6 |
@@ -115,6 +115,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | Drag and drop | Feature | SGit Vaults | SGit Vaults: a vault |   | [reality file](../sgit-app/built/index.md) |
 | A folder tree on a wide screen | Feature | SGit Vaults | SGit Vaults: a vault |   | [reality file](../sgit-app/built/index.md) |
 | A gallery of vaults | Feature | SGit Vaults | SGit Vaults: Gallery |   | [reality file](../sgit-app/built/index.md) |
+| Published vaults in the gallery | Feature | SGit Vaults | SGit Vaults: Gallery |   | [reality file](../sgit-app/built/index.md) |
 | Vaults on the device | Feature | SGit Vaults | SGit Vaults |   | [reality file](../sgit-app/built/index.md) |
 | Adding photos, videos and files, the screens | Feature | SGit Vaults | SGit Vaults: a vault |   | [reality file](../sgit-app/built/index.md) |
 | Browsing | Feature | SGit Vaults | SGit Vaults: a vault; SGit Vaults: Share |   | [reality file](../sgit-app/built/index.md) |

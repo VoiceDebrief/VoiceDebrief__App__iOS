@@ -4,6 +4,7 @@ Every release of this repository. Every push to `dev` is a release: CI works out
 
 | Version | Date | What changed |
 |---|---|---|
+| next | 14 November 2026 | The sgit app's Gallery shows the vaults published at sgit.ai/demos/vaults, 54 of them, grouped by kind and searchable; each opens live in the web Vault inside the app, to look at, with the read key its maker published. The list is read from sgit.ai each time, so new vaults appear without an update |
 | v0.1.93 | 14 November 2026 | Command-Return sends: in the picture sheet, the Talk banner and an agent's message box, at the owner's request. |
 | v0.1.92 | 14 November 2026 | While recording, add a picture and a line to the note: a picture on the clipboard is offered at once ("A picture is on the clipboard: add it to this note"), or paste or choose one; it goes with the note to whoever it is for. The record screen says when a newer build is waiting in TestFlight, from the report Claude writes into your vault, with a button to open TestFlight. |
 | v0.1.91 | 14 November 2026 | The voice game (Lab, L03: Play) lets go of the microphone as the control centre does: it stops listening when you leave the screen or the app goes to the background, never switches the audio off for the rest of the app, gives up if it was stopped while starting, and will not start while a voice note is being recorded. A results page on the site, [L03 results](../lab/l03/index.md), is written from the logs the app shares: drop one in `website/lab/l03/runs/` and run the generator. No run yet. |
