@@ -28,7 +28,7 @@ struct RootView: View {
     var body: some View {
         // Every part of the app in plain sight (the owner, 14 November 2026: "every feature should be
         // visible and linked, not hidden away"). A sidebar on iPad and Mac; on iPhone the first four are
-        // tabs and the rest are under More.
+        // tabs and the rest are listed by our own More tab (MoreHubView), each keeping its own navigation.
         TabView(selection: $tab) {
             Tab(RootTab.record.title, systemImage: RootTab.record.symbol, value: RootTab.record) {
                 launched(.record) { RecordView(session: session, book: book, go: { tab = $0 }) }.tracked("record")
@@ -45,40 +45,59 @@ struct RootView: View {
             Tab(RootTab.agents.title, systemImage: RootTab.agents.symbol, value: RootTab.agents) {
                 AgentsView(book: book).tracked("agents")
             }
+            .defaultVisibility(.hidden, for: .tabBar)
             // The games, out of the Lab and onto the sidebar (the owner: "brilliant; make them a top-level item").
             Tab(RootTab.play.title, systemImage: RootTab.play.symbol, value: RootTab.play) {
                 NavigationStack { GamePlayView() }.tracked("play")
             }
+            .defaultVisibility(.hidden, for: .tabBar)
             Tab(RootTab.guide.title, systemImage: RootTab.guide.symbol, value: RootTab.guide) {
-                GuideView(go: { tab = $0 }).tracked("guide")
+                GuideView(go: { tab = $0 })
+                    // Room at the bottom so the floating Talk button does not cover the last lines.
+                    .safeAreaInset(edge: .bottom) { Color.clear.frame(height: 76) }
+                    .tracked("guide")
             }
+            .defaultVisibility(.hidden, for: .tabBar)
             TabSection("You") {
                 Tab(RootTab.identity.title, systemImage: RootTab.identity.symbol, value: RootTab.identity) {
                     NavigationStack { IdentityView(vaults: book) }.tracked("identity")
                 }
+            .defaultVisibility(.hidden, for: .tabBar)
                 Tab(RootTab.credit.title, systemImage: RootTab.credit.symbol, value: RootTab.credit) {
                     NavigationStack { CreditView() }.tracked("credit")
                 }
+            .defaultVisibility(.hidden, for: .tabBar)
                 Tab(RootTab.activity.title, systemImage: RootTab.activity.symbol, value: RootTab.activity) {
                     NavigationStack { ActivityView() }.tracked("activity")
                 }
+            .defaultVisibility(.hidden, for: .tabBar)
             }
             TabSection("Experiments") {
                 Tab(RootTab.lab.title, systemImage: RootTab.lab.symbol, value: RootTab.lab) {
                     NavigationStack { LabView(store: session.store) }.tracked("lab")
                 }
+            .defaultVisibility(.hidden, for: .tabBar)
                 Tab(RootTab.words.title, systemImage: RootTab.words.symbol, value: RootTab.words) {
                     NavigationStack { GlossaryView() }.tracked("words")
                 }
+            .defaultVisibility(.hidden, for: .tabBar)
             }
             TabSection("More") {
                 Tab(RootTab.about.title, systemImage: RootTab.about.symbol, value: RootTab.about) {
                     NavigationStack { StatusView() }.tracked("about")
                 }
+            .defaultVisibility(.hidden, for: .tabBar)
                 Tab(RootTab.settings.title, systemImage: RootTab.settings.symbol, value: RootTab.settings) {
                     launched(.settings) { SettingsView(session: session, book: book) }.tracked("settings")
                 }
+            .defaultVisibility(.hidden, for: .tabBar)
             }
+            // On an iPhone the tab bar is Record, Library, Contacts, Vaults and this list of the rest: the
+            // system's own More put a second navigation bar above each part's own (two back buttons).
+            Tab(RootTab.more.title, systemImage: RootTab.more.symbol, value: RootTab.more) {
+                MoreHubView(go: { tab = $0 }).tracked("more")
+            }
+            .defaultVisibility(.hidden, for: .sidebar)
         }
         .tabViewStyle(.sidebarAdaptable)
         .welcomeOnFirstLaunch()

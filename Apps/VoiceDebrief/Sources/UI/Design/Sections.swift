@@ -25,6 +25,7 @@ extension RootTab: CaseIterable, Identifiable {
         case .words: "Your words"
         case .about: "What this build does"
         case .settings: "Settings"
+        case .more: "More"
         }
     }
 
@@ -44,6 +45,7 @@ extension RootTab: CaseIterable, Identifiable {
         case .words: "character.book.closed"
         case .about: "checklist"
         case .settings: "gearshape"
+        case .more: "ellipsis.circle"
         }
     }
 
@@ -64,6 +66,7 @@ extension RootTab: CaseIterable, Identifiable {
         case .words: "Names the clean text should know"
         case .about: "Built, in test, not built"
         case .settings: "Language, saving, diagnostics"
+        case .more: "Every other part of the app"
         }
     }
 
@@ -83,9 +86,10 @@ extension RootTab: CaseIterable, Identifiable {
         case .words: Color(dsHex: 0x2BB39A)
         case .about: Color(dsHex: 0x12C08A)
         case .settings: Color(dsHex: 0x8A9BB0)
+        case .more: Color(dsHex: 0x8A9BB0)
         }
     }
 
     /// The section's drawing in the asset catalogue (drawn by tools/art).
-    var art: String { "VDArt-\(rawValue)" }
+    var art: String { self == .more ? "VDArt-settings" : "VDArt-\(rawValue)" }
 }
