@@ -1,6 +1,6 @@
 +----------------------------------------------------------------------+
-| VOICEDEBRIEF + SGIT VAULTS                               {{version}} |
-| {{date}}                                                             |
+| VOICEDEBRIEF + SGIT VAULTS                               v0.1.70     |
+| 14 November 2026                                                     |
 +----------------------------------------------------------------------+
 | READ THE PROJECT INSIDE THE APP                                      |
 |                                                                      |
