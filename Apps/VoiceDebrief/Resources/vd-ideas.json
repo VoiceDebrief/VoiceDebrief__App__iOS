@@ -31,7 +31,7 @@
   "seen-working": 27,
   "built-untried": 64,
   "in-progress": 33,
-  "proposed": 38,
+  "proposed": 39,
   "parked": 6
  },
  "ideas": [
@@ -1021,6 +1021,32 @@
    ],
    "url": "https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/045-two-sentences-that-say-the-wrong-thing.md",
    "source": "A review by synthetic users"
+  },
+  {
+   "id": "issue-046",
+   "kind": "issue",
+   "number": "046",
+   "app": "VoiceDebrief",
+   "title": "Every empty screen says what to do next",
+   "status": "proposed",
+   "why": "Open, with nothing built yet: \"Status: open. Asked for by the owner, 14 November 2026, through the Sherpa brief: \"an empty state for every screen that says what to do next\". From the Sherpa...\"",
+   "summary": "The rule, from SGit Vaults' own first screen, which already does it: an empty screen says what this place is for in one sentence, then the one thing to do, as a button where one fits. It does not only say that nothing is here.",
+   "detail": [
+    "The rule, from SGit Vaults' own first screen, which already does it: an empty screen says what this place is for in one sentence, then the one thing to do, as a button where one fits. It does not only say that nothing is here.",
+    "| Screen | Today | Proposed | |---|---|---| | VoiceDebrief, Record (record-empty) | Says what recording does; the button is there. | Holds. | | VoiceDebrief, Library (library-empty) | \"No notes yet. A note is kept here the moment its recording stops.\" Says what, not what to do. | \"No notes yet. Record one on the Record tab: it is kept here the moment you stop, then transcribed and debriefed on this device.\" With a button that opens Record, if the shell can be asked to change tab. | | VoiceDebrief, Vaults (vaults-empty) | \"None yet.\" in the list, then the Create form. | \"No vaults yet. A vault keeps your notes encrypted, on this device first; once you have one, every finished note is saved into it.\" Above the Create form, as SGit Vaults does it. | | VoiceDebrief, Recipients (recipients, with only the built-in one) | Says what sending does; the add form follows. | Holds: one line could say...",
+    "Done when each \"Proposed\" row is in the app, or its owner has said why not."
+   ],
+   "statusLine": "Status: open. Asked for by the owner, 14 November 2026, through the Sherpa brief: \"an empty state for every screen that says what to do next\". From the Sherpa session's reading of the empty pictures (screens.yml run 39, sgit-app-screens.yml run 19). Owner: each screen's own session; the Sherpa session writes the words.",
+   "owner": "each screen's own session; the Sherpa session writes the words",
+   "places": [
+    "Settings: Identity",
+    "Settings: Recipients",
+    "The repository: pictures of every screen"
+   ],
+   "versions": [],
+   "features": [],
+   "url": "https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/046-an-empty-state-that-says-what-to-do-next.md",
+   "source": "The owner"
   },
   {
    "id": "issue-100",
@@ -2279,7 +2305,7 @@
    "why": "The reality file, Built: unverified: written, not yet proven by a run.",
    "summary": "UI/Guide/GuideView.swift, IdeasView.swift, WhatsNewView.swift, FeatureGuideView.swift, Model/GuideData.swift; data from website/admin/ideas.mjs, bundled as vd-ideas.json and vd-versions.json: every idea and request (issues, articles, rows of both reality files) with its status (seen working, built untried, in progress, proposed, parked) decided by written rules and the sentence that decided it...",
    "detail": [
-    "UI/Guide/GuideView.swift, IdeasView.swift, WhatsNewView.swift, FeatureGuideView.swift, Model/GuideData.swift; data from website/admin/ideas.mjs, bundled as vd-ideas.json and vd-versions.json: every idea and request (issues, articles, rows of both reality files) with its status (seen working, built untried, in progress, proposed, parked) decided by written rules and the sentence that decided it, searchable and filtered by status and app, with where it is in the app and the versions that named it; What is new lists every version newest first and marks those since the person last looked. The same list is the site's ideas page. Seven feature guides (record, a note, the library, vaults, sending, the briefing, settings), each a picture of the screen with numbered arrows and what each number is, written in website/guides/guides.json, drawn by website/admin/guides.py from a screens artifact as...",
+    "UI/Guide/GuideView.swift, IdeasView.swift, WhatsNewView.swift, FeatureGuideView.swift, Model/GuideData.swift; data from website/admin/ideas.mjs, bundled as vd-ideas.json and vd-versions.json: every idea and request (issues, articles, rows of both reality files) with its status (seen working, built untried, in progress, proposed, parked) decided by written rules and the sentence that decided it, searchable and filtered by status and app, with where it is in the app and the versions that named it; What is new lists every version newest first and marks those since the person last looked. The same list is the site's ideas page. Ten feature guides (for VoiceDebrief: record, a note, the library, vaults, sending, the briefing, settings; for SGit Vaults: getting started, inside a vault, sharing), each a picture of the screen with numbered arrows and what each number is, written in...",
     "Unit tests: the bundled data decodes, every status is known and explained, search, version order, since you last looked, every guide's pictures are in the app. The generator is checked by validate.mjs. Not reachable from the shell until it is given a place in the sidebar; not run on a device"
    ],
    "places": [
