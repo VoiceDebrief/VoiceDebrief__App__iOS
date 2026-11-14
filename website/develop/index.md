@@ -77,6 +77,14 @@ Where the `gh` command is set up, one line does steps 3 and 4: `gh api repos/Voi
 
 Both ways were followed from a Linux container on 13 November 2026 (`work/screens`: 68 pictures from the first run, 100 from the fourth). A person can download the same artifact from the run's page on GitHub.
 
+**Pictures on a version's page.** Every push to `dev` gets a page, `website/versions/<version>/index.md`, written by CI. After `screens.yml` has run on `dev` for that version, the screens session adds the pictures of what changed: download that run's artifact and the one for the version before, then
+
+```
+python3 .github/scripts/release-pictures.py <new folder> <old folder> website/versions/<version>
+```
+
+It compares the light iPhone and iPad pictures screen by screen, writes one small JPEG (the two side by side) for each of the most changed screens, and prints the markdown to paste into the page with `CAPTION` where the one line saying what is new goes. Somebody looks at the pictures and writes those lines: the script knows that a screen changed, not what the change is. This is a step run per release, not part of the workflow, because committing to `dev` from a workflow is a second writer of `dev`.
+
 **What the pictures are for.** Besides letting a session see its own work, they are read in rounds by synthetic users: see [Reviews](../reviews/index.md).
 
 ## What CI cannot do
