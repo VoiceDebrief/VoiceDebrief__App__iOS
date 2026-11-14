@@ -28,7 +28,7 @@ struct SettingsView: View {
             } header: {
                 Text("Server")
             } footer: {
-                Text("Opening and reading a vault needs only its key. Creating a vault or changing one also needs an access key, which is kept in this device's Keychain and sent only to the server above.")
+                Text("Opening and reading a vault needs only its key. Sending a vault to the server, or adding to one that is there, also needs an access key: a pass given out by whoever runs the server, which opens no vault. It is kept in this device's Keychain and sent only to the server above. Removing it changes no vault: until one is entered again, vaults on the server can be read and not added to.")
             }
 
             Section {
@@ -40,11 +40,11 @@ struct SettingsView: View {
             }
 
             Section {
-                Toggle("Convert to JPEG and H.264 when adding", isOn: $compatible)
+                Toggle("Make photos and videos open in any browser", isOn: $compatible)
             } header: {
                 Text("Photos and videos")
             } footer: {
-                Text("Off: a photo or video goes in as it is in your library (often HEIC and HEVC), which is exact and quick, but not every browser can show it. On: the system converts it first, which takes longer and is not the original.")
+                Text("Off: a photo or video goes in exactly as it is in your library, which is the original and quick, but a colleague's browser may not be able to show it (often HEIC and HEVC). On: it is converted to JPEG or H.264 first, which every browser shows; that takes longer and is no longer the original.")
             }
 
             Section {

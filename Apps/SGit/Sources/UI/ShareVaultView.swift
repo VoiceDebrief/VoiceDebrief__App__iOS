@@ -9,11 +9,18 @@ struct ShareVaultView: View {
     /// Files are still on their way into this vault.
     var pending = false
     @State private var token = ""
-    @State private var showingKey = false
+    @State private var showingKey: Bool
     @State private var showingReadKey = false
     @State private var readKey: String?
     @State private var copied: String?
     @Environment(\.dismiss) private var dismiss
+
+    init(shelf: VaultShelf, vault: SavedVault, pending: Bool = false, showingKey: Bool = false) {
+        self.shelf = shelf
+        self.vault = vault
+        self.pending = pending
+        _showingKey = State(initialValue: showingKey)
+    }
 
     var body: some View {
         List {
@@ -77,6 +84,23 @@ struct ShareVaultView: View {
                         SecretBlock(text: vault.keyText, label: "vault key", copied: $copied)
                         if let link = VaultNaming.webLink(keyText: vault.keyText) {
                             ShareLink(item: link) { Label("Send a link that opens it in a browser", systemImage: "link") }
+                        }
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text("On a computer, for every file as it was added and the whole history:")
+                                .font(.footnote)
+                                .foregroundStyle(.secondary)
+                            Text(VaultNaming.cloneCommand(keyText: "<the vault key>"))
+                                .font(.footnote.monospaced())
+                            Button("Copy the line with the key in it", systemImage: "doc.on.doc") {
+                                Clipboard.copySecret(VaultNaming.cloneCommand(keyText: vault.keyText))
+                                copied = "command"
+                            }
+                            .font(.footnote)
+                            if copied == "command" {
+                                Text("Copied. It holds the key: paste it only into your own terminal.")
+                                    .font(.footnote)
+                                    .foregroundStyle(.secondary)
+                            }
                         }
                     } else {
                         Button("Show the vault key", systemImage: "eye") { showingKey = true }

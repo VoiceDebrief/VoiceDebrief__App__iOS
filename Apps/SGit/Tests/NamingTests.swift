@@ -120,7 +120,7 @@ struct NamingTests {
 
     @Test func anInvitationCarriesTheStepsAndSaysWhatTheKeyAllows() {
         let full = VaultNaming.invitation(name: "Summit", keyText: "some-pass:abcd1234", readOnly: false, server: "s")
-        #expect(full.contains("Add a vault by its key"))
+        #expect(full.contains("Add a vault you were sent"))
         #expect(full.contains("some-pass:abcd1234"))
         #expect(full.contains("https://vault.sgraph.ai/#some-pass:abcd1234"))
         #expect(full.contains("access key for s"))
@@ -137,5 +137,14 @@ struct NamingTests {
         #expect(VaultListing.name(of: "a/b/c.txt") == "c.txt")
         #expect(VaultListing.parent(of: "a/b/c.txt") == "a/b")
         #expect(VaultListing.parent(of: "c.txt") == "")
+    }
+
+    @Test func aFolderSavedOutKeepsItsShapeAndSaysItsSize() {
+        #expect(VaultListing.relative("stage/day1/a.jpg", to: "stage") == "day1/a.jpg")
+        #expect(VaultListing.relative("stage/a.jpg", to: "") == "stage/a.jpg")
+        #expect(VaultListing.relative("stagecraft/a.jpg", to: "stage") == "stagecraft/a.jpg")
+        #expect(VaultNaming.saveOut(count: 1, bytes: 10).hasPrefix("Save this file to Files ("))
+        #expect(VaultNaming.saveOut(count: 12, bytes: 10).hasPrefix("Save these 12 files to Files ("))
+        #expect(VaultNaming.cloneCommand(keyText: "abc:def") == "pip install sgit-ai && sgit clone abc:def")
     }
 }

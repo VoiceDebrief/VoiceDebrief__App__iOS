@@ -68,6 +68,16 @@ struct VaultListing: Equatable, Sendable {
         return below("") ?? []
     }
 
+    /// Every file in a folder and beneath it; the whole vault for the empty folder.
+    static func under(_ all: [VaultFile], folder: String) -> [VaultFile] {
+        folder.isEmpty ? all : all.filter { $0.path.hasPrefix(folder + "/") }
+    }
+
+    /// A file's path as seen from a folder that holds it.
+    static func relative(_ path: String, to folder: String) -> String {
+        folder.isEmpty || !path.hasPrefix(folder + "/") ? path : String(path.dropFirst(folder.count + 1))
+    }
+
     static func name(of path: String) -> String {
         path.split(separator: "/").last.map(String.init) ?? path
     }
@@ -163,6 +173,14 @@ enum VaultNaming {
     }
 
     /// Where a vault's contents stand, for the line at the top of its screen.
+    /// The words on the button that saves a folder out, so that the size is known before it starts.
+    static func saveOut(count: Int, bytes: Int) -> String {
+        "Save \(count == 1 ? "this file" : "these \(count) files") to Files (\(bytes.fileSizeText))"
+    }
+
+    /// What somebody types on a computer to get the whole vault, originals and history.
+    static func cloneCommand(keyText: String) -> String { "pip install sgit-ai && sgit clone \(keyText)" }
+
     static func arrival(onDevice: Bool, server: String, pendingFiles: Int, failed: Bool, checked: Date?, now: Date = Date()) -> String {
         if failed { return "Some files did not go in. They are kept here: try again below." }
         if pendingFiles > 0 {
@@ -178,7 +196,7 @@ enum VaultNaming {
     /// What is sent to somebody being given a vault: the steps, then the key, then a link for a browser.
     static func invitation(name: String, keyText: String, readOnly: Bool, server: String) -> String {
         var lines = ["\(name): a vault of files, encrypted so that only people with its key can open it.", "",
-                     "To open it in the sgit app: choose \"Add a vault by its key\" and paste this key.", "", keyText]
+                     "To open it in the sgit app: choose \"Add a vault you were sent\" and paste this key.", "", keyText]
         if let link = webLink(keyText: keyText) {
             lines += ["", "Or open it in a browser:", link]
         }

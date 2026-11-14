@@ -25,12 +25,14 @@ final class SampleWorld {
     let shelf: VaultShelf
     let outbox: Outbox
     private(set) var vault: SavedVault?
+    /// The vault that was never sent anywhere.
+    private(set) var local: SavedVault?
     private(set) var ready = false
 
-    init() {
+    init(accessKey: Bool = true) {
         let root = FileManager.default.temporaryDirectory.appending(path: "sample-\(UUID().uuidString)", directoryHint: .isDirectory)
         let store = MemoryStore()
-        store.set("access-token", Data("sample".utf8))
+        if accessKey { store.set("access-token", Data("sample".utf8)) }
         shelf = VaultShelf(store: store, transport: FolderVaultTransport(root: root.appending(path: "server")),
                            cacheRoot: root.appending(path: "cache"), localRoot: root.appending(path: "local"))
         outbox = Outbox(root: root.appending(path: "outbox"))
@@ -38,7 +40,7 @@ final class SampleWorld {
 
     func prepare(set: String) async {
         defer { ready = true }
-        guard set != "empty" else { return }
+        guard set != "empty", set != "nokey" else { return }
         guard let made = await shelf.create(name: "Web Summit 2026") else { return }
         let folder = FileManager.default.temporaryDirectory.appending(path: "sample-files-\(UUID().uuidString)", directoryHint: .isDirectory)
         try? FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
@@ -82,8 +84,18 @@ final class SampleWorld {
             await outbox.wait(for: job.id)
         }
         await shelf.sendToServer(made)
-        await shelf.create(name: "Drafts, not shared")
+        local = await shelf.create(name: "Drafts, not shared")
         vault = shelf.current(made)
+        if set == "adding", let vault {
+            // Three files taken in and kept, not yet sent: what a person sees between choosing and arriving.
+            var held: [IncomingFile] = []
+            for (name, bytes) in [("IMG_0701.jpg", 2_400_000), ("IMG_0702.jpg", 3_100_000), ("Closing talk.mov", 48_000_000)] {
+                let url = folder.appending(path: UUID().uuidString)
+                guard (try? Data(count: bytes).write(to: url)) != nil else { continue }
+                held.append(IncomingFile(url: url, name: name))
+            }
+            _ = try? outbox.add(held, to: vault, folder: "stage", existing: [], shelf: shelf, starting: false)
+        }
         if let vault { _ = try? await shelf.load(vault) }
         await shelf.refreshGallery()
     }
@@ -109,7 +121,7 @@ final class SampleWorld {
 /// One screen, opened directly on the sample vault.
 struct ScreenshotRoot: View {
     let screen: String
-    @State private var world = SampleWorld()
+    @State private var world = SampleWorld(accessKey: LaunchOptions.sampleSet != "nokey")
 
     var body: some View {
         Group {
@@ -151,6 +163,14 @@ struct ScreenshotRoot: View {
             if let file = files.first(where: { $0.path == "stage/IMG_0412.jpg" }) {
                 NavigationStack { FileView(shelf: shelf, vault: vault, file: file) }
             }
+        case ("vault.local", _):
+            if let local = world.local {
+                NavigationStack { VaultView(shelf: shelf, outbox: outbox, vault: local, folder: "") }
+            }
+        case ("vault.adding", let vault?):
+            NavigationStack { VaultView(shelf: shelf, outbox: outbox, vault: vault, folder: "stage") }
+        case ("share.key", let vault?):
+            NavigationStack { ShareVaultView(shelf: shelf, vault: vault, showingKey: true) }
         case ("share", let vault?):
             NavigationStack { ShareVaultView(shelf: shelf, vault: vault) }
         case ("history", let vault?):
