@@ -120,7 +120,7 @@ struct NamingTests {
 
     @Test func anInvitationCarriesTheStepsAndSaysWhatTheKeyAllows() {
         let full = VaultNaming.invitation(name: "Summit", keyText: "some-pass:abcd1234", readOnly: false, server: "s")
-        #expect(full.contains("Add a vault by its key"))
+        #expect(full.contains("Add a vault you were sent"))
         #expect(full.contains("some-pass:abcd1234"))
         #expect(full.contains("https://vault.sgraph.ai/#some-pass:abcd1234"))
         #expect(full.contains("access key for s"))

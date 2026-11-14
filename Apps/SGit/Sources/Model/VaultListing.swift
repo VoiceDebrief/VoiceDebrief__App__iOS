@@ -196,7 +196,7 @@ enum VaultNaming {
     /// What is sent to somebody being given a vault: the steps, then the key, then a link for a browser.
     static func invitation(name: String, keyText: String, readOnly: Bool, server: String) -> String {
         var lines = ["\(name): a vault of files, encrypted so that only people with its key can open it.", "",
-                     "To open it in the sgit app: choose \"Add a vault by its key\" and paste this key.", "", keyText]
+                     "To open it in the sgit app: choose \"Add a vault you were sent\" and paste this key.", "", keyText]
         if let link = webLink(keyText: keyText) {
             lines += ["", "Or open it in a browser:", link]
         }
