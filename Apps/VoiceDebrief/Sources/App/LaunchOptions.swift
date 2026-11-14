@@ -59,6 +59,8 @@ enum SampleSet: String, Sendable {
 enum RootTab: String, Hashable, Sendable {
     case record, library, vaults, settings
     case contacts, identity, credit, lab, words, activity, about, guide, agents, play
+    /// The iPhone's More tab: a list of the parts past the first four (Design/MoreHub.swift).
+    case more
 }
 
 /// Every screen a UI test can open directly. The raw value is the id used in `-VDScreen` and in
