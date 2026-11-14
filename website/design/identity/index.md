@@ -98,7 +98,7 @@ Every note, picture and message travels one of two ways, and says which with a `
 |---|---|---|
 | Direction | One way | Both ways |
 | How | Sealed on your device to their key and dropped in their inbox; you can add to it but not read it back; the server sees only ciphertext | Both of you hold the vault's key and read and write the same encrypted files |
-| Used for | Voice notes, pictures, messages to agents, handing over a vault's key | The Agents screen and Claude's replies; shared vaults with people are still to come |
+| Used for | Voice notes, pictures, messages to agents, handing over a vault's key | In VoiceDebrief, the Agents vault you share with Claude; in SGit Vaults, a vault shared with the people you choose (each person's key handed over by lane). Neither has yet been run on a device |
 | Colour and symbol | Green, `envelope.fill` | Indigo, `lock.shield.fill` |
 | Drawing | A sealed envelope travels one way into their inbox, with no way back | One vault between two faces, arrows both ways, files arriving from each side |
 
