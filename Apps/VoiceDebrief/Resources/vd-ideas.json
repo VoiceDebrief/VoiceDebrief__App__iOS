@@ -29,8 +29,8 @@
  ],
  "counts": {
   "seen-working": 27,
-  "built-untried": 80,
-  "in-progress": 37,
+  "built-untried": 81,
+  "in-progress": 38,
   "proposed": 61,
   "parked": 6
  },
@@ -1707,6 +1707,37 @@
    "source": "The project"
   },
   {
+   "id": "issue-300",
+   "kind": "issue",
+   "number": "300",
+   "app": "SGit Vaults",
+   "title": "L03, a game played by voice, with Apple's model as one of its engines",
+   "status": "in-progress",
+   "why": "Open, and the reality file lists for it: The Lab, experiment L03: a game played by voice.",
+   "summary": "From: the owner, a voice note while driving, 14 November 2026. Session: the game session, branch work/game. Where: Apps/VoiceDebrief/Sources/Game/, Apps/VoiceDebrief/Tests/Game*.swift, one row \"L03: Play\" in the Lab.",
+   "detail": [
+    "From: the owner, a voice note while driving, 14 November 2026. Session: the game session, branch work/game. Where: Apps/VoiceDebrief/Sources/Game/, Apps/VoiceDebrief/Tests/Game*.swift, one row \"L03: Play\" in the Lab.",
+    "What was asked",
+    "A fun game, played by voice on an iPhone or an iPad, that uses Apple's on-device model (the Foundation Models framework) as part of its engine: points, obstacles, a little action, a story, problems to solve, levels, winning and losing, and a couple of easter eggs left to be found. The game is the excuse. The experiment is speed and feel: \"I say turn left: how long until it turns left?\" Every command is timed from the end of speaking to the change on the screen, the time is shown every time, and the log is kept and shared as JSON.",
+    "The position it follows",
+    "From \"Two decision engines\" and \"A harness inside the app\": the code owns the state. The model is asked one question at a time, with no history, and may only propose: it calls one tool, the code checks the call against the rules and applies it or says why not. The model is given only what makes sense at that moment.",
+    "The primitives",
+    "All in plain Swift with no model in sight, so all of it is unit tested.",
+    "| Primitive | What it is | |---|---| | GameState | A grid of tiles, the player, gold, keys, lives, moves left, points, level, status (playing, level won, won, lost). | | GameTile | floor, wall, gold, key, door, trap, exit, ladder, and one that looks like a wall and is not. | | GameLevel | A title, two lines of story, a few rows of text (# wall, o gold, k key, D door, ^ trap, E exit, H ladder, @ start), a move budget and lives. | | GameCommand | move (direction, steps), jump, climb, unlock, restart, next level, hint, and two that only the phrases know. | | GameRules.apply | The rule engine in code: a command and a state in, a new state, whether it was accepted, a sentence and events out. | | GameToolScope | The tools that make sense in this state, with descriptions that say what is possible now. | | GamePlanner | A breadth-first search over the rules themselves: the shortest list of..."
+   ],
+   "statusLine": "",
+   "places": [
+    "SGit Vaults: History",
+    "SGit Vaults: Share"
+   ],
+   "versions": [],
+   "features": [
+    "The Lab, experiment L03: a game played by voice"
+   ],
+   "url": "https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/300-the-voice-game.md",
+   "source": "The project"
+  },
+  {
    "id": "issue-004",
    "kind": "issue",
    "number": "004",
@@ -3224,6 +3255,26 @@
     "Settings: Experiments, the Lab"
    ],
    "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
+   "id": "feature.the.lab.experiment.l03.a.game.played.by.voice",
+   "kind": "feature",
+   "app": "VoiceDebrief",
+   "title": "The Lab, experiment L03: a game played by voice",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "Sources/Game/ (GameWorld, GameRules, GameLevels, GamePhrases, GameTools, GameModelEngine, GameController, GameHints, GameLog, GameBoardView, GamePlayView), reached from Settings, Lab, L03: Play (issue 300). Two games on the same primitives, Boxes (top-down, three levels) and Lantern (side view with gravity, ladders and jumps, three levels), with gold, keys, doors, traps, lives, a move budget...",
+   "detail": [
+    "Sources/Game/ (GameWorld, GameRules, GameLevels, GamePhrases, GameTools, GameModelEngine, GameController, GameHints, GameLog, GameBoardView, GamePlayView), reached from Settings, Lab, L03: Play (issue 300). Two games on the same primitives, Boxes (top-down, three levels) and Lantern (side view with gravity, ladders and jumps, three levels), with gold, keys, doors, traps, lives, a move budget, points and levels. A sentence (heard through the live words, typed) goes to the phrases, then, if they find nothing, to Apple's on-device model in a fresh session with only the tools this state allows, each described for the moment; the first tool call ends the request and is checked against the tools offered, then applied by the rules in code. The phrases can act on live words before they settle. Every command is timed from the end of speaking to the new state and shown with its parts; the model's...",
+    "Unit tests: every level parses and is won within its budget by a breadth-first planner over the rules without losing a life; the rules of both games; the tools offered per state and the check of a tool call; the phrases; the hidden things; the clue levels and the check of a model's clue; the voice player's script winning both games through the phrases, with and without its mistakes; the estimates; a typed command through the controller and its JSON log. Never played on a device and never put to a model: whether the model calls the right tool, and how fast, is what the game is for"
+   ],
+   "places": [],
+   "issues": [
+    "300"
+   ],
    "url": "https://ios.app.voicedebrief.ai/built/index.html",
    "source": "The reality file",
    "versions": []
