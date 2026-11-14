@@ -30,7 +30,7 @@
  "counts": {
   "seen-working": 7,
   "built-untried": 16,
-  "in-progress": 15,
+  "in-progress": 16,
   "proposed": 22,
   "parked": 1
  },
@@ -662,6 +662,37 @@
     "The people layer, SGitPeople"
    ],
    "url": "https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/200-people-messages-and-secrets.md",
+   "source": "The project"
+  },
+  {
+   "id": "issue-300",
+   "kind": "issue",
+   "number": "300",
+   "app": "SGit Vaults",
+   "title": "L03, a game played by voice, with Apple's model as one of its engines",
+   "status": "in-progress",
+   "why": "Open, and the reality file lists for it: The Lab, experiment L03: a game played by voice.",
+   "summary": "From: the owner, a voice note while driving, 14 November 2026. Session: the game session, branch work/game. Where: Apps/VoiceDebrief/Sources/Game/, Apps/VoiceDebrief/Tests/Game*.swift, one row \"L03: Play\" in the Lab.",
+   "detail": [
+    "From: the owner, a voice note while driving, 14 November 2026. Session: the game session, branch work/game. Where: Apps/VoiceDebrief/Sources/Game/, Apps/VoiceDebrief/Tests/Game*.swift, one row \"L03: Play\" in the Lab.",
+    "What was asked",
+    "A fun game, played by voice on an iPhone or an iPad, that uses Apple's on-device model (the Foundation Models framework) as part of its engine: points, obstacles, a little action, a story, problems to solve, levels, winning and losing, and a couple of easter eggs left to be found. The game is the excuse. The experiment is speed and feel: \"I say turn left: how long until it turns left?\" Every command is timed from the end of speaking to the change on the screen, the time is shown every time, and the log is kept and shared as JSON.",
+    "The position it follows",
+    "From \"Two decision engines\" and \"A harness inside the app\": the code owns the state. The model is asked one question at a time, with no history, and may only propose: it calls one tool, the code checks the call against the rules and applies it or says why not. The model is given only what makes sense at that moment.",
+    "The primitives",
+    "All in plain Swift with no model in sight, so all of it is unit tested.",
+    "| Primitive | What it is | |---|---| | GameState | A grid of tiles, the player, gold, keys, lives, moves left, points, level, status (playing, level won, won, lost). | | GameTile | floor, wall, gold, key, door, trap, exit, ladder, and one that looks like a wall and is not. | | GameLevel | A title, two lines of story, a few rows of text (# wall, o gold, k key, D door, ^ trap, E exit, H ladder, @ start), a move budget and lives. | | GameCommand | move (direction, steps), jump, climb, unlock, restart, next level, hint, and two that only the phrases know. | | GameRules.apply | The rule engine in code: a command and a state in, a new state, whether it was accepted, a sentence and events out. | | GameToolScope | The tools that make sense in this state, with descriptions that say what is possible now. | | GamePlanner | A breadth-first search over the rules themselves: the shortest list of..."
+   ],
+   "statusLine": "",
+   "places": [
+    "SGit Vaults: History",
+    "SGit Vaults: Share"
+   ],
+   "versions": [],
+   "features": [
+    "The Lab, experiment L03: a game played by voice"
+   ],
+   "url": "https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/300-the-voice-game.md",
    "source": "The project"
   },
   {

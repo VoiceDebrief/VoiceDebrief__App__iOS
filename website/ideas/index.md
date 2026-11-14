@@ -5,8 +5,8 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | Status | Meaning | How many |
 |---|---|---|
 | Seen working | Built, and a run proved it: CI, a device or a server. | 27 |
-| Built, untried | In the app or the repository, but not yet proven by a run on a device. | 72 |
-| In progress | Begun: part of it is built or a release has touched it. | 37 |
+| Built, untried | In the app or the repository, but not yet proven by a run on a device. | 73 |
+| In progress | Begun: part of it is built or a release has touched it. | 38 |
 | Proposed | Asked for or described; nothing of it is built. | 43 |
 | Parked | Waiting: on the owner, on Apple, or scheduled for later. | 6 |
 
@@ -90,6 +90,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | The Lab, experiment L01: one prompt, tools on and off | Feature | VoiceDebrief | Settings: Experiments, the Lab; The repository: CI |   | [reality file](../built/index.md) |
 | The model door, first slice | Feature | VoiceDebrief | Settings: Experiments, the Lab |   | [reality file](../built/index.md) |
 | The Lab, experiment L02: the control centre | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
+| The Lab, experiment L03: a game played by voice | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
 | Recipients, added by QR code | Feature | VoiceDebrief | Settings: Recipients |   | [reality file](../built/index.md) |
 | A clean text, with questions | Feature | VoiceDebrief | A note: Clean text; Library, then a note |   | [reality file](../built/index.md) |
 | Credit that counts down, with a simulated top-up | Feature | VoiceDebrief | The balance in the top bar; Settings: Recipients |   | [reality file](../built/index.md) |
@@ -159,6 +160,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | sgit app: a shared vault for chosen people | Issue | SGit Vaults | SGit Vaults: Share |   | [124](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/124-sgit-app-shared-vaults-for-people.md) |
 | sgit app: AutoFill, passwords and passkeys in other apps and in Safari | Issue | SGit Vaults | SGit Vaults: Share |   | [125](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/125-sgit-app-autofill-passwords-and-passkeys.md) |
 | People, messages and secrets (the SGitPeople package) | Issue | SGit Vaults | SGit Vaults | [v0.1.54](../versions/v0.1.54/index.md) | [200](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/200-people-messages-and-secrets.md) |
+| L03, a game played by voice, with Apple's model as one of its engines | Issue | SGit Vaults | SGit Vaults: History; SGit Vaults: Share |   | [300](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/300-the-voice-game.md) |
 | People, messages and secrets: the layer under both apps | Article | Both |   |   | [article](../articles/people-messages-and-secrets/index.md) |
 
 ## Proposed

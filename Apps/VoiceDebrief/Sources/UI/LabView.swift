@@ -28,6 +28,7 @@ struct LabView: View {
                             .foregroundStyle(.secondary)
                     }
                 }
+                NavigationLink { GamePlayView() } label: { VStack(alignment: .leading, spacing: 2) { Text("L03: Play"); Text("A small game played by voice. Each command is timed from the end of your words to the move, by the phrases or by the model.").font(.footnote).foregroundStyle(.secondary) } }
             } header: {
                 Text("Experiments")
             } footer: {
