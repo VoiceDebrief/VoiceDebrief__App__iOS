@@ -113,6 +113,7 @@ struct TalkButton: View {
                 PhotoChooser { picture = $0 }.buttonStyle(.bordered)
                 Spacer()
                 Button { Task { await tap() } } label: { Label("Send", systemImage: "paperplane.fill") }
+                    .keyboardShortcut(.return, modifiers: .command)
                     .buttonStyle(.borderedProminent)
             }
             .font(.footnote)

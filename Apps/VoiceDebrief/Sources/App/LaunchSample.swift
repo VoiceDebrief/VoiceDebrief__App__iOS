@@ -184,6 +184,7 @@ struct LaunchedScreen: View {
         case .about: return "What this build does"
         case .guide: return "Guide"
         case .agents: return "Agents"
+        case .play: return "Play"
         }
     }
 

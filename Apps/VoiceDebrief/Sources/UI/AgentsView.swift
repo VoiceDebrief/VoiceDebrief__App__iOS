@@ -193,6 +193,7 @@ struct AgentsView: View {
                     draft = ""
                     Task { await desk.send(text, to: agent) }
                 } label: { Image(systemName: "paperplane.fill") }
+                .keyboardShortcut(.return, modifiers: .command)
                 .disabled(draft.trimmingCharacters(in: .whitespaces).isEmpty || desk.sending)
             }
             .padding()
