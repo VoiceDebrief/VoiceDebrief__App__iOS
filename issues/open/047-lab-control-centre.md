@@ -51,3 +51,10 @@ switches the session off, refuses to listen while `LabActionHost.isRecording` sa
 abandons a start overtaken by a stop, and stops when the app goes to the background. **Not proven to be the
 cause**: nobody has reproduced the silence, and the same pattern (an audio session switched off after an
 await) should be looked for wherever else the app stops listening or playing.
+
+## After the owner's first try (14 November 2026, 18:11)
+
+"The control centre is really cool." Asked for: everything being heard shown while it listens, and the flow
+from words to proposal to action made easier to follow. Done: a strip of the live words at the top, and a
+numbered card for every sentence that says what each engine made of it. That is the first word from a
+device about L02; no log has come back yet, so how often the model was right is still not known.
