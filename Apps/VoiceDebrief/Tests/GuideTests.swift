@@ -78,4 +78,16 @@ struct GuideTests {
             }
         }
     }
+
+    @Test func theBundledArticlesDecodeAndParse() throws {
+        let book = try #require(ArticleBook.bundled())
+        #expect(!book.articles.isEmpty)
+        for a in book.articles { #expect(!ArticleBlock.parse(a.markdown).isEmpty, "\(a.id) has no blocks") }
+    }
+
+    @Test func markdownIsCutIntoBlocks() {
+        let blocks = ArticleBlock.parse("## A heading\n\nOne line\nand the next.\n\n- a point\n1. first\n> quoted\n\n| A | B |\n|---|---|\n| x | y |\n\n```\ncode\n```")
+        #expect(blocks == [.heading(level: 2, text: "A heading"), .paragraph("One line and the next."), .bullet("a point"),
+                           .bullet("1. first"), .quote("quoted"), .bullet("A · B"), .bullet("x · y"), .code("code")])
+    }
 }

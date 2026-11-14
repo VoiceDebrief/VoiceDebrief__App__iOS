@@ -29,7 +29,7 @@
  ],
  "counts": {
   "seen-working": 27,
-  "built-untried": 61,
+  "built-untried": 62,
   "in-progress": 33,
   "proposed": 37,
   "parked": 6
@@ -2258,6 +2258,24 @@
     "Library tab",
     "Record tab: the briefing card"
    ],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
+   "id": "feature-articles-to-read-in-the-app",
+   "kind": "feature",
+   "app": "VoiceDebrief",
+   "title": "Articles to read in the app",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "UI/Guide/ArticlesView.swift, from vd-articles.json (and sg-articles.json for SGit Vaults, not yet shown there), written by website/admin/ideas.mjs: every article, the journeys and, for SGit Vaults, its design pages, as their own markdown with links to the site and pictures named in their place; searchable; shown block by block",
+   "detail": [
+    "UI/Guide/ArticlesView.swift, from vd-articles.json (and sg-articles.json for SGit Vaults, not yet shown there), written by website/admin/ideas.mjs: every article, the journeys and, for SGit Vaults, its design pages, as their own markdown with links to the site and pictures named in their place; searchable; shown block by block",
+    "Unit tests: the bundled articles decode and parse, and the markdown blocks. Not run on a device"
+   ],
+   "places": [],
    "issues": [],
    "url": "https://ios.app.voicedebrief.ai/built/index.html",
    "source": "The reality file",
