@@ -68,7 +68,8 @@ struct LabLabelBoardTests {
     @Test func whatThePersonSaysStandsAndTheModelCannotMoveIt() {
         var board = LabLabelBoard()
         _ = board.propose("Holidays", for: "topic", loop: 1, inUse: Self.inUse, candidates: [])
-        #expect(board.override("X, Y, Z", for: "topic", candidates: []))
+        let pinned = board.override("X, Y, Z", for: "topic", candidates: [])
+        #expect(pinned)
         #expect(board.isPinned("topic"))
         #expect(board.values["topic"] == LabLabelValue(text: "X, Y, Z", source: "voice", loop: nil, matched: nil))
         #expect(board.propose("Holidays", for: "topic", loop: 2, inUse: Self.inUse, candidates: []) == .pinned)
@@ -78,7 +79,8 @@ struct LabLabelBoardTests {
         #expect(board.values["topic"]?.text == "X, Y, Z")
         #expect(board.propose("Holidays", for: "topic", loop: 3, inUse: Self.inUse, candidates: []) == .changed)
         // A choice the label does not have is not an override.
-        #expect(!board.override("sky high", for: "urgency", candidates: []))
+        let refused = board.override("sky high", for: "urgency", candidates: [])
+        #expect(!refused)
         #expect(!board.isPinned("urgency"))
     }
 
