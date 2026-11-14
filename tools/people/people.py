@@ -10,6 +10,8 @@ Cards, sealed and signed messages and inboxes exactly as Packages/SGitPeople wri
     people.py --home H accept SGM               open an invitation, keep the access key, make an inbox,
                                                 send the full card to the inviter
     people.py --home H send FINGERPRINT TEXT    a text message to a contact's inbox
+    people.py --home H reply CARD ID TEXT       answer a message or a note (by its id) in the card's inbox,
+                                                with this person's card inside, so the app can check who wrote
     people.py --home H check                    fetch, open, keep and mark processed what has arrived
     people.py --home H destroy                  delete this person's inbox vault from the server
 
@@ -271,6 +273,14 @@ def send(home, fp, text):
     print(f"sent to {contact['name']}")
 
 
+def reply(home, text_with_card, answers, text):
+    me, to = me_of(home), read_card(text_with_card)
+    if not to['inbox']: sys.exit('that card has no inbox to reply to')
+    body = message(me, to, 'text', text=text, reply_to=answers, card=card_text(home))
+    lane('write', to['inbox'], {'append_token': to['inbox']['append'], 'payload': b64(seal(body, to['encrypt_spki'], me).encode())})
+    print(f"replied to {to['name']} about {answers}")
+
+
 def check(home):
     me, inbox = me_of(home), load(home, 'inbox.json')
     keys = {'x-sgraph-vault-enum-key': inbox['enum_key']}
@@ -312,6 +322,7 @@ def main():
     s = sub.add_parser('invite'); s.add_argument('card')
     s = sub.add_parser('accept'); s.add_argument('sealed')
     s = sub.add_parser('send'); s.add_argument('fingerprint'); s.add_argument('text')
+    s = sub.add_parser('reply'); s.add_argument('card'); s.add_argument('id'); s.add_argument('text')
     sub.add_parser('check'); sub.add_parser('destroy')
     a = p.parse_args()
     if a.cmd == 'setup': setup(a.home, a.name, a.inbox, a.access_key)
@@ -320,6 +331,7 @@ def main():
     elif a.cmd == 'invite': print(invite(a.home, a.card, a.access_key))
     elif a.cmd == 'accept': accept(a.home, a.sealed)
     elif a.cmd == 'send': send(a.home, a.fingerprint, a.text)
+    elif a.cmd == 'reply': reply(a.home, a.card, a.id, a.text)
     elif a.cmd == 'check': check(a.home)
     elif a.cmd == 'destroy': destroy(a.home, a.access_key)
 

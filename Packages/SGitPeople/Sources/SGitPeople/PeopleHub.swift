@@ -184,6 +184,18 @@ public final class PeopleHub {
 
     // MARK: The inbox
 
+    /// The messages that answer `id`: a note sent to the developer, say, by its note id. Oldest first, as a thread reads.
+    public func replies(to id: String) -> [ReceivedMessage] {
+        messages.filter { $0.message?.replyTo == id }.sorted { $0.receivedAt < $1.receivedAt }
+    }
+
+    /// A text that answers a message (by its id, or a note's id).
+    public func reply(_ text: String, to id: String, contact: Contact) async throws {
+        var message = outgoing(.text, to: contact, text: text)
+        message.replyTo = id
+        try await send(message, to: contact)
+    }
+
     public func markRead(_ id: String) { store.markRead(id); reload() }
     public func removeMessage(_ id: String) { store.remove(id); reload() }
     public var unread: Int { messages.filter { $0.readAt == nil }.count }

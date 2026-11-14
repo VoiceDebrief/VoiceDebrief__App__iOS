@@ -125,3 +125,22 @@ struct PeopleHubTests {
         #expect(hub.secretList.first?.heldBy.map(\.name) == ["Ben"])
     }
 }
+
+@Suite("Replies to a note")
+@MainActor
+struct RepliesTests {
+    @Test func aReplyIsFoundUnderTheNoteItAnswers() async throws {
+        let ana = PeopleHub(identity: People.ana, name: "Ana", folder: nil, secrets: SecretsStore(keychain: MemoryKeychain()))
+        // The developer (Ben) answers Ana's note "note-42", with his card inside so that Ana's app can check him.
+        var answer = PeopleMessage(kind: .text, from: People.ben.bundle.signingFingerprint, to: People.ana.bundle.fingerprint,
+                                   sentAt: People.now, card: try People.card(People.ben, "Claude (developer)", inbox: People.benInbox).text(),
+                                   text: "Thanks, looking at it")
+        answer.replyTo = "note-42"
+        let payload = try answer.lanePayload(to: People.ana.bundle, from: People.ben)
+        try ana.store.add([InboxCheck.receive(fileId: "f1", content: payload, received: People.now, me: People.ana, contacts: [])])
+        ana.reload()
+        #expect(ana.replies(to: "note-42").map { $0.message?.text } == ["Thanks, looking at it"])
+        #expect(ana.replies(to: "note-42").first?.trust == .cardInside)
+        #expect(ana.replies(to: "other").isEmpty)
+    }
+}
