@@ -97,3 +97,31 @@ struct SecretsTests {
         #expect(store.all.isEmpty)
     }
 }
+
+@Suite("The hub screens sit on")
+@MainActor
+struct PeopleHubTests {
+    @Test func theIdentityIsMadeOnceAndKeptInICloudKeychain() throws {
+        let cloud = MemoryCloudKeychain()
+        let made = try PeopleIdentity.loadOrMake(MemoryKeychain(cloud: cloud), label: "Ana", rsaBits: 2048)
+        let onTheOtherDevice = try PeopleIdentity.loadOrMake(MemoryKeychain(cloud: cloud), label: "Ana", rsaBits: 2048)
+        #expect(made == onTheOtherDevice)
+    }
+
+    @Test func addingSharingAndTheCard() async throws {
+        let hub = PeopleHub(identity: People.ana, name: "Ana", folder: nil, secrets: SecretsStore(keychain: MemoryKeychain()),
+                            client: LaneClient(http: ReplayLaneHTTP([("write", 200, RecordedLane.writeOK)])))
+        #expect(hub.myCard?.inbox == nil)
+        #expect(throws: ContactBook.Failure.isMe) { try hub.addContact(from: hub.myCardText ?? "", met: .inPerson) }
+        let benWithout = try People.card(People.ben, "Ben", inbox: nil)
+        try hub.addContact(from: "Ben's card: " + (try benWithout.text()), met: .inPerson)
+        let ben = try #require(hub.contacts.first)
+        await #expect(throws: PeopleHub.SendFailure.noInbox("Ben")) { try await hub.sendText("hi", to: ben) }
+        try hub.addContact(from: try People.card(People.ben, "Ben", inbox: People.benInbox, at: People.now.addingTimeInterval(9)).text(),
+                           met: .byMessage)
+        let benNow = try #require(hub.contacts.first)
+        let kept = try hub.addSecret(kind: .password, name: "Wi-Fi", value: "v")
+        try await hub.shareSecret(kept.id, with: benNow)
+        #expect(hub.secretList.first?.heldBy.map(\.name) == ["Ben"])
+    }
+}
