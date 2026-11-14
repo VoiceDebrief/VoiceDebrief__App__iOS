@@ -47,6 +47,8 @@ def main():
     ap.add_argument('--notes', help='the version page to take What to Test from')
     ap.add_argument('--group', default='', help='part of the external group name; default: the first external group')
     ap.add_argument('--no-submit', action='store_true')
+    ap.add_argument('--queue-anyway', action='store_true',
+                    help='submit even if another build of this app is already waiting for Beta App Review')
     a = ap.parse_args()
 
     apps = call('GET', f'/apps?filter[bundleId]={a.bundle}')['data']
@@ -68,6 +70,17 @@ def main():
     else:
         sys.exit(f'build {a.build} did not finish processing in 30 minutes')
     build_id = build['id']
+
+    # One build in Apple's queue at a time: each waits for review on its own, so a second does not make the
+    # first go faster, and the owner found five waiting at once (14 November 2026). An automatic run skips
+    # while another is waiting or in review; a run by hand passes --queue-anyway.
+    if not a.queue_anyway:
+        waiting = call('GET', f'/builds?filter[app]={app}&filter[betaAppReviewSubmission.betaReviewState]=WAITING_FOR_REVIEW,IN_REVIEW&limit=5')['data']
+        waiting = [b for b in waiting if b['id'] != build_id]
+        if waiting:
+            names = ', '.join(b['attributes'].get('version', '?') for b in waiting)
+            print(f'not sent: build(s) {names} already waiting for Beta App Review; this one waits its turn (run by hand to send it anyway)')
+            return
 
     if build['attributes'].get('usesNonExemptEncryption') is None:
         call('PATCH', f'/builds/{build_id}', json={'data': {'type': 'builds', 'id': build_id, 'attributes': {'usesNonExemptEncryption': False}}})

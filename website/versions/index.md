@@ -4,6 +4,7 @@ Every release of this repository. Every push to `dev` is a release: CI works out
 
 | Version | Date | What changed |
 |---|---|---|
+| next | 14 November 2026 | External TestFlight: an automatic send now waits while another build of the app is already waiting for Apple's Beta App Review (the owner found five queued at once); a send by hand still goes. |
 | v0.1.94 | 14 November 2026 | Play is a section of its own in the sidebar (after Agents), with the voice games that were in the Lab as L03, at the owner's request ("brilliant; make them a top-level item"). L03 stays in the Lab too. |
 | v0.1.93 | 14 November 2026 | Command-Return sends: in the picture sheet, the Talk banner and an agent's message box, at the owner's request. |
 | v0.1.92 | 14 November 2026 | While recording, add a picture and a line to the note: a picture on the clipboard is offered at once ("A picture is on the clipboard: add it to this note"), or paste or choose one; it goes with the note to whoever it is for. The record screen says when a newer build is waiting in TestFlight, from the report Claude writes into your vault, with a button to open TestFlight. |
