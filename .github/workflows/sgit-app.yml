@@ -163,7 +163,31 @@ jobs:
 
       # On the share-extension branch only: archive and sign for distribution exactly as the upload
       # would, and stop there. An entitlement or an extension that cannot be signed shows here, not on dev.
-      - name: Sign for distribution, without uploading (a dry run)
+      # Two passes, so that a failure can be laid at the App Group's door or not: the first signs the
+      # app with no entitlements at all, as the build on dev is signed today.
+      - name: Signing dry run, control: the app with no App Group
+        if: startsWith(github.ref, 'refs/heads/work/sgit-app-share')
+        timeout-minutes: 30
+        continue-on-error: true
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_P8_BASE64: ${{ secrets.ASC_KEY_P8_BASE64 }}
+          APPLE_TEAM_ID: ${{ vars.APPLE_TEAM_ID || secrets.APPLE_TEAM_ID }}
+          EXPECTED_BUNDLE: ai.sgit.vaults.app
+          ENTITLEMENTS: scripts/release/sgit-none.entitlements
+          EXTENSION_ENTITLEMENTS_DIR: Apps/SGit
+          DESTINATION: export
+        run: |
+          missing=()
+          for s in ASC_KEY_ID ASC_ISSUER_ID ASC_KEY_P8_BASE64 APPLE_TEAM_ID; do [ -n "${!s:-}" ] || missing+=("$s"); done
+          if [ ${#missing[@]} -gt 0 ]; then
+            echo "### Signing dry run skipped: not set: ${missing[*]}" | tee -a "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          scripts/release/sgit-testflight.sh
+
+      - name: Signing dry run: the app with its App Group
         if: startsWith(github.ref, 'refs/heads/work/sgit-app-share')
         timeout-minutes: 30
         env:

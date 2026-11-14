@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyLists-1.0.dtd">
+<!-- No entitlements: the control for the signing dry run (issue 105). Not used by any build. -->
+<plist version="1.0">
+<dict/>
+</plist>
