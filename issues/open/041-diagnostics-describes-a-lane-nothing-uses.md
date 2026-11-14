@@ -1,5 +1,7 @@
 # 041: Diagnostics describes a pasted lane that nothing uses
 
+**Fixed: the field and the sentence are gone; Diagnostics shows the built-in lane's vault and key as facts and says it cannot be changed there; DeveloperLaneSection is deleted.**
+
 **Status:** open. From review round 2 (14 November 2026, `website/reviews/round-2/index.md`). **Owner:** the main session (`DiagnosticsView`, `NoteParts`).
 
 New finding 2. Screen `diagnostics-end`. Found by the privacy user and the developer, and checked in the code.

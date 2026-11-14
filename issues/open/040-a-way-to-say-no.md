@@ -1,5 +1,7 @@
 # 040: A way to say no in each confirmation
 
+**Built (untried on a device): the three (send to the developer, delete a note, throw a recording away) are alerts now, which always show Cancel or Keep recording beside the destructive button.**
+
 **Status:** open. From review round 2 (14 November 2026, `website/reviews/round-2/index.md`). **Owner:** the main session (`NoteDetailView`, `RecordView`, `SendBar`).
 
 New finding 3. Screens `note.finished-send`, `note.finished-delete`, `record.recording-discard`. Found by three

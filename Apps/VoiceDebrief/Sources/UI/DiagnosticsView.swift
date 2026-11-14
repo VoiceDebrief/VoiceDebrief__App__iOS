@@ -5,7 +5,6 @@ import SwiftUI
 struct DiagnosticsView: View {
     let session: DebriefSession
     @State private var report: Diagnostics?
-    @AppStorage("vd.developerLane") private var laneLink = ""
 
     var body: some View {
         Group {
@@ -38,31 +37,15 @@ struct DiagnosticsView: View {
                 } else {
                     ProgressView()
                 }
-                Section {
-                    TextField("sgi1. lane link", text: $laneLink, axis: .vertical)
-                        .lineLimit(1...3)
-                        .font(.footnote.monospaced())
-                        .textInputAutocapitalization(.never)
-                        .autocorrectionDisabled()
-                    if let lane = DeveloperLane.parse(laneLink) {
-                        LabeledContent("Using", value: "The pasted lane")
+                if let lane = DeveloperLane.builtIn {
+                    Section {
                         LabeledContent("Vault", value: lane.vault)
                         LabeledContent("Key", value: lane.fingerprint)
-                        Button("Remove the pasted lane", role: .destructive) { laneLink = "" }
-                    } else {
-                        if !laneLink.isEmpty {
-                            Text("That is not a lane link.").font(.footnote).foregroundStyle(.orange)
-                        }
-                        if let lane = DeveloperLane.builtIn {
-                            LabeledContent("Using", value: "The built-in lane")
-                            LabeledContent("Vault", value: lane.vault)
-                            LabeledContent("Key", value: lane.fingerprint)
-                        }
+                    } header: {
+                        Text("The developer's lane in this test build")
+                    } footer: {
+                        Text("Where \"Send to the developer\" goes: an inbox only the developer's key opens. It cannot be changed here. To send to someone else, add them under Settings, Recipients.")
                     }
-                } header: {
-                    Text("Lane")
-                } footer: {
-                    Text("After each run a button can send that note, encrypted, to the developer's lane. Nothing is sent without pressing it. This build has a lane built in; a link pasted here is used instead.")
                 }
             }
             .readableWidth()

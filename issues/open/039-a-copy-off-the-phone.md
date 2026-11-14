@@ -1,5 +1,7 @@
 # 039: A copy off the phone that anyone can make
 
+**Built (untried on a device): "Share or save the recording" on every note with audio, through the share sheet (Save to Files, AirDrop, any app); the footer says it leaves the device unencrypted.**
+
 **Status:** open. From review round 2 (14 November 2026, `website/reviews/round-2/index.md`). **Owner:** the main session (the note screen); the vaults session for what a vault on a server adds.
 
 New finding 1. Screens `note.finished-end`, `vaults`. Found by the user who lost a recording elsewhere; with the

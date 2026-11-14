@@ -215,7 +215,7 @@ struct SendBar: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 4) {
             status
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
@@ -234,7 +234,7 @@ struct SendBar: View {
                         Button {
                             confirmingBuiltIn = true
                         } label: {
-                            Label("Send to the developer of this test build", systemImage: "paperplane")
+                            Label("Send to the developer (test)", systemImage: "paperplane")
                         }
                         .buttonStyle(.bordered)
                         .buttonBorderShape(.capsule)
@@ -250,15 +250,17 @@ struct SendBar: View {
                 }
                 .padding(.horizontal, 16)
             }
-            Text("Sends the audio, transcript and debrief, encrypted on this device to the recipient's key. Sending to the developer asks first.")
+            Text("Audio, transcript and debrief, encrypted to the recipient. The developer asks first.")
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
                 .font(.caption2)
                 .foregroundStyle(.secondary)
                 .padding(.horizontal, 16)
         }
-        .padding(.vertical, 10)
+        .padding(.vertical, 6)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(.bar)
-        .confirmationDialog("Send this note to the developer of this test build?", isPresented: $confirmingBuiltIn, titleVisibility: .visible) {
+        .alert("Send this note to the developer of this test build?", isPresented: $confirmingBuiltIn) {
             Button("Send the audio, transcript and debrief") {
                 if let recipient = recipients.builtIn { session.send(noteId: noteId, to: recipient) }
             }

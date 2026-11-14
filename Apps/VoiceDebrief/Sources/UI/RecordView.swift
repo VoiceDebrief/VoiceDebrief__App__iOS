@@ -52,7 +52,7 @@ struct RecordView: View {
                     ToolbarItem(placement: .topBarLeading) {
                         Button("Discard", role: .destructive) { confirmingDiscard = true }
                             .font(.footnote)
-                            .confirmationDialog("Throw this recording away?", isPresented: $confirmingDiscard, titleVisibility: .visible) {
+                            .alert("Throw this recording away?", isPresented: $confirmingDiscard) {
                                 Button("Throw it away", role: .destructive) {
                                     Task { await session.discardRecording() }
                                 }
@@ -326,7 +326,7 @@ struct NoteRow: View {
     }
 
     private var subtitle: String {
-        let time = note.createdAt.formatted(date: .omitted, time: .shortened)
+        let time = note.createdAt.formatted(.dateTime.hour(.twoDigits(amPM: .abbreviated)).minute(.twoDigits))
         var day = ""
         if showsDay, !Calendar.current.isDateInToday(note.createdAt) {
             day = Calendar.current.isDateInYesterday(note.createdAt)

@@ -142,56 +142,6 @@ struct LevelBars: View {
     }
 }
 
-/// Sending this note to a lane. The button names the developer only for the built-in lane.
-struct DeveloperLaneSection: View {
-    let noteId: String
-    let session: DebriefSession
-    @AppStorage("vd.developerLane") private var link = ""
-    @State private var confirming = false
-
-    var body: some View {
-        Section {
-            if let lane = DeveloperLane.current(pasted: link) {
-                let pasted = DeveloperLane.parse(link) != nil
-                switch session.sharing(for: noteId) {
-                case .sending(let done, let total):
-                    HStack(spacing: 12) {
-                        ProgressView()
-                        Text(total > 0 ? "Sending part \(done) of \(total)" : "Encrypting")
-                    }
-                case .sent(let count):
-                    Label("Sent, in \(count) encrypted messages", systemImage: "checkmark.circle")
-                        .foregroundStyle(.secondary)
-                default:
-                    if case .failed(let why) = session.sharing(for: noteId) {
-                        Label(why, systemImage: "exclamationmark.triangle").foregroundStyle(.red).font(.callout)
-                    }
-                    Button {
-                        confirming = true
-                    } label: {
-                        Label(pasted ? "Send to lane \(lane.vault)" : "Send to the developer", systemImage: "paperplane")
-                    }
-                    .confirmationDialog("Send this note off this device?", isPresented: $confirming, titleVisibility: .visible) {
-                        Button("Send the audio, transcript and debrief") {
-                            Task { await session.share(noteId: noteId, lane: lane) }
-                        }
-                        Button("Cancel", role: .cancel) {}
-                    } message: {
-                        Text("It is encrypted on this device to the key \(lane.fingerprint). The server that carries it cannot read it.")
-                    }
-                }
-            } else {
-                Text("There is no lane in this build. Paste a lane link in Settings to be able to send a note.")
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
-            }
-        } header: {
-            Text("Send")
-        } footer: {
-            Text("Sending is never automatic. It asks every time, and names the key the note is encrypted to.")
-        }
-    }
-}
 
 /// A note's recording: play and pause, where it is, its length and size. Shown on every note that
 /// has audio, including one that was interrupted, so that "kept" can be heard (issue 029).
@@ -226,13 +176,16 @@ struct PlayerSection: View {
                         .foregroundStyle(.secondary)
                 }
             }
+            ShareLink(item: url, preview: SharePreview("Voice note recording")) {
+                Label("Share or save the recording", systemImage: "square.and.arrow.up")
+            }
             if let problem = player.problem {
                 Label(problem, systemImage: "exclamationmark.triangle.fill").font(.footnote).foregroundStyle(.orange)
             }
         } header: {
             Text("Recording")
         } footer: {
-            Text("Tap a line of the transcript to hear it.")
+            Text("Tap a line of the transcript to hear it. Sharing lets you save the audio to Files or send it anywhere; it leaves this device unencrypted.")
         }
         .onAppear { player.load(url) }
         .onChange(of: url) { _, new in player.load(new) }

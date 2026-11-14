@@ -1,5 +1,7 @@
 # 032: Explain the balance where it is shown
 
+**Changed by the main session (the credit session had finished): the counter reads "Test credit £4.85" with a test-tube icon, and its spoken label says no money is taken and recording never stops; the credit screen's first sentence states the starting balance and that recording never stops.**
+
 **Status:** open. From review round 1 (13 November 2026, `website/reviews/round-1/index.md`). **Owner:** the credit session (`CreditView`, the counter in the top bar).
 
 Finding 4. Screens `record`, `library`. Found by three of four users.

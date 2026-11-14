@@ -11,13 +11,20 @@ struct CreditCounter: View {
         Button {
             showing = true
         } label: {
-            Text(Credit.money(ledger.balance))
-                .font(.footnote.weight(.semibold).monospacedDigit())
+            // Marked as test credit where it is shown: three users read a bare amount as paying per memo
+            // (review rounds 1 and 2, issue 032). Recording never stops for credit.
+            Label {
+                Text("Test credit " + Credit.money(ledger.balance))
+            } icon: {
+                Image(systemName: "testtube.2")
+            }
+            .labelStyle(.titleAndIcon)
+                .font(.caption.weight(.semibold).monospacedDigit())
                 .foregroundStyle(ledger.isBelowZero ? Color.orange : Color.primary)
                 .contentTransition(.numericText(value: Double(ledger.balance)))
                 .animation(.snappy, value: ledger.balance)
         }
-        .accessibilityLabel("Credit: \(Credit.money(ledger.balance))")
+        .accessibilityLabel("Test credit: \(Credit.money(ledger.balance)). No money is taken and recording never stops.")
         .accessibilityHint(ledger.isBelowZero ? "Below zero. Nothing is blocked. Opens your credit." : "Opens your credit.")
         .sheet(isPresented: $showing) {
             NavigationStack {
@@ -109,7 +116,7 @@ struct CreditView: View {
                     Text("You have used \(Credit.money(-ledger.balance)) more than your credit. Nothing is blocked, and nothing will be. Top up when it feels fair.")
                         .font(.callout)
                 } else {
-                    Text("Counts down as the app is used. It may go below zero, and nothing is blocked when it does.")
+                    Text("Test credit: you started with \(Credit.money(Credit.startingCredit)) and it counts down as the app is used. No money is taken in this test build. It may go below zero, and nothing is blocked when it does: recording never stops for credit.")
                         .font(.callout)
                         .foregroundStyle(.secondary)
                 }

@@ -77,7 +77,7 @@ struct NoteDetailView: View {
                 }
 
                 Section {
-                    Button("Transcribe and debrief again") {
+                    Button(note.run.transcript == nil ? "Transcribe and debrief" : "Transcribe and debrief again") {
                         session.reprocess(noteId, localeId: localeId)
                     }
                     .disabled(session.isBusy || localeId.isEmpty)
@@ -103,7 +103,7 @@ struct NoteDetailView: View {
             }
             .navigationBarTitleDisplayMode(.inline)
             .onDisappear { player.stop() }
-            .confirmationDialog("Delete this note from this device?", isPresented: $confirmingDelete, titleVisibility: .visible) {
+            .alert("Delete this note from this device?", isPresented: $confirmingDelete) {
                 Button("Delete the note and its recording", role: .destructive) {
                     session.store.delete(noteId)
                     CreditLedger.shared.charge(.deleteNote, noteId: noteId)

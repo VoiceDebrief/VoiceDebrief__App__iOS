@@ -29,12 +29,9 @@ One file per piece of work: `open/NNN-slug.md`, moved to `done/` when it is done
 | 026 | Act on a note at once: send without waiting | |
 | 027 | Show where work happens; remarks; talking to the app | 013, 020 |
 | 028 | The device key signs every commit; the vault says whose device | the session that owns `VaultBook` |
-| 029 | Play a recording; show how long an interrupted one is | the main session |
-| 030 | Record again while the last note is being written up | the main session |
 | 031 | Say what Send does, on the note | the main session |
 | 032 | Explain the balance where it is shown | the credit session |
 | 033 | The log cannot tell a server from the device | the session that owns the vaults |
-| 034 | The gist first on a note | the main session |
 | 035 | A readable width on iPad | the main session; the vaults session |
 | 036 | States that say what to do next | the main session |
 | 037 | A vault, for someone who has never met one | the session that owns the vaults |
