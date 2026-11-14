@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ideas for VoiceDebrief and SGit Vaults, and where each one stands</title>
+<meta name="description" content="Every idea and request for the two apps, from the issues, the articles and the reality files, with its status (seen working, built untried, in progress, proposed, parked), where it lives in the app and the versions that brought it. Generated, not written by hand.">
+<link rel="canonical" href="https://ios.app.voicedebrief.ai/ideas/index.html">
+<meta property="og:url" content="https://ios.app.voicedebrief.ai/ideas/index.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="VoiceDebrief for iOS">
+<meta property="og:title" content="Ideas for VoiceDebrief and SGit Vaults, and where each one stands">
+<meta property="og:description" content="Every idea and request for the two apps, from the issues, the articles and the reality files, with its status (seen working, built untried, in progress, proposed, parked), where it lives in the app and the versions that brought it. Generated, not written by hand.">
+<link rel="alternate" type="text/markdown" href="index.md" title="This page as markdown">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/vd-tokens.css">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+
+<nav class="site"><div class="row">
+  <a class="brand" href="../index.html">Voice<em>Debrief</em> <span>iOS</span></a>
+  <span class="beta" title="In development: there is nothing to install yet">IN DEVELOPMENT</span>
+  <a class="parent" href="https://voicedebrief.ai" title="A VoiceDebrief product">&#8599; part of <b>voicedebrief.ai</b></a>
+  <a class="ver" href="../versions/index.html" title="Release history">dev</a>
+  <a class="nl" href="../built/index.html">Built</a>
+  <a class="nl" href="../architecture/index.html">How it works</a>
+  <a class="nl" href="../design/index.html">Design</a>
+  <a class="nl" href="../plan/index.html">Plan</a>
+  <a class="nl" href="../articles/index.html">Articles</a>
+  <a class="nl" href="../develop/index.html">Build</a>
+  <a class="nl here" href="../ideas/index.html">Ideas</a>
+  <a class="nl" href="../guides/index.html">Guides</a>
+  <a class="gh" href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">&#9733; GitHub</a>
+</div></nav>
+
+<main class="doc">
+<div class="crumb"><a href="../index.html">VoiceDebrief iOS</a> / ideas</div>
+<h1 id="ideas-and-where-they-stand">Ideas and where they stand</h1>
+<p>Every idea and request for the two apps, from the <a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/tree/dev/issues">issues</a>, the <a href="../articles/index.html">articles</a> and the reality files (<a href="../built/index.html">VoiceDebrief</a>, <a href="../sgit-app/built/index.html">SGit Vaults</a>), with its status. This page and the Ideas screen in the app are generated from those files by <code>website/admin/ideas.mjs</code>; nothing here is written by hand. The rules that decide a status are at the top of that script, and every idea in the app shows the sentence that decided its own. The machine-readable form is <a href="ideas.json">ideas.json</a>.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Status</th><th>Meaning</th><th>How many</th></tr></thead>
+<tbody>
+<tr><td>Seen working</td><td>Built, and a run proved it: CI, a device or a server.</td><td>27</td></tr>
+<tr><td>Built, untried</td><td>In the app or the repository, but not yet proven by a run on a device.</td><td>61</td></tr>
+<tr><td>In progress</td><td>Begun: part of it is built or a release has touched it.</td><td>33</td></tr>
+<tr><td>Proposed</td><td>Asked for or described; nothing of it is built.</td><td>36</td></tr>
+<tr><td>Parked</td><td>Waiting: on the owner, on Apple, or scheduled for later.</td><td>6</td></tr>
+</tbody></table></div>
+<h2 id="seen-working">Seen working</h2>
+<div class="tablewrap"><table>
+<thead><tr><th>What</th><th>Kind</th><th>App</th><th>Where in the app</th><th>Versions</th><th>Detail</th></tr></thead>
+<tbody>
+<tr><td>Prove vault writes against the live server</td><td>Issue</td><td>VoiceDebrief</td><td></td><td></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/done/004-live-vault-writes.md">004</a></td></tr>
+<tr><td>PKIKit, the key bundle</td><td>Issue</td><td>VoiceDebrief</td><td>Settings: Identity</td><td><a href="../versions/v0.1.29/index.html">v0.1.29</a></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/done/005-pkikit.md">005</a></td></tr>
+<tr><td>TestFlight for the sgit app</td><td>Issue</td><td>SGit Vaults</td><td>SGit Vaults</td><td></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/done/101-sgit-app-testflight.md">101</a></td></tr>
+<tr><td>The app skeleton</td><td>Feature</td><td>VoiceDebrief</td><td>The repository: CI</td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>Send a note to the developer</td><td>Feature</td><td>VoiceDebrief</td><td></td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>Create a vault</td><td>Feature</td><td>VoiceDebrief</td><td></td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>Save a debrief to a vault</td><td>Feature</td><td>VoiceDebrief</td><td>Vaults tab</td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>The people layer in Python, people.py</td><td>Feature</td><td>VoiceDebrief</td><td></td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>A conductor's inbox</td><td>Feature</td><td>VoiceDebrief</td><td>The repository: tools/conductor</td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>The key bundle, PKIKit</td><td>Feature</td><td>VoiceDebrief</td><td>Settings: Identity</td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>The About screen</td><td>Feature</td><td>VoiceDebrief</td><td>Settings: What this build does</td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>The vault engine</td><td>Feature</td><td>VoiceDebrief</td><td>The repository: CI</td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>A door on any site</td><td>Feature</td><td>VoiceDebrief</td><td></td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>The build pipeline</td><td>Feature</td><td>VoiceDebrief</td><td>The repository: CI</td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>Pictures of every screen</td><td>Feature</td><td>VoiceDebrief</td><td>The repository: pictures of every screen; The repository: CI</td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>Reviews from the pictures</td><td>Feature</td><td>VoiceDebrief</td><td>Record tab: the briefing card; The repository: pictures of every screen</td><td><a href="../versions/v0.1.29/index.html">v0.1.29</a> <a href="../versions/v0.1.40/index.html">v0.1.40</a></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>Sample data for the pictures</td><td>Feature</td><td>VoiceDebrief</td><td>The balance in the top bar; Settings: Recipients</td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>TestFlight upload</td><td>Feature</td><td>VoiceDebrief</td><td></td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>Vault interop</td><td>Feature</td><td>VoiceDebrief</td><td>The repository: CI</td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>PKI interop</td><td>Feature</td><td>VoiceDebrief</td><td>The repository: CI</td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>The site</td><td>Feature</td><td>VoiceDebrief</td><td></td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>Files over 4 MB in the vault engine</td><td>Feature</td><td>SGit Vaults</td><td>SGit Vaults: a vault</td><td></td><td><a href="../sgit-app/built/index.html">reality file</a></td></tr>
+<tr><td>The app builds and its tests pass</td><td>Feature</td><td>SGit Vaults</td><td>SGit Vaults</td><td></td><td><a href="../sgit-app/built/index.html">reality file</a></td></tr>
+<tr><td>Adding files, underneath the screens</td><td>Feature</td><td>SGit Vaults</td><td>SGit Vaults: a vault</td><td></td><td><a href="../sgit-app/built/index.html">reality file</a></td></tr>
+<tr><td>TestFlight upload</td><td>Feature</td><td>SGit Vaults</td><td>SGit Vaults: Gallery; SGit Vaults: a vault</td><td></td><td><a href="../sgit-app/built/index.html">reality file</a></td></tr>
+<tr><td>A vault made on this device</td><td>Feature</td><td>SGit Vaults</td><td>SGit Vaults: a vault</td><td></td><td><a href="../sgit-app/built/index.html">reality file</a></td></tr>
+<tr><td>A picture of every screen</td><td>Feature</td><td>SGit Vaults</td><td>SGit Vaults: Gallery; SGit Vaults: a vault; SGit Vaults: Share</td><td></td><td><a href="../sgit-app/built/index.html">reality file</a></td></tr>
+</tbody></table></div>
+<h2 id="built-untried">Built, untried</h2>
+<div class="tablewrap"><table>
+<thead><tr><th>What</th><th>Kind</th><th>App</th><th>Where in the app</th><th>Versions</th><th>Detail</th></tr></thead>
+<tbody>
+<tr><td>Say what Send does, on the note</td><td>Issue</td><td>VoiceDebrief</td><td>A note: the send bar; Library, then a note; Settings: Recipients</td><td></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/031-say-what-send-does.md">031</a></td></tr>
+<tr><td>States that say what to do next</td><td>Issue</td><td>VoiceDebrief</td><td>Library, then a note; Library tab; Record tab</td><td><a href="../versions/v0.1.29/index.html">v0.1.29</a></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/036-states-that-say-what-to-do.md">036</a></td></tr>
+<tr><td>A copy off the phone that anyone can make</td><td>Issue</td><td>VoiceDebrief</td><td>Library, then a note</td><td><a href="../versions/v0.1.29/index.html">v0.1.29</a></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/039-a-copy-off-the-phone.md">039</a></td></tr>
+<tr><td>A way to say no in each confirmation</td><td>Issue</td><td>VoiceDebrief</td><td>A note: the send bar; Library, then a note; Record tab</td><td><a href="../versions/v0.1.29/index.html">v0.1.29</a></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/040-a-way-to-say-no.md">040</a></td></tr>
+<tr><td>A send that can be seen, stopped and not lost</td><td>Issue</td><td>VoiceDebrief</td><td>A note: the send bar; Library, then a note; Library tab</td><td><a href="../versions/v0.1.40/index.html">v0.1.40</a></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/043-a-send-that-can-be-seen-stopped-and-not-lost.md">043</a></td></tr>
+<tr><td>Two symbols with no words at the top of the first screen</td><td>Issue</td><td>VoiceDebrief</td><td>Library tab; Record tab; The balance in the top bar</td><td><a href="../versions/v0.1.40/index.html">v0.1.40</a></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/044-two-symbols-with-no-words.md">044</a></td></tr>
+<tr><td>Vaults are local first; a server is a remote</td><td>Issue</td><td>VoiceDebrief</td><td>Vaults tab</td><td></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/done/011-local-vaults-and-remotes.md">011</a></td></tr>
+<tr><td>Vault keys and server tokens in iCloud Keychain, on by default</td><td>Issue</td><td>VoiceDebrief</td><td>Vaults tab; Settings: Identity</td><td><a href="../versions/v0.1.33/index.html">v0.1.33</a></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/done/017-key-sync.md">017</a></td></tr>
+<tr><td>Play a recording, and show how long an interrupted one is</td><td>Issue</td><td>VoiceDebrief</td><td>A note: the player; Library, then a note</td><td></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/done/029-play-a-recording.md">029</a></td></tr>
+<tr><td>Record again while the last note is being written up</td><td>Issue</td><td>VoiceDebrief</td><td>Record tab</td><td><a href="../versions/v0.1.29/index.html">v0.1.29</a></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/done/030-record-while-the-last-note-is-written-up.md">030</a></td></tr>
+<tr><td>The gist first on a note</td><td>Issue</td><td>VoiceDebrief</td><td>A note: Clean text; A note: the send bar; Library, then a note</td><td></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/done/034-the-gist-first-on-a-note.md">034</a></td></tr>
+<tr><td>Capture without loss</td><td>Feature</td><td>VoiceDebrief</td><td>Library tab</td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>Library on the device</td><td>Feature</td><td>VoiceDebrief</td><td>Library, then a note; Library tab</td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>The shell</td><td>Feature</td><td>VoiceDebrief</td><td>Record tab; Settings: Diagnostics; Settings tab</td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>Record or open a voice note</td><td>Feature</td><td>VoiceDebrief</td><td></td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>Transcript on the device</td><td>Feature</td><td>VoiceDebrief</td><td></td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>Debrief on the device</td><td>Feature</td><td>VoiceDebrief</td><td></td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>Live text and a level display while recording</td><td>Feature</td><td>VoiceDebrief</td><td>The repository: CI</td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>Vaults on the device</td><td>Feature</td><td>VoiceDebrief</td><td>Vaults tab; The repository: CI</td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>Servers as remotes</td><td>Feature</td><td>VoiceDebrief</td><td>Vaults tab</td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>Push and pull</td><td>Feature</td><td>VoiceDebrief</td><td>Vaults tab</td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>Vaults from earlier builds</td><td>Feature</td><td>VoiceDebrief</td><td>Vaults tab</td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>Vault keys and server tokens in iCloud Keychain</td><td>Feature</td><td>VoiceDebrief</td><td>Vaults tab; The repository: CI</td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>Record while a note is written up</td><td>Feature</td><td>VoiceDebrief</td><td>Record tab</td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>Play a recording</td><td>Feature</td><td>VoiceDebrief</td><td>A note: the player</td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>A briefing on opening</td><td>Feature</td><td>VoiceDebrief</td><td>Record tab; Record tab: the briefing card</td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>The Guide: ideas, what is new, feature guides</td><td>Feature</td><td>VoiceDebrief</td><td>Library tab; Record tab: the briefing card</td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>A welcome on the first launch</td><td>Feature</td><td>VoiceDebrief</td><td></td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>Where the work happens</td><td>Feature</td><td>VoiceDebrief</td><td>Record tab; Settings: Identity; Settings: Recipients</td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>Finish by voice or by a button off the screen</td><td>Feature</td><td>VoiceDebrief</td><td></td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>Talk to Claude</td><td>Feature</td><td>VoiceDebrief</td><td></td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>Every section in plain sight</td><td>Feature</td><td>VoiceDebrief</td><td>Record tab</td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>Your activity</td><td>Feature</td><td>VoiceDebrief</td><td>The repository: tools/conductor</td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>A note's journey after Finish</td><td>Feature</td><td>VoiceDebrief</td><td></td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>Record a note for someone</td><td>Feature</td><td>VoiceDebrief</td><td>Record tab; Settings: Recipients</td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>A send that is not lost</td><td>Feature</td><td>VoiceDebrief</td><td>Record tab; Record tab: the briefing card; Settings: Recipients</td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>Finish and send in one press</td><td>Feature</td><td>VoiceDebrief</td><td>Record tab; Settings: Recipients</td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>Send without waiting</td><td>Feature</td><td>VoiceDebrief</td><td>A note: the send bar; Library, then a note; Settings: Recipients</td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>The Lab, experiment L01: one prompt, tools on and off</td><td>Feature</td><td>VoiceDebrief</td><td>Settings: Experiments, the Lab; The repository: CI</td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>The model door, first slice</td><td>Feature</td><td>VoiceDebrief</td><td>Settings: Experiments, the Lab</td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>Recipients, added by QR code</td><td>Feature</td><td>VoiceDebrief</td><td>Settings: Recipients</td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>A clean text, with questions</td><td>Feature</td><td>VoiceDebrief</td><td>A note: Clean text; Library, then a note</td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>Credit that counts down, with a simulated top-up</td><td>Feature</td><td>VoiceDebrief</td><td>The balance in the top bar; Settings: Recipients</td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>A finished note saves itself to a vault</td><td>Feature</td><td>VoiceDebrief</td><td>Record tab; Settings: Save to a vault; Settings tab</td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>The people layer, SGitPeople</td><td>Feature</td><td>VoiceDebrief</td><td></td><td><a href="../versions/v0.1.54/index.html">v0.1.54</a></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>The user's key pair</td><td>Feature</td><td>VoiceDebrief</td><td>Settings: Identity</td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>The device's key pair</td><td>Feature</td><td>VoiceDebrief</td><td>Vaults tab; Settings: Identity</td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>Vouching for a device</td><td>Feature</td><td>VoiceDebrief</td><td>Settings: Identity</td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>A person in the register, optionally</td><td>Feature</td><td>VoiceDebrief</td><td>Settings: Identity</td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>Diagnostics</td><td>Feature</td><td>VoiceDebrief</td><td>Settings: Diagnostics</td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>Recording with the screen locked or the app in the background: the audio background mode is declared</td><td>Feature</td><td>VoiceDebrief</td><td></td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>The access key on the Create screen</td><td>Feature</td><td>SGit Vaults</td><td>SGit Vaults: the Create sheet</td><td></td><td><a href="../sgit-app/built/index.html">reality file</a></td></tr>
+<tr><td>Drag and drop</td><td>Feature</td><td>SGit Vaults</td><td>SGit Vaults: a vault</td><td></td><td><a href="../sgit-app/built/index.html">reality file</a></td></tr>
+<tr><td>A folder tree on a wide screen</td><td>Feature</td><td>SGit Vaults</td><td>SGit Vaults: a vault</td><td></td><td><a href="../sgit-app/built/index.html">reality file</a></td></tr>
+<tr><td>A gallery of vaults</td><td>Feature</td><td>SGit Vaults</td><td>SGit Vaults: Gallery</td><td></td><td><a href="../sgit-app/built/index.html">reality file</a></td></tr>
+<tr><td>Vaults on the device</td><td>Feature</td><td>SGit Vaults</td><td>SGit Vaults</td><td></td><td><a href="../sgit-app/built/index.html">reality file</a></td></tr>
+<tr><td>Adding photos, videos and files, the screens</td><td>Feature</td><td>SGit Vaults</td><td>SGit Vaults: a vault</td><td></td><td><a href="../sgit-app/built/index.html">reality file</a></td></tr>
+<tr><td>Browsing</td><td>Feature</td><td>SGit Vaults</td><td>SGit Vaults: a vault; SGit Vaults: Share</td><td></td><td><a href="../sgit-app/built/index.html">reality file</a></td></tr>
+<tr><td>Saving a folder out</td><td>Feature</td><td>SGit Vaults</td><td>SGit Vaults: a vault; SGit Vaults: Share</td><td></td><td><a href="../sgit-app/built/index.html">reality file</a></td></tr>
+<tr><td>Sharing a vault</td><td>Feature</td><td>SGit Vaults</td><td>SGit Vaults: Share</td><td></td><td><a href="../sgit-app/built/index.html">reality file</a></td></tr>
+<tr><td>History</td><td>Feature</td><td>SGit Vaults</td><td>SGit Vaults: History</td><td></td><td><a href="../sgit-app/built/index.html">reality file</a></td></tr>
+</tbody></table></div>
+<h2 id="in-progress">In progress</h2>
+<div class="tablewrap"><table>
+<thead><tr><th>What</th><th>Kind</th><th>App</th><th>Where in the app</th><th>Versions</th><th>Detail</th></tr></thead>
+<tbody>
+<tr><td>Signing and TestFlight</td><td>Issue</td><td>VoiceDebrief</td><td></td><td></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/001-signing-and-testflight.md">001</a></td></tr>
+<tr><td>What SGitVault still lacks</td><td>Issue</td><td>VoiceDebrief</td><td></td><td></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/006-vault-engine-gaps.md">006</a></td></tr>
+<tr><td>Credit, charging per use, top-up</td><td>Issue</td><td>VoiceDebrief</td><td>The balance in the top bar; Settings: Recipients</td><td>v0.1.20</td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/008-credits.md">008</a></td></tr>
+<tr><td>The lab, first experiment (L01): one prompt, tools on and off</td><td>Issue</td><td>VoiceDebrief</td><td>Settings: Experiments, the Lab; The repository: CI</td><td></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/012-lab-one-prompt.md">012</a></td></tr>
+<tr><td>Pictures of every screen, and synthetic users</td><td>Issue</td><td>VoiceDebrief</td><td>Settings: Experiments, the Lab; The repository: pictures of every screen</td><td><a href="../versions/v0.1.29/index.html">v0.1.29</a></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/016-screens-and-synthetic-users.md">016</a></td></tr>
+<tr><td>The user's key pair, the device key, and vouching (with issue 005)</td><td>Issue</td><td>VoiceDebrief</td><td>Vaults tab; Settings: Identity; The repository: CI</td><td><a href="../versions/v0.1.29/index.html">v0.1.29</a></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/018-identity.md">018</a></td></tr>
+<tr><td>Lanes are recipients, and the app has an inbox</td><td>Issue</td><td>VoiceDebrief</td><td>Library, then a note; Settings: Recipients; The repository: tools/conductor</td><td></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/019-recipients-and-inbox.md">019</a></td></tr>
+<tr><td>Finishing saves to the vault; discarding is the awkward path</td><td>Issue</td><td>VoiceDebrief</td><td></td><td>v0.1.13</td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/022-finish-saves-to-the-vault.md">022</a></td></tr>
+<tr><td>Files over 4 MB in a vault (presigned upload and download)</td><td>Issue</td><td>VoiceDebrief</td><td>Vaults tab</td><td>v0.1.19</td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/023-large-files-in-a-vault.md">023</a></td></tr>
+<tr><td>A clean text instead of a summary, with questions where the note is unclear</td><td>Issue</td><td>VoiceDebrief</td><td>A note: Clean text</td><td></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/024-clean-text-and-clarifications.md">024</a></td></tr>
+<tr><td>The version in plain sight, release notes worth reading, and a briefing on opening</td><td>Issue</td><td>VoiceDebrief</td><td>Library tab; Record tab: the briefing card; The version badge in the top bar</td><td><a href="../versions/v0.1.35/index.html">v0.1.35</a></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/025-version-and-release-notes-in-the-app.md">025</a></td></tr>
+<tr><td>Act on a note at once: send without waiting, controls that do not move</td><td>Issue</td><td>VoiceDebrief</td><td>Library, then a note; Record tab; Settings: Recipients</td><td><a href="../versions/v0.1.30/index.html">v0.1.30</a></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/026-act-on-a-note-at-once.md">026</a></td></tr>
+<tr><td>Show where the work happens; small remarks from the model; talking to the app</td><td>Issue</td><td>VoiceDebrief</td><td>Record tab</td><td><a href="../versions/v0.1.31/index.html">v0.1.31</a></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/027-show-where-work-happens-and-talk-to-the-app.md">027</a></td></tr>
+<tr><td>The device key signs every commit, and the vault says whose device it is</td><td>Issue</td><td>VoiceDebrief</td><td>Vaults tab; Settings: Identity</td><td></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/028-device-key-signs-commits.md">028</a></td></tr>
+<tr><td>Explain the balance where it is shown</td><td>Issue</td><td>VoiceDebrief</td><td>Record tab; The balance in the top bar</td><td><a href="../versions/v0.1.29/index.html">v0.1.29</a></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/032-explain-the-balance.md">032</a></td></tr>
+<tr><td>The log cannot tell a server from the device</td><td>Issue</td><td>VoiceDebrief</td><td>Settings: Recipients; Settings: Every step the vault engine took</td><td></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/033-the-log-cannot-tell-a-server-from-the-device.md">033</a></td></tr>
+<tr><td>A readable width on iPad</td><td>Issue</td><td>VoiceDebrief</td><td>Library, then a note; Library tab; Record tab</td><td></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/035-a-readable-width-on-ipad.md">035</a></td></tr>
+<tr><td>A vault, for someone who has never met one</td><td>Issue</td><td>VoiceDebrief</td><td>Vaults tab</td><td></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/037-a-vault-for-someone-who-has-never-met-one.md">037</a></td></tr>
+<tr><td>What the pictures could not show</td><td>Issue</td><td>VoiceDebrief</td><td>Library, then a note; Library tab; Record tab</td><td></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/038-what-the-pictures-could-not-show.md">038</a></td></tr>
+<tr><td>Diagnostics describes a pasted lane that nothing uses</td><td>Issue</td><td>VoiceDebrief</td><td>A note: the send bar; Settings: Recipients; Settings: Diagnostics</td><td><a href="../versions/v0.1.29/index.html">v0.1.29</a></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/041-diagnostics-describes-a-lane-nothing-uses.md">041</a></td></tr>
+<tr><td>Two sentences that say the wrong thing</td><td>Issue</td><td>VoiceDebrief</td><td>Vaults tab; Settings tab</td><td><a href="../versions/v0.1.40/index.html">v0.1.40</a></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/045-two-sentences-that-say-the-wrong-thing.md">045</a></td></tr>
+<tr><td>The sgit app, milestone one</td><td>Issue</td><td>SGit Vaults</td><td>SGit Vaults: Share</td><td></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/100-sgit-app-milestone-one.md">100</a></td></tr>
+<tr><td>The sgit app after milestone one</td><td>Issue</td><td>SGit Vaults</td><td>SGit Vaults: Share</td><td></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/103-sgit-app-after-milestone-one.md">103</a></td></tr>
+<tr><td>A gallery of vaults, opened in a browser inside the app</td><td>Issue</td><td>SGit Vaults</td><td>SGit Vaults: Gallery</td><td></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/107-sgit-app-gallery.md">107</a></td></tr>
+<tr><td>sgit app: a teammate sent a vault key cannot add to it</td><td>Issue</td><td>SGit Vaults</td><td>SGit Vaults: Share; SGit Vaults: Settings</td><td><a href="../versions/v0.1.45/index.html">v0.1.45</a></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/110-sgit-app-a-teammate-cannot-add-without-an-access-key.md">110</a></td></tr>
+<tr><td>sgit app: say whether a file has arrived</td><td>Issue</td><td>SGit Vaults</td><td>SGit Vaults: a vault</td><td><a href="../versions/v0.1.44/index.html">v0.1.44</a></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/111-sgit-app-has-it-arrived.md">111</a></td></tr>
+<tr><td>sgit app: who added it</td><td>Issue</td><td>SGit Vaults</td><td>SGit Vaults: History</td><td><a href="../versions/v0.1.44/index.html">v0.1.44</a></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/112-sgit-app-who-added-it.md">112</a></td></tr>
+<tr><td>sgit app: sharing, for someone who was never told what a key is</td><td>Issue</td><td>SGit Vaults</td><td>SGit Vaults: the Create sheet; SGit Vaults: Share; SGit Vaults: Settings</td><td><a href="../versions/v0.1.44/index.html">v0.1.44</a></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/113-sgit-app-sharing-for-someone-who-was-not-told-what-a-key-is.md">113</a></td></tr>
+<tr><td>sgit app: getting a folder out, at full quality</td><td>Issue</td><td>SGit Vaults</td><td>SGit Vaults: a vault; SGit Vaults: Share</td><td><a href="../versions/v0.1.44/index.html">v0.1.44</a></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/114-sgit-app-getting-files-out.md">114</a></td></tr>
+<tr><td>sgit app: the Create sheet, the four keys, and smaller things</td><td>Issue</td><td>SGit Vaults</td><td>SGit Vaults: the Create sheet; SGit Vaults: a vault; SGit Vaults: History</td><td><a href="../versions/v0.1.44/index.html">v0.1.44</a></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/115-sgit-app-the-create-sheet-and-the-words.md">115</a></td></tr>
+<tr><td>sgit app: what the pictures could not show</td><td>Issue</td><td>SGit Vaults</td><td>SGit Vaults: the Create sheet; SGit Vaults: a vault; SGit Vaults: Share</td><td><a href="../versions/v0.1.44/index.html">v0.1.44</a></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/116-sgit-app-what-the-pictures-could-not-show.md">116</a></td></tr>
+<tr><td>People, messages and secrets (the SGitPeople package)</td><td>Issue</td><td>SGit Vaults</td><td>SGit Vaults</td><td><a href="../versions/v0.1.54/index.html">v0.1.54</a></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/200-people-messages-and-secrets.md">200</a></td></tr>
+<tr><td>People, messages and secrets: the layer under both apps</td><td>Article</td><td>Both</td><td></td><td></td><td><a href="../articles/people-messages-and-secrets/index.html">article</a></td></tr>
+</tbody></table></div>
+<h2 id="proposed">Proposed</h2>
+<div class="tablewrap"><table>
+<thead><tr><th>What</th><th>Kind</th><th>App</th><th>Where in the app</th><th>Versions</th><th>Detail</th></tr></thead>
+<tbody>
+<tr><td>The four spikes</td><td>Issue</td><td>VoiceDebrief</td><td>Settings: Diagnostics</td><td></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/002-spikes.md">002</a></td></tr>
+<tr><td>Read WhatsApp's Ogg Opus (spike S4)</td><td>Issue</td><td>VoiceDebrief</td><td></td><td></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/009-ogg-opus.md">009</a></td></tr>
+<tr><td>Doors: a harness inside the app</td><td>Issue</td><td>VoiceDebrief</td><td>Settings: Experiments, the Lab</td><td></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/013-harness-doors.md">013</a></td></tr>
+<tr><td>Several vaults and several lanes, by name (build C of the design)</td><td>Issue</td><td>VoiceDebrief</td><td></td><td></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/014-vaults-and-lanes-register.md">014</a></td></tr>
+<tr><td>Show the flow as it happens</td><td>Issue</td><td>VoiceDebrief</td><td></td><td></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/020-show-the-flow.md">020</a></td></tr>
+<tr><td>Analyse while recording: a semantic graph, a title, pictures</td><td>Issue</td><td>VoiceDebrief</td><td></td><td></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/021-analysis-while-recording.md">021</a></td></tr>
+<tr><td>Prove the app's large-file exchange against the live server</td><td>Issue</td><td>SGit Vaults</td><td>SGit Vaults: a vault</td><td></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/102-sgit-app-live-server.md">102</a></td></tr>
+<tr><td>&quot;Send to vault&quot; from Photos and Files (a share extension)</td><td>Issue</td><td>SGit Vaults</td><td>SGit Vaults: a vault; SGit Vaults: Share</td><td></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/105-sgit-app-share-extension.md">105</a></td></tr>
+<tr><td>A viewer for chat-archive results, as a separate app</td><td>Issue</td><td>SGit Vaults</td><td>SGit Vaults: Gallery</td><td></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/106-chat-archive-viewer.md">106</a></td></tr>
+<tr><td>A harness inside the app</td><td>Article</td><td>Both</td><td></td><td></td><td><a href="../articles/a-harness-inside-the-app/index.html">article</a></td></tr>
+<tr><td>A private voice note, and what it would take to use it in a clinic</td><td>Article</td><td>Both</td><td></td><td></td><td><a href="../articles/a-private-voice-note-and-a-clinic/index.html">article</a></td></tr>
+<tr><td>Synthetic users</td><td>Article</td><td>Both</td><td></td><td></td><td><a href="../articles/synthetic-users/index.html">article</a></td></tr>
+<tr><td>The lab</td><td>Article</td><td>Both</td><td></td><td></td><td><a href="../articles/the-lab/index.html">article</a></td></tr>
+<tr><td>The vault is a version-controlled store</td><td>Article</td><td>Both</td><td></td><td></td><td><a href="../articles/the-vault-is-a-version-controlled-store/index.html">article</a></td></tr>
+<tr><td>Two decision engines</td><td>Article</td><td>Both</td><td></td><td></td><td><a href="../articles/two-decision-engines/index.html">article</a></td></tr>
+<tr><td>Voice everywhere</td><td>Article</td><td>Both</td><td></td><td></td><td><a href="../articles/voice-everywhere/index.html">article</a></td></tr>
+<tr><td>Where each key lives</td><td>Article</td><td>Both</td><td></td><td></td><td><a href="../articles/where-each-key-lives/index.html">article</a></td></tr>
+<tr><td>Receiving a voice note from the share sheet (WhatsApp)</td><td>Feature</td><td>VoiceDebrief</td><td></td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>Decoding WhatsApp's Ogg Opus</td><td>Feature</td><td>VoiceDebrief</td><td></td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>Saved and sent states on a note; saving to a vault automatically; an inbox in the app; the app's own QR code, so a conductor can write back</td><td>Feature</td><td>VoiceDebrief</td><td>Library, then a note</td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>Apple's larger model on Private Cloud Compute, as an option</td><td>Feature</td><td>VoiceDebrief</td><td>The repository: CI</td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>Translation, classification, citations of time in the debrief</td><td>Feature</td><td>VoiceDebrief</td><td></td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>The passkey ceremony, the account, the recovery code</td><td>Feature</td><td>VoiceDebrief</td><td></td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>Creating an account, adding a door, merge, audio over 3.8 MB in a vault</td><td>Feature</td><td>VoiceDebrief</td><td></td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>Debriefs signed by the device key; the vouching row in a vault's own screen</td><td>Feature</td><td>VoiceDebrief</td><td>Vaults tab</td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>The answer from pki.sgit.ai handed to the app by iOS</td><td>Feature</td><td>VoiceDebrief</td><td></td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>Checking that an issuer chains to the register's root through its links; withdrawing a vouching statement; the user's key in a master vault behind a passkey; exporting the identity to sgit's key store from the app</td><td>Feature</td><td>VoiceDebrief</td><td>Settings: Identity</td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>A merge when a device and its server have both changed; pushing or pulling a branch other than current; several servers for one vault; pushing automatically</td><td>Feature</td><td>VoiceDebrief</td><td></td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>The share extension, App Intents</td><td>Feature</td><td>VoiceDebrief</td><td></td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>Paying for credit through the App Store; the ledger in the user's vault; anything that stops someone editing their own balance</td><td>Feature</td><td>VoiceDebrief</td><td>The balance in the top bar</td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>The App Store</td><td>Feature</td><td>VoiceDebrief</td><td></td><td></td><td><a href="../built/index.html">reality file</a></td></tr>
+<tr><td>Local-first vaults and named remotes; keys in iCloud Keychain</td><td>Feature</td><td>SGit Vaults</td><td>SGit Vaults</td><td><a href="../versions/v0.1.33/index.html">v0.1.33</a></td><td><a href="../sgit-app/built/index.html">reality file</a></td></tr>
+<tr><td>A share extension; background uploads</td><td>Feature</td><td>SGit Vaults</td><td>SGit Vaults: Share</td><td></td><td><a href="../sgit-app/built/index.html">reality file</a></td></tr>
+<tr><td>A merge for colliding edits; branches</td><td>Feature</td><td>SGit Vaults</td><td>SGit Vaults</td><td></td><td><a href="../sgit-app/built/index.html">reality file</a></td></tr>
+<tr><td>A read-only token that can be revoked</td><td>Feature</td><td>SGit Vaults</td><td>SGit Vaults</td><td></td><td><a href="../sgit-app/built/index.html">reality file</a></td></tr>
+<tr><td>Video thumbnails; streaming a video without fetching it whole</td><td>Feature</td><td>SGit Vaults</td><td>SGit Vaults</td><td></td><td><a href="../sgit-app/built/index.html">reality file</a></td></tr>
+</tbody></table></div>
+<h2 id="parked">Parked</h2>
+<div class="tablewrap"><table>
+<thead><tr><th>What</th><th>Kind</th><th>App</th><th>Where in the app</th><th>Versions</th><th>Detail</th></tr></thead>
+<tbody>
+<tr><td>The passkey's relying party (decision D1)</td><td>Issue</td><td>VoiceDebrief</td><td>Settings: Identity</td><td></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/003-passkey-relying-party.md">003</a></td></tr>
+<tr><td>Stop SGitVault being two copies (decision D8)</td><td>Issue</td><td>VoiceDebrief</td><td></td><td></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/007-shared-vault-package.md">007</a></td></tr>
+<tr><td>Judge Apple's models on real voice notes (spike S2)</td><td>Issue</td><td>VoiceDebrief</td><td>Settings: Diagnostics</td><td></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/010-judge-the-models.md">010</a></td></tr>
+<tr><td>The larger Apple model on Private Cloud Compute, as an option</td><td>Issue</td><td>VoiceDebrief</td><td>Settings: Experiments, the Lab; The repository: CI</td><td></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/015-private-cloud-compute.md">015</a></td></tr>
+<tr><td>Telling speakers apart</td><td>Issue</td><td>VoiceDebrief</td><td>Settings: Identity; Settings: Experiments, the Lab</td><td></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/042-speaker-separation.md">042</a></td></tr>
+<tr><td>A read-only share that can be taken back</td><td>Issue</td><td>SGit Vaults</td><td>SGit Vaults: Share</td><td></td><td><a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/104-revocable-read-only-share.md">104</a></td></tr>
+</tbody></table></div>
+</main>
+
+<footer class="site"><div class="cols">
+  <div>
+    <div class="brandline">Voice<em>Debrief</em> <span>iOS</span></div>
+    <p>The VoiceDebrief transcript and debrief as a native iPhone and iPad app, on Apple's own models, with the results in a vault you own. In development: there is nothing to install yet. Content CC BY 4.0; code Apache 2.0.</p>
+    <p class="partnote">This site is static and has no analytics.</p>
+    <p class="verline">site dev · <a href="index.md">this page as markdown</a> · <a href="../llms.txt">llms.txt</a></p>
+  </div>
+  <div>
+    <h4>The app</h4>
+    <a href="../built/index.html">What is built</a>
+    <a href="../plan/index.html">The plan</a>
+    <a href="../develop/index.html">Build and test</a>
+    <a href="../versions/index.html">Release history</a>
+    <a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">GitHub</a>
+  </div>
+  <div>
+    <h4>VoiceDebrief</h4>
+    <a href="https://voicedebrief.ai">voicedebrief.ai</a>
+    <a href="https://meetscribe.chrome-extension.voicedebrief.ai">MeetScribe for Google Meet</a>
+  </div>
+  <div>
+    <h4>Built on</h4>
+    <a href="https://sgit.ai">sgit.ai</a>
+    <a href="https://pki.sgit.ai">pki.sgit.ai</a>
+    <a href="https://sgit.ai/security/index.html">The vault security model</a>
+  </div>
+</div></footer>
+</body>
+</html>

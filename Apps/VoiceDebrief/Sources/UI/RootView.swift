@@ -42,6 +42,9 @@ struct RootView: View {
             Tab("Vaults", systemImage: "lock.shield", value: RootTab.vaults) {
                 launched(.vaults) { VaultsView(book: book) }.tracked("vaults")
             }
+            Tab("Guide", systemImage: "book", value: RootTab.guide) {
+                GuideView().tracked("guide")
+            }
             TabSection("You") {
                 Tab("Identity", systemImage: "person.badge.key", value: RootTab.identity) {
                     NavigationStack { IdentityView(vaults: book) }.tracked("identity")
@@ -71,10 +74,17 @@ struct RootView: View {
             }
         }
         .tabViewStyle(.sidebarAdaptable)
+        .welcomeOnFirstLaunch()
+        // Talk to Claude from every screen but Record, which has its own control.
+        .overlay(alignment: .bottomTrailing) {
+            if tab != .record { TalkButton(session: session) }
+        }
         #if DEBUG
         .overlay(alignment: .topLeading) { LaunchMarker() }
         #endif
         .task {
+            // A Talk to Claude recording cannot survive a relaunch; do not let its flag outlive it.
+            UserDefaults.standard.set(false, forKey: "vd.talking")
             // Finishing a note saves it to the chosen vault, unless that is switched off (issue 022).
             session.onNoteReady = { [store, book] id in
                 Task { await AutoSave.run(noteId: id, store: store, book: book) }

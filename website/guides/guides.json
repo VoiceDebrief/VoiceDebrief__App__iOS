@@ -1,0 +1,175 @@
+{
+ "about": "The feature guides: hand-written content. Each step is a picture of one screen (a screen id of the screens workflow) with numbered callouts; at is where the arrow points and label where its number sits, both as fractions of the picture's width and height. website/admin/guides.py draws the pictures; website/admin/guides.mjs writes the pages and the app's copy. Say only what the app does: a guide is checked against the reality file like any other page.",
+ "pictures": "iPhone, light, from screens.yml run 39 on dev (commit 1d21781, 14 November 2026). Newer builds may differ: the record screen now chooses who a note is for above the record control.",
+ "guides": [
+  {
+   "id": "record",
+   "title": "Record a voice note",
+   "app": "VoiceDebrief",
+   "ideas": ["issue-030", "issue-026", "issue-027"],
+   "intro": "One button records. The recording is saved into the note while you speak, so a call or a crash cannot lose it. When you finish, the note is transcribed and debriefed on this device by Apple's models.",
+   "steps": [
+    {
+     "screen": "record",
+     "caption": "The Record tab, before you start.",
+     "callouts": [
+      {"n": 1, "at": [0.5, 0.765], "label": [0.18, 0.70], "text": "Tap to record. It is saved as you speak."},
+      {"n": 2, "at": [0.33, 0.877], "label": [0.12, 0.84], "text": "Or choose an audio file you already have (.m4a, .mp3 or .wav)."},
+      {"n": 3, "at": [0.16, 0.32], "label": [0.88, 0.30], "text": "Where the work happens: on this device, or on the network. Green while something is busy."},
+      {"n": 4, "at": [0.14, 0.47], "label": [0.9, 0.42], "text": "Your most recent notes. Tap one to open it."},
+      {"n": 5, "at": [0.905, 0.096], "label": [0.86, 0.2], "text": "The language you will speak in. Apple's speech model needs it before it listens."}
+     ]
+    },
+    {
+     "screen": "record.recording",
+     "caption": "While recording.",
+     "callouts": [
+      {"n": 1, "at": [0.42, 0.2], "label": [0.12, 0.17], "text": "How long you have been recording. Everything so far is already kept on the device."},
+      {"n": 2, "at": [0.5, 0.47], "label": [0.92, 0.38], "text": "The words as you say them: a preview. The transcript that is kept is made from the recording when you finish."},
+      {"n": 3, "at": [0.5, 0.765], "label": [0.85, 0.70], "text": "Tap to finish. The note is kept, then transcribed and debriefed."},
+      {"n": 4, "at": [0.45, 0.875], "label": [0.92, 0.81], "text": "Finish and send in one press, to a recipient you have added."},
+      {"n": 5, "at": [0.4, 0.096], "label": [0.5, 0.15], "text": "Discard, if you do not want this recording. It asks first."}
+     ]
+    }
+   ]
+  },
+  {
+   "id": "note",
+   "title": "Open a note: listen, send, save",
+   "app": "VoiceDebrief",
+   "ideas": ["issue-029", "issue-034", "issue-039", "issue-043", "issue-022"],
+   "intro": "A note opens with its one sentence as the heading, then what has happened to it, the recording, the transcript and the debrief. Everything you can do with it is on this screen.",
+   "steps": [
+    {
+     "screen": "note.finished",
+     "caption": "The top of a finished note.",
+     "callouts": [
+      {"n": 1, "at": [0.5, 0.23], "label": [0.94, 0.16], "text": "The note in one sentence, written by Apple's model on this device."},
+      {"n": 2, "at": [0.13, 0.425], "label": [0.06, 0.39], "text": "What happened to it: kept on this device, sent to whom and when, saved to which vault."},
+      {"n": 3, "at": [0.13, 0.565], "label": [0.06, 0.52], "text": "Play the recording. Tapping a line of the transcript plays from that moment."},
+      {"n": 4, "at": [0.4, 0.636], "label": [0.9, 0.64], "text": "Share or save the recording, for example to Files. It leaves the device unencrypted."},
+      {"n": 5, "at": [0.3, 0.86], "label": [0.5, 0.79], "text": "Send it: one button per recipient, encrypted to their key on this device."}
+     ]
+    },
+    {
+     "screen": "note.finished-end",
+     "caption": "The end of the same note.",
+     "callouts": [
+      {"n": 1, "at": [0.3, 0.26], "label": [0.9, 0.2], "text": "Write a clean text: an experiment that rewrites the note as full sentences, using your own words from Settings."},
+      {"n": 2, "at": [0.82, 0.435], "label": [0.9, 0.37], "text": "Which vault to save into."},
+      {"n": 3, "at": [0.35, 0.495], "label": [0.06, 0.45], "text": "Save this note to the vault, encrypted, as one signed commit. Finished notes are saved on their own unless that is switched off in Settings."},
+      {"n": 4, "at": [0.35, 0.663], "label": [0.06, 0.61], "text": "Transcribe and debrief again, in the language chosen now."},
+      {"n": 5, "at": [0.3, 0.722], "label": [0.9, 0.75], "text": "Delete the note from this device. It asks first."}
+     ]
+    }
+   ]
+  },
+  {
+   "id": "library",
+   "title": "The library: every note, and what each one is doing",
+   "app": "VoiceDebrief",
+   "ideas": ["issue-036", "issue-030"],
+   "intro": "Every note kept on this device, newest first, by day. Each row says what the note is doing or what you can do with it.",
+   "steps": [
+    {
+     "screen": "library",
+     "caption": "The Library tab.",
+     "callouts": [
+      {"n": 1, "at": [0.55, 0.316], "label": [0.94, 0.215], "text": "Waiting its turn: notes are written up one at a time, and you can keep recording meanwhile."},
+      {"n": 2, "at": [0.6, 0.42], "label": [0.94, 0.45], "text": "Being written up now."},
+      {"n": 3, "at": [0.6, 0.524], "label": [0.94, 0.56], "text": "Finished, and sent to somebody."},
+      {"n": 4, "at": [0.84, 0.748], "label": [0.94, 0.68], "text": "Interrupted: the recording is kept. Open it and run it again."},
+      {"n": 5, "at": [0.39, 0.94], "label": [0.39, 0.85], "text": "The Library tab, from anywhere."}
+     ]
+    }
+   ]
+  },
+  {
+   "id": "vaults",
+   "title": "Vaults: your notes, encrypted, on the device first",
+   "app": "VoiceDebrief",
+   "ideas": ["issue-011", "issue-017", "issue-037"],
+   "intro": "A vault is an encrypted, version-controlled folder you own. It is made on this device and needs no server and no network. A server is a remote you can push it to, so that it is kept elsewhere as well.",
+   "steps": [
+    {
+     "screen": "vaults",
+     "caption": "The Vaults tab.",
+     "callouts": [
+      {"n": 1, "at": [0.3, 0.29], "label": [0.94, 0.22], "text": "Your vaults, and where each one is: on this device only, or on a server too."},
+      {"n": 2, "at": [0.3, 0.433], "label": [0.94, 0.38], "text": "A name for a new vault."},
+      {"n": 3, "at": [0.25, 0.492], "label": [0.06, 0.45], "text": "Create a vault: a random key, made and kept on this device."},
+      {"n": 4, "at": [0.3, 0.715], "label": [0.94, 0.66], "text": "Servers you can push a vault to. The access token is kept in the Keychain."},
+      {"n": 5, "at": [0.4, 0.842], "label": [0.06, 0.8], "text": "Add a server by its address."}
+     ]
+    },
+    {
+     "screen": "vault.detail",
+     "caption": "Inside a vault.",
+     "callouts": [
+      {"n": 1, "at": [0.3, 0.268], "label": [0.94, 0.215], "text": "Where it lives: on this device only, or also on a server."},
+      {"n": 2, "at": [0.82, 0.328], "label": [0.94, 0.4], "text": "Choose a server to push to and pull from. Neither ever overwrites: if both sides changed, it says so and stops."},
+      {"n": 3, "at": [0.75, 0.72], "label": [0.06, 0.66], "text": "The latest commit, and its signature checked."},
+      {"n": 4, "at": [0.1, 0.852], "label": [0.06, 0.8], "text": "The files in the vault: each saved note is a folder of debrief, transcript, run and audio."}
+     ]
+    }
+   ]
+  },
+  {
+   "id": "recipients",
+   "title": "Send a note to somebody",
+   "app": "VoiceDebrief",
+   "ideas": ["issue-019", "issue-026", "issue-043"],
+   "intro": "A recipient is a person, another device or an agent session that has given you their link. A note sent to them is encrypted on this device to their key: nobody else can read it, including the server that carries it.",
+   "steps": [
+    {
+     "screen": "recipients",
+     "caption": "Settings, Recipients.",
+     "callouts": [
+      {"n": 1, "at": [0.3, 0.21], "label": [0.94, 0.16], "text": "Built into this test build: the developer, who can read what you send. It asks before sending."},
+      {"n": 2, "at": [0.3, 0.287], "label": [0.94, 0.33], "text": "Somebody you have added."},
+      {"n": 3, "at": [0.1, 0.541], "label": [0.06, 0.47], "text": "Add somebody from a picture of their QR code, or scan it with the camera."},
+      {"n": 4, "at": [0.3, 0.6], "label": [0.06, 0.66], "text": "Or paste their link. It can only write to their inbox: it cannot read anything."}
+     ]
+    }
+   ]
+  },
+  {
+   "id": "briefing",
+   "title": "What happened since you last looked",
+   "app": "VoiceDebrief",
+   "ideas": ["issue-025"],
+   "intro": "When you open the app, a card on the Record tab says what is new: an update, with a link to what changed, and what happened to your notes since you last opened it. The app works it out from the library; it is not written by a model. The Guide's What is new lists every version, with those you skipped marked.",
+   "steps": [
+    {
+     "screen": "record-briefing",
+     "caption": "The briefing card on the Record tab.",
+     "callouts": [
+      {"n": 1, "at": [0.5, 0.31], "label": [0.94, 0.24], "text": "The app was updated: tap to see what is new in this version."},
+      {"n": 2, "at": [0.5, 0.38], "label": [0.94, 0.45], "text": "What happened since you last looked: new notes, interrupted ones, sends and saves."},
+      {"n": 3, "at": [0.16, 0.468], "label": [0.06, 0.53], "text": "Dismiss it. The card is worked out again each time the app opens."}
+     ]
+    }
+   ]
+  },
+  {
+   "id": "settings",
+   "title": "Settings: language, saving, identity, credit",
+   "app": "VoiceDebrief",
+   "ideas": ["issue-022", "issue-018", "issue-008"],
+   "intro": "The few things to set once, and the places for the rest: who you are, who you send to, and the experiments.",
+   "steps": [
+    {
+     "screen": "settings",
+     "caption": "The Settings tab.",
+     "callouts": [
+      {"n": 1, "at": [0.82, 0.224], "label": [0.94, 0.15], "text": "The language you speak in."},
+      {"n": 2, "at": [0.85, 0.458], "label": [0.94, 0.39], "text": "Save each finished note to a vault, on by default."},
+      {"n": 3, "at": [0.75, 0.517], "label": [0.94, 0.57], "text": "Which vault: the first one, or one you choose."},
+      {"n": 4, "at": [0.18, 0.722], "label": [0.94, 0.7], "text": "Identity: your key pair, this device's key, and what links them."},
+      {"n": 5, "at": [0.16, 0.836], "label": [0.94, 0.81], "text": "Credit: a balance that counts down as the app is used. In this test build no money is taken."}
+     ]
+    }
+   ]
+  }
+ ]
+}
