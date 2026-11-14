@@ -78,6 +78,10 @@ final class DebriefSession {
     var run: DebriefRun? { currentNoteId.flatMap { store.note($0)?.run } }
 
     /// What is being done to a note right now, in words, if it is the one being processed.
+    /// Goes up each time something other than a tap asks to finish the recording: a spoken command or
+    /// a headphone, car or lock-screen button. The screen that owns the recording finishes it.
+    var finishRequests = 0
+
     /// The note whose recording is being made right now, if any.
     var recordingNote: String? { recordingNoteId }
 
@@ -122,6 +126,7 @@ final class DebriefSession {
             levels = []
             failure = nil
             recordingSince = Date()
+            RemoteControl.begin(title: "Recording a voice note") { [weak self] in self?.finishRequests += 1 }
         } catch {
             store.delete(note.id)
             failure = error.localizedDescription
@@ -137,8 +142,11 @@ final class DebriefSession {
         do {
             try await live.start(localeId: localeId) { settled, volatile in
                 Task { @MainActor [weak self] in
-                    self?.liveSettled = settled
-                    self?.liveVolatile = volatile
+                    guard let self else { return }
+                    self.liveSettled = settled
+                    self.liveVolatile = volatile
+                    // "Send this now" at the end of what was said finishes the recording.
+                    if VoiceCommand.detect(settled + " " + volatile) == .finish { self.finishRequests += 1 }
                 }
             }
         } catch {
@@ -160,6 +168,7 @@ final class DebriefSession {
         await live.stop()
         recorder.stop()
         recordingSince = nil
+        RemoteControl.end()
         guard let id = recordingNoteId else {
             failure = "Nothing was recorded."
             return nil
@@ -184,6 +193,7 @@ final class DebriefSession {
         if let id = recordingNoteId { store.delete(id) }
         recordingNoteId = nil
         recordingSince = nil
+        RemoteControl.end()
     }
 
     // MARK: Importing

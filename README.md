@@ -1,6 +1,6 @@
 # VoiceDebrief for iPhone and iPad
 
-![release](https://img.shields.io/badge/release-v0.1.50-blue)
+![release](https://img.shields.io/badge/release-v0.1.54-blue)
 
 A native app that turns a voice note into a transcript and a short debrief using Apple's on-device
 models only, and keeps the result in an encrypted vault the user owns, opened with a passkey.
