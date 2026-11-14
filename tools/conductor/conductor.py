@@ -132,7 +132,8 @@ def drain(inbox, out):
             note = notes.setdefault(os.path.basename(str(header.get('note', 'unknown'))), {'audio': {}, 'header': None, 'files': {}})
             if kind == 'voicedebrief/audio/v1':
                 note['audio'][header['part']] = body; note['header'] = header
-            elif kind in ('voicedebrief/run/v1', 'voicedebrief/clean/v1'):
+            elif kind.startswith('voicedebrief/'):
+                # run, clean, usage, and any later kind: filed under the note (or report) id by its name
                 note['files'][os.path.basename(header.get('name') or kind.split('/')[1] + '.json')] = body
             done.append(entry)
     for note_id, note in notes.items():
