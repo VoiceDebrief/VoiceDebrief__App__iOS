@@ -15,6 +15,7 @@ struct TalkButton: View {
 
     var body: some View {
         VStack(alignment: .trailing, spacing: 8) {
+            if recordingHere { liveBanner.transition(.move(edge: .bottom).combined(with: .opacity)) }
             if let said {
                 Text(said)
                     .font(.caption)
@@ -42,12 +43,50 @@ struct TalkButton: View {
         }
         .padding(.trailing, 16)
         .padding(.bottom, 90)
+        .animation(.snappy, value: recordingHere)
         .onChange(of: session.finishRequests) { _, _ in
             if recordingHere { Task { await tap() } }
         }
         .sheet(isPresented: $showingMessages) {
             NavigationStack { MessagesToClaudeView(session: session, book: book) }
         }
+    }
+
+    /// While talking to Claude from any screen: what is being heard, how long, the level, and how to send
+    /// (the owner, 14 November 2026: "I need a visual clue, show me the text; it is fine to take more room").
+    private var liveBanner: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "circle.fill").foregroundStyle(.red).font(.caption)
+                Text("Talking to Claude").font(.subheadline.weight(.semibold))
+                Spacer()
+                if case .recording(let since) = session.phase {
+                    Text(since, style: .timer).font(.subheadline.monospacedDigit()).foregroundStyle(.secondary)
+                }
+            }
+            if session.microphoneSilent {
+                Label("No sound is reaching the microphone.", systemImage: "mic.slash.fill")
+                    .font(.footnote.weight(.semibold)).foregroundStyle(.orange)
+            }
+            Group {
+                if session.liveSettled.isEmpty && session.liveVolatile.isEmpty {
+                    Text("Listening…").foregroundStyle(.secondary)
+                } else {
+                    Text(session.liveSettled) + Text(session.liveVolatile).foregroundStyle(.secondary)
+                }
+            }
+            .font(.callout)
+            .lineLimit(4)
+            .truncationMode(.head)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            LevelBars(levels: session.levels, height: 22, barWidth: 3)
+            Text("Tap the button, or say \"send this now\", to send it.").font(.caption).foregroundStyle(.secondary)
+        }
+        .padding(14)
+        .frame(maxWidth: 520)
+        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+        .shadow(radius: 6, y: 2)
+        .padding(.leading, 16)
     }
 
     private func tap() async {
