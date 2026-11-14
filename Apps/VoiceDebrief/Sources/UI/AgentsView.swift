@@ -19,7 +19,12 @@ struct AgentsView: View {
     var body: some View {
         NavigationSplitView {
             List(selection: $selected) {
-                Section { overview }
+                Section {
+                    overview
+                    if selected != nil, desk.picture != nil {
+                        Button { selected = nil } label: { Label("Show the overview", systemImage: "square.grid.2x2") }
+                    }
+                }
                 if let report = desk.report {
                     Section("Agents") {
                         ForEach(report.agents) { agent in
@@ -38,6 +43,12 @@ struct AgentsView: View {
         } detail: {
             if let report = desk.report, let id = selected, let agent = report.agents.first(where: { $0.id == id }) {
                 detail(agent, report: report)
+                    .toolbar {
+                        // Back to the overview picture (the owner: "how do I close that and go back?").
+                        ToolbarItem(placement: .topBarLeading) {
+                            Button { selected = nil } label: { Label("Overview", systemImage: "square.grid.2x2") }
+                        }
+                    }
             } else if let picture = desk.picture, let image = UIImage(data: picture) {
                 ScrollView { Image(uiImage: image).resizable().scaledToFit().padding() }
                     .navigationTitle("Overview")
