@@ -91,7 +91,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | A clean text, with questions | Feature | VoiceDebrief | A note: Clean text; Library, then a note |   | [reality file](../built/index.md) |
 | Credit that counts down, with a simulated top-up | Feature | VoiceDebrief | The balance in the top bar; Settings: Recipients |   | [reality file](../built/index.md) |
 | A finished note saves itself to a vault | Feature | VoiceDebrief | Record tab; Settings: Save to a vault; Settings tab |   | [reality file](../built/index.md) |
-| The people layer, SGitPeople | Feature | VoiceDebrief | Settings: Recipients | [v0.1.54](../versions/v0.1.54/index.md) | [reality file](../built/index.md) |
+| The people layer, SGitPeople | Feature | VoiceDebrief |   | [v0.1.54](../versions/v0.1.54/index.md) | [reality file](../built/index.md) |
 | The user's key pair | Feature | VoiceDebrief | Settings: Identity |   | [reality file](../built/index.md) |
 | The device's key pair | Feature | VoiceDebrief | Vaults tab; Settings: Identity |   | [reality file](../built/index.md) |
 | Vouching for a device | Feature | VoiceDebrief | Settings: Identity |   | [reality file](../built/index.md) |
