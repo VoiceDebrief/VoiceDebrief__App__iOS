@@ -20,6 +20,8 @@ struct GameToolSpec: Codable, Equatable, Sendable {
 
 enum GameToolName: String, CaseIterable, Sendable {
     case move, jump, climb, unlock, nextLevel, restart
+    /// The hint engine's only tool. Never offered to the rule engine.
+    case showClue
 }
 
 /// The model's proposal, checked before the rules see it.
@@ -99,6 +101,7 @@ enum GameToolScope {
         case .unlock: return .ok(.unlock)
         case .nextLevel: return .ok(.nextLevel)
         case .restart: return .ok(.restart)
+        case .showClue: return .refused("A clue is not a move.")
         }
     }
 }

@@ -5,6 +5,7 @@ struct GamePlayView: View {
     @AppStorage("vd.localeId") private var localeId = ""
     @Environment(\.horizontalSizeClass) private var sizeClass
     private let game = GameController.shared
+    private let player = GameVoicePlayer.shared
     @State private var typed = ""
 
     var body: some View {
@@ -43,6 +44,7 @@ struct GamePlayView: View {
         .navigationBarTitleDisplayMode(.inline)
         .onAppear { game.prepareModel() }
         .onDisappear {
+            player.stop()
             Task { await game.stopListening() }
         }
     }
@@ -77,7 +79,7 @@ struct GamePlayView: View {
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: .infinity)
             if let hint = game.hint {
-                Label(hint.words, systemImage: "lightbulb")
+                Label(hint.source == "model" ? "\(hint.words) (the model's clue)" : hint.words, systemImage: "lightbulb")
                     .font(.footnote)
                     .foregroundStyle(Color(light: 0xB98500, dark: 0xF0B429))
             }
@@ -118,6 +120,24 @@ struct GamePlayView: View {
             if let problem = game.problem {
                 Text(problem).font(.footnote).foregroundStyle(DS.Palette.red)
             }
+            HStack {
+                Button {
+                    if player.playing { player.stop() } else { player.start(game, localeId: localeId) }
+                } label: {
+                    Label(player.playing ? "Stop the voice player" : "Voice player", systemImage: player.playing ? "person.wave.2.fill" : "person.wave.2")
+                }
+                .buttonStyle(.bordered)
+                Spacer()
+                if let saying = player.saying {
+                    Text("says \u{201C}\(saying)\u{201D}").font(.footnote).foregroundStyle(.secondary).lineLimit(1)
+                }
+            }
+            Text(game.listening
+                 ? "The voice player speaks its commands; the microphone hears them like yours."
+                 : "The voice player speaks its commands. Press Listen first for them to go through the microphone; otherwise its words are handed in directly.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .frame(maxWidth: .infinity, alignment: .leading)
             HStack {
                 TextField("Or type: go left two", text: $typed)
                     .textFieldStyle(.roundedBorder)
@@ -184,7 +204,7 @@ struct GameLatencyCard: View {
                     Text(GameWords.ms(total))
                         .font(DS.TypeScale.number)
                         .foregroundStyle(total < 500 ? DS.Palette.green : (total < 1500 ? DS.Palette.amber : DS.Palette.red))
-                    Text("by \(entry.engine)\(entry.early ? ", before the words settled" : "")")
+                    Text("by \(entry.engine)\(entry.early ? ", before the words settled" : "")\(total < 0 ? ", before the voice finished" : "")")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                     Spacer()

@@ -353,3 +353,51 @@ struct GameMeasureTests {
         #expect(log.assumptions.count == 3)
     }
 }
+
+@Suite("L03: the voice player's script")
+struct GamePlayerScriptTests {
+    /// Plays a whole game the way the voice player does, its words through the phrases and the rules.
+    static func play(_ kind: GameKind, mistakes: Bool) -> GameState {
+        var state = GameState.start(kind)
+        for turn in 0..<400 {
+            guard let line = GamePlayerScript.line(for: state, turn: turn, mistakes: mistakes) else { break }
+            guard let command = GamePhrases.parse(line, kind: kind) else { continue }
+            state = GameRules.apply(command, to: state).state
+        }
+        return state
+    }
+
+    @Test func theVoicePlayersWordsWinEveryGameThroughThePhrases() {
+        for kind in GameKind.allCases {
+            for mistakes in [false, true] {
+                let end = Self.play(kind, mistakes: mistakes)
+                #expect(end.status == .won, "\(kind), mistakes \(mistakes): ended \(end.status) on level \(end.levelIndex + 1)")
+                #expect(end.lives == GameLevels.all(kind)[end.levelIndex].lives)
+            }
+        }
+    }
+
+    @Test func itsMistakesAreRefusedOrNotUnderstood() {
+        let state = GameState.start(.boxes)
+        let wrong = GamePlayerScript.line(for: state, turn: GamePlayerScript.mistakeTurn, mistakes: true)
+        #expect(wrong == "fly over the wall")
+        #expect(GamePhrases.parse(wrong ?? "", kind: .boxes) == nil)
+        let blocked = GamePlayerScript.mistake(for: state, turn: 0)
+        #expect(blocked == "go up")
+        #expect(GameRules.apply(GamePhrases.parse(blocked ?? "", kind: .boxes) ?? .hint, to: state).accepted == false)
+    }
+
+    @Test func itVariesItsWords() {
+        #expect(GamePlayerScript.words(for: .move(.left, 1), turn: 0) == "left")
+        #expect(GamePlayerScript.words(for: .move(.left, 1), turn: 1) == "go left")
+        #expect(GamePlayerScript.words(for: .move(.down, 3), turn: 2) == "move down three squares")
+        #expect(GamePlayerScript.words(for: .jump(.right), turn: 1) == "jump to the right")
+    }
+
+    @Test func aClueFromTheModelIsCheckedForLength() {
+        #expect(GameHints.checkClue("  Try the gold on your left.\n") == "Try the gold on your left.")
+        #expect(GameHints.checkClue("") == nil)
+        #expect(GameHints.checkClue(String(repeating: "a", count: GameHints.clueLimit + 1)) == nil)
+        #expect(GameToolScope.check(tool: "showClue", arguments: [:], offered: [GameHints.clueTool]) == .refused("A clue is not a move."))
+    }
+}

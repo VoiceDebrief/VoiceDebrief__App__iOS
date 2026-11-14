@@ -24,6 +24,9 @@ final class GameController {
     private(set) var problem: String?
     private(set) var modelBusy = false
     private(set) var wrongStreak = 0
+    /// The model's clues, newest first.
+    private(set) var hintTurns: [GameModelTurn] = []
+    private(set) var hintAsking = false
     private(set) var movesSinceProgress = 0
 
     var mode: GameEngineMode = .both
@@ -49,6 +52,10 @@ final class GameController {
     private var waiting: [Pending] = []
     private var worker: Task<Void, Never>?
     private var counter = 0
+    /// The voice player is speaking, or finished at this moment: what the microphone hears now is its.
+    private var playerSpeaking = false
+    private var playerFinishedAt: Date?
+    private var playerEntriesWhileSpeaking: [String] = []
 
     init(kind: GameKind = .boxes) {
         let start = GameState.start(kind)
@@ -83,7 +90,20 @@ final class GameController {
 
     private func newEntry(words: String, source: String, endedAt: Date, settledAt: Date? = nil, early: Bool = false) -> String {
         counter += 1
-        let entry = GameLogEntry(id: "g\(counter)", game: state.kind, level: state.levelIndex + 1, words: words, source: source,
+        var source = source
+        var endedAt = endedAt
+        let id = "g\(counter)"
+        // Heard while the voice player spoke, or just after: its words, timed from the end of its speech.
+        if source == "spoken" {
+            if playerSpeaking {
+                source = "player"
+                playerEntriesWhileSpeaking.append(id)
+            } else if let finished = playerFinishedAt, Date().timeIntervalSince(finished) < 5 {
+                source = "player"
+                endedAt = finished
+            }
+        }
+        let entry = GameLogEntry(id: id, game: state.kind, level: state.levelIndex + 1, words: words, source: source,
                                  endedAt: endedAt, settledAt: settledAt, early: early,
                                  thermal: GameEnergy.thermalWords(ProcessInfo.processInfo.thermalState))
         entries.insert(entry, at: 0)
@@ -120,6 +140,23 @@ final class GameController {
             }
         }
         return id
+    }
+
+    // MARK: The voice player
+
+    func playerStarted() {
+        playerSpeaking = true
+        playerFinishedAt = nil
+        playerEntriesWhileSpeaking = []
+    }
+
+    /// The voice player's speech ended. Sentences acted on while it was still speaking are timed from
+    /// this moment too, so their time is below zero: acted on before the voice finished.
+    func playerFinished(at: Date) {
+        playerSpeaking = false
+        playerFinishedAt = at
+        for id in playerEntriesWhileSpeaking { update(id) { $0.endedAt = at } }
+        playerEntriesWhileSpeaking = []
     }
 
     /// A button pressed instead of a word said.
@@ -191,6 +228,33 @@ final class GameController {
         }
         if !asked, let showing = hint, showing.level == level { return }
         hint = GameHints.make(state, level: level)
+        if level >= 2 { askModelForClue() }
+    }
+
+    private var recentWrongWords: [String] {
+        Array(entries.prefix(6).filter { $0.accepted == false }.map(\.words).prefix(3))
+    }
+
+    /// The hint engine's model: given a short state, the next step and the words that did not work, it
+    /// may phrase the clue through one tool. The code keeps the square and checks the words.
+    private func askModelForClue() {
+        guard OnDeviceModel.status.isAvailable, !hintAsking, !modelBusy, let code = hint, code.level >= 2,
+              state.status == .playing,
+              let plan = GamePlanner.plan(state), let next = GamePlanner.compress(plan).first else { return }
+        hintAsking = true
+        let basis = state
+        let prompt = GameHints.modelPrompt(state: basis, next: next, wrong: recentWrongWords)
+        let tools = [GameHints.clueTool]
+        Task { [weak self] in
+            guard let self else { return }
+            let turn = await self.engine.ask(role: "hint", instructions: GameHints.modelInstructions, prompt: prompt, tools: tools)
+            self.hintAsking = false
+            self.hintTurns.insert(turn, at: 0)
+            guard let words = GameHints.checkClue(turn.arguments["words"]), self.state == basis, var showing = self.hint else { return }
+            showing.words = words
+            showing.source = "model"
+            self.hint = showing
+        }
     }
 
     private func update(_ id: String, _ change: (inout GameLogEntry) -> Void) {
@@ -376,10 +440,12 @@ final class GameController {
                                   modelContextSize: OnDeviceModel.contextSize),
                 rulesInstructions: GameModelEngine.rulesInstructions,
                 assumptions: GameLog.assumptionWords,
-                entries: entries)
+                entries: entries,
+                hints: hintTurns)
     }
 
     func clearLog() {
         entries = []
+        hintTurns = []
     }
 }

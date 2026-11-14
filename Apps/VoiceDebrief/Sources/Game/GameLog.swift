@@ -31,7 +31,7 @@ struct GameLogEntry: Codable, Equatable, Sendable, Identifiable {
     let source: String
     /// The end of speaking: the last change to the live words, the moment the voice player's speech
     /// finished, or the press of return.
-    let endedAt: Date
+    var endedAt: Date
     /// When the words settled, for spoken words.
     var settledAt: Date?
     /// Acted on before the words settled.
@@ -119,6 +119,8 @@ struct GameLog: Codable, Equatable, Sendable {
     /// The assumptions the estimates rest on, in words.
     var assumptions: [String]
     var entries: [GameLogEntry]
+    /// The hint engine's requests to the model.
+    var hints: [GameModelTurn] = []
 
     var json: String { LabRun.json(of: self) }
 

@@ -44,6 +44,30 @@ enum GameHints {
         return GameHint(cell: cell, words: "Try saying \u{201C}\(first.words)\u{201D}.", level: 2, source: "code")
     }
 
+    // MARK: The model's part
+
+    static let modelInstructions = "You give hints in a game played by voice. Call showClue once with one short, friendly clue that nudges the player towards the next step without listing every step."
+
+    static let clueTool = GameToolSpec(name: GameToolName.showClue.rawValue, description: "Shows one short clue to the player.",
+                                       directions: [], takesSteps: false)
+
+    static func modelPrompt(state: GameState, next: GameCommand, wrong: [String]) -> String {
+        var lines = ["Game: \(state.oneLine)", "The next step is: \(next.words)."]
+        if !wrong.isEmpty { lines.append("Words that did not work: \(wrong.joined(separator: "; ")).") }
+        return lines.joined(separator: "\n")
+    }
+
+    /// The most characters a clue may have.
+    static let clueLimit = 90
+
+    /// A clue the code accepts: some words, not too many, on one line.
+    static func checkClue(_ words: String?) -> String? {
+        guard let words else { return nil }
+        let clean = words.replacingOccurrences(of: "\n", with: " ").trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !clean.isEmpty, clean.count <= clueLimit else { return nil }
+        return clean
+    }
+
     /// Events that count as progress: something found or opened.
     static func isProgress(_ events: [GameEvent]) -> Bool {
         let progress: Set<GameEvent> = [.gold, .key, .unlocked, .levelWon, .gameWon, .nextLevel, .restarted, .egg]

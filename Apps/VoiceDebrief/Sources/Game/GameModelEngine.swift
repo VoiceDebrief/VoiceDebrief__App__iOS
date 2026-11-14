@@ -103,6 +103,24 @@ struct GameClimbTool: Tool {
     }
 }
 
+/// The hint engine's tool: one short clue.
+struct GameClueTool: Tool {
+    let name: String
+    let description: String
+    let box: GameCallBox
+
+    @Generable
+    struct Arguments {
+        @Guide(description: "One short, friendly clue, under twelve words")
+        let words: String
+    }
+
+    func call(arguments: Arguments) async throws -> String {
+        box.record(tool: name, arguments: ["words": arguments.words])
+        throw GameToolStop()
+    }
+}
+
 /// unlock, nextLevel and restart: no arguments.
 struct GamePlainTool: Tool {
     let name: String
@@ -169,11 +187,11 @@ final class GameModelEngine {
             session = ready.session
             box = ready.box
             turn.prewarmed = true
+            self.ready = nil
         } else {
             box = GameCallBox()
             session = LanguageModelSession(tools: Self.tools(tools, box: box), instructions: instructions)
         }
-        ready = nil
         do {
             let response = try await session.respond(to: prompt)
             turn.answer = response.content
@@ -200,6 +218,7 @@ final class GameModelEngine {
             case .jump: return GameJumpTool(name: spec.name, description: spec.description, box: box)
             case .climb: return GameClimbTool(name: spec.name, description: spec.description, box: box)
             case .unlock, .nextLevel, .restart: return GamePlainTool(name: spec.name, description: spec.description, box: box)
+            case .showClue: return GameClueTool(name: spec.name, description: spec.description, box: box)
             case nil: return nil
             }
         }
