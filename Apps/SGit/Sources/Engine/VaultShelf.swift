@@ -4,6 +4,7 @@ import ImageIO
 import Observation
 import SGitVault
 import UIKit
+import UniformTypeIdentifiers
 
 // Started from Apps/VoiceDebrief/Sources/Engine/VaultBook.swift (v0.1.8): the saved vaults, the token,
 // the signing key, create, add and open are the same. What a debrief needed is gone; files, thumbnails,
@@ -16,8 +17,25 @@ struct SavedVault: Codable, Identifiable, Hashable, Sendable {
     var keyText: String         // a vault key or a read key. Secret.
     var addedAt: Date
     var createdHere: Bool
+    /// The vault's objects are in a folder on this device and nowhere else: it opens and takes commits
+    /// with no network and no token. False once it has been sent to the server, or for a vault that was
+    /// added by its key: those are read from and written to the server.
+    var onDevice = false
 
     var canWrite: Bool { VaultKey.classify(keyText) == .vault }
+}
+
+extension SavedVault {
+    /// Vaults saved by the first build have no `onDevice`: they were all on the server.
+    init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = try c.decode(String.self, forKey: .id)
+        name = try c.decode(String.self, forKey: .name)
+        keyText = try c.decode(String.self, forKey: .keyText)
+        addedAt = try c.decode(Date.self, forKey: .addedAt)
+        createdHere = try c.decodeIfPresent(Bool.self, forKey: .createdHere) ?? false
+        onDevice = try c.decodeIfPresent(Bool.self, forKey: .onDevice) ?? false
+    }
 }
 
 /// What a vault holds now, as the screens show it.
@@ -33,13 +51,17 @@ enum VaultShelfError: LocalizedError {
     case readOnly
     case alreadyThere
     case nameTaken(String)
+    case filesOnTheirWay
+    case serverDiffers
 
     var errorDescription: String? {
         switch self {
-        case .noToken: return "Writing to a vault needs an access token. Add one in Settings."
+        case .noToken: return "The server takes changes only from people it knows, so writing to it needs an access key. Add one in Settings."
         case .readOnly: return "This is a read key: it can open the vault but not change it."
         case .alreadyThere: return "That vault is already in the list."
         case .nameTaken(let name): return "There is already a file called \(name) in this folder."
+        case .filesOnTheirWay: return "Files are still on their way into this vault. Send it to the server when they are in."
+        case .serverDiffers: return "The server already holds this vault with changes this device does not have, so nothing was sent."
         }
     }
 }
@@ -79,7 +101,7 @@ enum Thumbnail {
 }
 
 /// The vaults this device knows, and everything the app reads from them or changes in them one file
-/// at a time. Adding files is the `Outbox`. Keys and the access token live in the Keychain. Every
+/// at a time. Adding files is the `Outbox`. Keys and the access key live in the Keychain. Every
 /// request, decryption and signature check is recorded in `log`, never with key material.
 @MainActor
 @Observable
@@ -87,9 +109,12 @@ final class VaultShelf {
     private let store: any SecretStore
     let log = VaultTrafficLog()
     let server: URL
-    /// Where vaults are read from and written to: the server, or a folder in tests.
+    /// The server: where a vault that is not on this device is read from and written to. A folder in tests.
     let transport: any VaultFileTransport
     let cacheRoot: URL
+    /// Where vaults that live on this device are kept, each in `<localRoot>/<vault id>/`, in the server's layout.
+    let localRoot: URL
+    var local: FolderVaultTransport { FolderVaultTransport(root: localRoot, perVaultSubfolder: "") }
 
     private(set) var vaults: [SavedVault] = []
     private(set) var hasToken = false
@@ -106,11 +131,13 @@ final class VaultShelf {
     private let thumbnails = Limiter(3)
 
     init(store: any SecretStore = KeychainStore(), server: URL = VaultAddress.defaultServer,
-         transport: (any VaultFileTransport)? = nil, cacheRoot: URL? = nil) {
+         transport: (any VaultFileTransport)? = nil, cacheRoot: URL? = nil, localRoot: URL? = nil) {
         self.store = store
         self.server = server
         self.transport = transport ?? HTTPVaultTransport(server: server)
         self.cacheRoot = cacheRoot ?? FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
+        self.localRoot = localRoot ?? FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+            .appending(path: "vaults", directoryHint: .isDirectory)
         if let data = store.get("vaults"), let saved = try? JSONDecoder().decode([SavedVault].self, from: data) {
             vaults = saved
         }
@@ -166,31 +193,39 @@ final class VaultShelf {
         return trimmed.isEmpty ? "Vault \(vaultId)" : trimmed
     }
 
-    /// Creates a new vault and remembers its key.
+    /// The saved vault as it is now. Screens hold a copy from when they opened; this is the current one.
+    func current(_ vault: SavedVault) -> SavedVault {
+        vaults.first { $0.id == vault.id } ?? vault
+    }
+
+    /// Where this vault is read from and written to now: its folder on this device, or the server.
+    func transport(for vault: SavedVault) -> any VaultFileTransport {
+        current(vault).onDevice ? local : transport
+    }
+
+    /// Whether writing to the server needs a token that is not there.
+    private var serverNeedsToken: Bool { token == nil && transport is HTTPVaultTransport }
+
+    /// Creates a new vault on this device and remembers its key. No server, no token, no network.
     @discardableResult
     func create(name: String) async -> SavedVault? {
         guard busy == nil else { return nil }
         problem = nil
-        let token = self.token
-        if token == nil, transport is HTTPVaultTransport {
-            problem = VaultShelfError.noToken.localizedDescription
-            return nil
-        }
         busy = "Creating the vault"
         defer { busy = nil }
         do {
             let signer = try commitSigner()
-            let writer = transport
+            let writer = local
             let created = try await Task.detached(priority: .userInitiated) {
-                try await VaultCreate.create(signer: signer, accessToken: token, writer: writer)
+                try await VaultCreate.create(signer: signer, accessToken: nil, writer: writer)
             }.value
             keys[created.key.vaultId] = created.key
             let saved = SavedVault(id: created.key.vaultId, name: label(name, created.key.vaultId),
-                                   keyText: created.keyText, addedAt: Date(), createdHere: true)
+                                   keyText: created.keyText, addedAt: Date(), createdHere: true, onDevice: true)
             vaults.append(saved)
             persist()
             log.record(VaultTrafficEvent(kind: .verify, path: "create",
-                                         detail: "created vault \(created.key.vaultId): empty tree, one signed commit, branch current, branch index",
+                                         detail: "created vault \(created.key.vaultId) on this device: empty tree, one signed commit, branch current, branch index",
                                          vaultId: created.key.vaultId))
             return saved
         } catch {
@@ -198,6 +233,46 @@ final class VaultShelf {
             return nil
         }
     }
+
+    /// Sends a vault that lives on this device to the server, large files included, so that somebody
+    /// else can open it. From then on the server is where it lives: this device reads and writes it
+    /// there, and its folder here is removed. Nothing is removed unless everything arrived.
+    /// - Parameter pending: whether files are still on their way into the vault.
+    @discardableResult
+    func sendToServer(_ vault: SavedVault, pending: Bool = false) async -> Bool {
+        guard busy == nil else { return false }
+        problem = nil
+        let now = current(vault)
+        guard now.onDevice else { return true }
+        guard now.canWrite else { problem = VaultShelfError.readOnly.localizedDescription; return false }
+        guard !pending else { problem = VaultShelfError.filesOnTheirWay.localizedDescription; return false }
+        guard !serverNeedsToken else { problem = VaultShelfError.noToken.localizedDescription; return false }
+        busy = "Sending the vault to \(serverName)"
+        defer { busy = nil }
+        do {
+            let key = try await key(for: now)
+            let result = try await VaultSync.transferWithLargeFiles(key: key, from: local, to: transport, accessToken: token,
+                                                                    scratch: scratchFolder, log: log)
+            switch result.outcome {
+            case .created, .fastForwarded, .upToDate:
+                guard let index = vaults.firstIndex(where: { $0.id == vault.id }) else { return false }
+                vaults[index].onDevice = false
+                persist()
+                opened[vault.id] = nil
+                try? FileManager.default.removeItem(at: localRoot.appending(path: vault.id, directoryHint: .isDirectory))
+                _ = try? await load(vaults[index])
+                return true
+            case .sourceBehind, .diverged:
+                problem = VaultShelfError.serverDiffers.localizedDescription
+                return false
+            }
+        } catch {
+            problem = "The vault was not sent: \(Self.describe(error))"
+            return false
+        }
+    }
+
+    var serverName: String { server.host() ?? "the server" }
 
     /// Adds a vault made elsewhere, by its vault key, a read key, or a web Vault link. It is opened once
     /// to check the key.
@@ -211,7 +286,7 @@ final class VaultShelf {
         do {
             let key = try await SGitVault.deriveKey(from: text, log: log)
             guard !vaults.contains(where: { $0.id == key.vaultId }) else { throw VaultShelfError.alreadyThere }
-            let vault = makeHandle(key)
+            let vault = makeHandle(key, onDevice: false)
             _ = try await vault.pull()
             keys[key.vaultId] = key
             opened[key.vaultId] = vault
@@ -239,6 +314,8 @@ final class VaultShelf {
         opened[vault.id] = nil
         contents[vault.id] = nil
         try? FileManager.default.removeItem(at: filesFolder.appending(path: vault.id, directoryHint: .isDirectory))
+        // A vault that lives only on this device goes with it: the screen says so before asking.
+        try? FileManager.default.removeItem(at: localRoot.appending(path: vault.id, directoryHint: .isDirectory))
         persist()
     }
 
@@ -249,9 +326,10 @@ final class VaultShelf {
     var thumbnailFolder: URL { cacheRoot.appending(path: "vault-thumbnails", directoryHint: .isDirectory) }
     var scratchFolder: URL { cacheRoot.appending(path: "vault-scratch", directoryHint: .isDirectory) }
 
-    private func makeHandle(_ key: VaultKey) -> SGitVault {
-        SGitVault(address: VaultAddress(vaultId: key.vaultId, server: server), readKey: key.readKey,
-                  cache: objectCache, log: log, transport: transport, branch: "current")
+    private func makeHandle(_ key: VaultKey, onDevice: Bool) -> SGitVault {
+        let place: any VaultTransport = onDevice ? local : transport
+        return SGitVault(address: VaultAddress(vaultId: key.vaultId, server: server), readKey: key.readKey,
+                         cache: objectCache, log: log, transport: place, branch: "current")
     }
 
     func key(for vault: SavedVault) async throws -> VaultKey {
@@ -263,7 +341,8 @@ final class VaultShelf {
 
     func open(_ vault: SavedVault) async throws -> SGitVault {
         if let existing = opened[vault.id] { return existing }
-        let made = makeHandle(try await key(for: vault))
+        let now = current(vault)
+        let made = makeHandle(try await key(for: now), onDevice: now.onDevice)
         opened[vault.id] = made
         return made
     }
@@ -302,7 +381,7 @@ final class VaultShelf {
         if let task = fetching[running] { return try await task.value }
         let handle = try await open(vault)
         let token = self.token
-        let transport = self.transport
+        let transport = self.transport(for: vault)
         let scratch = scratchFolder
         let blobId = file.blobId
         let task = Task { () throws -> URL in
@@ -320,6 +399,27 @@ final class VaultShelf {
             fetchedBytes[blobId] = nil
         }
         return try await task.value
+    }
+
+    /// A file to drag out of the app, to the desktop or another app. It is fetched and decrypted when
+    /// it is dropped, not when the drag begins.
+    func itemProvider(for file: VaultFile, in vault: SavedVault) -> NSItemProvider {
+        let name = VaultListing.name(of: file.path)
+        let provider = NSItemProvider()
+        provider.suggestedName = name
+        let ext = name.split(separator: ".").last.map(String.init) ?? ""
+        let type = UTType(filenameExtension: ext) ?? .data
+        provider.registerFileRepresentation(forTypeIdentifier: type.identifier, fileOptions: [], visibility: .all) { completion in
+            Task { @MainActor in
+                do {
+                    completion(try await self.localFile(for: file, in: vault), false, nil)
+                } catch {
+                    completion(nil, false, error)
+                }
+            }
+            return nil
+        }
+        return provider
     }
 
     /// The largest image a thumbnail is made for without being asked: making one fetches the whole file.
@@ -369,7 +469,7 @@ final class VaultShelf {
         let key = try await key(for: vault)
         guard let writeKey = key.writeKey else { throw VaultShelfError.readOnly }
         let token = self.token
-        if token == nil, transport is HTTPVaultTransport { throw VaultShelfError.noToken }
+        if !current(vault).onDevice, serverNeedsToken { throw VaultShelfError.noToken }
         return (try await open(vault), writeKey, token)
     }
 
@@ -382,7 +482,7 @@ final class VaultShelf {
             attempt += 1
             do {
                 _ = try await handle.commit(staged: staged, removing: removing, message: message, signer: signer,
-                                            writeKey: writeKey, accessToken: token, transport: transport,
+                                            writeKey: writeKey, accessToken: token, transport: transport(for: vault),
                                             alreadyUploaded: Set(staged.map(\.blobId)))
                 break
             } catch VaultError.pushConflict where attempt < 3 {

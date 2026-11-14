@@ -4,7 +4,7 @@ import Security
 // Copied from Apps/VoiceDebrief/Sources/Engine/SecretStore.swift (v0.1.8), with this app's own
 // Keychain service. Shared app code moves into a package later; until then keep the two alike.
 
-/// Where the app keeps what must not be readable by anything else: vault keys, the access token,
+/// Where the app keeps what must not be readable by anything else: vault keys, the access key,
 /// the key that signs commits. The Keychain on a device; memory in tests.
 protocol SecretStore: Sendable {
     func get(_ name: String) -> Data?

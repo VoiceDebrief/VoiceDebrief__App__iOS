@@ -53,6 +53,8 @@ struct ItemProgress: Equatable, Sendable {
 struct IncomingFile: Sendable {
     let url: URL
     let name: String
+    /// A folder below the one the files are being added to, for a file that came inside a dropped folder.
+    var subfolder = ""
 }
 
 /// Files on their way into vaults. A selection is copied into the app's own storage before anything
@@ -136,7 +138,15 @@ final class Outbox {
              shelf: VaultShelf, moving: Bool = true) throws -> UploadJob {
         let id = UUID()
         try FileManager.default.createDirectory(at: plainFolder(id), withIntermediateDirectories: true)
-        let paths = VaultNaming.paths(for: files.map(\.name), in: folder, existing: existing)
+        var taken = existing
+        var paths: [String] = []
+        for file in files {
+            let sub = VaultNaming.cleanFolder(file.subfolder)
+            let target = [folder, sub].filter { !$0.isEmpty }.joined(separator: "/")
+            let path = VaultNaming.paths(for: [file.name], in: target, existing: taken)[0]
+            taken.append(path)
+            paths.append(path)
+        }
         var items: [UploadItem] = []
         for (index, file) in files.enumerated() {
             let itemId = UUID()
@@ -262,7 +272,7 @@ final class Outbox {
             do {
                 _ = try await handle.commit(
                     staged: staged, message: ready.message, signer: signer, writeKey: writeKey, accessToken: token,
-                    transport: shelf.transport, alreadyUploaded: already,
+                    transport: shelf.transport(for: vault), alreadyUploaded: already,
                     uploaded: { blobId in
                         Task { @MainActor in
                             guard let entry = lookup[blobId] else { return }

@@ -7,8 +7,20 @@ struct SGitApp: App {
 
     var body: some Scene {
         WindowGroup {
-            RootView(shelf: shelf, outbox: outbox)
-                .task { outbox.resumeAll(shelf: shelf) }
+            #if DEBUG
+            if let screen = LaunchOptions.screen {
+                ScreenshotRoot(screen: screen)
+            } else {
+                main
+            }
+            #else
+            main
+            #endif
         }
+    }
+
+    private var main: some View {
+        RootView(shelf: shelf, outbox: outbox)
+            .task { outbox.resumeAll(shelf: shelf) }
     }
 }

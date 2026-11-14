@@ -198,7 +198,8 @@ public enum VaultSync {
     ///   `VaultError.pushConflict` when the destination's ref moved during the transfer (nothing is overwritten).
     public static func transfer(key: VaultKey, from source: any VaultTransport,
                                 to destination: any VaultRemoteTransport, accessToken: String?,
-                                log: VaultTrafficLog? = nil) async throws -> VaultSyncResult {
+                                log: VaultTrafficLog? = nil,
+                                alreadySent: Set<String> = []) async throws -> VaultSyncResult {
         let start = ContinuousClock.now
         let vaultId = key.vaultId
         guard let src = try await place(source, key: key) else {
@@ -228,7 +229,8 @@ public enum VaultSync {
             (haveTrees, haveBlobs) = try await closure(of: [known.tree_id], in: source, key: key)
         }
         let need = try await closure(of: fresh.map(\.commit.tree_id), skipping: haveTrees, in: source, key: key)
-        let ids = need.blobs.subtracting(haveBlobs).sorted() + need.trees.sorted() + fresh.map(\.id)
+        // `alreadySent`: blobs the caller has delivered by another route (large objects, sent as files).
+        let ids = need.blobs.subtracting(haveBlobs).subtracting(alreadySent).sorted() + need.trees.sorted() + fresh.map(\.id)
 
         let writeKeyHex = key.writeKey.map { $0.withUnsafeBytes { Data($0).hexString } } ?? ""
         var sent = 0

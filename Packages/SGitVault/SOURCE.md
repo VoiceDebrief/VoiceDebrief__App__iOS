@@ -22,5 +22,7 @@ brought here by diff against the commit above.
 | 13 Nov 2026 | `Sources/SGitVault/VaultLargeFiles.swift` | New: `VaultBlobStager` encrypts a file to disk under its object id; `SGitVault.commit(staged:removing:…)` uploads what the server lacks, then trees, commit and the ref with compare-and-swap, with the `large` flag; `SGitVault.download` fetches a file to disk and checks id, tag, size and content hash; `VaultChange.between` |
 | 13 Nov 2026 | `Sources/SGitVault/SGitVault.swift` | Added `files(in:)`: the files of any commit, so two commits can be compared. Nothing else changed |
 | 13 Nov 2026 | `Tests/SGitVaultTests/LargeFileTests.swift`, `Tests/Fixtures/sgit_writes_large.py` | New: the stream cipher against CryptoKit; staged commits, resuming, a lost race; Swift reads what sgit wrote over 4 MB, and exports what it wrote for sgit to read (`.github/workflows/sgit-app.yml`) |
+| 14 Nov 2026 | `Sources/SGitVault/VaultSync.swift` | `transfer` takes `alreadySent`: blob ids the caller has delivered by another route, which are not sent again. Default empty, so behaviour is unchanged for existing callers |
+| 14 Nov 2026 | `Sources/SGitVault/VaultLargeFiles.swift`, `Tests/SGitVaultTests/LargeFileTests.swift` | `VaultSync.transferWithLargeFiles`: moves the objects flagged `large` as files (fetched to disk, checked against their ids, uploaded in parts), then calls `transfer` for the rest. With a test that moves a vault holding a 6 MB file between two folders |
 
 Nothing else differs from the source commit.

@@ -390,3 +390,88 @@ extension SGitVault {
         }
     }
 }
+
+extension VaultSync {
+    /// The ids of the blobs flagged `large` under `roots`.
+    static func largeBlobs(under roots: [String], in transport: any VaultTransport,
+                           key: VaultKey) async throws -> Set<String> {
+        var seen: Set<String> = []
+        var large: Set<String> = []
+        var stack = roots.map { ($0, 0) }
+        while let (id, depth) = stack.popLast() {
+            if seen.contains(id) { continue }
+            guard depth <= SGitVault.maxTreeDepth else {
+                throw VaultError.malformed(path: "bare/data/\(id)", detail: "folders nested deeper than \(SGitVault.maxTreeDepth)")
+            }
+            seen.insert(id)
+            let raw = try await object(id, in: transport, vaultId: key.vaultId)
+            let tree: WireTree = try json(raw, key: key, path: "bare/data/\(id)", what: "tree")
+            for entry in tree.entries {
+                if let sub = entry.tree_id {
+                    stack.append((sub, depth + 1))
+                } else if let blob = entry.blob_id, entry.large == true, VaultCrypto.objectIdWidth(blob) > 0 {
+                    large.insert(blob)
+                }
+            }
+        }
+        return large
+    }
+
+    /// `transfer`, for a vault that may hold large objects. Those are moved first, each as a file
+    /// (fetched to `scratch`, checked against its id, then uploaded in parts), and never held in memory;
+    /// `transfer` then sends everything else and moves the ref. Where the destination is ahead or the two
+    /// have diverged nothing is sent, exactly as `transfer` behaves.
+    /// - Parameter progress: called with a large object's id and the bytes of it moved so far.
+    public static func transferWithLargeFiles(key: VaultKey,
+                                              from source: any VaultTransport & VaultLargeTransport,
+                                              to destination: any VaultRemoteTransport & VaultLargeTransport,
+                                              accessToken: String?, scratch: URL, log: VaultTrafficLog? = nil,
+                                              progress: (@Sendable (_ blobId: String, _ bytes: Int) -> Void)? = nil) async throws -> VaultSyncResult {
+        let vaultId = key.vaultId
+        guard let src = try await place(source, key: key) else {
+            throw VaultError.vaultNotFoundOrWrongKey(vaultId: vaultId)
+        }
+        let dst = try await place(destination, key: key)
+        if let dst, dst.head == src.head {
+            return try await transfer(key: key, from: source, to: destination, accessToken: accessToken, log: log)
+        }
+        let (fresh, reached) = try await commits(from: src.head, stopAt: dst?.head, in: source, key: key)
+        if dst != nil, !reached {
+            return try await transfer(key: key, from: source, to: destination, accessToken: accessToken, log: log)
+        }
+        var have: Set<String> = []
+        if let dst {
+            let known = try await commit(dst.head, in: source, key: key)
+            have = try await largeBlobs(under: [known.tree_id], in: source, key: key)
+        }
+        let need = try await largeBlobs(under: fresh.map(\.commit.tree_id), in: source, key: key).subtracting(have)
+        let writeKeyHex = key.writeKey.map { $0.withUnsafeBytes { Data($0).hexString } } ?? ""
+        var moved = 0
+        try FileManager.default.createDirectory(at: scratch, withIntermediateDirectories: true)
+        for id in need.sorted() {
+            try Task.checkCancellation()
+            let fileId = "bare/data/\(id)"
+            let file = scratch.appending(path: "moving-\(UUID().uuidString)")
+            defer { try? FileManager.default.removeItem(at: file) }
+            let t = ContinuousClock.now
+            try await source.downloadLarge(vaultId: vaultId, fileId: fileId, to: file, expectedBytes: nil,
+                                           accessToken: nil) { _ in }
+            let sha = try VaultFileCipher.sha256(of: file)
+            let width = VaultCrypto.objectIdWidth(id)
+            guard VaultCrypto.objectPrefix + String(sha.prefix(width)) == id else {
+                throw VaultError.integrity(objectId: id, actual: VaultCrypto.objectPrefix + String(sha.prefix(width)))
+            }
+            let size = try VaultFileCipher.byteCount(of: file)
+            try await destination.uploadLarge(vaultId: vaultId, fileId: fileId, from: file, writeKey: writeKeyHex,
+                                              accessToken: accessToken) { done in progress?(id, done) }
+            moved += size
+            await log?.record(VaultTrafficEvent(kind: .request, path: fileId, bytes: size, durationMs: t.elapsedMs, status: 200,
+                                                detail: "large object, \(source.label) → \(destination.label), as a file",
+                                                vaultId: vaultId))
+        }
+        let rest = try await transfer(key: key, from: source, to: destination, accessToken: accessToken, log: log,
+                                      alreadySent: need)
+        return VaultSyncResult(outcome: rest.outcome, head: rest.head, commits: rest.commits,
+                               objects: rest.objects + need.count, bytes: rest.bytes + moved)
+    }
+}

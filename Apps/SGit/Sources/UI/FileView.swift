@@ -33,12 +33,12 @@ struct FileView: View {
             Section {
                 ZStack {
                     if let player {
-                        VideoPlayer(player: player).frame(minHeight: 260)
+                        VideoPlayer(player: player).frame(height: 320)
                     } else if let preview {
                         Image(uiImage: preview)
                             .resizable()
                             .scaledToFit()
-                            .frame(maxWidth: .infinity)
+                            .frame(maxWidth: .infinity, maxHeight: 380)
                             .onTapGesture { quickLook = local }
                     } else {
                         VStack(spacing: 10) {

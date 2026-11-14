@@ -263,6 +263,48 @@ final class LargeFileTests: XCTestCase {
         XCTAssertEqual(paths, ["mine.txt", "theirs.txt"])
     }
 
+    func testAVaultWithLargeFilesIsMovedToAnotherPlace() async throws {
+        let made = try await makeVault()
+        let work = try temporaryFolder("move-work")
+        let stager = try await made.vault.stager()
+        let big = randomData(6 * 1024 * 1024 + 3)
+        let source = work.appending(path: "big.bin")
+        try big.write(to: source)
+        let small = work.appending(path: "small.txt")
+        try Data("small\n".utf8).write(to: small)
+        let staged = [try await stager.stage(file: source, as: "media/big.bin", in: work.appending(path: "staged")),
+                      try await stager.stage(file: small, as: "small.txt", in: work.appending(path: "staged"))]
+        let writeKey = try XCTUnwrap(made.key.writeKey)
+        _ = try await made.vault.commit(staged: staged, message: "Add 2 files", signer: made.signer, writeKey: writeKey,
+                                        accessToken: nil, transport: made.transport)
+
+        // To a place that does not hold the vault: everything goes, the large object as a file.
+        let elsewhere = CountingTransport(inner: FolderVaultTransport(root: try temporaryFolder("move-server")))
+        let result = try await VaultSync.transferWithLargeFiles(key: made.key, from: made.transport, to: elsewhere,
+                                                                accessToken: nil, scratch: work.appending(path: "scratch"))
+        XCTAssertEqual(result.outcome, .created)
+        XCTAssertEqual(elsewhere.largeUploads, 1)
+        let reader = SGitVault(address: VaultAddress(vaultId: made.key.vaultId), readKey: made.key.readKey,
+                               cache: temporaryCache(), log: VaultTrafficLog(), transport: elsewhere.inner, branch: "current")
+        let head = try await reader.pull()
+        XCTAssertTrue(head.signature.isVerified)
+        let out = work.appending(path: "out.bin")
+        try await reader.download("media/big.bin", to: out, scratch: work.appending(path: "scratch2"), accessToken: nil,
+                                  transport: elsewhere.inner)
+        XCTAssertEqual(try Data(contentsOf: out), big)
+
+        // Again: nothing to send. Then one more commit: a fast-forward that sends no large object twice.
+        let again = try await VaultSync.transferWithLargeFiles(key: made.key, from: made.transport, to: elsewhere,
+                                                               accessToken: nil, scratch: work.appending(path: "scratch"))
+        XCTAssertEqual(again.outcome, .upToDate)
+        _ = try await made.vault.commit(staged: [], removing: ["small.txt"], message: "Remove small.txt", signer: made.signer,
+                                        writeKey: writeKey, accessToken: nil, transport: made.transport)
+        let forward = try await VaultSync.transferWithLargeFiles(key: made.key, from: made.transport, to: elsewhere,
+                                                                 accessToken: nil, scratch: work.appending(path: "scratch"))
+        XCTAssertEqual(forward.outcome, .fastForwarded)
+        XCTAssertEqual(elsewhere.largeUploads, 1)
+    }
+
     func testMediaTypes() {
         XCTAssertEqual(VaultBlobStager.contentType(for: "a/IMG_0001.HEIC"), "image/heic")
         XCTAssertEqual(VaultBlobStager.contentType(for: "clip.mov"), "video/quicktime")
@@ -371,7 +413,13 @@ final class Recorder: @unchecked Sendable {
 }
 
 /// A folder transport that counts large uploads and can fail the nth.
-final class CountingTransport: VaultWriteTransport, VaultLargeTransport, @unchecked Sendable {
+final class CountingTransport: VaultTransport, VaultWriteTransport, VaultLargeTransport, @unchecked Sendable {
+    var label: String { inner.label }
+
+    func get(vaultId: String, path: String) async throws -> VaultResponse {
+        try await inner.get(vaultId: vaultId, path: path)
+    }
+
     struct Failed: Error {}
     let inner: FolderVaultTransport
     let failLargeUploadNumber: Int?

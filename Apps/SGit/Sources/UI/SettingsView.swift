@@ -13,13 +13,13 @@ struct SettingsView: View {
             Section {
                 LabeledContent("Server", value: shelf.server.host() ?? shelf.server.absoluteString)
                 if shelf.hasToken {
-                    LabeledContent("Access token", value: "In the Keychain")
-                    Button("Remove the token", role: .destructive) { shelf.setToken("") }
+                    LabeledContent("Access key", value: "In the Keychain")
+                    Button("Remove the access key", role: .destructive) { shelf.setToken("") }
                 } else {
-                    SecureField("Access token", text: $token)
+                    SecureField("Access key", text: $token)
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled()
-                    Button("Save the token") {
+                    Button("Save the access key") {
                         shelf.setToken(token)
                         token = ""
                     }
@@ -28,7 +28,7 @@ struct SettingsView: View {
             } header: {
                 Text("Server")
             } footer: {
-                Text("Opening and reading a vault needs only its key. Creating a vault or changing one also needs an access token, which is kept in this device's Keychain and sent only to the server above.")
+                Text("Opening and reading a vault needs only its key. Creating a vault or changing one also needs an access key, which is kept in this device's Keychain and sent only to the server above.")
             }
 
             Section {

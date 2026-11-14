@@ -54,7 +54,7 @@
 <tr><td>The server's published API description</td><td>Reading needs no access token, including the signed URL for a large object. Writing needs the access token and the vault's write key</td></tr>
 <tr><td>The live server, with <code>sgit</code> itself</td><td>The exchange for a large object works on <code>dev.send.sgraph.ai</code> as the package describes it (a throwaway vault, destroyed afterwards)</td></tr>
 </tbody></table></div>
-<p>The two source repositories could not be attached to this session. What is said about the web Vault UI's source is the parent session's reading of it, passed on; the rest is from published code.</p>
+<p>Both source repositories were read on 14 November 2026, once the owner asked for them to be cloned. From the web Vault's source: it opens a vault this app made from its vault key, without writing anything, and shows it as &quot;Untitled Vault&quot; because the app writes no settings file; its link is the site's root followed by <code>#</code> and the key; it chooses the signed URL for a file by size, not by the <code>large</code> flag; its own commits are unsigned, which the app's history shows as &quot;Not signed&quot;; and when it rewrites a folder it drops the <code>large</code> flag and the file types, which the app tolerates by going by size too. None of that has been tried between the two yet.</p>
 <h2 id="decisions">Decisions</h2>
 <div class="tablewrap"><table>
 <thead><tr><th></th><th>Decision</th></tr></thead>
@@ -65,15 +65,15 @@
 <tr><td>Large files</td><td>Encrypted and decrypted from disk to disk, a megabyte at a time. Uploaded in parts, three at a time; downloaded in ranges, three at a time. See &quot;Limits&quot;</td></tr>
 <tr><td>Where a file goes</td><td>Into the folder that is open, under its own name. A name already taken gets a number</td></tr>
 <tr><td>Reading</td><td>A file is fetched and decrypted when it is opened. The decrypted copy is in the app's cache folder only, which the system may empty, and which Settings can empty</td></tr>
-<tr><td>Server</td><td>One server (<code>dev.send.sgraph.ai</code>) and one access token, as the engine has them today. Local-first vaults with named remotes (issue 011) are adopted when they land</td></tr>
+<tr><td>Where a vault lives</td><td>A vault you create is made and kept on this device: no account, no token, no network, and it takes files at once. It goes to a server when you choose to share it, which is the first time an access token is asked for, with the reason. From then on the server is where it lives and this device reads and writes it there, as it does a vault added by its key. One server (<code>dev.send.sgraph.ai</code>) for now</td></tr>
 <tr><td>Keys</td><td>Vault keys, the access token and the device's commit-signing key are in this app's Keychain, on this device only. This app does not share a Keychain with VoiceDebrief</td></tr>
 <tr><td>Honesty</td><td>No screen says a file is in the vault before the commit that names it has been pushed and read back</td></tr>
 </tbody></table></div>
 <h2 id="the-words">The words</h2>
-<p>The owner's and sgit's: <strong>vault</strong>, <strong>vault key</strong> (reads and writes), <strong>read key</strong> (reads only), <strong>access token</strong> (the web UI calls it an access key), <strong>commit</strong>, <strong>history</strong>, <strong>branch</strong>. The app says <strong>Add</strong> for putting files in and <strong>Refresh</strong> for fetching the latest; the web UI's Push and Pull arrive with local-first vaults, when there is something local to push.</p>
+<p>The owner's and sgit's: <strong>vault</strong>, <strong>vault key</strong> (reads and writes), <strong>read key</strong> (reads only), <strong>access key</strong> (the server's own word is access token), <strong>commit</strong>, <strong>history</strong>, <strong>branch</strong>. The app says <strong>Add</strong> for putting files in, <strong>Refresh</strong> for fetching the latest, and <strong>Send to the server</strong> for the one push a vault made on the device needs.</p>
 <h2 id="the-screens">The screens</h2>
 <p><strong>Vaults.</strong> The vaults this device knows. Add one by pasting its key or scanning a QR code; create one. Each row says whether the key can write.</p>
-<p><strong>A vault.</strong> The folder that is open: folders first, then files, as a grid of thumbnails or a list. Add (from Photos, from Files), New folder by naming one when adding, Refresh, Share, History. Uploads in progress sit at the top with a bar for each file and one for the whole selection, and a failed one says why and offers Try again and Discard.</p>
+<p><strong>A vault.</strong> The folder that is open: folders first, then files, as a grid of thumbnails or a list. On an iPad or a Mac the folders are also a tree down the left, as in the web Vault. Files and folders can be dropped on it from the desktop, and a file can be dragged out. Add (from Photos, from Files), New folder by naming one when adding, Refresh, Share, History. Uploads in progress sit at the top with a bar for each file and one for the whole selection, and a failed one says why and offers Try again and Discard.</p>
 <p><strong>A file.</strong> An image at full size with zoom; a video in the system player; anything else in Quick Look. Save to Photos and Share. Delete and rename are a commit each.</p>
 <p><strong>Share.</strong> The vault key as text and as a QR code, under a plain statement: whoever holds it can read everything, add, change and delete, and it cannot be taken back. Below it the read key, for somebody who should only look. See &quot;Giving somebody the vault&quot;.</p>
 <p><strong>History.</strong> The commits, newest first: the message, the time, the short id, the fingerprint of the key that signed it and whether the signature verified, and whether that key is this device's. A commit opens to the files it added, changed and removed.</p>
@@ -96,6 +96,7 @@
 <li><strong>The format encrypts a file as one AES-GCM message.</strong> sgit and the web UI therefore hold a whole file, and its whole ciphertext, in memory. The app does not: it computes the same bytes as a stream. Its limit is free space on the device (the staged copy and the ciphertext exist together until the upload ends, so about twice the file), and AES-GCM's own limit of about 64 GB a message.</li>
 <li><strong>What could not be avoided.</strong> Each upload part is held in memory while it is sent: three parts of 10 MB. A blob that sgit deflated and that is over 4 MB is inflated in memory, up to 64 MB. A server without signed URLs (a self-hosted one) takes a large object in one request, which the app allows up to 64 MB. Thumbnails are made from the full image, so a folder of photographs is fetched whole the first time it is shown.</li>
 <li><strong>The other end.</strong> A teammate opening a large video in the web UI needs it to fit in the browser's memory; <code>sgit clone</code> on a computer needs it to fit in memory once.</li>
+<li><strong>A vault on this device only is on this device only.</strong> Until it is sent to a server there is one copy. Forgetting it deletes it, and the app says so before it does.</li>
 <li><strong>An upload stops when the app is suspended.</strong> It is taken up again when the app returns: parts already sent in an unfinished object are sent again, finished objects are not. Background uploads are after milestone one.</li>
 <li><strong>A vault with packs</strong> (objects stored as zips) is refused, as it is by the engine today.</li>
 </ul>
@@ -110,7 +111,7 @@
 </ol>
 <h2 id="after-it-in-this-order">After it, in this order</h2>
 <ol>
-<li>Local-first vaults and named remotes (issue 011), then keys in iCloud Keychain (017), as the VoiceDebrief app adopts them.</li>
+<li>A vault that stays on the device after it is shared, with push and pull and a choice of servers, as VoiceDebrief has since issue 011. That needs two things first: a merge for when two people add at once (today the app commits straight to the server, where a refused push is simply tried again), and a way to keep a vault's trees on the device without fetching every video in it. Then keys in iCloud Keychain (017).</li>
 <li>A share extension: &quot;send to vault&quot; from Photos and Files.</li>
 <li>Background uploads.</li>
 <li>A file-level merge for edits and deletions that collide (adding already needs none).</li>

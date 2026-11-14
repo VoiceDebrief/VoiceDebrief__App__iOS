@@ -21,6 +21,10 @@ struct OutboxTests {
         return data
     }
 
+    static func shelf(_ transport: any VaultFileTransport) throws -> VaultShelf {
+        VaultShelf(store: MemoryStore(), transport: transport, cacheRoot: try folder("cache"), localRoot: try folder("local"))
+    }
+
     static func incoming(_ files: [(String, Data)]) throws -> [IncomingFile] {
         let dir = try folder("picked")
         return try files.map { name, data in
@@ -32,8 +36,9 @@ struct OutboxTests {
 
     @Test func aSelectionBecomesOneSignedCommitAndIsReadBack() async throws {
         let transport = FolderVaultTransport(root: try Self.folder("server"))
-        let shelf = VaultShelf(store: MemoryStore(), transport: transport, cacheRoot: try Self.folder("cache"))
+        let shelf = try Self.shelf(transport)
         let vault = try #require(await shelf.create(name: "Team"))
+        #expect(vault.onDevice)
         let outbox = Outbox(root: try Self.folder("outbox"))
         let clip = Self.random(5 * 1024 * 1024 + 9)
         let photo = Self.random(20_000)
@@ -73,6 +78,27 @@ struct OutboxTests {
         #expect(fingerprint != nil)
         #expect(fingerprint == shelf.deviceFingerprint)
 
+        // So far the vault is on this device only: the server holds nothing, and a teammate cannot add it.
+        let teammate = try Self.shelf(transport)
+        #expect(await teammate.add(keyText: vault.keyText, name: "Team") == nil)
+        teammate.clearProblem()
+
+        // Sent to the server, large file included. The device's own folder goes; the vault reads the same.
+        #expect(await shelf.sendToServer(vault, pending: true) == false)
+        shelf.clearProblem()
+        #expect(await shelf.sendToServer(vault))
+        #expect(shelf.current(vault).onDevice == false)
+        #expect(!FileManager.default.fileExists(atPath: shelf.localRoot.appending(path: vault.id).path))
+        let onServer = try await shelf.load(vault)
+        #expect(onServer.head.commitId == contents.head.commitId)
+
+        // The teammate opens it by its key and reads the large file byte for byte.
+        let theirs = try #require(await teammate.add(keyText: vault.keyText, name: "Team"))
+        let theirContents = try await teammate.load(theirs)
+        let theirClip = try #require(theirContents.files.first { $0.path == "trip/clip.mov" })
+        let theirLocal = try await teammate.localFile(for: theirClip, in: theirs)
+        #expect(try Data(contentsOf: theirLocal) == clip)
+
         // Rename and delete are a commit each, and upload nothing.
         try await shelf.rename(clipFile, to: "film.mov", in: vault)
         let renamed = try #require(shelf.contents[vault.id])
@@ -89,8 +115,9 @@ struct OutboxTests {
 
     @Test func aFailedUploadKeepsEverythingAndCarriesOnAfterARestart() async throws {
         let flaky = FlakyTransport(inner: FolderVaultTransport(root: try Self.folder("server")), failures: 1)
-        let shelf = VaultShelf(store: MemoryStore(), transport: flaky, cacheRoot: try Self.folder("cache"))
+        let shelf = try Self.shelf(flaky)
         let vault = try #require(await shelf.create(name: "Team"))
+        #expect(await shelf.sendToServer(vault))
         let root = try Self.folder("outbox")
         let outbox = Outbox(root: root)
         let big = Self.random(4 * 1024 * 1024 + 4_096)
@@ -121,8 +148,9 @@ struct OutboxTests {
 
     @Test func discardingRemovesTheJobAndItsFiles() async throws {
         let flaky = FlakyTransport(inner: FolderVaultTransport(root: try Self.folder("server")), failures: 100)
-        let shelf = VaultShelf(store: MemoryStore(), transport: flaky, cacheRoot: try Self.folder("cache"))
+        let shelf = try Self.shelf(flaky)
         let vault = try #require(await shelf.create(name: "Team"))
+        #expect(await shelf.sendToServer(vault))
         let outbox = Outbox(root: try Self.folder("outbox"))
         let job = try outbox.add(try Self.incoming([("big.bin", Self.random(4 * 1024 * 1024 + 1))]),
                                  to: vault, folder: "", existing: [], shelf: shelf)
@@ -135,17 +163,83 @@ struct OutboxTests {
 
     @Test func aReadKeyCannotAdd() async throws {
         let transport = FolderVaultTransport(root: try Self.folder("server"))
-        let owner = VaultShelf(store: MemoryStore(), transport: transport, cacheRoot: try Self.folder("cache"))
+        let owner = try Self.shelf(transport)
         let made = try #require(await owner.create(name: "Team"))
+        #expect(await owner.sendToServer(made))
         let readKey = try await owner.key(for: made).exportReadKey()
 
-        let reader = VaultShelf(store: MemoryStore(), transport: transport, cacheRoot: try Self.folder("cache2"))
+        let reader = try Self.shelf(transport)
         let vault = try #require(await reader.add(keyText: readKey, name: "Theirs"))
         #expect(!vault.canWrite)
         let outbox = Outbox(root: try Self.folder("outbox"))
         let job = try outbox.add(try Self.incoming([("a.txt", Data("a".utf8))]), to: vault, folder: "", existing: [], shelf: reader)
         await outbox.wait(for: job.id)
         #expect(outbox.jobs.first?.problem?.contains("read key") == true)
+    }
+}
+
+@Suite("A vault on this device")
+@MainActor
+struct LocalVaultTests {
+    @Test func creatingNeedsNoTokenAndNoServer() async throws {
+        // The real server transport, and no token: nothing here may touch the network.
+        let shelf = VaultShelf(store: MemoryStore(), cacheRoot: try OutboxTests.folder("cache"),
+                               localRoot: try OutboxTests.folder("local"))
+        #expect(!shelf.hasToken)
+        let vault = try #require(await shelf.create(name: "Mine"))
+        #expect(vault.onDevice)
+        #expect(vault.canWrite)
+        #expect(shelf.problem == nil)
+
+        // It takes files at once.
+        let outbox = Outbox(root: try OutboxTests.folder("outbox"))
+        let job = try outbox.add(try OutboxTests.incoming([("a.txt", Data("a".utf8))]), to: vault, folder: "", existing: [], shelf: shelf)
+        await outbox.wait(for: job.id)
+        #expect(outbox.jobs.isEmpty, "\(outbox.jobs.first?.problem ?? "")")
+        let contents = try await shelf.load(vault)
+        #expect(contents.files.map(\.path) == ["a.txt"])
+        #expect(contents.head.signature.isVerified)
+
+        // Sharing is the first thing that asks for a token, and says why. Nothing is sent without one.
+        #expect(await shelf.sendToServer(vault) == false)
+        #expect(shelf.problem?.contains("access key") == true)
+        #expect(shelf.current(vault).onDevice)
+    }
+
+    @Test func aDroppedFolderKeepsItsShape() async throws {
+        let shelf = try OutboxTests.shelf(FolderVaultTransport(root: try OutboxTests.folder("server")))
+        let vault = try #require(await shelf.create(name: "Mine"))
+        // A folder as it would be dragged in from the desktop.
+        let dropped = try OutboxTests.folder("dropped").appending(path: "Summit", directoryHint: .isDirectory)
+        try FileManager.default.createDirectory(at: dropped.appending(path: "day 1"), withIntermediateDirectories: true)
+        try Data("one".utf8).write(to: dropped.appending(path: "day 1/a.txt"))
+        try Data("two".utf8).write(to: dropped.appending(path: "b.txt"))
+        let incoming = PickedFile.keepAll(scoped: dropped)
+        #expect(incoming.count == 2)
+        let outbox = Outbox(root: try OutboxTests.folder("outbox"))
+        let job = try outbox.add(incoming, to: vault, folder: "photos", existing: [], shelf: shelf)
+        await outbox.wait(for: job.id)
+        #expect(outbox.jobs.isEmpty, "\(outbox.jobs.first?.problem ?? "")")
+        let contents = try await shelf.load(vault)
+        #expect(contents.files.map(\.path) == ["photos/Summit/b.txt", "photos/Summit/day 1/a.txt"])
+        #expect(FileManager.default.fileExists(atPath: dropped.appending(path: "b.txt").path), "the originals are left where they were")
+    }
+
+    @Test func aVaultSavedByTheFirstBuildIsOnTheServer() throws {
+        let old = #"[{"id":"abcd1234","name":"Old","keyText":"some-pass:abcd1234","addedAt":0,"createdHere":true}]"#
+        let vaults = try JSONDecoder().decode([SavedVault].self, from: Data(old.utf8))
+        #expect(vaults.first?.onDevice == false)
+        #expect(vaults.first?.canWrite == true)
+    }
+
+    @Test func forgettingAVaultOnThisDeviceDeletesIt() async throws {
+        let shelf = try OutboxTests.shelf(FolderVaultTransport(root: try OutboxTests.folder("server")))
+        let vault = try #require(await shelf.create(name: "Mine"))
+        let folder = shelf.localRoot.appending(path: vault.id)
+        #expect(FileManager.default.fileExists(atPath: folder.path))
+        shelf.remove(vault)
+        #expect(shelf.vaults.isEmpty)
+        #expect(!FileManager.default.fileExists(atPath: folder.path))
     }
 }
 
