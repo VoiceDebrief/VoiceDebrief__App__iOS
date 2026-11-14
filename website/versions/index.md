@@ -4,6 +4,7 @@ Every release of this repository. Every push to `dev` is a release: CI works out
 
 | Version | Date | What changed |
 |---|---|---|
+| next | 14 November 2026 | iPad and Mac record screen, from the screenshots: the recipient chips wrap onto a second line instead of being cut ("Maria (in"), and while recording the time sits above the button. |
 | next | 14 November 2026 | Pictures of the Guide and of Play: five more screens photographed by CI on every device and appearance (the Guide, one feature guide, the latest release card, Play as it opens, and a game two commands in), 40 in each set. The Guide takes the item to open first, used only by the pictures. Nothing a user sees has changed. |
 | v0.1.107 | 14 November 2026 | The sgit app's Gallery shows the vaults published at sgit.ai/demos/vaults, 54 of them, grouped by kind and searchable; each opens live in the web Vault inside the app, to look at, with the read key its maker published. The list is read from sgit.ai each time, so new vaults appear without an update |
 | v0.1.106 | 14 November 2026 | The floating Talk to Claude button is no longer shown on Play and in the Lab, where it covered their own Listen buttons (seen in the screenshots). |
