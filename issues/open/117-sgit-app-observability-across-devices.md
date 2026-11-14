@@ -5,7 +5,7 @@
 The owner, 14 November 2026: "add a full-blown observability here so you capture every single action that happens
 on this app across my three devices" (a laptop, an iPad and an iPhone), reusing what VoiceDebrief has.
 
-**Written (14 November 2026, not yet compiled):** VoiceDebrief's `UsageLog`, lane and lane encryption copied into
+**Compiles and its tests pass (14 November 2026, `a4d6620`); done when a report from a device has been read:** VoiceDebrief's `UsageLog`, lane and lane encryption copied into
 the app; every screen is timed and about thirty actions are recorded; Settings, Your activity shows them and
 sends the report over the developer's lane as `sgit/usage/v1`, with the device model and a random install id so
 that three devices can be told apart. The developer reads it with `tools/conductor/conductor.py drain`.

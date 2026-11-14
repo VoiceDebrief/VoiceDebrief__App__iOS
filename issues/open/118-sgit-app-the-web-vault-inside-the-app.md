@@ -6,7 +6,7 @@ The owner, 14 November 2026: recreate as much as possible of the web Vault's cor
 file, edit a file, see the HTML preview), and "allow me to open the full web interface here", loading the vault by
 JavaScript as sgit.ai's embedding does, not by putting the key in the address.
 
-**Written (14 November 2026, not yet compiled):** `UI/WebVaultView.swift`. The protocol it uses was tried against
+**Compiles and its tests pass (14 November 2026, `a4d6620`); done when it has been used on a device:** `UI/WebVaultView.swift`. The protocol it uses was tried against
 the live page first, in Chromium, with a throwaway vault: see the reality file's row.
 
 **What the try showed, to keep:**
