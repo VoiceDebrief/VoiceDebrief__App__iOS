@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>People, messages and secrets: the layer under both apps</title>
+<meta name="description" content="An architecture and a brief: a key pair and an inbox from the first launch, contact cards exchanged by QR code, message or register, sealed messages checked for regularly, and a secrets manager on top.">
+<link rel="canonical" href="https://ios.app.voicedebrief.ai/articles/people-messages-and-secrets/index.html">
+<meta property="og:url" content="https://ios.app.voicedebrief.ai/articles/people-messages-and-secrets/index.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="VoiceDebrief for iOS">
+<meta property="og:title" content="People, messages and secrets: the layer under both apps">
+<meta property="og:description" content="An architecture and a brief: a key pair and an inbox from the first launch, contact cards exchanged by QR code, message or register, sealed messages checked for regularly, and a secrets manager on top.">
+<link rel="alternate" type="text/markdown" href="index.md" title="This page as markdown">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/vd-tokens.css">
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+
+<nav class="site"><div class="row">
+  <a class="brand" href="../../index.html">Voice<em>Debrief</em> <span>iOS</span></a>
+  <span class="beta" title="In development: there is nothing to install yet">IN DEVELOPMENT</span>
+  <a class="parent" href="https://voicedebrief.ai" title="A VoiceDebrief product">&#8599; part of <b>voicedebrief.ai</b></a>
+  <a class="ver" href="../../versions/index.html" title="Release history">dev</a>
+  <a class="nl" href="../../built/index.html">Built</a>
+  <a class="nl" href="../../architecture/index.html">How it works</a>
+  <a class="nl" href="../../design/index.html">Design</a>
+  <a class="nl" href="../../plan/index.html">Plan</a>
+  <a class="nl here" href="../../articles/index.html">Articles</a>
+  <a class="nl" href="../../develop/index.html">Build</a>
+  <a class="gh" href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">&#9733; GitHub</a>
+</div></nav>
+
+<main class="doc">
+<div class="crumb"><a href="../../index.html">VoiceDebrief iOS</a> / articles / people-messages-and-secrets</div>
+<h1 id="people-messages-and-secrets-the-layer-under-both-apps">People, messages and secrets: the layer under both apps</h1>
+<p><strong>Kind:</strong> an architecture and a brief. <strong>From:</strong> the owner, 14 November 2026: &quot;anybody who installs the app has a public and private key straight away ... register people, kind of like PKI ... identities from the website, and identities shared by QR code, in person or in a WhatsApp message ... a messaging system ... your device becomes the management layer ... a full-blown secrets manager.&quot; Written up by the agent working on the repository. Intention, not fact: <a href="../../built/index.html">what is built</a> says what exists.</p>
+<p>The idea in one line: <strong>every install is a person with keys and an inbox; people meet by exchanging cards; everything they send each other, including secrets, is sealed to the recipient's key and dropped in their inbox.</strong> VoiceDebrief and SGit Vaults both stand on it, and so does a secrets manager.</p>
+<h2 id="1-from-the-first-launch">1. From the first launch</h2>
+<p><a href="../../assets/diagrams/people-1-identity.svg"><img class="shot" src="../../assets/diagrams/people-1-identity.svg" alt="The first launch makes a key pair for the person, a key for the device, an inbox and a contact card; a secrets store holds access keys and vault keys; pki.sgit.ai is optional." loading="lazy"></a></p>
+<ul>
+<li><strong>Your key pair</strong> (RSA-OAEP 4096 to receive, ECDSA P-256 to sign; the sgit key bundle). Made at first launch, kept in iCloud Keychain so that your other devices have it. <em>Built in VoiceDebrief (<code>PKIKit</code>, the Identity screen); made when asked for, not at first launch; untried on a device.</em></li>
+<li><strong>This device's key</strong>, in the Secure Enclave where there is one, vouched for by your key. <em>Built in VoiceDebrief; untried.</em></li>
+<li><strong>An inbox</strong>: an append lane on a vault of yours. Anyone holding its link can drop a sealed message in; only your key opens it. <em>The lane works today (every note sent to the developer goes this way); an inbox per person is not built.</em></li>
+<li><strong>A contact card</strong>: your name, your public keys, your inbox's link, signed by you. Shown as a QR code or a link. <em>Not built: today's QR code carries an inbox link and one public key, not a signed card.</em></li>
+<li><strong>The secrets store</strong>: access keys, vault keys, passwords and tokens, in the Keychain. Each secret remembers who it was given to. <em>Not built.</em></li>
+</ul>
+<h2 id="2-meeting-someone">2. Meeting someone</h2>
+<p><a href="../../assets/diagrams/people-2-meeting.svg"><img class="shot" src="../../assets/diagrams/people-2-meeting.svg" alt="Three ways to exchange cards: in person by QR code, by a message such as WhatsApp, or from the register. Each contact keeps how it was met." loading="lazy"></a></p>
+<div class="tablewrap"><table>
+<thead><tr><th>Way</th><th>How</th><th>How far to trust it</th></tr></thead>
+<tbody>
+<tr><td>In person</td><td>Each scans the other's QR code</td><td>The most: you saw the person and the code together</td></tr>
+<tr><td>By a message</td><td>The card as a QR picture or a link, on WhatsApp, Signal, email</td><td>As far as the channel it came by</td></tr>
+<tr><td>From the register</td><td>Look up a name or fingerprint at pki.sgit.ai</td><td>As far as the register's checks on that person</td></tr>
+</tbody></table></div>
+<p>A contact keeps how it was met, and can be checked later (fingerprints compared face to face, or the register vouching). Adding is <strong>two-way</strong>: when you add someone, the app offers to send them your card, so they can write back. Agents are contacts like any other: a Claude session has a card and an inbox (<code>tools/conductor/</code> makes them).</p>
+<h2 id="3-messages-and-secrets">3. Messages and secrets</h2>
+<p><a href="../../assets/diagrams/people-3-messages.svg"><img class="shot" src="../../assets/diagrams/people-3-messages.svg" alt="A message or a secret is sealed on the sender's device to the recipient's key, dropped in their inbox, and opened on their device, which checks for new messages on opening, every minute while in use, and less often when idle." loading="lazy"></a></p>
+<p>A message is sealed to the recipient's public key and signed with the sender's, on the sender's device (the envelope <code>PKIKit</code> already makes). It can carry text, a voice note (what VoiceDebrief sends today), <strong>a secret</strong>, a vault invitation, or a card.</p>
+<p><strong>Checking for new messages.</strong> There are no push events, so the app asks: when it opens or comes to the front, every minute while it is in use, and less and less often when idle (the owner's pattern from the website). One list call on one inbox per check: little traffic.</p>
+<h2 id="4-the-secrets-manager">4. The secrets manager</h2>
+<p>The owner's point: there is a gap in the market, because sharing a secret safely is still awkward. Here it is one gesture: pick the secret, pick the contact, send. What it needs:</p>
+<ul>
+<li><strong>Kinds</strong>: a server access key, a vault key, a password, an API token, a note.</li>
+<li><strong>Kept</strong> in the Keychain (iCloud Keychain by default, a switch for this device only), with a backup in one of your vaults if you choose.</li>
+<li><strong>Shared</strong> as a sealed message to a contact; <strong>received</strong> into the store with one tap.</li>
+<li><strong>Remembered</strong>: who holds each secret and since when, so that a secret can be changed and the new value sent to everyone who should have it, and nobody who should not.</li>
+<li><strong>Shown</strong> only after Face ID or the passcode, copied with an expiry on the clipboard.</li>
+</ul>
+<h2 id="5-the-access-key-and-the-first-message">5. The access key, and the first message</h2>
+<p>A person needs the server access key to write to a vault server, including to create their own inbox. The owner's assumption: everyone who uses the app is given it. That makes it the first secret most people will receive, which raises a chicken-and-egg question: how does it arrive before they have an inbox?</p>
+<p>The answer this design proposes: <strong>the first exchange carries it.</strong> The newcomer shows their card (their public key, no inbox yet); whoever invites them seals the access key to that key and sends it back by the same route, a QR code or a WhatsApp message. A sealed secret is safe on WhatsApp: only the newcomer's key opens it. With the access key in their store, the newcomer's app creates their inbox and sends their full card. This also settles issue 110 for SGit Vaults: a teammate receives the access key as a secret, held and remembered like any other.</p>
+<h2 id="where-it-is-built">Where it is built</h2>
+<p>One Swift package shared by both apps (proposed name <code>SGitPeople</code>): the key bundle (moving <code>PKIKit</code> out of VoiceDebrief), contact cards, contacts, inboxes and the check for new messages, the message format, and the secrets store. Each app adds its own screens. A dedicated session builds it.</p>
+<h2 id="decisions-for-the-owner">Decisions for the owner</h2>
+<ol>
+<li><strong>Access key distribution</strong> as in section 5, or each person brings their own.</li>
+<li><strong>The card's format</strong>: a new signed card, compatible with pki.sgit.ai's key bundle (proposed), shown as a QR code and a link.</li>
+<li><strong>Where inboxes live</strong>: on each person's own vault (proposed), or one shared vault for a team.</li>
+<li><strong>The register</strong>: publishing to pki.sgit.ai optional and off by default (proposed).</li>
+</ol>
+</main>
+
+<footer class="site"><div class="cols">
+  <div>
+    <div class="brandline">Voice<em>Debrief</em> <span>iOS</span></div>
+    <p>The VoiceDebrief transcript and debrief as a native iPhone and iPad app, on Apple's own models, with the results in a vault you own. In development: there is nothing to install yet. Content CC BY 4.0; code Apache 2.0.</p>
+    <p class="partnote">This site is static and has no analytics.</p>
+    <p class="verline">site dev · <a href="index.md">this page as markdown</a> · <a href="../../llms.txt">llms.txt</a></p>
+  </div>
+  <div>
+    <h4>The app</h4>
+    <a href="../../built/index.html">What is built</a>
+    <a href="../../plan/index.html">The plan</a>
+    <a href="../../develop/index.html">Build and test</a>
+    <a href="../../versions/index.html">Release history</a>
+    <a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">GitHub</a>
+  </div>
+  <div>
+    <h4>VoiceDebrief</h4>
+    <a href="https://voicedebrief.ai">voicedebrief.ai</a>
+    <a href="https://meetscribe.chrome-extension.voicedebrief.ai">MeetScribe for Google Meet</a>
+  </div>
+  <div>
+    <h4>Built on</h4>
+    <a href="https://sgit.ai">sgit.ai</a>
+    <a href="https://pki.sgit.ai">pki.sgit.ai</a>
+    <a href="https://sgit.ai/security/index.html">The vault security model</a>
+  </div>
+</div></footer>
+</body>
+</html>

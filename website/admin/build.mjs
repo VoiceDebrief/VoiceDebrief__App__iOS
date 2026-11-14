@@ -48,6 +48,8 @@ const PAGES = [
     description: 'An idea: voice as the way in from every screen, why the live words matter, and more than one interface to try.' },
   { path: 'articles/a-private-voice-note-and-a-clinic', nav: null, title: 'A private voice note, and what it would take to use it in a clinic',
     description: 'An idea, with corrections: the on-device, encrypted, account-free workflow of VoiceDebrief applied between a patient and a clinician; what is built, what the conversation overstated, and what data protection still asks.' },
+  { path: 'articles/people-messages-and-secrets', nav: null, title: 'People, messages and secrets: the layer under both apps',
+    description: 'An architecture and a brief: a key pair and an inbox from the first launch, contact cards exchanged by QR code, message or register, sealed messages checked for regularly, and a secrets manager on top.' },
   { path: 'articles/synthetic-users', nav: null, title: 'Synthetic users for an app its builder cannot see',
     description: 'A brief: invented users walking screenshots of every screen to find where a real one would get lost.' },
   { path: 'identity/return', nav: null, title: 'Back from pki.sgit.ai: hand the answer to the app',

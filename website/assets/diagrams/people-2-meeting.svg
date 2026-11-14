@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 560" width="1080" height="560" role="img" aria-labelledby="t d">
+<title id="t">Meeting someone: three ways to exchange cards</title>
+<desc id="d">Two people exchange contact cards in person by QR code, by a message such as WhatsApp, or through the public register. Each contact is kept with how it was met, which says how far to trust it.</desc>
+<style>
+  .bg{fill:#F8FAFC} .box{fill:#FFFFFF;stroke:#C9D5E0;stroke-width:1.2} .zone{fill:none;stroke:#9FB2C4;stroke-width:1.2;stroke-dasharray:2 4}
+  .live{stroke:#0E9E72;stroke-width:2} .test{stroke:#8A6A18;stroke-width:1.6} .plan{stroke:#6B7F94;stroke-width:1.4;stroke-dasharray:6 5}
+  .t{font:600 14px -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;fill:#0B1B2B}
+  .s{font:400 12px -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;fill:#45596E}
+  .z{font:600 12px -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;fill:#6B7F94;letter-spacing:.06em}
+  .h{font:700 17px -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;fill:#0B1B2B}
+  .l{font:400 11.5px -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;fill:#45596E}
+  .a{fill:none;stroke:#45596E;stroke-width:1.5} .a.live{stroke:#0E9E72;stroke-width:2} .a.plan{stroke:#6B7F94;stroke-dasharray:6 5}
+  .hd{fill:#45596E} .hd.live{fill:#0E9E72} .hd.plan{fill:#6B7F94} .n{fill:#0E9E72} .nt{font:700 12px -apple-system,Helvetica,Arial,sans-serif;fill:#FFFFFF}
+  .lb{fill:#F8FAFC}
+  @media (prefers-color-scheme: dark){
+    .bg{fill:#08131F} .box{fill:#0E1E2E;stroke:#2B3F53} .zone{stroke:#48607A} .live{stroke:#12C08A} .test{stroke:#F0B429} .plan{stroke:#8CA2B8}
+    .t,.h{fill:#F2F6FA} .s,.l{fill:#A8BBCE} .z{fill:#8CA2B8} .a{stroke:#A8BBCE} .a.live{stroke:#12C08A} .a.plan{stroke:#8CA2B8}
+    .hd{fill:#A8BBCE} .hd.live{fill:#12C08A} .hd.plan{fill:#8CA2B8} .n{fill:#12C08A} .nt{fill:#04231A} .lb{fill:#08131F}
+  }
+</style>
+<rect class="bg" width="1080" height="560" rx="14"/>
+<text class="h" x="24" y="34">Meeting someone: three ways to exchange cards</text>
+<rect class="box test" x="40" y="70" width="320" height="110" rx="10"/>
+<text class="t" x="52" y="92">In person</text>
+<text class="s" x="52" y="110">Each scans the other’s QR code.</text>
+<text class="s" x="52" y="126">The strongest: you saw the</text>
+<text class="s" x="52" y="142">person and the code together</text>
+<path class="a " d="M200 180 L200 236"/>
+<polygon class="hd " points="200.0,236.0 196.3,227.8 203.7,227.8"/>
+<rect class="lb" x="154" y="202" width="92" height="18" rx="3"/>
+<text class="l" x="200" y="214" text-anchor="middle">Met in person</text>
+<rect class="box test" x="380" y="70" width="320" height="110" rx="10"/>
+<text class="t" x="392" y="92">By a message</text>
+<text class="s" x="392" y="110">The card as a QR picture or a link,</text>
+<text class="s" x="392" y="126">sent on WhatsApp, Signal, email.</text>
+<text class="s" x="392" y="142">As strong as the channel it came by</text>
+<path class="a " d="M540 180 L540 236"/>
+<polygon class="hd " points="540.0,236.0 536.3,227.8 543.7,227.8"/>
+<rect class="lb" x="504" y="202" width="73" height="18" rx="3"/>
+<text class="l" x="540" y="214" text-anchor="middle">Sent to me</text>
+<rect class="box plan" x="720" y="70" width="320" height="110" rx="10"/>
+<text class="t" x="732" y="92">From the register</text>
+<text class="s" x="732" y="110">Look up a name or fingerprint at</text>
+<text class="s" x="732" y="126">pki.sgit.ai. As strong as the</text>
+<text class="s" x="732" y="142">register’s checks on that person</text>
+<path class="a " d="M880 180 L880 236"/>
+<polygon class="hd " points="880.0,236.0 876.3,227.8 883.7,227.8"/>
+<rect class="lb" x="844" y="202" width="73" height="18" rx="3"/>
+<text class="l" x="880" y="214" text-anchor="middle">Registered</text>
+<rect class="box plan" x="40" y="236" width="1000" height="150" rx="10"/>
+<text class="t" x="52" y="258">Your contacts</text>
+<text class="s" x="52" y="276">People, your own devices and agents, each with: a name, their public keys and fingerprints, their inbox, how you met them, and what you have given them.</text>
+<text class="s" x="52" y="292">A contact can be checked later: compare fingerprints face to face, or see the register vouch for them.</text>
+<text class="s" x="52" y="308">From a contact you can: send a message or a voice note, give a secret (such as the server access key), invite to a vault, or forget them.</text>
+<text class="s" x="52" y="324">The card goes both ways: when you add someone, the app can send them yours, so that they can write back.</text>
+<rect class="box test" x="40" y="410" width="490" height="96" rx="10"/>
+<text class="t" x="52" y="432">Today</text>
+<text class="s" x="52" y="450">Recipients by QR code or pasted link, one way only: you can</text>
+<text class="s" x="52" y="466">send to them; they cannot write back unless they also add you.</text>
+<text class="s" x="52" y="482">Agents already work this way (the developer lane)</text>
+<rect class="box plan" x="550" y="410" width="490" height="96" rx="10"/>
+<text class="t" x="562" y="432">To build</text>
+<text class="s" x="562" y="450">The card carries the public keys, not only an inbox; adding</text>
+<text class="s" x="562" y="466">is two-way; contacts are shared by both apps; the register</text>
+<text class="s" x="562" y="482">lookup and publication</text>
+<rect class="box live" x="40" y="528" width="26" height="16" rx="4"/><text class="l" x="74" y="540">Seen working on the owner’s devices</text>
+<rect class="box test" x="330" y="528" width="26" height="16" rx="4"/><text class="l" x="364" y="540">In the build, not yet confirmed</text>
+<rect class="box plan" x="620" y="528" width="26" height="16" rx="4"/><text class="l" x="654" y="540">Decided, not built</text>
+</svg>
