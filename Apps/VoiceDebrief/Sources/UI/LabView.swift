@@ -19,7 +19,7 @@ struct LabView: View {
                     }
                 }
                 NavigationLink {
-                    LabControlView()
+                    LabControlView(store: store)
                 } label: {
                     VStack(alignment: .leading, spacing: 2) {
                         Text("L02: Control centre")
@@ -31,7 +31,7 @@ struct LabView: View {
             } header: {
                 Text("Experiments")
             } footer: {
-                Text("An experiment changes nothing: its tools only read or take note, and what the model chooses is shown, not acted on.")
+                Text("An experiment changes nothing that is kept: its tools only read or take note. In L02, two confirmed actions are carried out: opening a section and searching the notes.")
             }
             Section("Apple's on-device model") {
                 LabeledContent("Status", value: OnDeviceModel.status.text)
