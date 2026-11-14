@@ -62,6 +62,8 @@ const PAGES = [
     description: 'An architecture and a brief: a key pair and an inbox from the first launch, contact cards exchanged by QR code, message or register, sealed messages checked for regularly, and a secrets manager on top.' },
   { path: 'articles/synthetic-users', nav: null, title: 'Synthetic users for an app its builder cannot see',
     description: 'A brief: invented users walking screenshots of every screen to find where a real one would get lost.' },
+  { path: 'articles/secrets-app', nav: null, title: 'A secrets app that keeps one file where you already keep things',
+    description: 'Research, a storage design and a build plan: other password managers compared; the vault as one encrypted file in iCloud Drive, merged after offline edits, with several stores and locks you choose; names and per-use pricing. Proposed.' },
   { path: 'identity/return', nav: null, title: 'Back from pki.sgit.ai: hand the answer to the app',
     description: 'The page pki.sgit.ai sends a person back to after they vouch for the VoiceDebrief app on a device: how to hand the answer in the address to the app.' },
   { path: 'sgit-app/design', nav: null, title: 'The sgit app for iPhone, iPad and Mac: design for milestone one',

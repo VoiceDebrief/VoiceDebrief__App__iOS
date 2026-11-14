@@ -16,7 +16,7 @@ struct GamePlayView: View {
                         NavigationLink {
                             GameScreen(kind: kind)
                         } label: {
-                            GameTile(kind: kind, best: game.bestScore(kind),
+                            GameChoiceTile(kind: kind, best: game.bestScore(kind),
                                      current: game.state.kind == kind && !game.entries.isEmpty ? game.state : nil)
                         }
                         .buttonStyle(.plain)
@@ -47,7 +47,7 @@ struct GamePlayView: View {
 }
 
 /// One game as a large tile: a picture of its first level, what it is, how far you got.
-struct GameTile: View {
+struct GameChoiceTile: View {
     let kind: GameKind
     let best: Int?
     /// The game being played now, if it is this one.

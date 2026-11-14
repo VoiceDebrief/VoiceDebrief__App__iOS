@@ -187,6 +187,7 @@ final class LabControlCentre {
     private var consumed = 0
     private var waiting: [String] = []
     private var worker: Task<Void, Never>?
+    private var heard = 0
     private var starting: Set<String> = []
     /// True from the press of Listen until a stop: a start that finds it false gives up.
     private var wantsToListen = false
@@ -244,8 +245,10 @@ final class LabControlCentre {
     func hear(_ words: String, source: String, expected: String? = nil, now: Date = Date()) -> String? {
         let text = words.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !LabTriggerMatcher.words(text).isEmpty else { return nil }
-        let entry = LabControlEntry(id: Note.newId(at: now), heardAt: now, words: text, source: source, expected: expected,
+        var entry = LabControlEntry(id: Note.newId(at: now), heardAt: now, words: text, source: source, expected: expected,
                                     triggers: triggers, askModel: askModel, automatic: automatic)
+        heard += 1
+        entry.number = heard
         entries.insert(entry, at: 0)
         takeUp(0)
         if entry.state == .asking {
@@ -370,6 +373,7 @@ final class LabControlCentre {
     func clear() {
         waiting = []
         entries = []
+        heard = 0
     }
 
     // MARK: Listening

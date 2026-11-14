@@ -106,6 +106,9 @@ Every page has a markdown twin: replace index.html with index.md.
 - https://ios.app.voicedebrief.ai/articles/people-messages-and-secrets/index.html : PROPOSED architecture for
   identities, contact cards (QR, message, register), inboxes, sealed messages and a secrets manager, with three drawings.
 - https://ios.app.voicedebrief.ai/articles/synthetic-users/index.html : invented users walking screenshots.
+- https://ios.app.voicedebrief.ai/articles/secrets-app/index.html : PROPOSED secrets app: other managers compared;
+  the vault as one encrypted file in iCloud Drive with past copies, merge after offline edits, several stores, key
+  custody (iCloud Keychain, passkey PRF, recovery code), threat model, names, build plan, per-use pricing.
 
 ## Facts worth knowing before you work on it
 
