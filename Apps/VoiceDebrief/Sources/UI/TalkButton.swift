@@ -114,12 +114,14 @@ struct MessagesToClaudeView: View {
                     Text("Nothing sent to Claude yet. Tap the button and speak.").foregroundStyle(.secondary)
                 }
                 ForEach(notes) { note in
-                    VStack(alignment: .leading, spacing: 6) {
-                        Text(note.title).lineLimit(2)
-                        Text(state(note)).font(.caption).foregroundStyle(.secondary)
+                    VStack(spacing: DS.Space.xs) {
+                        ChatBubble(mine: true, caption: state(note)) {
+                            Text(note.title).lineLimit(3)
+                        }
                         ForEach(replies(to: note)) { reply($0) }
                     }
-                    .padding(.vertical, 2)
+                    .padding(.vertical, DS.Space.xxs)
+                    .listRowSeparator(.hidden)
                 }
             }
             Section {
@@ -136,14 +138,11 @@ struct MessagesToClaudeView: View {
     }
 
     private func reply(_ message: AgentsReport.Message) -> some View {
-        VStack(alignment: .leading, spacing: 3) {
-            Text(message.text).font(.callout)
-            Text("Claude, " + message.at.formatted(date: .abbreviated, time: .shortened))
-                .font(.caption2).foregroundStyle(.secondary)
+        ChatBubble(mine: false, from: AvatarSubject.recipient(named: RecipientStore.builtInName),
+                   caption: "Claude, " + message.at.formatted(date: .abbreviated, time: .shortened)) {
+            Text(message.text)
         }
-        .padding(10)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.accentColor.opacity(0.12), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .listRowSeparator(.hidden)
     }
 
     private func state(_ note: Note) -> String {
