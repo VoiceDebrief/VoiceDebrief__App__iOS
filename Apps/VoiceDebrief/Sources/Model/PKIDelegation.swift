@@ -1,5 +1,9 @@
 import CryptoKit
 import Foundation
+// The PKI interop tool compiles this file with the package's PKI files as one module, where there is nothing to import.
+#if canImport(SGitPeople)
+import SGitPeople
+#endif
 
 /// "Sign in with pki.sgit.ai", from the asking side, as delegation.js and sso.js at pki.sgit.ai define it.
 /// There is no server in between:

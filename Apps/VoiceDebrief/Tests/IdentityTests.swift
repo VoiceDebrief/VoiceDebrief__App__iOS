@@ -3,6 +3,7 @@ import Foundation
 import Security
 import Testing
 @testable import VoiceDebrief
+import SGitPeople
 
 /// A `UserDefaults` of its own for each test: what a fresh install has.
 func freshDefaults() -> UserDefaults {
