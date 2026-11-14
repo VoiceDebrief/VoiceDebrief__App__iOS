@@ -12,7 +12,7 @@ To do: let a device name itself once (a name kept with its public key in the vau
 does for a device), show that name in History and beside a file, and say "this device" in words. Group History
 by day.
 
-**Written (14 November 2026, not yet compiled):** History is grouped by day, and each commit says "This device"
+**Done (14 November 2026, green in CI on `f2c3b94` and seen in its picture):** History is grouped by day, and each commit says "This device"
 or "Another device (key ...)" in place of a hash; the hash stays on the commit's own screen.
 
 **Left, and it needs a decision first:** a name for a device. A name has to live in the vault to be seen by the
