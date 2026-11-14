@@ -29,9 +29,9 @@
  ],
  "counts": {
   "seen-working": 27,
-  "built-untried": 80,
-  "in-progress": 37,
-  "proposed": 61,
+  "built-untried": 85,
+  "in-progress": 38,
+  "proposed": 60,
   "parked": 6
  },
  "ideas": [
@@ -1707,6 +1707,39 @@
    "source": "The project"
   },
   {
+   "id": "issue-300",
+   "kind": "issue",
+   "number": "300",
+   "app": "SGit Vaults",
+   "title": "L03, a game played by voice, with Apple's model as one of its engines",
+   "status": "in-progress",
+   "why": "Open, and the reality file lists for it: The Lab, experiment L03: a game played by voice.",
+   "summary": "From: the owner, a voice note while driving, 14 November 2026. Session: the game session, branch work/game. Where: Apps/VoiceDebrief/Sources/Game/, Apps/VoiceDebrief/Tests/Game*.swift, one row \"L03: Play\" in the Lab.",
+   "detail": [
+    "From: the owner, a voice note while driving, 14 November 2026. Session: the game session, branch work/game. Where: Apps/VoiceDebrief/Sources/Game/, Apps/VoiceDebrief/Tests/Game*.swift, one row \"L03: Play\" in the Lab.",
+    "What was asked",
+    "A fun game, played by voice on an iPhone or an iPad, that uses Apple's on-device model (the Foundation Models framework) as part of its engine: points, obstacles, a little action, a story, problems to solve, levels, winning and losing, and a couple of easter eggs left to be found. The game is the excuse. The experiment is speed and feel: \"I say turn left: how long until it turns left?\" Every command is timed from the end of speaking to the change on the screen, the time is shown every time, and the log is kept and shared as JSON.",
+    "The position it follows",
+    "From \"Two decision engines\" and \"A harness inside the app\": the code owns the state. The model is asked one question at a time, with no history, and may only propose: it calls one tool, the code checks the call against the rules and applies it or says why not. The model is given only what makes sense at that moment.",
+    "The primitives",
+    "All in plain Swift with no model in sight, so all of it is unit tested.",
+    "| Primitive | What it is | |---|---| | GameState | A grid of tiles, the player, gold, keys, lives, moves left, points, level, status (playing, level won, won, lost). | | GameTile | floor, wall, gold, key, door, trap, exit, ladder, and one that looks like a wall and is not. | | GameLevel | A title, two lines of story, a few rows of text (# wall, o gold, k key, D door, ^ trap, E exit, H ladder, @ start), a move budget and lives. | | GameCommand | move (direction, steps), jump, climb, unlock, restart, next level, hint, and two that only the phrases know. | | GameRules.apply | The rule engine in code: a command and a state in, a new state, whether it was accepted, a sentence and events out. | | GameToolScope | The tools that make sense in this state, with descriptions that say what is possible now. | | GamePlanner | A breadth-first search over the rules themselves: the shortest list of..."
+   ],
+   "statusLine": "",
+   "places": [
+    "SGit Vaults: History",
+    "SGit Vaults: Share"
+   ],
+   "versions": [
+    "v0.1.80"
+   ],
+   "features": [
+    "The Lab, experiment L03: a game played by voice"
+   ],
+   "url": "https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/300-the-voice-game.md",
+   "source": "The project"
+  },
+  {
    "id": "issue-004",
    "kind": "issue",
    "number": "004",
@@ -2397,8 +2430,8 @@
    "kind": "design",
    "app": "SGit Vaults",
    "title": "The trust map",
-   "status": "proposed",
-   "why": "Listed on the design page \"A secrets manager made of people and vaults\" as proposed.",
+   "status": "built-untried",
+   "why": "Listed on the design page \"A secrets manager made of people and vaults\" as built, not yet proven.",
    "summary": "a drawing of the people you have met, with their photos, solid where both confirmed and dashed where one side only.",
    "detail": [
     "a drawing of the people you have met, with their photos, solid where both confirmed and dashed where one side only."
@@ -3227,6 +3260,28 @@
    "url": "https://ios.app.voicedebrief.ai/built/index.html",
    "source": "The reality file",
    "versions": []
+  },
+  {
+   "id": "feature.the.lab.experiment.l03.a.game.played.by.voice",
+   "kind": "feature",
+   "app": "VoiceDebrief",
+   "title": "The Lab, experiment L03: a game played by voice",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "Sources/Game/ (GameWorld, GameRules, GameLevels, GamePhrases, GameTools, GameModelEngine, GameController, GameHints, GameLog, GameBoardView, GamePlayView), reached from Settings, Lab, L03: Play (issue 300). Two games on the same primitives, Boxes (top-down, three levels) and Lantern (side view with gravity, ladders and jumps, three levels), with gold, keys, doors, traps, lives, a move budget...",
+   "detail": [
+    "Sources/Game/ (GameWorld, GameRules, GameLevels, GamePhrases, GameTools, GameModelEngine, GameController, GameHints, GameLog, GameBoardView, GamePlayView), reached from Settings, Lab, L03: Play (issue 300). Two games on the same primitives, Boxes (top-down, three levels) and Lantern (side view with gravity, ladders and jumps, three levels), with gold, keys, doors, traps, lives, a move budget, points and levels. A sentence (heard through the live words, typed) goes to the phrases, then, if they find nothing, to Apple's on-device model in a fresh session with only the tools this state allows, each described for the moment; the first tool call ends the request and is checked against the tools offered, then applied by the rules in code. The phrases can act on live words before they settle. Every command is timed from the end of speaking to the new state and shown with its parts; the model's...",
+    "Unit tests: every level parses and is won within its budget by a breadth-first planner over the rules without losing a life; the rules of both games; the tools offered per state and the check of a tool call; the phrases; the hidden things; the clue levels and the check of a model's clue; the voice player's script winning both games through the phrases, with and without its mistakes; the estimates; a typed command through the controller and its JSON log. Never played on a device and never put to a model: whether the model calls the right tool, and how fast, is what the game is for"
+   ],
+   "places": [],
+   "issues": [
+    "300"
+   ],
+   "url": "https://ios.app.voicedebrief.ai/built/index.html",
+   "source": "The reality file",
+   "versions": [
+    "v0.1.80"
+   ]
   },
   {
    "id": "feature.the.lab.experiment.l02.the.control.centre",
@@ -4095,7 +4150,7 @@
    "summary": "The last step of the Mac job in sgit-app.yml, with the release script: on a green push to dev, archive, sign and upload",
    "detail": [
     "The last step of the Mac job in sgit-app.yml, with the release script: on a green push to dev, archive, sign and upload",
-    "Run 7 (13 November 2026) uploaded ai.sgit.vaults.app 0.1.19 (7), which the owner installed on a Mac. Run 14 (14 November) uploaded 0.1.34 (14): creating a vault without an access key, the access key on the Create screen, drag and drop, the folder tree. Run 20 uploaded 0.1.37 (20): the fixes the pictures called for. Run 25 (05:54 UTC) uploaded 0.1.39 (25): the gallery. Nobody has reported from any of the three yet"
+    "Run 7 (13 November 2026) uploaded ai.sgit.vaults.app 0.1.19 (7), which the owner installed on a Mac. Run 14 (14 November) uploaded 0.1.34 (14): creating a vault without an access key, the access key on the Create screen, drag and drop, the folder tree. Run 20 uploaded 0.1.37 (20): the fixes the pictures called for. Run 25 (05:54 UTC) uploaded 0.1.39 (25): the gallery. The owner has since used a TestFlight build on his iPhone: a vault on the device with six photos and two videos of 112 MB and 60 MB, added from the photo picker. Run 71 (14 November, 14:18 UTC) uploaded 0.1.70 (71): Secrets, Questions for you, Ask this vault, the same vaults on every device, the design restyle and the people engine."
    ],
    "places": [
     "SGit Vaults: Gallery",
@@ -4310,6 +4365,27 @@
    "versions": []
   },
   {
+   "id": "sgit-feature.a.small.picture.and.the.facts.beside.each.file",
+   "kind": "feature",
+   "app": "SGit Vaults",
+   "title": "A small picture and the facts beside each file",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "Engine/FileFacts.swift, Engine/Outbox.swift: while a file is added, before its plain copy goes, the app makes a small picture (480 pixels: the image itself, a frame of a video, the first page of a PDF or document) and a facts file, seals both like any file and puts them in the same commit. Layout, for any client: .sgit/thumbs/<content hash>.jpg and .sgit/meta/<content hash>.json, keyed by the...",
+   "detail": [
+    "Engine/FileFacts.swift, Engine/Outbox.swift: while a file is added, before its plain copy goes, the app makes a small picture (480 pixels: the image itself, a frame of a video, the first page of a PDF or document) and a facts file, seals both like any file and puts them in the same commit. Layout, for any client: .sgit/thumbs/<content hash>.jpg and .sgit/meta/<content hash>.json, keyed by the file's content hash (the 12 hex characters the tree already records), so a renamed or moved file keeps them. Schema sgit.ai/file-meta/v1: name, size, contentHash, contentType, kind, addedAt; for images width, height, orientation, taken, make, model, lens, iso, exposure, aperture, focal length; for video and audio duration, width, height, frame rate, codec, taken, make, model; location only when the person turns on Settings, Keep where photos and videos were taken (off by default); header, every...",
+    "Unit tests for the picture and facts of a photo, the layout, a QuickTime location, and the outbox writing a facts file per file in the same commit; not yet compiled when written. Files added before this have no picture kept; they are shown as before"
+   ],
+   "places": [
+    "SGit Vaults: a vault",
+    "SGit Vaults: Settings"
+   ],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
    "id": "sgit-feature.saving.a.folder.out",
    "kind": "feature",
    "app": "SGit Vaults",
@@ -4386,6 +4462,46 @@
    "places": [
     "SGit Vaults: a vault",
     "SGit Vaults: History"
+   ],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
+   "id": "sgit-feature.people",
+   "kind": "feature",
+   "app": "SGit Vaults",
+   "title": "People",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "The people session's screens (Sources/People/, on the shared SGitPeople package): a People row on the home list with the unread count; You (your card as a QR code and a link), Contacts (add by scanning, a picture or pasting; a photo of the person, on this device only), Inbox; Keys and access (an access key, keys given or received, who holds which) reached from Secrets",
+   "detail": [
+    "The people session's screens (Sources/People/, on the shared SGitPeople package): a People row on the home list with the unread count; You (your card as a QR code and a link), Contacts (add by scanning, a picture or pasting; a photo of the person, on this device only), Inbox; Keys and access (an access key, keys given or received, who holds which) reached from Secrets",
+    "The screens compile and the app's tests pass (the people session's runs 53 and 60); wired here, not yet compiled when written. Nothing has run on a device; making an inbox and sending use the live server only once a person holds an access key"
+   ],
+   "places": [
+    "SGit Vaults: Share"
+   ],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
+   "id": "sgit-feature.who.you.trust.and.shared.vaults.for.people",
+   "kind": "feature",
+   "app": "SGit Vaults",
+   "title": "Who you trust, and shared vaults for people",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "Sources/Team/: a \"Who you trust\" row on the home list draws you in the middle and each contact around you with their photo (an agent as a chip), the line between solid and thick when fingerprints were checked face to face and they have written to you, solid when both sides hold each other's card, dashed when only you hold theirs; a person's page says how you met and what is missing. \"Make a shared...",
+   "detail": [
+    "Sources/Team/: a \"Who you trust\" row on the home list draws you in the middle and each contact around you with their photo (an agent as a chip), the line between solid and thick when fingerprints were checked face to face and they have written to you, solid when both sides hold each other's card, dashed when only you hold theirs; a person's page says how you met and what is missing. \"Make a shared vault with some of them\": choose people whose inbox you know, name it; the app makes the vault, puts it on the server, writes .sgit/members.json (schema sgit.ai/members/v1: names, key fingerprints, who added whom, never keys) and sends each person the vault key sealed to their key. A vault with members says \"Shared with …\" at the top",
+    "Unit tests for the links, the layout, the summary and the member list; not yet compiled when written. Nothing has been sent to a real person. On the receiving side, \"Open this vault\" on a received invitation (the people session's) adds it to the list of vaults through the same check as pasting a key"
+   ],
+   "places": [
+    "SGit Vaults: Share"
    ],
    "issues": [],
    "url": "https://ios.app.voicedebrief.ai/sgit-app/built/index.html",

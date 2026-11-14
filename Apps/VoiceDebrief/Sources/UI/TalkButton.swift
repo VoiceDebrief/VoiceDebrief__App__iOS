@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 /// Talk to Claude, from anywhere in the app: tap, speak, tap, and it goes to Claude (developer), the
 /// agent working on the app (the owner, 14 November 2026: "click on it, start talking, click on it, it
@@ -10,11 +11,17 @@ struct TalkButton: View {
     @AppStorage("vd.talking") private var talking = false
     @State private var showingMessages = false
     @State private var said: String?
+    /// Added while talking: a picture (pasted or chosen) and a line typed, sent with the note.
+    @State private var picture: UIImage?
+    @State private var extra = ""
+    @State private var pictureSender = PictureSender()
+    @State private var nothingToPaste = false
 
     private var recordingHere: Bool { talking && session.recordingNote != nil }
 
     var body: some View {
         VStack(alignment: .trailing, spacing: 8) {
+            if recordingHere { liveBanner.transition(.move(edge: .bottom).combined(with: .opacity)) }
             if let said {
                 Text(said)
                     .font(.caption)
@@ -42,6 +49,12 @@ struct TalkButton: View {
         }
         .padding(.trailing, 16)
         .padding(.bottom, 90)
+        .animation(.snappy, value: recordingHere)
+        .alert("There is no picture on the clipboard", isPresented: $nothingToPaste) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("Take a screenshot, tap its preview, then Copy, and paste here.")
+        }
         .onChange(of: session.finishRequests) { _, _ in
             if recordingHere { Task { await tap() } }
         }
@@ -50,13 +63,80 @@ struct TalkButton: View {
         }
     }
 
+    /// While talking to Claude from any screen: what is being heard, how long, the level, and how to send
+    /// (the owner, 14 November 2026: "I need a visual clue, show me the text; it is fine to take more room").
+    private var liveBanner: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "circle.fill").foregroundStyle(.red).font(.caption)
+                Text("Talking to Claude").font(.subheadline.weight(.semibold))
+                Spacer()
+                if case .recording(let since) = session.phase {
+                    Text(since, style: .timer).font(.subheadline.monospacedDigit()).foregroundStyle(.secondary)
+                }
+            }
+            if session.microphoneSilent {
+                Label("No sound is reaching the microphone.", systemImage: "mic.slash.fill")
+                    .font(.footnote.weight(.semibold)).foregroundStyle(.orange)
+            }
+            Group {
+                if session.liveSettled.isEmpty && session.liveVolatile.isEmpty {
+                    Text("Listening…").foregroundStyle(.secondary)
+                } else {
+                    Text(session.liveSettled) + Text(session.liveVolatile).foregroundStyle(.secondary)
+                }
+            }
+            .font(.callout)
+            .lineLimit(4)
+            .truncationMode(.head)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            LevelBars(levels: session.levels, height: 22, barWidth: 3)
+            // Add to it while talking: a picture and a line of your own (the owner: "allow me to paste an
+            // image, add some text, and have a Send button").
+            if let picture {
+                HStack {
+                    Image(uiImage: picture).resizable().scaledToFill()
+                        .frame(width: 56, height: 56).clipShape(RoundedRectangle(cornerRadius: 8))
+                    Text("Goes with the note").font(.caption).foregroundStyle(.secondary)
+                    Spacer()
+                    Button("Remove", role: .destructive) { self.picture = nil }.font(.caption)
+                }
+            }
+            TextField("Add a line (optional)", text: $extra, axis: .vertical)
+                .lineLimit(1...3)
+                .textFieldStyle(.roundedBorder)
+            HStack(spacing: 10) {
+                Button {
+                    if let image = UIPasteboard.general.image { picture = image } else { nothingToPaste = true }
+                } label: { Label("Paste picture", systemImage: "doc.on.clipboard") }
+                    .buttonStyle(.bordered)
+                PhotoChooser { picture = $0 }.buttonStyle(.bordered)
+                Spacer()
+                Button { Task { await tap() } } label: { Label("Send", systemImage: "paperplane.fill") }
+                    .buttonStyle(.borderedProminent)
+            }
+            .font(.footnote)
+            Text("Or say \"send this now\".").font(.caption).foregroundStyle(.secondary)
+        }
+        .padding(14)
+        .frame(maxWidth: 520)
+        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+        .shadow(radius: 6, y: 2)
+        .padding(.leading, 16)
+    }
+
     private func tap() async {
         guard let claude = RecipientStore.shared.builtIn else { return }
         if recordingHere {
             talking = false
             UsageLog.shared.action("talk.send")
+            let image = picture, line = extra
+            picture = nil; extra = ""
             if let id = await session.stopRecording() {
                 session.send(noteId: id, to: claude)
+                if image != nil || !line.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                    Task { await pictureSender.send(image: image, caption: line, to: claude, about: id) }
+                }
                 show("Sent to Claude when it is written up. Hold the button to see your messages.")
             }
         } else {

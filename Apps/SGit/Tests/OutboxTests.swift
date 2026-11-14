@@ -50,7 +50,9 @@ struct OutboxTests {
         #expect(!FileManager.default.fileExists(atPath: outbox.folder(of: job.id).path))
 
         let contents = try #require(shelf.contents[vault.id])
-        #expect(contents.files.map(\.path) == ["trip/clip.mov", "trip/notes.txt", "trip/photo.jpg"])
+        #expect(VaultListing.visible(contents.files).map(\.path) == ["trip/clip.mov", "trip/notes.txt", "trip/photo.jpg"])
+        // Every file chose its facts file beside it, in the hidden folder, in the same commit.
+        #expect(contents.files.filter { $0.path.hasPrefix(".sgit/meta/") }.count == 3)
         #expect(contents.head.message == job.message)
         #expect(contents.head.signature.isVerified)
         let clipFile = try #require(contents.files.first { $0.path == "trip/clip.mov" })
@@ -64,15 +66,19 @@ struct OutboxTests {
         #expect(shelf.isCached(clipFile, in: vault))
 
         // The browser's view of it.
-        let top = VaultListing.of(contents.files, in: "")
+        let top = VaultListing.of(VaultListing.visible(contents.files), in: "")
         #expect(top.files.isEmpty)
         #expect(top.folders.map(\.name) == ["trip"])
         #expect(top.folders.first?.files == 3)
-        #expect(VaultListing.of(contents.files, in: "trip").files.map(\.path) == ["trip/clip.mov", "trip/notes.txt", "trip/photo.jpg"])
+        #expect(VaultListing.of(VaultListing.visible(contents.files), in: "trip").files.map(\.path) == ["trip/clip.mov", "trip/notes.txt", "trip/photo.jpg"])
 
         // History: what the commit changed, and that this device signed it.
         let changes = try await shelf.changes(in: contents.head, of: vault)
         #expect(changes.map(\.kind) == [.added, .added, .added])
+        // The facts files went in the same commit, and are left out of what History shows.
+        let everything = try await shelf.allChanges(in: contents.head, of: vault)
+        #expect(everything.count > changes.count)
+        #expect(everything.allSatisfy { $0.kind == .added })
         let keyId = try #require(contents.head.authorKeyId)
         let fingerprint = await shelf.fingerprint(ofKey: keyId, in: vault)
         #expect(fingerprint != nil)
@@ -108,7 +114,7 @@ struct OutboxTests {
         await #expect(throws: VaultShelfError.self) { try await shelf.rename(film, to: "notes.txt", in: vault) }
         try await shelf.delete(film, in: vault)
         let after = try #require(shelf.contents[vault.id])
-        #expect(after.files.map(\.path) == ["trip/notes.txt", "trip/photo.jpg"])
+        #expect(VaultListing.visible(after.files).map(\.path) == ["trip/notes.txt", "trip/photo.jpg"])
         #expect(after.head.message == "Remove film.mov")
         #expect(after.history.count == 4)
     }
@@ -139,7 +145,7 @@ struct OutboxTests {
         await reopened.wait(for: job.id)
         #expect(reopened.jobs.isEmpty, "\(reopened.jobs.first?.problem ?? "")")
         let contents = try #require(shelf.contents[vault.id])
-        #expect(contents.files.map(\.path) == ["big.bin", "small.txt"])
+        #expect(VaultListing.visible(contents.files).map(\.path) == ["big.bin", "small.txt"])
         let file = try #require(contents.files.first { $0.path == "big.bin" })
         let local = try await shelf.localFile(for: file, in: vault)
         #expect(try Data(contentsOf: local) == big)
@@ -197,7 +203,7 @@ struct LocalVaultTests {
         await outbox.wait(for: job.id)
         #expect(outbox.jobs.isEmpty, "\(outbox.jobs.first?.problem ?? "")")
         let contents = try await shelf.load(vault)
-        #expect(contents.files.map(\.path) == ["a.txt"])
+        #expect(VaultListing.visible(contents.files).map(\.path) == ["a.txt"])
         #expect(contents.head.signature.isVerified)
 
         // Sharing is the first thing that asks for a token, and says why. Nothing is sent without one.
@@ -221,7 +227,7 @@ struct LocalVaultTests {
         await outbox.wait(for: job.id)
         #expect(outbox.jobs.isEmpty, "\(outbox.jobs.first?.problem ?? "")")
         let contents = try await shelf.load(vault)
-        #expect(contents.files.map(\.path) == ["photos/Summit/b.txt", "photos/Summit/day 1/a.txt"])
+        #expect(VaultListing.visible(contents.files).map(\.path) == ["photos/Summit/b.txt", "photos/Summit/day 1/a.txt"])
         #expect(FileManager.default.fileExists(atPath: dropped.appending(path: "b.txt").path), "the originals are left where they were")
     }
 

@@ -1,4 +1,5 @@
 import SGitVault
+import SGitPeople
 import SwiftUI
 import VisionKit
 
@@ -6,6 +7,7 @@ import VisionKit
 struct VaultsView: View {
     let shelf: VaultShelf
     let outbox: Outbox
+    let people: PeopleModel
     @State private var adding = false
     @State private var creating = false
     @State private var showSettings = false
@@ -55,7 +57,7 @@ struct VaultsView: View {
                                     .foregroundStyle(.secondary)
                                 let waiting = outbox.jobs(for: vault)
                                 if !waiting.isEmpty {
-                                    let files = waiting.reduce(0) { $0 + $1.items.count }
+                                    let files = waiting.reduce(0) { $0 + $1.shown.count }
                                     Label("\(files) file\(files == 1 ? "" : "s") on the way in", systemImage: "arrow.up.circle")
                                         .font(.footnote)
                                         .foregroundStyle(waiting.contains { $0.problem != nil } ? Color.red : Color.secondary)
@@ -70,10 +72,23 @@ struct VaultsView: View {
             }
             Section {
                 NavigationLink {
-                    SecretsView(shelf: shelf)
+                    SecretsView(shelf: shelf, people: people)
                         .tracked("secrets")
                 } label: {
                     sectionRow(.secrets)
+                }
+                NavigationLink {
+                    PeopleHome(model: people)
+                        .tracked("people")
+                } label: {
+                    sectionRow(.people)
+                        .badge(people.unreadCount)
+                }
+                NavigationLink {
+                    TrustMapView(shelf: shelf, people: people)
+                        .tracked("trust-map")
+                } label: {
+                    Label("Who you trust", systemImage: "point.3.connected.trianglepath.dotted")
                 }
                 NavigationLink {
                     QuestionsView()
@@ -90,7 +105,7 @@ struct VaultsView: View {
                     Label("Guide and what is new", systemImage: "book.pages")
                 }
             } footer: {
-                Text("Passwords, passcodes, Wi-Fi and keys, kept in vaults. Questions are from the people building this app, answered by typing or speaking. The Guide shows what changed in each version and how each part works.")
+                Text("Passwords, passcodes, Wi-Fi and keys, kept in vaults. People are those you have swapped cards with, and your inbox. Questions are from the people building this app, answered by typing or speaking. The Guide shows what changed in each version and how each part works.")
             }
             Section {
                 NavigationLink {

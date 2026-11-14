@@ -22,11 +22,14 @@ struct RecipientsView: View {
                     NavigationLink {
                         RecipientDetailView(recipient: recipient)
                     } label: {
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(recipient.name)
-                            Text(recipients.isBuiltIn(recipient) ? "Built into this test build" : "Lane \(recipient.lane?.vault ?? "")")
-                                .font(.footnote)
-                                .foregroundStyle(.secondary)
+                        HStack(spacing: DS.Space.s) {
+                            AvatarView(AvatarSubject(recipient: recipient), size: 40)
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(recipient.name)
+                                Text(recipients.isBuiltIn(recipient) ? "Built into this test build" : "Lane \(recipient.lane?.vault ?? "")")
+                                    .font(.footnote)
+                                    .foregroundStyle(.secondary)
+                            }
                         }
                     }
                 }

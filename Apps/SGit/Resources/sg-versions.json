@@ -6,6 +6,82 @@
  "nextArt": [],
  "versions": [
   {
+   "version": "v0.1.86",
+   "date": "14 November 2026",
+   "notes": [
+    "Agents: choosing a vault now sticks (the picker stayed on None and \"Give this vault to Claude\" did nothing, found by the owner), and it says when there is no vault to choose. Talking to Claude: the banner takes a picture (paste or choose) and a line of text, with a Send button; they go with the note."
+   ],
+   "hasPage": true,
+   "url": "https://ios.app.voicedebrief.ai/versions/v0.1.86/index.html",
+   "pictures": 0,
+   "art": [],
+   "issues": []
+  },
+  {
+   "version": "v0.1.85",
+   "date": "14 November 2026",
+   "notes": [
+    "Talking to Claude from any screen now shows what is being heard: a banner above the button with the live words, the time, the level and how to send, at the owner's request (\"I need a visual clue, show me the text\")."
+   ],
+   "hasPage": true,
+   "url": "https://ios.app.voicedebrief.ai/versions/v0.1.85/index.html",
+   "pictures": 0,
+   "art": [],
+   "issues": []
+  },
+  {
+   "version": "v0.1.84",
+   "date": "14 November 2026",
+   "notes": [
+    "The pictures of every screen: the picture of what the app asks before sending to the developer finds its button by a word in its name, after the button was renamed and the run failed with every picture taken. Nothing in the app has changed."
+   ],
+   "hasPage": true,
+   "url": "https://ios.app.voicedebrief.ai/versions/v0.1.84/index.html",
+   "pictures": 0,
+   "art": [],
+   "issues": []
+  },
+  {
+   "version": "v0.1.82",
+   "date": "14 November 2026",
+   "notes": [
+    "The sgit app draws who you trust: you in the middle, each person around you with their photo, the line solid when you both have each other's card and dashed when only you have theirs. From the map, make a shared vault for chosen people: the vault's key is sealed to each person's key and sent to their inbox, and the vault shows who it is shared with",
+    "The sgit app gains People: your card as a QR code, contacts you add by scanning (with a photo of the person, kept on your device), an inbox for sealed messages, and Keys and access under Secrets",
+    "The sgit app keeps a small picture and the facts of every file in the vault beside it, so a folder of large videos shows its pictures without anyone downloading the videos: the picture (a photo, a frame of a video, a page of a document) and a facts file (size, dimensions, length, codec, camera, when it was taken; where only if you allow it) in a hidden .sgit folder that any client can read"
+   ],
+   "hasPage": true,
+   "url": "https://ios.app.voicedebrief.ai/versions/v0.1.82/index.html",
+   "pictures": 0,
+   "art": [],
+   "issues": []
+  },
+  {
+   "version": "v0.1.81",
+   "date": "14 November 2026",
+   "notes": [
+    "Faces in more places: each contact in Contacts shows its avatar, an agent's conversation opens with you, an arrow and the agent, and the card that follows a send shows the same route above its steps. A contact is drawn the same way everywhere (Claude, the built-in recipient, as a conductor)."
+   ],
+   "hasPage": true,
+   "url": "https://ios.app.voicedebrief.ai/versions/v0.1.81/index.html",
+   "pictures": 0,
+   "art": [],
+   "issues": []
+  },
+  {
+   "version": "v0.1.80",
+   "date": "14 November 2026",
+   "notes": [
+    "A game played by voice, Lab experiment L03 (issue 300), from the owner's note while driving. Under Settings, Lab, L03: Play. Two small games on the same pieces: Boxes (squares from above: find the gold, the exit opens, keys, doors, traps, three levels) and Lantern (a figure from the side: walk, jump, climb ladders, three levels). Say or type a command: the phrases (code, no model) act at once, and Apple's on-device model is asked when they find nothing, with only the tools that make sense at that moment; its first tool call ends the request, and the code checks and applies it. Every command shows the time from the end of your words to the move, which engine acted, the model's time to its tool call, estimated tokens and energy; the log is shared as JSON. A clue appears when you look stuck: first a glowing square, then the words to try, phrased by the model when it is there. A voice player can play the game by itself: it says its commands aloud (and makes the odd mistake), the microphone hears them like yours, and its times run from the moment its voice stops. A few things are hidden. In test: compiled and unit tested, never played on a device or put to a model."
+   ],
+   "hasPage": true,
+   "url": "https://ios.app.voicedebrief.ai/versions/v0.1.80/index.html",
+   "pictures": 0,
+   "art": [],
+   "issues": [
+    "300"
+   ]
+  },
+  {
    "version": "v0.1.78",
    "date": "14 November 2026",
    "notes": [

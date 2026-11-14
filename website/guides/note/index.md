@@ -32,4 +32,4 @@ A note opens with its one sentence as the heading, then what has happened to it,
 - A send that can be seen, stopped and not lost: **Built, untried**. The issue says: "Built (untried on a device): pendingSend and sendProblem kept on the note on disk; waiting sends resumed at launch and when the note is ready; Do not send on..."
 - Finishing saves to the vault; discarding is the awkward path: **In progress**. The issue says: "Built (untried on a device): the control that ends a recording is green with a tick and says the note is kept; Discard is a small red word at the top of the..."
 
-*Pictures: iPhone, light, from screens.yml run 39 on dev (commit 1d21781, 14 November 2026). Newer builds may differ: the record screen now chooses who a note is for above the record control.*
+*Pictures: VoiceDebrief: iPhone, light, from screens.yml run 43606968488 on work/sherpa at 0f2e6f8 (the same tree as dev, v0.1.74, 14 November 2026), after the design session's restyle.*

@@ -33,15 +33,23 @@ final class PictureSender {
     }
 
     func send(_ image: UIImage, caption: String, to recipient: Recipient) async {
-        guard let lane = recipient.lane, let data = Self.jpeg(image) else {
+        await send(image: image, caption: caption, to: recipient, about: nil)
+    }
+
+    /// A picture, a line of text, or both. `about` is the voice note they go with, if any: they are then
+    /// filed with that note by the receiver.
+    func send(image: UIImage?, caption: String, to recipient: Recipient, about noteId: String?) async {
+        let data = image.flatMap { Self.jpeg($0) } ?? Data()
+        guard let lane = recipient.lane, image == nil || !data.isEmpty else {
             state = .failed("The picture could not be prepared"); return
         }
+        guard !data.isEmpty || !caption.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
         let now = Date()
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "en_US_POSIX")
         formatter.timeZone = TimeZone(identifier: "UTC")
         formatter.dateFormat = "yyyyMMdd-HHmmss"
-        let id = "picture-" + formatter.string(from: now)
+        let id = noteId ?? ("picture-" + formatter.string(from: now))
         let messages: [Data]
         do {
             messages = try DeveloperLane.imageMessages(image: data, imageName: "screenshot.jpg", caption: caption,

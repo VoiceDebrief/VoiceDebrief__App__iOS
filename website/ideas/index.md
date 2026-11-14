@@ -5,9 +5,9 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | Status | Meaning | How many |
 |---|---|---|
 | Seen working | Built, and a run proved it: CI, a device or a server. | 27 |
-| Built, untried | In the app or the repository, but not yet proven by a run on a device. | 80 |
-| In progress | Begun: part of it is built or a release has touched it. | 37 |
-| Proposed | Asked for or described; nothing of it is built. | 61 |
+| Built, untried | In the app or the repository, but not yet proven by a run on a device. | 85 |
+| In progress | Begun: part of it is built or a release has touched it. | 38 |
+| Proposed | Asked for or described; nothing of it is built. | 60 |
 | Parked | Waiting: on the owner, on Apple, or scheduled for later. | 6 |
 
 ## Seen working
@@ -57,6 +57,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | Play a recording, and show how long an interrupted one is | Issue | VoiceDebrief | A note: the player; Library, then a note |   | [029](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/done/029-play-a-recording.md) |
 | Record again while the last note is being written up | Issue | VoiceDebrief | Record tab | [v0.1.29](../versions/v0.1.29/index.md) | [030](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/done/030-record-while-the-last-note-is-written-up.md) |
 | The gist first on a note | Issue | VoiceDebrief | A note: Clean text; A note: the send bar; Library, then a note |   | [034](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/done/034-the-gist-first-on-a-note.md) |
+| The trust map | Design | SGit Vaults |   |   | [design](../sgit-app/secrets/index.md) |
 | The same vaults on every device | Design | SGit Vaults |   |   | [design](../sgit-app/secrets/index.md) |
 | Secrets as files in vaults | Design | SGit Vaults |   |   | [design](../sgit-app/secrets/index.md) |
 | Questions for the owner, by voice | Design | SGit Vaults |   |   | [design](../sgit-app/secrets/index.md) |
@@ -95,6 +96,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | Send without waiting | Feature | VoiceDebrief | A note: the send bar; Library, then a note; Settings: Recipients |   | [reality file](../built/index.md) |
 | The Lab, experiment L01: one prompt, tools on and off | Feature | VoiceDebrief | Settings: Experiments, the Lab; The repository: CI |   | [reality file](../built/index.md) |
 | The model door, first slice | Feature | VoiceDebrief | Settings: Experiments, the Lab |   | [reality file](../built/index.md) |
+| The Lab, experiment L03: a game played by voice | Feature | VoiceDebrief |   | [v0.1.80](../versions/v0.1.80/index.md) | [reality file](../built/index.md) |
 | The Lab, experiment L02: the control centre | Feature | VoiceDebrief | Settings: Experiments, the Lab |   | [reality file](../built/index.md) |
 | Recipients, added by QR code | Feature | VoiceDebrief | Settings: Recipients |   | [reality file](../built/index.md) |
 | A clean text, with questions | Feature | VoiceDebrief | A note: Clean text; Library, then a note |   | [reality file](../built/index.md) |
@@ -116,10 +118,13 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | Adding photos, videos and files, the screens | Feature | SGit Vaults | SGit Vaults: a vault |   | [reality file](../sgit-app/built/index.md) |
 | Browsing | Feature | SGit Vaults | SGit Vaults: a vault; SGit Vaults: Share |   | [reality file](../sgit-app/built/index.md) |
 | Playing a video | Feature | SGit Vaults | SGit Vaults: a vault |   | [reality file](../sgit-app/built/index.md) |
+| A small picture and the facts beside each file | Feature | SGit Vaults | SGit Vaults: a vault; SGit Vaults: Settings |   | [reality file](../sgit-app/built/index.md) |
 | Saving a folder out | Feature | SGit Vaults | SGit Vaults: a vault; SGit Vaults: Share |   | [reality file](../sgit-app/built/index.md) |
 | The web Vault inside the app | Feature | SGit Vaults | SGit Vaults: a vault |   | [reality file](../sgit-app/built/index.md) |
 | Your activity | Feature | SGit Vaults | SGit Vaults: Share; SGit Vaults: Settings |   | [reality file](../sgit-app/built/index.md) |
 | Ask this vault, an experiment | Feature | SGit Vaults | SGit Vaults: a vault; SGit Vaults: History |   | [reality file](../sgit-app/built/index.md) |
+| People | Feature | SGit Vaults | SGit Vaults: Share |   | [reality file](../sgit-app/built/index.md) |
+| Who you trust, and shared vaults for people | Feature | SGit Vaults | SGit Vaults: Share |   | [reality file](../sgit-app/built/index.md) |
 | Secrets | Feature | SGit Vaults | SGit Vaults: a vault |   | [reality file](../sgit-app/built/index.md) |
 | Questions for you | Feature | SGit Vaults | SGit Vaults: Settings |   | [reality file](../sgit-app/built/index.md) |
 | Guide and what is new | Feature | SGit Vaults | SGit Vaults |   | [reality file](../sgit-app/built/index.md) |
@@ -167,6 +172,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | sgit app: a shared vault for chosen people | Issue | SGit Vaults | SGit Vaults: Share |   | [124](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/124-sgit-app-shared-vaults-for-people.md) |
 | sgit app: AutoFill, passwords and passkeys in other apps and in Safari | Issue | SGit Vaults | SGit Vaults: Share |   | [125](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/125-sgit-app-autofill-passwords-and-passkeys.md) |
 | People, messages and secrets (the SGitPeople package) | Issue | SGit Vaults | SGit Vaults | [v0.1.54](../versions/v0.1.54/index.md) | [200](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/200-people-messages-and-secrets.md) |
+| L03, a game played by voice, with Apple's model as one of its engines | Issue | SGit Vaults | SGit Vaults: History; SGit Vaults: Share | [v0.1.80](../versions/v0.1.80/index.md) | [300](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/300-the-voice-game.md) |
 | People, messages and secrets: the layer under both apps | Article | Both |   |   | [article](../articles/people-messages-and-secrets/index.md) |
 
 ## Proposed
@@ -214,7 +220,6 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | A machine that hands in new keys | Design | SGit Vaults |   |   | [design](../sgit-app/secrets/index.md) |
 | Works on a plane | Design | SGit Vaults |   |   | [design](../sgit-app/secrets/index.md) |
 | A share with an end date | Design | SGit Vaults |   |   | [design](../sgit-app/secrets/index.md) |
-| The trust map | Design | SGit Vaults |   |   | [design](../sgit-app/secrets/index.md) |
 | Receiving a voice note from the share sheet (WhatsApp) | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
 | Decoding WhatsApp's Ogg Opus | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
 | Saved and sent states on a note; saving to a vault automatically; an inbox in the app; the app's own QR code, so a conductor can write back | Feature | VoiceDebrief | Library, then a note |   | [reality file](../built/index.md) |

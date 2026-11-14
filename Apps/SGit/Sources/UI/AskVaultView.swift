@@ -69,7 +69,7 @@ struct AskVaultView: View {
         UsageLog.shared.action("ask.question")
         let contents = shelf.contents[vault.id]
         let device = shelf.deviceKeyId
-        let facts = VaultFacts(files: (contents?.files ?? []).map { VaultFacts.File(path: $0.path, size: $0.size) },
+        let facts = VaultFacts(files: VaultListing.visible(contents?.files ?? []).map { VaultFacts.File(path: $0.path, size: $0.size) },
                                commits: (contents?.history ?? []).map {
                                    VaultFacts.Commit(at: $0.timestamp, message: $0.message, byThisDevice: $0.authorKeyId != nil && $0.authorKeyId == device)
                                },
