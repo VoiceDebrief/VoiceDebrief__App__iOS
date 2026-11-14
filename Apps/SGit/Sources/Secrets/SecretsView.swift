@@ -1,5 +1,6 @@
 import LocalAuthentication
 import SGitVault
+import SGitPeople
 import SwiftUI
 
 /// Face ID (or the device passcode) before a hidden value is shown or copied.
@@ -15,6 +16,8 @@ enum Unlock {
 /// Every secret this device can open, grouped by the vault that holds it.
 struct SecretsView: View {
     let shelf: VaultShelf
+    /// The keys that belong to this person rather than to a vault: access keys, keys given or received.
+    var people: PeopleModel?
     @State private var entries: [String: [SecretEntry]] = [:]
     @State private var loading = false
     @State private var problem: String?
@@ -36,6 +39,17 @@ struct SecretsView: View {
                 }
             }
             if let problem { Section { ProblemLabel(text: problem) } }
+            if let hub = people?.hub {
+                Section {
+                    NavigationLink {
+                        KeysAndAccessView(hub: hub).tracked("keys-and-access")
+                    } label: {
+                        Label("Keys and access (\(people?.keysAndAccess.count ?? 0))", systemImage: "key.horizontal")
+                    }
+                } footer: {
+                    Text("Keys that belong to you rather than to a vault: a server access key, keys you were given or gave someone, each with who holds it.")
+                }
+            }
             ForEach(shelf.secretVaults) { vault in
                 let shown = filtered(entries[vault.id] ?? [])
                 Section {

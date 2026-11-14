@@ -29,4 +29,4 @@ A vault holds folders and files, like a folder on a computer, with every change 
 - sgit app: who added it: **In progress**. Open, and named by the release notes of v0.1.44.
 - sgit app: getting a folder out, at full quality: **In progress**. Open, and named by the release notes of v0.1.44.
 
-*Pictures: SGit Vaults: iPhone, light, from sgit-app-screens.yml run 19 on dev (commit e62bf68, 14 November 2026).*
+*Pictures: SGit Vaults: iPhone, light, from sgit-app-screens.yml run 43606971217 on work/sherpa at 0f2e6f8 (the same tree as dev, 14 November 2026), after the design session's restyle.*

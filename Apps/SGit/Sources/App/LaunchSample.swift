@@ -1,6 +1,7 @@
 #if DEBUG
 import Observation
 import SGitVault
+import SGitPeople
 import SwiftUI
 import UIKit
 
@@ -187,7 +188,7 @@ struct ScreenshotRoot: View {
         let files = world.vault.flatMap { shelf.contents[$0.id]?.files } ?? []
         switch (screen, world.vault) {
         case ("vaults", _):
-            RootView(shelf: shelf, outbox: outbox)
+            RootView(shelf: shelf, outbox: outbox, people: .sample(.full))
         case ("create", _):
             CreateVaultSheet(shelf: shelf)
         case ("add", _):
@@ -211,7 +212,7 @@ struct ScreenshotRoot: View {
         case ("share.key", let vault?):
             NavigationStack { ShareVaultView(shelf: shelf, vault: vault, showingKey: true) }
         case ("secrets", _):
-            NavigationStack { SecretsView(shelf: shelf) }
+            NavigationStack { SecretsView(shelf: shelf, people: .sample(.full)) }
         case ("secret", _):
             if let home = shelf.secretsHome {
                 SampleSecret(shelf: shelf, vault: home)
@@ -221,6 +222,25 @@ struct ScreenshotRoot: View {
                 GuideHome(ideas: IdeaBook.bundled(), history: VersionHistory.bundled(), guides: GuideBook.bundled(),
                           current: AppInfo.shortVersion(), lastSeen: "")
             }
+        case ("people-empty", _):
+            NavigationStack { PeopleHome(model: .sample(.empty)) }
+        case ("people-home", _):
+            NavigationStack { PeopleHome(model: .sample(.full)) }
+        case ("people-you", _):
+            let model = PeopleModel.sample(.full)
+            if let hub = model.hub { NavigationStack { YouView(model: model, hub: hub) } }
+        case ("people-contacts", _):
+            if let hub = PeopleModel.sample(.full).hub { NavigationStack { ContactsView(hub: hub) } }
+        case ("people-inbox", _):
+            if let hub = PeopleModel.sample(.full).hub { NavigationStack { InboxView(hub: hub) } }
+        case ("trust-map", _):
+            NavigationStack { TrustMapView(shelf: shelf, people: .sample(.full)) }
+        case ("share-with-people", _):
+            if let hub = PeopleModel.sample(.full).hub {
+                NavigationStack { ShareWithPeopleView(shelf: shelf, hub: hub, vault: nil) }
+            }
+        case ("keys-and-access", _):
+            if let hub = PeopleModel.sample(.full).hub { NavigationStack { KeysAndAccessView(hub: hub) } }
         case ("questions", _):
             NavigationStack { QuestionsView() }
         case ("share", let vault?):
