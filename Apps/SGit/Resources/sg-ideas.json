@@ -30,8 +30,8 @@
  "counts": {
   "seen-working": 7,
   "built-untried": 26,
-  "in-progress": 17,
-  "proposed": 39,
+  "in-progress": 18,
+  "proposed": 38,
   "parked": 1
  },
  "ideas": [
@@ -494,8 +494,8 @@
    "number": "120",
    "app": "SGit Vaults",
    "title": "sgit app: questions for the owner, answered by typing or by voice",
-   "status": "proposed",
-   "why": "Open, with nothing built yet: \"Status: open. Owner: the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB).\"",
+   "status": "in-progress",
+   "why": "Open, and the reality file lists for it: TestFlight upload.",
    "summary": "The owner, 14 November 2026: \"you need a way that you can start to ask questions from me throughout the app, so I can answer them even with voice\".",
    "detail": [
     "The owner, 14 November 2026: \"you need a way that you can start to ask questions from me throughout the app, so I can answer them even with voice\".",
@@ -508,7 +508,9 @@
     "SGit Vaults: Settings"
    ],
    "versions": [],
-   "features": [],
+   "features": [
+    "TestFlight upload"
+   ],
    "url": "https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/120-sgit-app-questions-for-the-owner.md",
    "source": "The owner"
   },
@@ -1357,7 +1359,9 @@
     "SGit Vaults: a vault",
     "SGit Vaults: Share"
    ],
-   "issues": [],
+   "issues": [
+    "120"
+   ],
    "url": "https://ios.app.voicedebrief.ai/sgit-app/built/index.html",
    "source": "The reality file",
    "versions": []
