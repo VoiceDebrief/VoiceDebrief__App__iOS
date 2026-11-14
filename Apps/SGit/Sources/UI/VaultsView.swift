@@ -120,23 +120,44 @@ struct VaultsView: View {
 extension VaultsView {
     /// A part of the app as a row: its drawing as a thumbnail, its icon, name and line.
     func sectionRow(_ section: SGSection) -> some View {
+        SGSectionRow(section: section)
+    }
+}
+
+/// A part of the app as a row: its drawing as a thumbnail, its icon, name and line. At the
+/// accessibility text sizes the thumbnail goes and every word wraps, so nothing is cut.
+struct SGSectionRow: View {
+    let section: SGSection
+    @Environment(\.dynamicTypeSize) private var typeSize
+
+    var body: some View {
         HStack(spacing: DS.Space.s) {
-            Image(section.art)
-                .resizable()
-                .scaledToFill()
-                .frame(width: 72, height: 54)
-                .clipShape(RoundedRectangle(cornerRadius: DS.Radius.control, style: .continuous))
-                .accessibilityHidden(true)
-            VStack(alignment: .leading, spacing: 2) {
-                HStack(spacing: DS.Space.xs) {
-                    SGSectionIcon(section: section, size: 20)
-                    Text(section.title).font(.body.weight(.semibold))
-                }
-                Text(section.line).font(.footnote).foregroundStyle(.secondary)
+            if !typeSize.isAccessibilitySize {
+                Image(section.art)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 72, height: 54)
+                    .clipShape(RoundedRectangle(cornerRadius: DS.Radius.control, style: .continuous))
+                    .accessibilityHidden(true)
             }
+            VStack(alignment: .leading, spacing: 2) {
+                Label {
+                    Text(section.title)
+                        .font(.body.weight(.semibold))
+                        .fixedSize(horizontal: false, vertical: true)
+                } icon: {
+                    SGSectionIcon(section: section, size: 20)
+                }
+                Text(section.line)
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
         .padding(.vertical, 2)
         .contentShape(Rectangle())
+        .accessibilityElement(children: .combine)
     }
 }
 

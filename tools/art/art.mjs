@@ -13,7 +13,7 @@ export const C = {
 export const T = {
   record: '#0E9E72', library: '#2F80ED', vaults: '#4F5BD5', recipients: '#E5577E', identity: '#8E5CF7',
   credit: '#D4A12A', lab: '#13A8C8', words: '#2BB39A', diagnostics: '#7B8DA3', status: '#12C08A',
-  settings: '#8A9BB0', activity: '#F08A4B', contacts: '#E5577E', about: '#12C08A', gallery: '#E07A3F', share: '#E5577E', history: '#13A8C8',
+  settings: '#8A9BB0', activity: '#F08A4B', contacts: '#E5577E', about: '#12C08A', gallery: '#E07A3F', share: '#E5577E', history: '#13A8C8', webVault: '#4F5BD5', inbox: '#2F80ED', secrets: '#8E5CF7', people: '#E5577E',
 };
 
 // A deterministic sequence, so a picture is the same every time it is drawn.
@@ -75,6 +75,8 @@ const bars = (x, cy, w, maxH, n, color, seed = 3, bw = 0) => {
 const W = 720, H = 540;
 
 export const tiles = {
+  people: () => tiles.recipients(),
+  you: () => tiles.identity(),
   contacts: () => tiles.recipients(),
   about: () => tiles.status(),
   record: () => frame(W, H, T.record, `
@@ -205,6 +207,32 @@ export const tiles = {
     <g filter="url(#soft)" transform="translate(560 130)"><circle r="58" fill="url(#acc)"/>
       <circle r="40" fill="none" stroke="#FFFFFF" stroke-width="7"/>
       <path d="M0 -24 V0 L16 12" fill="none" stroke="#FFFFFF" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></g>`),
+
+  webVault: () => frame(W, H, T.webVault, `
+    <g filter="url(#soft)"><rect x="140" y="110" width="440" height="300" rx="24" fill="url(#card)"/></g>
+    <rect x="140" y="110" width="440" height="46" rx="24" fill="#DCE6EF"/><rect x="140" y="134" width="440" height="22" fill="#DCE6EF"/>
+    ${[170, 196, 222].map((x, i) => `<circle cx="${x}" cy="133" r="8" fill="${[C.red, C.amber, C.greenHi][i]}"/>`).join('')}
+    <rect x="250" y="122" width="250" height="22" rx="11" fill="#FFFFFF"/>
+    <circle cx="300" cy="280" r="74" fill="url(#acc)"/>
+    <circle cx="300" cy="280" r="30" fill="none" stroke="#FFFFFF" stroke-width="7"/>
+    ${[0, 60, 120].map(a => `<rect x="296" y="236" width="8" height="88" rx="4" fill="#FFFFFF" transform="rotate(${a} 300 280)"/>`).join('')}
+    ${lines(410, 214, 140, 5, 30, C.navy, 0.2)}`),
+
+  inbox: () => frame(W, H, T.inbox, `
+    ${[0, 1].map(i => `<g transform="rotate(${[-10, 6][i]} 360 200)" filter="url(#soft)"><rect x="${270 + i * 30}" y="${110 + i * 20}" width="190" height="124" rx="14" fill="url(#card)"/>
+      <path d="M${270 + i * 30} ${118 + i * 20} l95 62 l95 -62" fill="none" stroke="${C.navy}" stroke-opacity="0.3" stroke-width="5" stroke-linejoin="round"/></g>`).join('')}
+    <g filter="url(#soft)"><path d="M200 300 L250 230 H470 L520 300 V410 a20 20 0 0 1 -20 20 H220 a20 20 0 0 1 -20 -20 Z" fill="url(#acc)"/></g>
+    <path d="M200 300 H290 a70 40 0 0 0 140 0 H520" fill="none" stroke="#FFFFFF" stroke-width="8" stroke-linejoin="round"/>
+    <circle cx="520" cy="236" r="26" fill="${C.red}"/><circle cx="520" cy="236" r="26" fill="none" stroke="#FFFFFF" stroke-width="4"/>`),
+
+  secrets: () => frame(W, H, T.secrets, `
+    <g filter="url(#soft)"><rect x="170" y="170" width="380" height="180" rx="34" fill="url(#deep)" stroke="${lighten(T.secrets, 0.35)}" stroke-width="3"/></g>
+    ${[0, 1, 2, 3, 4, 5].map(i => `<g transform="translate(${226 + i * 54} 260)">${[0, 60, 120].map(a => `<rect x="-4" y="-20" width="8" height="40" rx="4" fill="#FFFFFF" transform="rotate(${a})"/>`).join('')}</g>`).join('')}
+    <g filter="url(#soft)" transform="translate(520 150) rotate(-30)">
+      <circle r="44" fill="url(#acc)"/><circle r="16" fill="${C.navy}"/>
+      <rect x="-9" y="40" width="18" height="100" rx="6" fill="url(#acc)"/>
+      <rect x="9" y="96" width="26" height="14" rx="5" fill="url(#acc)"/><rect x="9" y="122" width="18" height="14" rx="5" fill="url(#acc)"/>
+    </g>`),
 
   gallery: () => frame(W, H, T.gallery, [[-10, 180, 130], [4, 300, 110], [14, 400, 160]].map(([rot, x, y], i) => `
     <g transform="rotate(${rot} ${x + 100} ${y + 100})" filter="url(#soft)">

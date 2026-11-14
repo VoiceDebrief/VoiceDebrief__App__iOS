@@ -16,7 +16,8 @@ const site = join(root, 'website/assets/art');
 
 // One per RootTab, plus diagnostics (inside Settings). Keep in step with Sources/UI/Design/Sections.swift.
 const vdTiles = ['record', 'library', 'contacts', 'vaults', 'identity', 'credit', 'activity', 'lab', 'words', 'about', 'settings', 'diagnostics'];
-const sgTiles = ['vaults', 'gallery', 'share', 'history', 'settings'];
+// One per SGSection (Apps/SGit/Sources/UI/Design/Sections.swift).
+const sgTiles = ['vaults', 'gallery', 'share', 'history', 'settings', 'webVault', 'activity', 'people', 'you', 'contacts', 'inbox', 'secrets'];
 
 const browser = await chromium.launch();
 const page = await browser.newPage({ deviceScaleFactor: 1 });
