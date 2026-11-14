@@ -2,13 +2,15 @@ import Combine
 import SwiftUI
 import UIKit
 
-/// Experiment L03: play by voice, and see how long each command took to show.
-struct GamePlayView: View {
+/// One game, played by voice, with how long each command took to show. Opened from the Play landing page.
+struct GameScreen: View {
+    let kind: GameKind
     @AppStorage("vd.localeId") private var localeId = ""
     @Environment(\.horizontalSizeClass) private var sizeClass
     private let game = GameController.shared
     private let player = GameVoicePlayer.shared
     @State private var typed = ""
+    @AppStorage("vd.game.asMe") private var asMe = false
 
     var body: some View {
         Group {
@@ -42,9 +44,12 @@ struct GamePlayView: View {
             }
         }
         .background(DS.Palette.ground)
-        .navigationTitle("Play")
+        .navigationTitle(kind.title)
         .navigationBarTitleDisplayMode(.inline)
-        .onAppear { game.prepareModel() }
+        .onAppear {
+            if game.state.kind != kind { game.choose(kind) }
+            game.prepareModel()
+        }
         .onDisappear {
             player.stop()
             Task { await game.stopListening() }
@@ -59,12 +64,6 @@ struct GamePlayView: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: DS.Space.xs) {
-            Picker("Game", selection: Binding(get: { game.state.kind }, set: { game.choose($0) })) {
-                ForEach(GameKind.allCases) { kind in
-                    Text(kind.title).tag(kind)
-                }
-            }
-            .pickerStyle(.segmented)
             Text("Level \(game.state.levelIndex + 1): \(game.state.level.title)")
                 .font(DS.TypeScale.heading)
             Text(game.state.level.story)
@@ -77,9 +76,12 @@ struct GamePlayView: View {
 
     private var board: some View {
         VStack(spacing: DS.Space.xs) {
-            GameBoardView(state: game.state, hint: game.hint)
+            GameBoardView(state: game.state, hint: game.hint, asMe: asMe)
                 .frame(maxWidth: .infinity)
                 .frame(maxHeight: sizeClass == .regular ? 520 : 360)
+            if game.listening {
+                GameHeardStrip(game: game)
+            }
             Text(game.message)
                 .font(.callout.weight(.semibold))
                 .multilineTextAlignment(.center)
@@ -117,12 +119,6 @@ struct GamePlayView: View {
             }
             .buttonStyle(.borderedProminent)
             .tint(game.listening ? DS.Palette.red : DS.Palette.green)
-            if game.listening {
-                Text(liveWords)
-                    .font(.callout)
-                    .foregroundStyle(.secondary)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            }
             if let problem = game.problem {
                 Text(problem).font(.footnote).foregroundStyle(DS.Palette.red)
             }
@@ -164,10 +160,6 @@ struct GamePlayView: View {
         }
     }
 
-    private var liveWords: String {
-        let text = (String(game.liveSettled.suffix(120)) + " " + game.liveVolatile).trimmingCharacters(in: .whitespacesAndNewlines)
-        return text.isEmpty ? "Listening. Say a direction: left, right, up, down." : text
-    }
 
     private func sendTyped() {
         game.hear(typed, source: "typed")
@@ -210,12 +202,15 @@ struct GameLatencyCard: View {
                     Text(GameWords.ms(total))
                         .font(DS.TypeScale.number)
                         .foregroundStyle(total < 500 ? DS.Palette.green : (total < 1500 ? DS.Palette.amber : DS.Palette.red))
+                    Text("\u{2192} \(entry.command ?? "nothing")")
+                        .font(DS.TypeScale.heading)
+                        .lineLimit(1)
                     Text("by \(entry.engine)\(entry.early ? ", before the words settled" : "")\(total < 0 ? ", before the voice finished" : "")")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                     Spacer()
                 }
-                Text("\u{201C}\(entry.words)\u{201D} \u{2192} \(entry.command ?? "nothing")")
+                Text("heard \u{201C}\(entry.words)\u{201D}")
                     .font(.footnote)
                     .lineLimit(2)
                 Text(GameLatencyWords.parts(entry))
@@ -256,6 +251,7 @@ enum GameLatencyWords {
 
 struct GameEngineSection: View {
     @Bindable var game: GameController
+    @AppStorage("vd.game.asMe") private var asMe = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: DS.Space.xs) {
@@ -269,6 +265,7 @@ struct GameEngineSection: View {
             .onChange(of: game.mode) { game.prepareModel() }
             Toggle("Ask the model too, to compare", isOn: $game.shadowModel)
             Toggle("Act before the words settle", isOn: $game.actEarly)
+            Toggle("Play as me (Boxes): my avatar on the board", isOn: $asMe)
             Text("Phrases: the code's fixed words, no model. Model: Apple's on-device model, one sentence at a time with only this turn's tools; its first tool call ends the request. Both: phrases first, the model when they find nothing. Model: \(OnDeviceModel.status.text).")
                 .font(.caption)
                 .foregroundStyle(.secondary)
@@ -368,5 +365,67 @@ extension View {
         padding(DS.Space.s)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(DS.Palette.surface, in: RoundedRectangle(cornerRadius: DS.Radius.control))
+    }
+}
+
+/// While listening: what is being heard now, as it settles, and what became of the last few sentences,
+/// so that the player can see what the game heard before it acts (the owner, 14 November 2026).
+struct GameHeardStrip: View {
+    let game: GameController
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack(alignment: .firstTextBaseline, spacing: 6) {
+                Image(systemName: "waveform")
+                    .foregroundStyle(DS.Palette.green)
+                    .symbolEffect(.variableColor.iterative, options: .repeating)
+                if game.hearingSettled.isEmpty && game.hearingVolatile.isEmpty {
+                    Text("Listening. Say a direction: left, right, up, down.")
+                        .foregroundStyle(.secondary)
+                } else {
+                    (Text(game.hearingSettled).foregroundStyle(.primary)
+                        + Text(game.hearingSettled.isEmpty ? "" : " ")
+                        + Text(game.hearingVolatile).foregroundStyle(.secondary).italic())
+                        .lineLimit(2)
+                }
+                Spacer(minLength: 0)
+            }
+            .font(.callout)
+            ForEach(game.heard.prefix(4)) { entry in
+                HStack(alignment: .firstTextBaseline, spacing: 6) {
+                    Text("\u{201C}\(entry.words)\u{201D}")
+                        .lineLimit(1)
+                    Text(GameHeardWords.fate(entry))
+                        .foregroundStyle(GameHeardWords.colour(entry))
+                        .lineLimit(1)
+                    Spacer(minLength: 0)
+                    Text(GameWords.ms(entry.totalMs)).monospacedDigit().foregroundStyle(.secondary)
+                }
+                .font(.caption)
+            }
+        }
+        .padding(DS.Space.s)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(DS.Palette.surface, in: RoundedRectangle(cornerRadius: DS.Radius.control))
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Heard: \(game.hearingSettled) \(game.hearingVolatile)")
+    }
+}
+
+/// What became of a heard sentence, in a few words.
+enum GameHeardWords {
+    static func fate(_ entry: GameLogEntry) -> String {
+        if let command = entry.command {
+            let how = entry.engine == "model" ? "the model" : (entry.early ? "the phrases, early" : "the phrases")
+            return entry.accepted == false ? "\u{2192} \(command), refused (\(how))" : "\u{2192} \(command) (\(how))"
+        }
+        if entry.outcome == nil && entry.model == nil { return "\u{2192} asking the model\u{2026}" }
+        if let refusal = entry.modelRefusal { return "\u{2192} \(refusal)" }
+        return "\u{2192} not understood"
+    }
+
+    static func colour(_ entry: GameLogEntry) -> Color {
+        if entry.command == nil { return entry.outcome == nil ? DS.Palette.amber : DS.Palette.red }
+        return entry.accepted == false ? DS.Palette.amber : DS.Palette.green
     }
 }

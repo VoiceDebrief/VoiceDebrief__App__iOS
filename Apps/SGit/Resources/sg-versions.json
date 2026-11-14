@@ -6,6 +6,58 @@
  "nextArt": [],
  "versions": [
   {
+   "version": "v0.1.104",
+   "date": "14 November 2026",
+   "notes": [
+    "The voice game shows what it hears, at the owner's request (\"the game is so cool\"): while Listen is on, a line under the board shows the sentence being said, black once settled and grey while it may still change, and the last four sentences with what each became (the command and which engine, refused, not understood, or asking the model) and its time; the command also sits beside the large time. The board takes the house palette, and Play as me puts your own avatar on the board in Boxes. Play opens on a landing page: the two games as large tiles with a picture of their first level, your best score and where you are, how to start, and how the last game went; a tile opens that game."
+   ],
+   "hasPage": true,
+   "url": "https://ios.app.voicedebrief.ai/versions/v0.1.104/index.html",
+   "pictures": 0,
+   "art": [],
+   "issues": []
+  },
+  {
+   "version": "v0.1.103",
+   "date": "14 November 2026",
+   "notes": [
+    "The Guide, after the owner found it had little to do on a wide Mac window: it opens on the latest release card, large, with Try buttons that open the sections the card names; on iPad and Mac it has two columns, the list on the left and the chosen card, guide or list on the right; every guide is a picture tile, and a guide shows each picture beside its numbered notes with an Open button for its section; the ideas are a count per status and what is in progress now. After the owner's second note: back and forward in the Guide as in a browser (two buttons, a sideways swipe, Command-[ and Command-]), a few lines before every picture saying what it shows and why it matters, a contents row at the top of each guide to jump to its parts, and wider pages."
+   ],
+   "hasPage": true,
+   "url": "https://ios.app.voicedebrief.ai/versions/v0.1.103/index.html",
+   "pictures": 0,
+   "art": [
+    "+----------------------------------------------------------------------+\n| VOICEDEBRIEF                                             v0.1.103    |\n| 14 November 2026                                                     |\n+----------------------------------------------------------------------+\n| THE GUIDE, LIKE A WEBSITE ON IPAD AND MAC                            |\n|                                                                      |\n| * Opens on the latest release card, large, with Try buttons          |\n| * Two columns: the list left, the chosen guide or card right         |\n| * Back and forward, as in a browser: buttons, swipe, Cmd-[ and ]     |\n| * Each picture has a few lines first: what it shows and why          |\n| * A guide has a contents row to jump to each part; wider pages       |\n|                                                                      |\n| WHERE    Guide, in the sidebar or the tab bar                        |\n| TRY      Open two guides, then swipe right and left to go back       |\n| NOT YET  Pictures of the Guide itself in the screens workflow        |\n+----------------------------------------------------------------------+"
+   ],
+   "issues": []
+  },
+  {
+   "version": "v0.1.102",
+   "date": "14 November 2026",
+   "notes": [
+    "The record screen on iPad and Mac is two columns, at the owner's request: on the left who it is for, the control, and while recording the live words and attachments; on the right your recent notes, Messages from Claude (from your agents vault) and Explore. iPhone keeps one column. Play has its own drawing.",
+    "A wide record screen for iPad and Mac, ready to be wired: two columns that scroll on their own, what you do on the left (who it is for, the control, the live words) and what came back on the right (recent notes, Claude's replies as a conversation), held to readable widths.",
+    "Two ways to talk says where a shared vault is used now: in VoiceDebrief, the Agents vault you share with Claude; in SGit Vaults, a vault shared with the people you choose (it had said shared vaults with people were still to come). The Play section has its own drawing: a board of squares beside a figure carrying a lantern up a ladder."
+   ],
+   "hasPage": true,
+   "url": "https://ios.app.voicedebrief.ai/versions/v0.1.102/index.html",
+   "pictures": 0,
+   "art": [],
+   "issues": []
+  },
+  {
+   "version": "v0.1.101",
+   "date": "14 November 2026",
+   "notes": [
+    "The secrets app article grows, after more from the owner: how the iCloud file stays whole when two devices or two people write at once (never replace a copy that has not been merged; a merge the app shows you), where that is weaker than the server and when the server is worth paying for; the comparison as positioning, including where 1Password, Bitwarden and Proton Pass already share with public keys; and pricing costed against what each operation costs, with a recommendation: credit only, a £5 starter that switches on a server copy charged per change, reading never charged. Read it."
+   ],
+   "hasPage": true,
+   "url": "https://ios.app.voicedebrief.ai/versions/v0.1.101/index.html",
+   "pictures": 0,
+   "art": [],
+   "issues": []
+  },
+  {
    "version": "v0.1.100",
    "date": "14 November 2026",
    "notes": [

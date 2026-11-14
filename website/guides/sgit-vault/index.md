@@ -6,6 +6,8 @@ A vault holds folders and files, like a folder on a computer, with every change 
 
 ## 1. A vault.
 
+A vault looks like a folder on a computer. The line at the top tells you whether everything in it has reached the server, which matters before you tell a teammate it is there.
+
 ![A vault. Numbered arrows mark the parts described below.](../img/sgit-vault-1.jpg)
 
 1. Whether everything is on the server, on this device only, or on its way in.
@@ -16,6 +18,8 @@ A vault holds folders and files, like a folder on a computer, with every change 
 6. More: history, saving a folder out, and the rest.
 
 ## 2. History.
+
+Every change to a vault is kept as a signed commit, so you can see who added what and when, and that nobody has altered it since.
 
 ![History. Numbered arrows mark the parts described below.](../img/sgit-vault-2.jpg)
 

@@ -30,9 +30,9 @@ for (const g of spec.guides) {
     if (g.app === 'SGit Vaults') copies.push(join(REPO, 'Apps/SGit/Resources', `sg-guide-${img}`));
     for (const p of copies)
       if (!existsSync(p)) problems.push(`${g.id}: missing picture ${p.slice(REPO.length + 1)} (run website/admin/guides.py)`);
-    return { screen: s.screen, caption: s.caption, image: `vd-guide-${g.id}-${i + 1}`, callouts: s.callouts.map((c) => ({ n: c.n, text: c.text })) };
+    return { screen: s.screen, caption: s.caption, lead: s.lead, image: `vd-guide-${g.id}-${i + 1}`, callouts: s.callouts.map((c) => ({ n: c.n, text: c.text })) };
   });
-  app.guides.push({ id: g.id, title: g.title, app: g.app, pictures: picturesOf(g), intro: g.intro, ideas: g.ideas || [], steps });
+  app.guides.push({ id: g.id, title: g.title, app: g.app, open: g.open, pictures: picturesOf(g), intro: g.intro, ideas: g.ideas || [], steps });
   const related = (g.ideas || []).map((id) => byId.get(id)).filter(Boolean);
   files.push([join(SITE, 'guides', g.id, 'index.md'), `# ${g.title}
 
@@ -42,7 +42,7 @@ ${g.intro}
 
 ${g.steps.map((s, i) => `## ${i + 1}. ${s.caption}
 
-![${s.caption} Numbered arrows mark the parts described below.](../img/${g.id}-${i + 1}.jpg)
+${s.lead ? s.lead + '\n\n' : ''}![${s.caption} Numbered arrows mark the parts described below.](../img/${g.id}-${i + 1}.jpg)
 
 ${s.callouts.map((c) => `${c.n}. ${c.text}`).join('\n')}
 `).join('\n')}

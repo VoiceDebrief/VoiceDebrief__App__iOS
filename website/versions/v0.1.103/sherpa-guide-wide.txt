@@ -1,0 +1,16 @@
++----------------------------------------------------------------------+
+| VOICEDEBRIEF                                             v0.1.103    |
+| 14 November 2026                                                     |
++----------------------------------------------------------------------+
+| THE GUIDE, LIKE A WEBSITE ON IPAD AND MAC                            |
+|                                                                      |
+| * Opens on the latest release card, large, with Try buttons          |
+| * Two columns: the list left, the chosen guide or card right         |
+| * Back and forward, as in a browser: buttons, swipe, Cmd-[ and ]     |
+| * Each picture has a few lines first: what it shows and why          |
+| * A guide has a contents row to jump to each part; wider pages       |
+|                                                                      |
+| WHERE    Guide, in the sidebar or the tab bar                        |
+| TRY      Open two guides, then swipe right and left to go back       |
+| NOT YET  Pictures of the Guide itself in the screens workflow        |
++----------------------------------------------------------------------+

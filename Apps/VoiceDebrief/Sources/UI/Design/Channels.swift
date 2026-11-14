@@ -56,7 +56,7 @@ enum ChannelKind: String, CaseIterable, Identifiable, Sendable {
         case .lane:
             "Used for voice notes, pictures, messages to agents and handing over a vault's key."
         case .sharedVault:
-            "Used for the Agents screen and Claude's replies; shared vaults with people are still to come."
+            "In VoiceDebrief, the Agents vault you share with Claude, where its replies arrive; in SGit Vaults, a vault shared with the people you choose."
         }
     }
 }
