@@ -191,3 +191,15 @@ struct PlayerSection: View {
         .onChange(of: url) { _, new in player.load(new) }
     }
 }
+
+/// The version, at the top beside the balance, opening what changed in it (owner's request, 14 November 2026).
+struct VersionBadge: View {
+    var body: some View {
+        Link(destination: AppInfo.notes()) {
+            Label(AppInfo.shortVersion(), systemImage: "sparkles")
+                .labelStyle(.titleAndIcon)
+                .font(.caption.weight(.semibold).monospacedDigit())
+        }
+        .accessibilityLabel("Version \(AppInfo.versionLine()). Opens what is new in it.")
+    }
+}

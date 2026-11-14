@@ -43,6 +43,7 @@ struct RecordView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) { CreditCounter() }
+                ToolbarItem(placement: .topBarLeading) { VersionBadge() }
                 ToolbarItem(placement: .topBarTrailing) {
                     LanguageMenu()
                         .disabled(session.isBusy)
@@ -138,10 +139,6 @@ struct RecordView: View {
                 }
             }
             recent
-            // The version, where it can be found, with what changed in it.
-            Link("Version \(AppInfo.versionLine()) · what is new", destination: AppInfo.releaseNotes)
-                .font(.footnote)
-                .foregroundStyle(.secondary)
         }
     }
 

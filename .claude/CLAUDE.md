@@ -43,7 +43,8 @@ passkey. The plan is `website/plan/index.md`. Load-bearing decisions, not to be 
 - **The version**: the `version` file is owned by CI. **Never edit it.** Every push to `dev` is a release:
   CI takes the latest tag, adds one, writes `version` and the README badge, tags, and stamps the site. The
   app's TestFlight version is that tag. Describe your change in a row headed `next` at the top of
-  `website/versions/index.md`; whoever next edits the page after CI has tagged writes the number in.
+  `website/versions/index.md`. CI (`website/admin/release.mjs`) turns the `next` rows into the new version's
+  rows and writes that version's own page, `website/versions/<version>/`, which the app's version badge opens.
 - **Work tracking**: `issues/open/NNN-slug.md` and `issues/done/`, one file each.
 - **Style**: British English, no em-dashes, plain statements. Code is Apache 2.0; content CC BY 4.0.
 - **Tests**: Swift Testing in the app, XCTest in `SGitVault` (as it came). No invented model or

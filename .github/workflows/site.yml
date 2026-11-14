@@ -67,8 +67,9 @@ jobs:
             IFS=. read -r MAJOR MINOR PATCH <<< "${LATEST#v}"
             NEW="v$MAJOR.$MINOR.$((PATCH + 1))"
             echo "$NEW" > version
+            node website/admin/release.mjs "$NEW"     # next rows become this version's, and its own page
             sed -i "s/release-v[0-9]*\.[0-9]*\.[0-9]*/release-$NEW/" README.md
-            git add version README.md
+            git add version README.md website
             git commit --quiet -m "Update release badge and version file"
             if git push --quiet origin HEAD:dev; then
               git tag "$NEW"

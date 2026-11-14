@@ -4,7 +4,7 @@
 // The domain comes from the CNAME file: canonical links, og:url, sitemap.xml and robots.txt are built from it.
 //   node website/admin/build.mjs           write
 //   node website/admin/build.mjs --check   exit 1 if any generated file is out of date (used by validate.mjs)
-import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync, readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -67,6 +67,14 @@ const PAGES = [
   { path: 'versions', nav: null,       title: 'VoiceDebrief for iOS release history',
     description: 'Every release of the VoiceDebrief iOS repository, with what changed.' },
 ];
+// One page per released version, written by CI (admin/release.mjs). Found here, not listed by hand.
+for (const v of (existsSync(join(ROOT, 'versions')) ? readdirSync(join(ROOT, 'versions')) : [])
+  .filter((d) => /^v\d+\.\d+\.\d+$/.test(d) && existsSync(join(ROOT, 'versions', d, 'index.md')))
+  .sort((a, b) => a.localeCompare(b, 'en', { numeric: true }))) {
+  PAGES.push({ path: `versions/${v}`, nav: null, title: `What changed in VoiceDebrief for iOS ${v}`,
+    description: `The release notes for ${v}: what changed in the app and the repository.` });
+}
+
 
 // ---------------------------------------------------------------- markdown (the subset these pages use)
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');

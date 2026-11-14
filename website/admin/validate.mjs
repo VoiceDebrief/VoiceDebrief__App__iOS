@@ -33,7 +33,7 @@ catch (e) { fail(`generated files out of date:\n${e.stderr}`); }
 const listed = [...readFileSync(join(SITE_ROOT, 'admin/build.mjs'), 'utf8').matchAll(/path: '([^']*)'/g)].map(m => m[1]);
 for (const md of site.filter(f => f.endsWith('index.md'))) {
   const dir = relative(SITE_ROOT, dirname(md)) || '';
-  if (!listed.includes(dir)) fail(`${rel(md)} is not in build.mjs's page list`);
+  if (!listed.includes(dir) && !/^versions\/v\d+\.\d+\.\d+$/.test(dir)) fail(`${rel(md)} is not in build.mjs's page list`);
   if (!existsSync(join(dirname(md), 'index.html'))) fail(`${rel(md)} has no index.html`);
 }
 

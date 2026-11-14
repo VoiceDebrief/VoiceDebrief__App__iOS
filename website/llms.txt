@@ -36,7 +36,9 @@ Every page has a markdown twin: replace index.html with index.md.
   the compiler: Swift is not built on Linux), how the site is built, how a release is made.
   Also how CI photographs every screen from invented sample data (screens.yml), and how an agent
   in a Linux container downloads and looks at the pictures.
-- https://ios.app.voicedebrief.ai/versions/index.html : release history.
+- https://ios.app.voicedebrief.ai/versions/index.html : release history. Each released version also has its
+  own page at versions/ plus the version and /index.html (for example versions/v0.1.28/index.html), written by CI;
+  the app's version badge opens it.
 - https://ios.app.voicedebrief.ai/reviews/index.html : reviews of the screens from pictures taken in
   CI: what a round is, and the list of rounds.
 - https://ios.app.voicedebrief.ai/reviews/round-1/index.html : round 1 (13 November 2026): what is
