@@ -22,13 +22,13 @@ struct ShareVaultView: View {
                     Text("This vault is on this device only. Before anybody else can open it, it has to be on a server they can reach. Sending it uploads every file, encrypted; the server cannot read them. From then on this device reads and writes the vault there.")
                         .font(.callout)
                     if !shelf.hasToken {
-                        Text("\(shelf.serverName) takes new vaults only from people it knows: that is what an access token is for. It is kept in this device's Keychain and sent only to that server.")
+                        Text("\(shelf.serverName) takes new vaults only from people it knows: that is what an access key is for. It is kept in this device's Keychain and sent only to that server.")
                             .font(.callout)
                             .foregroundStyle(.secondary)
-                        SecureField("Access token", text: $token)
+                        SecureField("Access key", text: $token)
                             .textInputAutocapitalization(.never)
                             .autocorrectionDisabled()
-                        Button("Save the token") {
+                        Button("Save the access key") {
                             shelf.setToken(token)
                             token = ""
                         }

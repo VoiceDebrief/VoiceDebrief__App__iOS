@@ -40,13 +40,13 @@ The two source repositories could not be attached to this session. What is said 
 
 ## The words
 
-The owner's and sgit's: **vault**, **vault key** (reads and writes), **read key** (reads only), **access token** (the web UI calls it an access key), **commit**, **history**, **branch**. The app says **Add** for putting files in, **Refresh** for fetching the latest, and **Send to the server** for the one push a vault made on the device needs.
+The owner's and sgit's: **vault**, **vault key** (reads and writes), **read key** (reads only), **access key** (the server's own word is access token), **commit**, **history**, **branch**. The app says **Add** for putting files in, **Refresh** for fetching the latest, and **Send to the server** for the one push a vault made on the device needs.
 
 ## The screens
 
 **Vaults.** The vaults this device knows. Add one by pasting its key or scanning a QR code; create one. Each row says whether the key can write.
 
-**A vault.** The folder that is open: folders first, then files, as a grid of thumbnails or a list. Add (from Photos, from Files), New folder by naming one when adding, Refresh, Share, History. Uploads in progress sit at the top with a bar for each file and one for the whole selection, and a failed one says why and offers Try again and Discard.
+**A vault.** The folder that is open: folders first, then files, as a grid of thumbnails or a list. On an iPad or a Mac the folders are also a tree down the left, as in the web Vault. Files and folders can be dropped on it from the desktop, and a file can be dragged out. Add (from Photos, from Files), New folder by naming one when adding, Refresh, Share, History. Uploads in progress sit at the top with a bar for each file and one for the whole selection, and a failed one says why and offers Try again and Discard.
 
 **A file.** An image at full size with zoom; a video in the system player; anything else in Quick Look. Save to Photos and Share. Delete and rename are a commit each.
 

@@ -4,6 +4,7 @@ import ImageIO
 import Observation
 import SGitVault
 import UIKit
+import UniformTypeIdentifiers
 
 // Started from Apps/VoiceDebrief/Sources/Engine/VaultBook.swift (v0.1.8): the saved vaults, the token,
 // the signing key, create, add and open are the same. What a debrief needed is gone; files, thumbnails,
@@ -55,7 +56,7 @@ enum VaultShelfError: LocalizedError {
 
     var errorDescription: String? {
         switch self {
-        case .noToken: return "The server takes changes only from people it knows, so writing to it needs an access token. Add one in Settings."
+        case .noToken: return "The server takes changes only from people it knows, so writing to it needs an access key. Add one in Settings."
         case .readOnly: return "This is a read key: it can open the vault but not change it."
         case .alreadyThere: return "That vault is already in the list."
         case .nameTaken(let name): return "There is already a file called \(name) in this folder."
@@ -100,7 +101,7 @@ enum Thumbnail {
 }
 
 /// The vaults this device knows, and everything the app reads from them or changes in them one file
-/// at a time. Adding files is the `Outbox`. Keys and the access token live in the Keychain. Every
+/// at a time. Adding files is the `Outbox`. Keys and the access key live in the Keychain. Every
 /// request, decryption and signature check is recorded in `log`, never with key material.
 @MainActor
 @Observable
@@ -398,6 +399,27 @@ final class VaultShelf {
             fetchedBytes[blobId] = nil
         }
         return try await task.value
+    }
+
+    /// A file to drag out of the app, to the desktop or another app. It is fetched and decrypted when
+    /// it is dropped, not when the drag begins.
+    func itemProvider(for file: VaultFile, in vault: SavedVault) -> NSItemProvider {
+        let name = VaultListing.name(of: file.path)
+        let provider = NSItemProvider()
+        provider.suggestedName = name
+        let ext = name.split(separator: ".").last.map(String.init) ?? ""
+        let type = UTType(filenameExtension: ext) ?? .data
+        provider.registerFileRepresentation(forTypeIdentifier: type.identifier, fileOptions: [], visibility: .all) { completion in
+            Task { @MainActor in
+                do {
+                    completion(try await self.localFile(for: file, in: vault), false, nil)
+                } catch {
+                    completion(nil, false, error)
+                }
+            }
+            return nil
+        }
+        return provider
     }
 
     /// The largest image a thumbnail is made for without being asked: making one fetches the whole file.

@@ -37,6 +37,37 @@ struct VaultListing: Equatable, Sendable {
         return VaultListing(folder: folder, folders: sortedFolders, files: files)
     }
 
+    /// A folder in the tree shown beside the files on a wide screen.
+    struct Node: Identifiable, Hashable, Sendable {
+        var id: String { path }
+        let name: String
+        let path: String
+        /// Nil when the folder holds no folders, so that no disclosure arrow is drawn.
+        var children: [Node]?
+    }
+
+    /// Every folder the paths imply, as a tree, sorted as the Finder sorts.
+    static func tree(paths: [String]) -> [Node] {
+        var found: Set<String> = []
+        for path in paths {
+            var parts = path.split(separator: "/").map(String.init)
+            parts.removeLast()
+            var here = ""
+            for part in parts {
+                here = here.isEmpty ? part : here + "/" + part
+                found.insert(here)
+            }
+        }
+        let folders = found
+        func below(_ parent: String) -> [Node]? {
+            let direct = folders.filter { Self.parent(of: $0) == parent }
+                .sorted { name(of: $0).localizedStandardCompare(name(of: $1)) == .orderedAscending }
+            guard !direct.isEmpty else { return nil }
+            return direct.map { Node(name: name(of: $0), path: $0, children: below($0)) }
+        }
+        return below("") ?? []
+    }
+
     static func name(of path: String) -> String {
         path.split(separator: "/").last.map(String.init) ?? path
     }

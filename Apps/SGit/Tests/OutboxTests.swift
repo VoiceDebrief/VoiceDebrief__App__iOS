@@ -202,8 +202,27 @@ struct LocalVaultTests {
 
         // Sharing is the first thing that asks for a token, and says why. Nothing is sent without one.
         #expect(await shelf.sendToServer(vault) == false)
-        #expect(shelf.problem?.contains("access token") == true)
+        #expect(shelf.problem?.contains("access key") == true)
         #expect(shelf.current(vault).onDevice)
+    }
+
+    @Test func aDroppedFolderKeepsItsShape() async throws {
+        let shelf = try OutboxTests.shelf(FolderVaultTransport(root: try OutboxTests.folder("server")))
+        let vault = try #require(await shelf.create(name: "Mine"))
+        // A folder as it would be dragged in from the desktop.
+        let dropped = try OutboxTests.folder("dropped").appending(path: "Summit", directoryHint: .isDirectory)
+        try FileManager.default.createDirectory(at: dropped.appending(path: "day 1"), withIntermediateDirectories: true)
+        try Data("one".utf8).write(to: dropped.appending(path: "day 1/a.txt"))
+        try Data("two".utf8).write(to: dropped.appending(path: "b.txt"))
+        let incoming = PickedFile.keepAll(scoped: dropped)
+        #expect(incoming.count == 2)
+        let outbox = Outbox(root: try OutboxTests.folder("outbox"))
+        let job = try outbox.add(incoming, to: vault, folder: "photos", existing: [], shelf: shelf)
+        await outbox.wait(for: job.id)
+        #expect(outbox.jobs.isEmpty, "\(outbox.jobs.first?.problem ?? "")")
+        let contents = try await shelf.load(vault)
+        #expect(contents.files.map(\.path) == ["photos/Summit/b.txt", "photos/Summit/day 1/a.txt"])
+        #expect(FileManager.default.fileExists(atPath: dropped.appending(path: "b.txt").path), "the originals are left where they were")
     }
 
     @Test func aVaultSavedByTheFirstBuildIsOnTheServer() throws {

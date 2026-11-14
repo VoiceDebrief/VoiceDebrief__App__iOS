@@ -171,7 +171,14 @@ struct AddVaultSheet: View {
 struct CreateVaultSheet: View {
     let shelf: VaultShelf
     @State private var name = ""
+    @State private var forTheTeam = true
+    @State private var accessKey = ""
     @Environment(\.dismiss) private var dismiss
+
+    private var needsKey: Bool { forTheTeam && !shelf.hasToken }
+    private var ready: Bool {
+        shelf.busy == nil && (!needsKey || !accessKey.trimmingCharacters(in: .whitespaces).isEmpty)
+    }
 
     var body: some View {
         NavigationStack {
@@ -179,7 +186,21 @@ struct CreateVaultSheet: View {
                 Section {
                     TextField("Name, for this device only", text: $name)
                 } footer: {
-                    Text("A new vault is a random key, an empty folder and one signed commit, made and kept on this device: no account, no token, no network. You can add files to it at once. Nobody else can open it until you send it to a server, from its Share screen; that is the first time a token is asked for.")
+                    Text("A new vault is a random key, an empty folder and one signed commit, made on this device. Its key is kept in this device's Keychain.")
+                }
+                Section {
+                    Toggle("Put it on the server, to share it", isOn: $forTheTeam)
+                    if needsKey {
+                        SecureField("Access key for \(shelf.serverName)", text: $accessKey)
+                            .textInputAutocapitalization(.never)
+                            .autocorrectionDisabled()
+                    } else if forTheTeam {
+                        LabeledContent("Access key", value: "In the Keychain")
+                    }
+                } footer: {
+                    Text(forTheTeam
+                         ? "The vault is made here, then sent to \(shelf.serverName), encrypted, so that anybody you give its key to can open it. The server takes new vaults only from people it knows: that is what the access key is for. It is kept in this device's Keychain."
+                         : "The vault stays on this device only: no account, no key for a server, no network. You can put it on the server later, from its Share screen.")
                 }
                 if let busy = shelf.busy {
                     Section {
@@ -200,10 +221,14 @@ struct CreateVaultSheet: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Create") {
                         Task {
-                            if await shelf.create(name: name) != nil { dismiss() }
+                            if needsKey { shelf.setToken(accessKey) }
+                            guard let made = await shelf.create(name: name) else { return }
+                            // If sending fails the vault is still made, on this device, and the list says why.
+                            if forTheTeam { await shelf.sendToServer(made) }
+                            dismiss()
                         }
                     }
-                    .disabled(shelf.busy != nil)
+                    .disabled(!ready)
                 }
             }
             .onAppear { shelf.clearProblem() }

@@ -54,6 +54,14 @@ struct NamingTests {
         #expect(4_100_000.fileSizeText == "4.1 MB")
     }
 
+    @Test func theFoldersMakeATree() {
+        let tree = VaultListing.tree(paths: ["a.txt", "trip/day 2/x.jpg", "trip/day 10/y.jpg", "trip/z.mov", "notes/n.md"])
+        #expect(tree.map(\.path) == ["notes", "trip"])
+        #expect(tree[0].children == nil)
+        #expect(tree[1].children?.map(\.path) == ["trip/day 2", "trip/day 10"])
+        #expect(VaultListing.tree(paths: ["only.txt"]).isEmpty)
+    }
+
     @Test func aFileIsKnownByItsName() {
         #expect(VaultListing.kind(of: "a/IMG_1.HEIC") == .image)
         #expect(VaultListing.kind(of: "clip.MOV") == .video)

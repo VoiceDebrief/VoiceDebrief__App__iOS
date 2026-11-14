@@ -27,11 +27,30 @@ struct PickedFile: Transferable, Sendable {
         FileRepresentation(importedContentType: .data) { try keep($0.file) }
     }
 
-    /// Copies a file chosen in the Files picker, which is only readable while its scope is open.
-    static func keep(scoped url: URL) throws -> PickedFile {
+    /// Copies a file chosen in the Files picker or dropped on the app, which is only readable while its
+    /// scope is open. A folder is taken whole: every file in it, each with where it sat inside the folder.
+    static func keepAll(scoped url: URL) -> [IncomingFile] {
         let scoped = url.startAccessingSecurityScopedResource()
         defer { if scoped { url.stopAccessingSecurityScopedResource() } }
-        return try keep(url)
+        var isFolder: ObjCBool = false
+        guard FileManager.default.fileExists(atPath: url.path, isDirectory: &isFolder) else { return [] }
+        guard isFolder.boolValue else {
+            guard let kept = try? keep(url) else { return [] }
+            return [IncomingFile(url: kept.url, name: url.lastPathComponent)]
+        }
+        var out: [IncomingFile] = []
+        let base = url.standardizedFileURL.path
+        guard let walker = FileManager.default.enumerator(at: url, includingPropertiesForKeys: [.isRegularFileKey],
+                                                          options: [.skipsHiddenFiles]) else { return [] }
+        for case let item as URL in walker {
+            guard (try? item.resourceValues(forKeys: [.isRegularFileKey]).isRegularFile) == true,
+                  let kept = try? keep(item) else { continue }
+            let inside = item.deletingLastPathComponent().standardizedFileURL.path
+            var sub = url.lastPathComponent
+            if inside.hasPrefix(base), inside.count > base.count { sub += String(inside.dropFirst(base.count)) }
+            out.append(IncomingFile(url: kept.url, name: item.lastPathComponent, subfolder: sub))
+        }
+        return out
     }
 }
 
