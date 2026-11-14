@@ -1,0 +1,7 @@
+# What changed in v0.1.80
+
+Released 14 November 2026. Every push to the repository's `dev` branch is a release; this page was written by CI from the notes that came with it. [Every version](../index.md) · [What is built](../../built/index.md)
+
+A game played by voice, Lab experiment L03 (issue 300), from the owner's note while driving. Under Settings, Lab, L03: Play. Two small games on the same pieces: Boxes (squares from above: find the gold, the exit opens, keys, doors, traps, three levels) and Lantern (a figure from the side: walk, jump, climb ladders, three levels). Say or type a command: the phrases (code, no model) act at once, and Apple's on-device model is asked when they find nothing, with only the tools that make sense at that moment; its first tool call ends the request, and the code checks and applies it. Every command shows the time from the end of your words to the move, which engine acted, the model's time to its tool call, estimated tokens and energy; the log is shared as JSON. A clue appears when you look stuck: first a glowing square, then the words to try, phrased by the model when it is there. A voice player can play the game by itself: it says its commands aloud (and makes the odd mistake), the microphone hears them like yours, and its times run from the moment its voice stops. A few things are hidden. In test: compiled and unit tested, never played on a device or put to a model.
+
+Pictures of the screens are added to this page when the screens workflow has taken them for this version.
