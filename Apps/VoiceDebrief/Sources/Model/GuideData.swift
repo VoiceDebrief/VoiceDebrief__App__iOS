@@ -93,6 +93,33 @@ struct VersionEntry: Codable, Hashable, Identifiable, Sendable {
 /// Filling a release card's placeholders, as website/admin/cards.mjs does at release: a line that ends in
 /// a box edge keeps the edge in its column.
 enum ReleaseCard {
+    /// The sections a card's WHERE and TRY lines name, by their titles, in the order named: what its
+    /// Try buttons open. "Record screen" names Record; a title must stand as a whole word.
+    static func sections(in text: String) -> [RootTab] {
+        let lines = text.components(separatedBy: "\n").filter {
+            let t = $0.trimmingCharacters(in: CharacterSet(charactersIn: "| "))
+            return t.hasPrefix("WHERE") || t.hasPrefix("TRY")
+        }
+        var found: [(Int, RootTab)] = []
+        let joined = lines.joined(separator: " ")
+        for tab in RootTab.allCases {
+            let pattern = "\\b" + NSRegularExpression.escapedPattern(for: tab.title) + "\\b"
+            if let r = joined.range(of: pattern, options: [.regularExpression, .caseInsensitive]) {
+                found.append((joined.distance(from: joined.startIndex, to: r.lowerBound), tab))
+            }
+        }
+        return found.sorted { $0.0 < $1.0 }.map(\.1)
+    }
+
+    /// The card's title: the first line of capitals inside the box after the heading block.
+    static func title(of text: String) -> String? {
+        let rows = text.components(separatedBy: "\n").map { $0.trimmingCharacters(in: CharacterSet(charactersIn: "| ")) }
+        let bars = rows.indices.filter { rows[$0].hasPrefix("+-") }
+        guard bars.count >= 2, bars[1] + 1 < rows.count else { return nil }
+        let t = rows[bars[1] + 1]
+        return t.isEmpty ? nil : t
+    }
+
     static func fill(_ text: String, _ values: [String: String]) -> String {
         text.components(separatedBy: "\n").map { line in
             var out = line
@@ -131,6 +158,12 @@ struct VersionHistory: Codable, Sendable {
         let own = VersionEntry(version: current, date: "", notes: next, url: AppInfo.notes(for: current).absoluteString,
                                hasPage: true, pictures: 0, issues: [], art: art)
         return [own] + versions
+    }
+
+    /// The newest release card: the running build's own, or else the latest version that has one.
+    func latestCard(current: String) -> (version: String, text: String)? {
+        for v in all(current: current) { if let first = v.art?.first { return (v.version, first) } }
+        return nil
     }
 
     /// The versions a person has not looked at: newer than the last one they saw, up to the running one.
@@ -172,6 +205,8 @@ struct FeatureGuide: Codable, Hashable, Identifiable, Sendable {
     let id: String
     let title: String
     let app: String
+    /// The section this guide is about (a `RootTab` raw value), for an Open button; none for SGit Vaults.
+    var open: String? = nil
     /// Where this guide's pictures came from, when not the book's own line.
     let pictures: String?
     let intro: String

@@ -46,7 +46,7 @@ struct RootView: View {
                 AgentsView(book: book).tracked("agents")
             }
             Tab(RootTab.guide.title, systemImage: RootTab.guide.symbol, value: RootTab.guide) {
-                GuideView().tracked("guide")
+                GuideView(go: { tab = $0 }).tracked("guide")
             }
             TabSection("You") {
                 Tab(RootTab.identity.title, systemImage: RootTab.identity.symbol, value: RootTab.identity) {

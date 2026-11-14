@@ -32,7 +32,7 @@ for (const g of spec.guides) {
       if (!existsSync(p)) problems.push(`${g.id}: missing picture ${p.slice(REPO.length + 1)} (run website/admin/guides.py)`);
     return { screen: s.screen, caption: s.caption, image: `vd-guide-${g.id}-${i + 1}`, callouts: s.callouts.map((c) => ({ n: c.n, text: c.text })) };
   });
-  app.guides.push({ id: g.id, title: g.title, app: g.app, pictures: picturesOf(g), intro: g.intro, ideas: g.ideas || [], steps });
+  app.guides.push({ id: g.id, title: g.title, app: g.app, open: g.open, pictures: picturesOf(g), intro: g.intro, ideas: g.ideas || [], steps });
   const related = (g.ideas || []).map((id) => byId.get(id)).filter(Boolean);
   files.push([join(SITE, 'guides', g.id, 'index.md'), `# ${g.title}
 

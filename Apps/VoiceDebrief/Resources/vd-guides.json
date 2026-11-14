@@ -6,6 +6,7 @@
    "id": "record",
    "title": "Record a voice note",
    "app": "VoiceDebrief",
+   "open": "record",
    "pictures": "VoiceDebrief: iPhone, light, from screens.yml run 43606968488 on work/sherpa at 0f2e6f8 (the same tree as dev, v0.1.74, 14 November 2026), after the design session's restyle.",
    "intro": "Choose who the note is for, then one button records. The recording is saved into the note while you speak, so a call or a crash cannot lose it. When you finish, the note is transcribed and debriefed on this device by Apple's models, and sent if it was for someone.",
    "ideas": [
@@ -82,6 +83,7 @@
    "id": "note",
    "title": "Open a note: listen, send, save",
    "app": "VoiceDebrief",
+   "open": "library",
    "pictures": "VoiceDebrief: iPhone, light, from screens.yml run 43606968488 on work/sherpa at 0f2e6f8 (the same tree as dev, v0.1.74, 14 November 2026), after the design session's restyle.",
    "intro": "A note opens with its one sentence as the heading, then what has happened to it, the recording, the transcript and the debrief. Everything you can do with it is on this screen.",
    "ideas": [
@@ -152,6 +154,7 @@
    "id": "library",
    "title": "The library: every note, and what each one is doing",
    "app": "VoiceDebrief",
+   "open": "library",
    "pictures": "VoiceDebrief: iPhone, light, from screens.yml run 43606968488 on work/sherpa at 0f2e6f8 (the same tree as dev, v0.1.74, 14 November 2026), after the design session's restyle.",
    "intro": "Every note kept on this device, newest first, by day. Each row says what the note is doing or what you can do with it.",
    "ideas": [
@@ -196,6 +199,7 @@
    "id": "vaults",
    "title": "Vaults: your notes, encrypted, on the device first",
    "app": "VoiceDebrief",
+   "open": "vaults",
    "pictures": "VoiceDebrief: iPhone, light, from screens.yml run 43606968488 on work/sherpa at 0f2e6f8 (the same tree as dev, v0.1.74, 14 November 2026), after the design session's restyle.",
    "intro": "A vault is an encrypted, version-controlled folder you own. It is made on this device and needs no server and no network. A server is a remote you can push it to, so that it is kept elsewhere as well.",
    "ideas": [
@@ -256,6 +260,7 @@
    "id": "recipients",
    "title": "Contacts: send a note to somebody",
    "app": "VoiceDebrief",
+   "open": "contacts",
    "pictures": "VoiceDebrief: iPhone, light, from screens.yml run 43606968488 on work/sherpa at 0f2e6f8 (the same tree as dev, v0.1.74, 14 November 2026), after the design session's restyle.",
    "intro": "A contact is a person, another device or an agent session that has given you their link. A note sent to them is encrypted on this device to their key: nobody else can read it, including the server that carries it.",
    "ideas": [
@@ -293,6 +298,7 @@
    "id": "briefing",
    "title": "What happened since you last looked",
    "app": "VoiceDebrief",
+   "open": "record",
    "pictures": "VoiceDebrief: iPhone, light, from screens.yml run 43606968488 on work/sherpa at 0f2e6f8 (the same tree as dev, v0.1.74, 14 November 2026), after the design session's restyle.",
    "intro": "When you open the app, a card on the Record tab says what is new: an update, with a link to what changed, and what happened to your notes since you last opened it. The app works it out from the library; it is not written by a model. The Guide's What is new lists every version, with those you skipped marked.",
    "ideas": [
@@ -324,6 +330,7 @@
    "id": "settings",
    "title": "Settings: language, saving, experiments",
    "app": "VoiceDebrief",
+   "open": "settings",
    "pictures": "VoiceDebrief: iPhone, light, from screens.yml run 43606968488 on work/sherpa at 0f2e6f8 (the same tree as dev, v0.1.74, 14 November 2026), after the design session's restyle.",
    "intro": "Settings is under More, with the few things to set once, and the places for the rest: who you send to, the experiments and what the app has done.",
    "ideas": [

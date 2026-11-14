@@ -169,7 +169,8 @@
       }
      ]
     }
-   ]
+   ],
+   "open": "record"
   },
   {
    "id": "note",
@@ -316,7 +317,8 @@
       }
      ]
     }
-   ]
+   ],
+   "open": "library"
   },
   {
    "id": "library",
@@ -406,7 +408,8 @@
       }
      ]
     }
-   ]
+   ],
+   "open": "library"
   },
   {
    "id": "vaults",
@@ -527,7 +530,8 @@
       }
      ]
     }
-   ]
+   ],
+   "open": "vaults"
   },
   {
    "id": "recipients",
@@ -594,7 +598,8 @@
       }
      ]
     }
-   ]
+   ],
+   "open": "contacts"
   },
   {
    "id": "briefing",
@@ -647,7 +652,8 @@
       }
      ]
     }
-   ]
+   ],
+   "open": "record"
   },
   {
    "id": "settings",
@@ -780,7 +786,8 @@
       }
      ]
     }
-   ]
+   ],
+   "open": "settings"
   },
   {
    "id": "sgit-start",
