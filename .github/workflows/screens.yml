@@ -15,7 +15,10 @@ name: screens
 on:
   workflow_dispatch:
   push:
-    branches: [dev, 'work/**']
+    # dev, and the branch that owns the pictures. Every other work/ branch runs it by hand when it
+    # wants to see its screens: on every push it took two Macs for half an hour from a queue that
+    # all sessions share, and merging dev into a branch counted as touching the screens.
+    branches: [dev, 'work/screens']
     paths:
       - 'Apps/VoiceDebrief/Sources/UI/**'
       - 'Apps/VoiceDebrief/Sources/App/**'
@@ -36,7 +39,7 @@ env:
   PROJECT: Apps/VoiceDebrief/VoiceDebrief.xcodeproj
   SCHEME: VoiceDebriefScreens
   # One per entry in ScreensTests.shots. Update both together.
-  SHOTS: record,record-empty,record.recording,record.working,library,library-empty,note.finished,note.transcript,note.interrupted,note.working,vaults,vaults-empty,vault.detail,settings,diagnostics,traffic,about,note.finished-end,vaults-end,vault.detail-end,diagnostics-end,about-end,recipients,words,settings-end,lab,lab.prompt,credit,identity,note.queued,note.finished-send,note.finished-delete,record.recording-discard
+  SHOTS: record,record-empty,record.recording,record.working,library,library-empty,note.finished,note.transcript,note.interrupted,note.working,vaults,vaults-empty,vault.detail,settings,diagnostics,traffic,about,note.finished-end,vaults-end,vault.detail-end,diagnostics-end,about-end,recipients,words,settings-end,lab,lab.prompt,credit,identity,note.queued,note.finished-send,note.finished-delete,record.recording-discard,record.sending,record-briefing
 
 jobs:
   shoot:

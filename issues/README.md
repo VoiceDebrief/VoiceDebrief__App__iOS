@@ -46,3 +46,10 @@ One file per piece of work: `open/NNN-slug.md`, moved to `done/` when it is done
 | 105 | "Send to vault" from Photos and Files: a share extension | signing; perhaps the owner (an App Group) |
 | 106 | A viewer for chat-archive results, as a separate app | later; not in the sgit app |
 | 107 | A gallery of vaults in the sgit app | the owner: a showcase vault, or the links |
+| 110 | sgit app: a teammate sent a vault key cannot add to it | the sgit app session; the owner's decision |
+| 111 | sgit app: say whether a file has arrived | the sgit app session |
+| 112 | sgit app: who added it | the sgit app session |
+| 113 | sgit app: sharing, for someone never told what a key is | the sgit app session; the owner's decision |
+| 114 | sgit app: getting a folder out, at full quality | the sgit app session |
+| 115 | sgit app: the Create sheet, the four keys, smaller things | the sgit app session |
+| 116 | sgit app: what the pictures could not show; round 2 | the sgit app session, then the screens session |

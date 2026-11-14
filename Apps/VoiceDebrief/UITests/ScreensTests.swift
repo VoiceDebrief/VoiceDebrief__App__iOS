@@ -24,6 +24,7 @@ final class ScreensTests: XCTestCase {
         "note.finished-end", "vaults-end", "vault.detail-end", "diagnostics-end", "about-end",
         "recipients", "words", "settings-end", "lab", "lab.prompt", "credit", "identity",
         "note.queued", "note.finished-send", "note.finished-delete", "record.recording-discard",
+        "record.sending", "record-briefing",
     ]
 
     @MainActor func test01_record() { shoot("record") }
@@ -57,12 +58,18 @@ final class ScreensTests: XCTestCase {
     @MainActor func test29_identity() { shoot("identity") }
     @MainActor func test30_note_queued() { shoot("note.queued") }
     // What the app asks before it sends, deletes or discards: tap the control, then the picture.
-    @MainActor func test31_send_asks() { shoot("note.finished", wait: 6, tap: "Send to the developer of this test build", as: "note.finished-send") }
+    @MainActor func test31_send_asks() { shoot("note.finished", wait: 6, tap: "Send to the developer", as: "note.finished-send") }
     @MainActor func test32_delete_asks() { shoot("note.finished", wait: 6, toTheEnd: true, tap: "Delete from this device", as: "note.finished-delete") }
+    @MainActor func test34_record_sending() { shoot("record.sending") }
+    // Opened again six hours after the last time, on a newer version: what the app says is new.
+    @MainActor func test35_record_briefing() {
+        let lastOpened = String(Int(Date().timeIntervalSince1970) - 6 * 3600)
+        shoot("record", as: "record-briefing", extra: ["-vd.lastOpened", lastOpened, "-vd.lastVersion", "0.1.0"])
+    }
     @MainActor func test33_discard_asks() { shoot("record.recording", tap: "Discard", as: "record.recording-discard") }
 
     func testTheListMatchesTheTestMethods() {
-        XCTAssertEqual(Self.shots.count, 33)
+        XCTAssertEqual(Self.shots.count, 35)
         XCTAssertEqual(Set(Self.shots).count, Self.shots.count)
     }
 
@@ -72,7 +79,7 @@ final class ScreensTests: XCTestCase {
 
     @MainActor
     private func shoot(_ screen: String, set: String = "full", wait: UInt32 = 3, toTheEnd: Bool = false,
-                       tap: String? = nil, as name: String? = nil) {
+                       tap: String? = nil, as name: String? = nil, extra: [String]? = nil) {
         // Landscape on iPad: the size at which the layout has most room to go wrong. screens.yml
         // turns the PNG upright from its EXIF orientation (the capture is the portrait framebuffer).
         if UIDevice.current.userInterfaceIdiom == .pad {
@@ -84,6 +91,9 @@ final class ScreensTests: XCTestCase {
         // British dates and numbers, whatever the runner's simulator was set up with.
         app.launchArguments = ["-VDSampleData", set, "-VDScreen", screen, "-vd.localeId", "en-GB",
                                "-AppleLanguages", "(en-GB)", "-AppleLocale", "en_GB"]
+        // Every picture is a first opening unless it says otherwise: without this, the second launch
+        // on a simulator would show what is new since the first.
+        app.launchArguments += extra ?? ["-vd.lastOpened", "0"]
         app.launch()
         sleep(wait)
         if toTheEnd {
@@ -93,7 +103,8 @@ final class ScreensTests: XCTestCase {
         }
         var tapped = true
         if let tap {
-            let control = app.buttons[tap].firstMatch
+            // By how the label starts, so that a reworded button is still found.
+            let control = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", tap)).firstMatch
             tapped = control.waitForExistence(timeout: 5)
             if tapped {
                 control.tap()
@@ -108,7 +119,7 @@ final class ScreensTests: XCTestCase {
         add(attachment)
         let marker = app.descendants(matching: .any).matching(identifier: "vd.screen.\(screen)").firstMatch
         XCTAssertTrue(marker.waitForExistence(timeout: 10), "The app did not open \(screen) from its launch arguments")
-        XCTAssertTrue(tapped, "There is no button named \(tap ?? "") on \(screen): the picture is of the screen without it")
+        XCTAssertTrue(tapped, "There is no button whose name starts \(tap ?? "") on \(screen): the picture is of the screen without it")
         app.terminate()
     }
 }

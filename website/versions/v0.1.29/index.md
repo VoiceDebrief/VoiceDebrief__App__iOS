@@ -14,4 +14,40 @@ Pictures of every screen (issue 016). A debug build launched with `-VDSampleData
 
 Identity (issues 005 and 018). `PKIKit`: the sgit key bundle in Swift (RSA-OAEP 4096 and ECDSA P-256, fingerprints, PKCS#8, keys under a passphrase, the `k1` key code, detached signatures, statements, the signed envelope), proven in a new workflow where `sgit pki` and pki.sgit.ai's own `keys.js` read what Swift makes and Swift reads what they make. In the app, under Settings, an Identity screen: a key pair that says who you are, kept in iCloud Keychain so it reaches your other devices; a second key that says which device, kept in the Secure Enclave where there is one and ended by deleting the app; a statement, signed by the first and kept in a vault, that vouches for the second; and, optionally, a delegation from an identity at pki.sgit.ai, with the answer pasted back in. In test: none of it has run on a device, and debriefs are not yet signed by the device key.
 
-Pictures of the screens are added to this page when the screens workflow has taken them for this version.
+## Pictures
+
+The screens that changed most, on an iPhone and an iPad, from the pictures CI took of this version (commit `9d61979`, which is this version's app). They are compared with the first set of pictures there was (13 November, commit `fb0c548`), because this page's notes reach back that far. Everything shown is invented sample data.
+
+**A note opens with its one sentence as the heading, and has a player that shows the recording's length and size.**
+
+![A finished note on iPhone and iPad](note.finished.jpg)
+
+**The record control stays live while earlier notes are written up, and says how many are waiting.**
+
+![The record screen while two notes are being processed](record.working.jpg)
+
+**The record screen promises "Saved as you speak" before recording; Recent says the day; a row says what to do next. Two symbols in the top bar stand where the balance in pounds was.**
+
+![The record screen with recent notes](record.jpg)
+
+**A send pressed before a note is finished waits, and says so.**
+
+![A note still being written up, with a send waiting](note.queued.jpg)
+
+**Deleting a note asks with an alert that shows Cancel.**
+
+![The alert before deleting a note](note.finished-delete.jpg)
+
+**Throwing a recording away asks first, with "Keep recording" beside it.**
+
+![The alert before discarding a recording](record.recording-discard.jpg)
+
+**The end of a note: the clean text experiment is below the transcript, and the send bar is one quieter row that says what goes.**
+
+![The end of a finished note](note.finished-end.jpg)
+
+**Identity, new under Settings, here with no identity made yet.**
+
+![The Identity screen](identity.jpg)
+
+Also changed: `note.transcript`, `note.interrupted`, `note.working`, `library`, `settings`, `credit`, `diagnostics`, `about`. The alert before sending is not pictured for this version: the test that taps the send control looked for its old name.
