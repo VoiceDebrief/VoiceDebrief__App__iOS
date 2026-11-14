@@ -24,7 +24,7 @@ env:
   PROJECT: Apps/SGit/SGit.xcodeproj
   SCHEME: SGitScreens
   # One per entry in ScreensTests.shots. Update both together.
-  SHOTS: vaults,vaults-empty,create,add,vault,vault.folder,vault.list,file,share,history,commit,settings,gallery,create-nokey,vault.local,vault.adding-adding,share.key,vault.adding-refused
+  SHOTS: vaults,vaults-empty,create,add,vault,vault.folder,vault.list,file,share,history,commit,settings,gallery,create-nokey,vault.local,vault.adding-adding,share.key,vault.adding-refused,vault-dark,share.key-dark,vault-large,share-large
 
 jobs:
   shoot:

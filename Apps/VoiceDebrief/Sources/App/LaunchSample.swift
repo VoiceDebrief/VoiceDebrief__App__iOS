@@ -175,6 +175,13 @@ struct LaunchedScreen: View {
         case .library: return "Library"
         case .vaults: return "Vaults"
         case .settings: return "Settings"
+        case .contacts: return "Contacts"
+        case .identity: return "Identity"
+        case .credit: return "Credit"
+        case .lab: return "Lab"
+        case .words: return "Your words"
+        case .activity: return "Your activity"
+        case .about: return "What this build does"
         }
     }
 
