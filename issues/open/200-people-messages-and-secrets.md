@@ -30,13 +30,21 @@ each other, secrets included, is sealed to the recipient's key and dropped in th
 
 ## Next
 
-1. ~~Prove the first-contact round trip against the live server~~: done with `tools/people/people.py` on 14 November
-   2026 (see the reality file). Still to do: the same from Swift, which needs an access key where Swift runs.
-2. Screens in SGit Vaults: You, Contacts, Inbox, Secrets (with the sgit app session, which owns `Apps/SGit`).
-3. VoiceDebrief: its recipients become contacts; the record screen shows the inbox (the parent session's screens).
+1. ~~Prove the first-contact round trip against the live server~~: done with `tools/people/people.py`, twice (the
+   second in pki.sgit.ai's message form, with a reply). Still to do: the same from Swift, which needs an access key
+   where Swift runs.
+2. Screens in SGit Vaults: You, Contacts (a photo of the person after an in-person scan), Inbox, and Keys and
+   access, on `work/sgit-app-people` (green; landing). The split agreed with the sgit app session on 14 November
+   2026: it builds the Secrets product (entries as files in a vault's `secrets/` folder, vault keys through iCloud
+   Keychain, the team trust map on `isMutual` / `verifiedAt` / photos, shared vaults through `sendVault`); this
+   package and these screens hold the identity, contacts, messages and the keys that belong to the identity.
+3. VoiceDebrief: replies to notes sent to the developer (the parent session: the app's card in each note's header,
+   `PeopleHub.replies(to:)` in Messages to Claude); then its recipients become contacts.
 4. Devices (the owner, via the parent): your devices by their vouching statements in `identity/devices/`, name,
-   kind, device key fingerprint, last seen; remove one, which withdraws its statement. After contacts and first contact.
-5. A page on the site for `card/#sgc1…` links (sealed messages use pki.sgit.ai's own `m/#m1…` page), which shows what it holds and opens nothing.
+   kind, device key fingerprint, last seen; remove one, which withdraws its statement.
+5. From the sgit app session's note: an animated multi-frame QR for a long secret; "vouched by <root> / not
+   vouched" from pki.sgit.ai's register with the pinned root.
+6. A page on the site for `card/#sgc1…` links, which shows what it holds and opens nothing.
 
 ## Assumed, for the owner to confirm (the article's four decisions)
 
