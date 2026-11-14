@@ -392,7 +392,7 @@ final class DebriefSession {
             queuedLanes[noteId] = lane
             queuedSends[noteId] = recipient.name
         } else {
-            Task { await share(noteId: noteId, lane: lane) }
+            Task { await share(noteId: noteId, lane: lane, to: recipient.name) }
         }
     }
 
@@ -404,9 +404,9 @@ final class DebriefSession {
     /// A note is finished and its audio is in its final form: send it if that was asked for, then tell
     /// whoever else is waiting (the automatic save to a vault).
     private func noteReady(_ noteId: String) {
-        queuedSends[noteId] = nil
+        let name = queuedSends.removeValue(forKey: noteId) ?? ""
         if let lane = queuedLanes.removeValue(forKey: noteId) {
-            Task { await share(noteId: noteId, lane: lane) }
+            Task { await share(noteId: noteId, lane: lane, to: name) }
         }
         onNoteReady?(noteId)
     }
@@ -414,9 +414,29 @@ final class DebriefSession {
 
     /// Sends the last note's audio, transcript and debrief to the developer's lane, encrypted to the
     /// developer's key. Only ever called from the button that says so.
-    func share(noteId: String, lane: DeveloperLane) async {
+    func share(noteId: String, lane: DeveloperLane, to name: String = "") async {
+        // Sends go one at a time, in the order asked for: several notes finished and sent in quick
+        // succession (issue 026) must all go, not only the first.
+        outbox.append((noteId, lane, name))
+        guard !draining else { return }
+        draining = true
+        while !outbox.isEmpty {
+            let job = outbox.removeFirst()
+            await sendNow(noteId: job.noteId, lane: job.lane, name: job.name)
+        }
+        draining = false
+    }
+
+    private var outbox: [(noteId: String, lane: DeveloperLane, name: String)] = []
+    private var draining = false
+
+    /// Who is being sent to over the network right now, for the screen that shows where work happens.
+    private(set) var sendingTo: String?
+
+    private func sendNow(noteId: String, lane: DeveloperLane, name: String) async {
         guard let note = store.note(noteId), let url = store.audioURL(for: noteId) else { return }
-        if case .sending = sharing { return }
+        sendingTo = name.isEmpty ? "lane \(lane.vault)" : name
+        defer { sendingTo = nil }
         sharingNoteId = noteId
         sharing = .sending(0, 0)
         do {
@@ -427,6 +447,7 @@ final class DebriefSession {
                 Task { @MainActor [weak self] in self?.sharing = .sending(done, total) }
             }
             sharing = .sent(messages.count)
+            store.recordSend(noteId, to: name.isEmpty ? "lane \(lane.vault)" : name)
             CreditLedger.shared.charge(.send, noteId: noteId)
         } catch {
             sharing = .failed(error.localizedDescription)

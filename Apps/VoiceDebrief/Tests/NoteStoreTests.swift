@@ -129,3 +129,17 @@ struct NoteTitleTests {
         #expect(reopened.saveProblem == nil)
     }
 }
+
+@Suite("Who a note was sent to")
+@MainActor
+struct NoteSendTests {
+    @Test func aSendIsRememberedOnTheNoteAndSurvivesAReopen() throws {
+        let root = NoteStoreTests.temporaryRoot()
+        let store = NoteStore(root: root)
+        let note = try #require(store.create(audioAt: try NoteStoreTests.audioFile(), source: "Recorded here", localeId: "en-GB"))
+        store.recordSend(note.id, to: "Maria", at: Date(timeIntervalSince1970: 0))
+        store.recordSend(note.id, to: "Indi", at: Date(timeIntervalSince1970: 60))
+        let reopened = try #require(NoteStore(root: root).note(note.id))
+        #expect(reopened.sends?.map(\.to) == ["Maria", "Indi"])
+    }
+}
