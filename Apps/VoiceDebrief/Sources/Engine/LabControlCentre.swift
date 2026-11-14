@@ -1,6 +1,7 @@
 import AVFoundation
 import Foundation
 import Observation
+import UIKit
 #if canImport(FoundationModels)
 import FoundationModels
 #endif
@@ -187,6 +188,8 @@ final class LabControlCentre {
     private var waiting: [String] = []
     private var worker: Task<Void, Never>?
     private var starting: Set<String> = []
+    /// True from the press of Listen until a stop: a start that finds it false gives up.
+    private var wantsToListen = false
     /// The action being carried out that takes time, if any: tests wait on it.
     private(set) var pendingAction: Task<Void, Never>?
 
@@ -199,6 +202,10 @@ final class LabControlCentre {
             triggers = LabTrigger.defaults
         }
         automatic = Set(defaults.stringArray(forKey: Self.automaticKey) ?? [])
+        // Leaving the app ends the listening, whatever screen is showing.
+        NotificationCenter.default.addObserver(forName: UIApplication.didEnterBackgroundNotification, object: nil, queue: .main) { [weak self] _ in
+            Task { @MainActor [weak self] in await self?.stopListening() }
+        }
     }
 
     // MARK: The phrases and what runs by itself
@@ -312,9 +319,12 @@ final class LabControlCentre {
             guard let open = host.openSection else {
                 return LabOutcome(carriedOut: false, words: "Not opened: this build has not connected the Lab to the app's sections.")
             }
-            return open(name)
-                ? LabOutcome(carriedOut: true, words: "Opened \(name).")
-                : LabOutcome(carriedOut: false, words: "Not opened: there is no section called \(name).")
+            guard open(name) else {
+                return LabOutcome(carriedOut: false, words: "Not opened: there is no section called \(name).")
+            }
+            // The app has moved to another screen: the Lab stops listening, whether or not this one notices.
+            Task { await stopListening() }
+            return LabOutcome(carriedOut: true, words: "Opened \(name).")
         case .findNote:
             guard let store else {
                 return LabOutcome(carriedOut: false, words: "Not searched: there is no library here.")
@@ -364,15 +374,36 @@ final class LabControlCentre {
 
     // MARK: Listening
 
+    /// Listening never outlives the screen that asked for it, and never touches a recording.
+    ///
+    /// Three notes from build 0.1.72 arrived as silence (14 November 2026). Two ways this screen could
+    /// have done that are closed here. It used to switch the shared audio session off when it stopped,
+    /// after an await: if a note's recording had started in the meantime, or was already running when
+    /// Listen was pressed, that switched the microphone off underneath it. And a Listen still waiting
+    /// for the microphone permission when the screen was left went on to start afterwards. Now the Lab
+    /// never switches the audio session off (the recorder does that when a recording ends), does not
+    /// listen while a note is being recorded, gives up a start that was overtaken by a stop, and
+    /// stops when the app leaves the foreground.
     func startListening(localeId: String) async {
-        guard !listening else { return }
+        guard !listening, !wantsToListen else { return }
         problem = nil
+        if host.isRecording?() == true {
+            problem = "A note is being recorded. The Lab does not listen at the same time."
+            return
+        }
         guard !localeId.isEmpty else {
             problem = "Choose the language spoken in Settings first."
             return
         }
+        wantsToListen = true
         guard await AVAudioApplication.requestRecordPermission() else {
+            wantsToListen = false
             problem = "The microphone is not allowed for this app."
+            return
+        }
+        // The screen was left, or a recording began, while the question was on the screen.
+        guard wantsToListen, host.isRecording?() != true else {
+            wantsToListen = false
             return
         }
         do {
@@ -386,7 +417,12 @@ final class LabControlCentre {
             try await live.start(localeId: localeId) { [weak self] settled, volatile in
                 Task { @MainActor [weak self] in self?.heardLive(settled: settled, volatile: volatile) }
             }
+            if !wantsToListen {
+                listening = false
+                await live.stop()
+            }
         } catch {
+            wantsToListen = false
             listening = false
             await live.stop()
             problem = "Listening could not start: \(error.localizedDescription)"
@@ -394,10 +430,12 @@ final class LabControlCentre {
     }
 
     func stopListening() async {
+        wantsToListen = false
         guard listening else { return }
         listening = false
+        // The microphone tap and the engine stop before this first suspends. The audio session is
+        // left as it is: switching it off here could silence a recording that has just begun.
         await live.stop()
-        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
         // What was said last and had not settled is still a sentence.
         let rest = (String(liveSettled.dropFirst(consumed)) + " " + liveVolatile).trimmingCharacters(in: .whitespacesAndNewlines)
         hear(rest, source: "spoken")
