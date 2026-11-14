@@ -305,6 +305,7 @@ function readDesignIdeas() {
 const ARTICLE_EXTRA = [
   { path: 'sgit-app/design', app: 'SGit Vaults', kind: 'Design' },
   { path: 'sgit-app/secrets', app: 'SGit Vaults', kind: 'Design' },
+  { path: 'sgit-app/secrets/opportunity', app: 'SGit Vaults', kind: 'Research' },
   { path: 'journeys', app: 'Both', kind: 'Journeys' },
 ];
 function readArticleTexts() {
