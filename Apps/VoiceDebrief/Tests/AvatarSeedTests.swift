@@ -10,16 +10,18 @@ struct AvatarSeedTests {
 
     /// Worked out independently with Python's hashlib (SHA-256 of "conductor#0" and "me#0"), so the
     /// character is the same on any device and in any later build.
+    static func parts(_ s: AvatarSeed) -> [Int] { [s.colour, s.shape, s.eyes, s.mouth, s.accent] }
+
     @Test func knownIdsDrawKnownCharacters() {
-        let c = AvatarSeed(id: "conductor")
-        #expect([c.colour, c.shape, c.eyes, c.mouth, c.accent] == [8, 2, 2, 0, 2])
-        let me = AvatarSeed(id: "me")
-        #expect([me.colour, me.shape, me.eyes, me.mouth, me.accent] == [4, 3, 0, 1, 8])
+        let conductor: [Int] = [8, 2, 2, 0, 2]
+        let me: [Int] = [4, 3, 0, 1, 8]
+        #expect(Self.parts(AvatarSeed(id: "conductor")) == conductor)
+        #expect(Self.parts(AvatarSeed(id: "me")) == me)
     }
 
     @Test func anotherVariantIsAnotherLook() {
-        let c = AvatarSeed(id: "conductor", variant: 1)
-        #expect([c.colour, c.shape, c.eyes, c.mouth, c.accent] == [11, 0, 2, 2, 5])
+        let expected: [Int] = [11, 0, 2, 2, 5]
+        #expect(Self.parts(AvatarSeed(id: "conductor", variant: 1)) == expected)
     }
 
     @Test func theAccentIsNeverTheMainColourOrItsNeighbour() {
