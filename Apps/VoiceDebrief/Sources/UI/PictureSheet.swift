@@ -44,6 +44,7 @@ struct PictureSheet: View {
                 ToolbarItem(placement: .cancellationAction) { Button("Close") { dismiss() } }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Send") { Task { await sender.send(image, caption: caption, to: recipient) } }
+                        .keyboardShortcut(.return, modifiers: .command)   // Cmd+Return sends (the owner)
                         .disabled(busy)
                 }
             }
