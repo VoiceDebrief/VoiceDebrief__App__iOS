@@ -262,9 +262,9 @@ struct LabControlCentreTests {
         let tally = LabControlTally.of(centre.entries)
         #expect(tally.modelJudged == 0)
         #expect(tally.phraseJudged == LabControlTest.all.count)
-        // Seven said in a fixed phrase and three plain remarks are right; three paraphrases are
+        // Eight said in a fixed phrase and three plain remarks are right; four paraphrases are
         // missed and one phrase in passing fools them.
-        #expect(tally.phraseRight == 10)
+        #expect(tally.phraseRight == 11)
 
         let json = centre.log.json
         #expect(json.contains("\"experiment\" : \"L02\""))
@@ -368,7 +368,7 @@ struct LabControlActionTests {
         let id = try #require(centre.hear("Send this to Maria.", source: "typed"))
         centre.doIt(id)
         #expect(centre.entries[0].outcome == .recordedOnly)
-        #expect(LabAction.allCases.filter(\.isCarriedOut) == [.openSection, .findNote])
+        #expect(LabAction.allCases.filter(\.isCarriedOut) == [.openSection, .findNote, .recordTo])
     }
 
     @Test func findingANoteReadsTheLibraryAndChangesNothing() throws {
@@ -414,5 +414,100 @@ struct LabControlActionTests {
         #expect(LabNoteSearch.find("plumber boiler", in: notes).map(\.id) == ["a"])
         #expect(LabNoteSearch.find("the note about", in: notes).isEmpty)
         #expect(LabNoteSearch.find("garden", in: notes).isEmpty)
+    }
+}
+
+@Suite("Lab L02: recording a note for someone")
+@MainActor
+struct LabControlRecordToTests {
+    @Test func thePhrasesNameThePerson() {
+        #expect(LabTriggerTests.match("Record a note for Maria.") == LabControlProposal(action: "recordTo", argument: "maria"))
+        #expect(LabTriggerTests.match("Start recording for Claude") == LabControlProposal(action: "recordTo", argument: "claude"))
+        // Recording for a time is a different action.
+        #expect(LabTriggerTests.match("Record for five minutes.")?.action == "recordFor")
+    }
+
+    @Test func itAlwaysWaitsForDoItEvenIfSomeoneTriesToSwitchItOn() {
+        let host = LabActionHost()
+        var asked: [String] = []
+        host.startRecording = { name in
+            asked.append(name)
+            return (true, "Recording, for Maria (sent when you finish).")
+        }
+        let centre = LabControlActionTests.centre(host: host)
+        centre.setAutomatic("recordTo", true)
+        #expect(centre.automatic.isEmpty)
+        centre.hear("Record a note for Maria.", source: "typed")
+        #expect(centre.entries[0].state == .waiting)
+        #expect(asked.isEmpty)
+        // Even a list that says otherwise does not let it through.
+        let entry = LabControlEntry(id: "e", heardAt: Date(), words: "Record a note for Maria.", source: "typed",
+                                    triggers: LabTrigger.defaults, askModel: false, automatic: ["recordTo"])
+        #expect(entry.state == .waiting)
+        #expect(LabAction.allCases.filter(\.alwaysAsks) == [.recordTo])
+    }
+
+    @Test func doItStartsTheRecordingOnceAndTheCardSaysWhatTheAppSaid() async throws {
+        let host = LabActionHost()
+        var asked: [String] = []
+        host.startRecording = { name in
+            asked.append(name)
+            return (true, "Recording, for Maria (sent when you finish).")
+        }
+        let centre = LabControlActionTests.centre(host: host)
+        let id = try #require(centre.hear("Record a note for Maria.", source: "typed"))
+        centre.doIt(id)
+        centre.doIt(id)
+        await centre.pendingAction?.value
+        #expect(asked == ["maria"])
+        #expect(centre.entries[0].outcome == LabOutcome(carriedOut: true, words: "Recording, for Maria (sent when you finish)."))
+    }
+
+    @Test func aRefusalFromTheAppIsShownAndNothingIsClaimed() async throws {
+        let host = LabActionHost()
+        host.startRecording = { _ in (false, "Not started: there is no contact called maria.") }
+        let centre = LabControlActionTests.centre(host: host)
+        let id = try #require(centre.hear("Record a note for Maria.", source: "typed"))
+        centre.doIt(id)
+        await centre.pendingAction?.value
+        #expect(centre.entries[0].outcome == LabOutcome(carriedOut: false, words: "Not started: there is no contact called maria."))
+    }
+
+    @Test func withNothingConnectedOrNoOneNamedNothingStarts() async throws {
+        let centre = LabControlActionTests.centre(host: LabActionHost())
+        let unwired = try #require(centre.hear("Record a note for Maria.", source: "typed"))
+        centre.doIt(unwired)
+        await centre.pendingAction?.value
+        #expect(centre.entries[0].outcome == LabOutcome(carriedOut: false, words: "Not started: this build has not connected the Lab to recording."))
+
+        let unnamed = try #require(centre.hear("Record a note for", source: "typed"))
+        centre.doIt(unnamed)
+        await centre.pendingAction?.value
+        #expect(centre.entries[0].outcome == LabOutcome(carriedOut: false, words: "Not started: no one was named."))
+    }
+
+    @Test func aCorrectionMadeAfterwardsInTheLogCarriesNothingOut() async throws {
+        let host = LabActionHost()
+        var asked = 0
+        host.startRecording = { _ in
+            asked += 1
+            return (true, "Recording.")
+        }
+        let centre = LabControlActionTests.centre(host: host)
+        // Nothing was proposed, so there is no card: saying later what it asked for only judges it.
+        let later = try #require(centre.hear("I want to say something new to Maria.", source: "typed"))
+        #expect(centre.entries[0].state == .nothing)
+        centre.edit(later, action: "recordTo", argument: "maria")
+        await centre.pendingAction?.value
+        #expect(asked == 0)
+        #expect(centre.entries[0].state == .done)
+        #expect(centre.entries[0].outcome == .correctedLater)
+
+        // A card that is waiting, corrected to another person, does go ahead: that is the confirmation.
+        let waiting = try #require(centre.hear("Record a note for Mario.", source: "typed"))
+        centre.edit(waiting, action: "recordTo", argument: "Maria")
+        await centre.pendingAction?.value
+        #expect(asked == 1)
+        #expect(centre.entries[0].outcome?.carriedOut == true)
     }
 }

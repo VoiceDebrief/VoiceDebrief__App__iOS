@@ -11,4 +11,9 @@ final class LabActionHost {
     var openSection: ((String) -> Bool)?
     /// The names `openSection` accepts. Empty means not said: the Lab's own list is used.
     var sectionNames: [String] = []
+
+    /// Set by whoever owns recording. Starts a recording now, for the recipient named (as it was
+    /// said, in lower case). Returns whether a recording started, and one plain sentence for the card.
+    /// The Lab lets go of the microphone before it calls this.
+    var startRecording: (@MainActor (_ recipient: String) async -> (started: Bool, words: String))?
 }
