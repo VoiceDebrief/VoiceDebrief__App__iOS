@@ -254,6 +254,13 @@ struct RecordView: View {
 
     private var liveCard: some View {
         card {
+            if session.microphoneSilent {
+                Label("No sound is reaching the microphone. Another app (a call, FaceTime, Siri, the car) may be using it, or the microphone is covered.",
+                      systemImage: "mic.slash.fill")
+                    .font(.callout.weight(.semibold))
+                    .foregroundStyle(.orange)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
             if !session.liveSettled.isEmpty || !session.liveVolatile.isEmpty {
                 (Text(session.liveSettled) + Text(session.liveVolatile).foregroundStyle(.secondary))
                     .font(.callout)

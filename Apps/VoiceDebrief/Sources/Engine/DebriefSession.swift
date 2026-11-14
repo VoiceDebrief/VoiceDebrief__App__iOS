@@ -146,6 +146,8 @@ final class DebriefSession {
             liveVolatile = ""
             liveNote = ""
             levels = []
+            silentSince = nil
+            microphoneSilent = false
             failure = nil
             recordingSince = Date()
             RemoteControl.begin(title: "Recording a voice note") { [weak self] in self?.finishRequests += 1 }
@@ -186,9 +188,23 @@ final class DebriefSession {
         return value < 0.01 ? 0 : value
     }
 
+    /// Since when the microphone has given nothing at all (true silence, not a quiet room).
+    private var silentSince: Date?
+    /// True when nothing at all has reached the microphone for three seconds: another app (a call,
+    /// FaceTime, Siri, a car) may hold it. Three notes of pure silence came from build 0.1.72, unnoticed.
+    private(set) var microphoneSilent = false
+
     private func pushLevel() {
         guard recordingSince != nil else { return }
-        levels.append(Self.smoothed(previous: levels.last ?? 0, next: recorder.level()))
+        let decibels = recorder.decibels()
+        let raw = VoiceRecorder.level(decibels: decibels)
+        if decibels > -120 { silentSince = nil; microphoneSilent = false }
+        else if silentSince == nil { silentSince = Date() }
+        else if let since = silentSince, Date().timeIntervalSince(since) > 3, !microphoneSilent {
+            microphoneSilent = true
+            UsageLog.shared.action("record.silent-microphone")
+        }
+        levels.append(Self.smoothed(previous: levels.last ?? 0, next: raw))
         if levels.count > Self.levelCount { levels.removeFirst(levels.count - Self.levelCount) }
     }
 
