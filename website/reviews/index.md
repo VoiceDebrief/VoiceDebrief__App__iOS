@@ -16,6 +16,7 @@ A synthetic user reads a picture. It cannot feel a control that is too small, he
 
 | Round | Date | Pictures | Findings |
 |---|---|---|---|
+| [Round 3](round-3/index.md) | 14 November 2026 | 35 pictures per set, at commit `7c323cc` on `work/screens` (`dev` at v0.1.36) | A fifth user, who sends memos to a colleague. Of round 2's 12 new findings: 3 fixed, 4 fixed in part, 4 unchanged, 1 a decision. Two users changed their minds, one each way. 15 new findings; issues 043 to 045 |
 | [Round 2](round-2/index.md) | 14 November 2026 | 33 pictures per set, at commit `4338ea2` on `work/screens` (`dev` up to `6475ff7`) | Of round 1's 15 open findings: 3 fixed, 6 fixed in part, 6 unchanged. Two users changed their minds. 12 new findings; issues 039 to 041 |
 | [Round 1](round-1/index.md) | 13 November 2026 | 28 pictures per set, iPhone and iPad, light and dark, at commit `fb0c548` on `work/screens` | 21, of which 15 open and 6 not a fault; ten issues opened (029 to 038) |
 

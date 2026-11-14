@@ -39,6 +39,9 @@ One file per piece of work: `open/NNN-slug.md`, moved to `done/` when it is done
 | 040 | A way to say no in each confirmation | the main session; a device |
 | 041 | Diagnostics describes a pasted lane that nothing uses | the main session |
 | 042 | Telling speakers apart | the owner: decision 4 |
+| 043 | A send that can be seen, stopped and not lost | the main session |
+| 044 | Two symbols with no words at the top of the first screen | the main session; the credit session |
+| 045 | Two sentences that say the wrong thing | the main session; the vaults session |
 | 100 | The sgit app, milestone one | a device and the live server |
 | 102 | Prove the sgit app's large files against the live server | 100 on a device |
 | 103 | The sgit app after milestone one | 100; 011 and 017 |
