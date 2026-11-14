@@ -13,7 +13,10 @@ struct MessageTests {
         let message = text(from: People.ana, to: People.ben)
         let sealed = try message.seal(to: People.ben.bundle, from: People.ana)
         let opened = try PeopleMessage.open(envelope: sealed, me: People.ben, contacts: [People.ana.bundle])
-        #expect(opened.message == message)
+        var unsigned = opened.message
+        #expect(unsigned.sig != nil)
+        unsigned.sig = nil
+        #expect(unsigned == message)
         #expect(opened.trust == .contact)
         #expect(opened.signer == People.ana.bundle.signingFingerprint)
     }
@@ -98,7 +101,9 @@ struct MessageTests {
         #expect(SealedText.link(sealedText).hasPrefix("https://pki.sgit.ai/m/#m1."))
         for wrapped in [sealedText, SealedText.link(sealedText), "Open this: \(sealedText) thanks"] {
             let envelope = try #require(SealedText.envelope(in: wrapped))
-            #expect(try PeopleMessage.open(envelope: envelope, me: People.ben, contacts: [People.ana.bundle]).message == message)
+            var unsigned = try PeopleMessage.open(envelope: envelope, me: People.ben, contacts: [People.ana.bundle]).message
+            unsigned.sig = nil
+            #expect(unsigned == message)
         }
         #expect(SealedText.envelope(in: "m1.") == nil)
         // pki.sgit.ai's QR object for an agent holds the same code.
