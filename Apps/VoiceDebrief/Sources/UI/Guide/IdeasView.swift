@@ -182,7 +182,11 @@ struct IdeaDetailView: View {
             if !related.isEmpty {
                 Section("Related issues") {
                     ForEach(related) { r in
-                        NavigationLink(value: r) { IdeaRow(idea: r, status: book.status(r.status) ?? IdeaStatus(id: r.status, label: r.status, meaning: "")) }
+                        // a destination link, not a value: this screen is also pushed from a guide, where no
+                        // destination for Idea values is registered
+                        NavigationLink { IdeaDetailView(idea: r, book: book) } label: {
+                            IdeaRow(idea: r, status: book.status(r.status) ?? IdeaStatus(id: r.status, label: r.status, meaning: ""))
+                        }
                     }
                 }
             }
