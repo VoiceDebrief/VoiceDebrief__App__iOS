@@ -98,4 +98,23 @@ struct GuideTests {
         let history = VersionHistory(next: ["A note."], versions: [], nextArt: ["| {{version}} |"])
         #expect(history.all(current: "v1.2.3").first?.art == ["| v1.2.3      |"])
     }
+
+    @Test func aCardsTryButtonsOpenTheSectionsItNames() {
+        let card = """
+        +------------------------------+
+        | VOICEDEBRIEF      v0.1.70    |
+        | 14 November 2026             |
+        +------------------------------+
+        | SENDING ON THE MOVE          |
+        |                              |
+        | * Replies from Claude        |
+        |                              |
+        | WHERE    Record screen       |
+        | TRY      Agents > a vault    |
+        | NOT YET  Vaults on a server  |
+        +------------------------------+
+        """
+        #expect(ReleaseCard.sections(in: card) == [.record, .agents])
+        #expect(ReleaseCard.title(of: card) == "SENDING ON THE MOVE")
+    }
 }

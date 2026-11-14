@@ -6,6 +6,8 @@ A contact is a person, another device or an agent session that has given you the
 
 ## 1. Contacts, Recipients.
 
+A contact is anyone who can receive a note: a person, another device or an agent session. You add one by their QR code or link; what you send is sealed to their key before it leaves.
+
 ![Contacts, Recipients. Numbered arrows mark the parts described below.](../img/recipients-1.jpg)
 
 1. Built into this test build: Claude (developer), who can read what you send. It asks before sending.

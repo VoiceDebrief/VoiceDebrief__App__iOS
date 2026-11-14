@@ -6,6 +6,8 @@ Settings is under More, with the few things to set once, and the places for the 
 
 ## 1. More, Settings.
 
+Settings is under More. The first things are the ones to set once: the language you speak in, and whether each finished note is saved to a vault.
+
 ![More, Settings. Numbered arrows mark the parts described below.](../img/settings-1.jpg)
 
 1. The language you speak in.
@@ -14,6 +16,8 @@ Settings is under More, with the few things to set once, and the places for the 
 4. More holds Settings, Identity, Credit and the other sections.
 
 ## 2. Further down.
+
+Further down are the places for the rest: who you can send to, the experiments, and what the app has done, for when something needs explaining.
 
 ![Further down. Numbered arrows mark the parts described below.](../img/settings-2.jpg)
 

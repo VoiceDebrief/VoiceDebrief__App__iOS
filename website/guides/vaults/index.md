@@ -6,6 +6,8 @@ A vault is an encrypted, version-controlled folder you own. It is made on this d
 
 ## 1. The Vaults tab.
 
+A vault is an encrypted, version-controlled folder you own. It is made on this device and needs no server; adding a server later keeps a copy elsewhere.
+
 ![The Vaults tab. Numbered arrows mark the parts described below.](../img/vaults-1.jpg)
 
 1. Your vaults, and where each one is: on this device only, or on a server too.
@@ -14,6 +16,8 @@ A vault is an encrypted, version-controlled folder you own. It is made on this d
 4. Servers you can push a vault to. The access token is kept in the Keychain.
 
 ## 2. Inside a vault.
+
+Inside a vault you can see where it lives, push it to a server or pull from one, and check its latest commit and signature. Each saved note is a folder in it.
 
 ![Inside a vault. Numbered arrows mark the parts described below.](../img/vaults-2.jpg)
 

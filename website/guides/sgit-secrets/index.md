@@ -6,6 +6,8 @@ A secret is a password, a Wi-Fi network, a server or a card, kept as one encrypt
 
 ## 1. The Secrets list.
 
+Secrets are passwords, Wi-Fi networks, servers and the like, each kept as an encrypted file in a vault. Those in a shared vault are seen by everyone who holds its key.
+
 ![The Secrets list. Numbered arrows mark the parts described below.](../img/sgit-secrets-1.jpg)
 
 1. Your own secrets, in a vault of your own.
@@ -17,6 +19,8 @@ A secret is a password, a Wi-Fi network, a server or a card, kept as one encrypt
 
 ## 2. One secret.
 
+One secret, with its fields. Hidden values stay masked until Face ID; every change is a commit, so an earlier version is never lost.
+
 ![One secret. Numbered arrows mark the parts described below.](../img/sgit-secrets-2.jpg)
 
 1. Each field, with a button to copy it.
@@ -26,6 +30,8 @@ A secret is a password, a Wi-Fi network, a server or a card, kept as one encrypt
 5. Delete it: a commit like any other, so the vault's history keeps the earlier versions.
 
 ## 3. Questions for you.
+
+The people building the app ask the owner questions here, and the answers go back to them encrypted. It is how decisions reach the code without a meeting.
 
 ![Questions for you. Numbered arrows mark the parts described below.](../img/sgit-secrets-3.jpg)
 

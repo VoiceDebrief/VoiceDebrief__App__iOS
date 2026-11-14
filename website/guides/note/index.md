@@ -6,6 +6,8 @@ A note opens with its one sentence as the heading, then what has happened to it,
 
 ## 1. The top of a finished note.
 
+A note opens on its one-sentence summary, then what has happened to it. This is the screen to check that a note was kept, sent or saved, and to listen to it again.
+
 ![The top of a finished note. Numbered arrows mark the parts described below.](../img/note-1.jpg)
 
 1. The note in one sentence, written by Apple's model on this device.
@@ -15,6 +17,8 @@ A note opens with its one sentence as the heading, then what has happened to it,
 5. Send it: one button per recipient, encrypted to their key on this device.
 
 ## 2. The end of the same note.
+
+Further down are the things you do less often: the clean-text experiment, saving to a particular vault, running the note again in another language, and deleting it.
 
 ![The end of the same note. Numbered arrows mark the parts described below.](../img/note-2.jpg)
 
