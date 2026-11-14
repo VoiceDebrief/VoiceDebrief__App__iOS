@@ -66,6 +66,7 @@ enum LaunchScreen: String, CaseIterable, Sendable {
     case record
     case recordRecording = "record.recording"
     case recordWorking = "record.working"
+    case recordSending = "record.sending"
     case library
     case noteFinished = "note.finished"
     case noteTranscript = "note.transcript"
@@ -88,7 +89,7 @@ enum LaunchScreen: String, CaseIterable, Sendable {
     var tab: RootTab {
         switch self {
         // A note that is still being made is where stopping a recording leaves it: on the Record tab.
-        case .record, .recordRecording, .recordWorking, .noteWorking, .noteQueued: return .record
+        case .record, .recordRecording, .recordWorking, .recordSending, .noteWorking, .noteQueued: return .record
         case .library, .noteFinished, .noteTranscript, .noteInterrupted: return .library
         case .vaults, .vaultDetail: return .vaults
         case .settings, .recipients, .words, .credit, .identity, .lab, .labPrompt, .diagnostics, .traffic, .about: return .settings
@@ -99,7 +100,7 @@ enum LaunchScreen: String, CaseIterable, Sendable {
     /// on a stand-in for that first screen, so the tab bar and the back button are the real ones.
     var isPushed: Bool {
         switch self {
-        case .record, .recordRecording, .recordWorking, .library, .vaults, .settings: return false
+        case .record, .recordRecording, .recordWorking, .recordSending, .library, .vaults, .settings: return false
         default: return true
         }
     }

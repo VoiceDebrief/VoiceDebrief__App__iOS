@@ -43,3 +43,10 @@ One file per piece of work: `open/NNN-slug.md`, moved to `done/` when it is done
 | 102 | Prove the sgit app's large files against the live server | 100 on a device |
 | 103 | The sgit app after milestone one | 100; 011 and 017 |
 | 104 | A read-only share that can be taken back | the owner's decision |
+| 110 | sgit app: a teammate sent a vault key cannot add to it | the sgit app session; the owner's decision |
+| 111 | sgit app: say whether a file has arrived | the sgit app session |
+| 112 | sgit app: who added it | the sgit app session |
+| 113 | sgit app: sharing, for someone never told what a key is | the sgit app session; the owner's decision |
+| 114 | sgit app: getting a folder out, at full quality | the sgit app session |
+| 115 | sgit app: the Create sheet, the four keys, smaller things | the sgit app session |
+| 116 | sgit app: what the pictures could not show; round 2 | the sgit app session, then the screens session |

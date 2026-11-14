@@ -57,6 +57,9 @@ Every page has a markdown twin: replace index.html with index.md.
 - https://ios.app.voicedebrief.ai/sgit-app/design/index.html : sgit as a native app for iPhone, iPad and
   Mac. Intention: put photos, videos and large files in a vault, browse, share, history; the share
   mechanisms that exist; the limits. It will move to its own repository and site.
+- https://ios.app.voicedebrief.ai/sgit-app/reviews/round-1/index.html : the sgit app's first review
+  from pictures (14 November 2026): three synthetic users, seventeen findings, issues 110 to 116. The
+  first: a teammate sent a vault key cannot add to it without an access key.
 - https://ios.app.voicedebrief.ai/sgit-app/built/index.html : its reality file. If it is not listed
   there as built, it does not exist.
 
