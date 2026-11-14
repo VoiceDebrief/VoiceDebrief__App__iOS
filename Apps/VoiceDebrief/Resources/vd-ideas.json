@@ -29,7 +29,7 @@
  ],
  "counts": {
   "seen-working": 26,
-  "built-untried": 55,
+  "built-untried": 59,
   "in-progress": 32,
   "proposed": 36,
   "parked": 6
@@ -1377,12 +1377,14 @@
     "A second round should follow the fixes for issues 110 to 115, with the same three users and tasks.",
     "Done (14 November 2026, green in CI on 50c8629 and looked at): four more pictures, 17 in all: the Create sheet with no access key (create-nokey), a vault on this device only (vault.local), files taken in and waiting to be sent (vault.adding-adding), the vault key shown with its copy button, link, QR code and command (share.key).",
     "Left: the menus open; a failed upload and its retry; a video opened; the errors; dark and the largest text; round 2 of the review.",
-    "Done after that (14 November 2026, green on d2cb5ce and looked at): an eighteenth picture, vault.adding-refused: a file added by somebody with the vault key and no access key, refused by the app's own check, with what it says and \"Try again\" (the state issue 110 is about)."
+    "Done after that (14 November 2026, green on d2cb5ce and looked at): an eighteenth picture, vault.adding-refused: a file added by somebody with the vault key and no access key, refused by the app's own check, with what it says and \"Try again\" (the state issue 110 is about).",
+    "Done after that (14 November 2026, green on b1f6638 and looked at): four more, 22 in all: the vault and the shown key in dark appearance, the vault and the share sheet at a large accessibility text size."
    ],
    "statusLine": "Status: open. From the sgit app's review round 1 (14 November 2026, website/sgit-app/reviews/round-1/index.md). Owner: the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB).",
    "owner": "the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB)",
    "places": [
     "SGit Vaults: the Create sheet",
+    "SGit Vaults: a vault",
     "SGit Vaults: Share"
    ],
    "versions": [
@@ -2237,6 +2239,82 @@
     "Record tab",
     "Settings: Identity",
     "Settings: Recipients"
+   ],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
+   "id": "feature-finish-by-voice-or-by-a-button-off-the-screen",
+   "kind": "feature",
+   "app": "VoiceDebrief",
+   "title": "Finish by voice or by a button off the screen",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "Model/VoiceCommand.swift (\"send this now\", \"send it now\", \"stop recording\" and others, only at the very end of what was said), Engine/RemoteControl.swift (play/pause, pause, stop from headphones, a car, the lock screen)",
+   "detail": [
+    "Model/VoiceCommand.swift (\"send this now\", \"send it now\", \"stop recording\" and others, only at the very end of what was said), Engine/RemoteControl.swift (play/pause, pause, stop from headphones, a car, the lock screen)",
+    "Unit tests for the phrases. The remote buttons are untried and may not reach a recording app"
+   ],
+   "places": [],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
+   "id": "feature-talk-to-claude",
+   "kind": "feature",
+   "app": "VoiceDebrief",
+   "title": "Talk to Claude",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "UI/TalkButton.swift: a button on every screen but Record; tap to record, tap (or say the phrase) to send to Claude (developer); hold for Messages to Claude, with each note's state. No replies yet: they need the app's own inbox",
+   "detail": [
+    "UI/TalkButton.swift: a button on every screen but Record; tap to record, tap (or say the phrase) to send to Claude (developer); hold for Messages to Claude, with each note's state. No replies yet: they need the app's own inbox",
+    "No test; not run on a device"
+   ],
+   "places": [],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
+   "id": "feature-every-section-in-plain-sight",
+   "kind": "feature",
+   "app": "VoiceDebrief",
+   "title": "Every section in plain sight",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "RootView: sections grouped (You, Experiments, More) in a sidebar on iPad and Mac, tabs and More on iPhone; the record screen's Explore tiles open each",
+   "detail": [
+    "RootView: sections grouped (You, Experiments, More) in a sidebar on iPad and Mac, tabs and More on iPhone; the record screen's Explore tiles open each",
+    "No test; not run on a device"
+   ],
+   "places": [
+    "Record tab"
+   ],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
+   "id": "feature-your-activity",
+   "kind": "feature",
+   "app": "VoiceDebrief",
+   "title": "Your activity",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "Engine/UsageLog.swift (.tracked(\"screen\") on every section; actions for recording, finishing, tiles, sending the report), UI/ActivityView.swift: last used, screens with counts and time, actions with counts; sent to the developer's lane as voicedebrief/usage/v1 (screen and action ids and times, no content); tools/conductor files it",
+   "detail": [
+    "Engine/UsageLog.swift (.tracked(\"screen\") on every section; actions for recording, finishing, tiles, sending the report), UI/ActivityView.swift: last used, screens with counts and time, actions with counts; sent to the developer's lane as voicedebrief/usage/v1 (screen and action ids and times, no content); tools/conductor files it",
+    "No test; not run on a device"
+   ],
+   "places": [
+    "The repository: tools/conductor"
    ],
    "issues": [],
    "url": "https://ios.app.voicedebrief.ai/built/index.html",
@@ -3253,10 +3331,10 @@
    "title": "A picture of every screen",
    "status": "seen-working",
    "why": "The reality file, Built: built: in the repository and proven by a run.",
-   "summary": "Apps/SGit/UITests/ScreensTests.swift, Sources/App/LaunchSample.swift (Debug builds only), .github/workflows/sgit-app-screens.yml: eighteen screens on an iPhone and on an iPad in landscape, each opened on an invented vault made by the real engine in temporary folders",
+   "summary": "Apps/SGit/UITests/ScreensTests.swift, Sources/App/LaunchSample.swift (Debug builds only), .github/workflows/sgit-app-screens.yml: twenty-two screens on an iPhone and on an iPad in landscape, each opened on an invented vault made by the real engine in temporary folders",
    "detail": [
-    "Apps/SGit/UITests/ScreensTests.swift, Sources/App/LaunchSample.swift (Debug builds only), .github/workflows/sgit-app-screens.yml: eighteen screens on an iPhone and on an iPad in landscape, each opened on an invented vault made by the real engine in temporary folders",
-    "Run 1 (14 November 2026) produced all 24 pictures. They are the only way any screen but the first two has been seen: on a simulator, with sample data, never with a server. Two faults they showed (thumbnails outside their tiles, a picture filling the file screen) were fixed; the run on 9b3f642 (26 pictures, thirteen screens) shows both fixed, and shows the standing line, Share on the toolbar and the gallery. The run on 50c8629 (34 pictures, seventeen screens) adds Create with no access key, a vault on this device only, files waiting to be sent and a key shown; all four were looked at and read as intended. The run on d2cb5ce (36 pictures) adds an upload refused for want of an access key, made by the app's own check"
+    "Apps/SGit/UITests/ScreensTests.swift, Sources/App/LaunchSample.swift (Debug builds only), .github/workflows/sgit-app-screens.yml: twenty-two screens on an iPhone and on an iPad in landscape, each opened on an invented vault made by the real engine in temporary folders",
+    "Run 1 (14 November 2026) produced all 24 pictures. They are the only way any screen but the first two has been seen: on a simulator, with sample data, never with a server. Two faults they showed (thumbnails outside their tiles, a picture filling the file screen) were fixed; the run on 9b3f642 (26 pictures, thirteen screens) shows both fixed, and shows the standing line, Share on the toolbar and the gallery. The run on 50c8629 (34 pictures, seventeen screens) adds Create with no access key, a vault on this device only, files waiting to be sent and a key shown; all four were looked at and read as intended. The run on d2cb5ce (36 pictures) adds an upload refused for want of an access key, made by the app's own check. The run on b1f6638 (44 pictures) adds dark appearance, which reads well, and a large text size, which showed file names cut short under tiles and the iPad tree breaking a word..."
    ],
    "places": [
     "SGit Vaults: Gallery",

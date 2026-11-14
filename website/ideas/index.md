@@ -5,7 +5,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | Status | Meaning | How many |
 |---|---|---|
 | Seen working | Built, and a run proved it: CI, a device or a server. | 26 |
-| Built, untried | In the app or the repository, but not yet proven by a run on a device. | 55 |
+| Built, untried | In the app or the repository, but not yet proven by a run on a device. | 59 |
 | In progress | Begun: part of it is built or a release has touched it. | 32 |
 | Proposed | Asked for or described; nothing of it is built. | 36 |
 | Parked | Waiting: on the owner, on Apple, or scheduled for later. | 6 |
@@ -74,6 +74,10 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | The Guide: ideas, what is new, feature guides | Feature | VoiceDebrief | Library tab; Record tab: the briefing card |   | [reality file](../built/index.md) |
 | A welcome on the first launch | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
 | Where the work happens | Feature | VoiceDebrief | Record tab; Settings: Identity; Settings: Recipients |   | [reality file](../built/index.md) |
+| Finish by voice or by a button off the screen | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
+| Talk to Claude | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
+| Every section in plain sight | Feature | VoiceDebrief | Record tab |   | [reality file](../built/index.md) |
+| Your activity | Feature | VoiceDebrief | The repository: tools/conductor |   | [reality file](../built/index.md) |
 | Record a note for someone | Feature | VoiceDebrief | Record tab; Settings: Recipients |   | [reality file](../built/index.md) |
 | A send that is not lost | Feature | VoiceDebrief | Record tab; Record tab: the briefing card; Settings: Recipients |   | [reality file](../built/index.md) |
 | Finish and send in one press | Feature | VoiceDebrief | Record tab; Settings: Recipients |   | [reality file](../built/index.md) |
@@ -135,7 +139,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | sgit app: sharing, for someone who was never told what a key is | Issue | SGit Vaults | SGit Vaults: the Create sheet; SGit Vaults: Share; SGit Vaults: Settings | [v0.1.44](../versions/v0.1.44/index.md) | [113](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/113-sgit-app-sharing-for-someone-who-was-not-told-what-a-key-is.md) |
 | sgit app: getting a folder out, at full quality | Issue | SGit Vaults | SGit Vaults: a vault; SGit Vaults: Share | [v0.1.44](../versions/v0.1.44/index.md) | [114](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/114-sgit-app-getting-files-out.md) |
 | sgit app: the Create sheet, the four keys, and smaller things | Issue | SGit Vaults | SGit Vaults: the Create sheet; SGit Vaults: a vault; SGit Vaults: History | [v0.1.44](../versions/v0.1.44/index.md) | [115](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/115-sgit-app-the-create-sheet-and-the-words.md) |
-| sgit app: what the pictures could not show | Issue | SGit Vaults | SGit Vaults: the Create sheet; SGit Vaults: Share | [v0.1.44](../versions/v0.1.44/index.md) | [116](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/116-sgit-app-what-the-pictures-could-not-show.md) |
+| sgit app: what the pictures could not show | Issue | SGit Vaults | SGit Vaults: the Create sheet; SGit Vaults: a vault; SGit Vaults: Share | [v0.1.44](../versions/v0.1.44/index.md) | [116](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/116-sgit-app-what-the-pictures-could-not-show.md) |
 | People, messages and secrets: the layer under both apps | Article | Both |   |   | [article](../articles/people-messages-and-secrets/index.md) |
 
 ## Proposed

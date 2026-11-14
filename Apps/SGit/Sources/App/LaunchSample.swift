@@ -15,6 +15,8 @@ enum LaunchOptions {
 
     static var screen: String? { value("-SGScreen") }
     static var sampleSet: String { value("-SGSampleData") ?? "full" }
+    /// "dark" or "large": how the screen is to look, beyond the default.
+    static var look: String? { value("-SGLook") }
 }
 
 /// An invented vault for the pictures: real objects, made by the real engine, in temporary folders.
@@ -138,6 +140,8 @@ struct ScreenshotRoot: View {
         Group {
             if world.ready {
                 shown
+                    .preferredColorScheme(LaunchOptions.look == "dark" ? .dark : nil)
+                    .dynamicTypeSize(LaunchOptions.look == "large" ? .accessibility3 : .large)
                     .overlay(alignment: .topLeading) {
                         Text("·").font(.system(size: 1)).opacity(0.02)
                             .accessibilityIdentifier("sg.screen.\(screen)")
