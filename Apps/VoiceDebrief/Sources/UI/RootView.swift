@@ -84,7 +84,9 @@ struct RootView: View {
         .welcomeOnFirstLaunch()
         // Talk to Claude from every screen but Record, which has its own control.
         .overlay(alignment: .bottomTrailing) {
-            if tab != .record { TalkButton(session: session, book: book) }
+            // Not where the screen has its own microphone button (Play, the Lab) that the floating button
+            // would cover (seen in the screens session's pictures, 14 November 2026).
+            if ![.record, .play, .lab].contains(tab) { TalkButton(session: session, book: book) }
         }
         #if DEBUG
         .overlay(alignment: .topLeading) { LaunchMarker() }
