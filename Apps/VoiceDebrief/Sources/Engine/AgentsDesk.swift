@@ -25,9 +25,11 @@ final class AgentsDesk {
         }
     }
 
-    var vaultId: String {
-        get { UserDefaults.standard.string(forKey: Self.vaultKey) ?? "" }
-        set { UserDefaults.standard.set(newValue, forKey: Self.vaultKey) }
+    /// The vault the conductor writes into. Stored, so that the screen follows a change at once (as a
+    /// computed property over UserDefaults it did not: the picker stayed on None and the button did
+    /// nothing, the owner, 14 November 2026); kept in UserDefaults across launches.
+    var vaultId: String = UserDefaults.standard.string(forKey: AgentsDesk.vaultKey) ?? "" {
+        didSet { UserDefaults.standard.set(vaultId, forKey: Self.vaultKey) }
     }
 
     /// Pulls the vault and reads the report and its picture.

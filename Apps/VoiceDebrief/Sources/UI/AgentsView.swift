@@ -84,6 +84,10 @@ struct AgentsView: View {
                 Text("None").tag("")
                 ForEach(book.vaults.filter { $0.canWrite }) { v in Text(v.name).tag(v.id) }
             }
+            if book.vaults.filter({ $0.canWrite }).isEmpty {
+                Text("You have no vault you can write to yet: create one on the Vaults tab first.")
+                    .font(.footnote).foregroundStyle(.orange)
+            }
             Text("2. Give it to Claude (developer). Its key is sealed on this device to Claude's key; the server cannot read it.")
             Button(sharing ? "Sending" : "Give this vault to Claude (developer)") {
                 guard let vault else { return }

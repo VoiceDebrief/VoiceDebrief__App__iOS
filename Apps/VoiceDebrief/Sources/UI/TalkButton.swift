@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 /// Talk to Claude, from anywhere in the app: tap, speak, tap, and it goes to Claude (developer), the
 /// agent working on the app (the owner, 14 November 2026: "click on it, start talking, click on it, it
@@ -10,6 +11,11 @@ struct TalkButton: View {
     @AppStorage("vd.talking") private var talking = false
     @State private var showingMessages = false
     @State private var said: String?
+    /// Added while talking: a picture (pasted or chosen) and a line typed, sent with the note.
+    @State private var picture: UIImage?
+    @State private var extra = ""
+    @State private var pictureSender = PictureSender()
+    @State private var nothingToPaste = false
 
     private var recordingHere: Bool { talking && session.recordingNote != nil }
 
@@ -44,6 +50,11 @@ struct TalkButton: View {
         .padding(.trailing, 16)
         .padding(.bottom, 90)
         .animation(.snappy, value: recordingHere)
+        .alert("There is no picture on the clipboard", isPresented: $nothingToPaste) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("Take a screenshot, tap its preview, then Copy, and paste here.")
+        }
         .onChange(of: session.finishRequests) { _, _ in
             if recordingHere { Task { await tap() } }
         }
@@ -80,7 +91,32 @@ struct TalkButton: View {
             .truncationMode(.head)
             .frame(maxWidth: .infinity, alignment: .leading)
             LevelBars(levels: session.levels, height: 22, barWidth: 3)
-            Text("Tap the button, or say \"send this now\", to send it.").font(.caption).foregroundStyle(.secondary)
+            // Add to it while talking: a picture and a line of your own (the owner: "allow me to paste an
+            // image, add some text, and have a Send button").
+            if let picture {
+                HStack {
+                    Image(uiImage: picture).resizable().scaledToFill()
+                        .frame(width: 56, height: 56).clipShape(RoundedRectangle(cornerRadius: 8))
+                    Text("Goes with the note").font(.caption).foregroundStyle(.secondary)
+                    Spacer()
+                    Button("Remove", role: .destructive) { self.picture = nil }.font(.caption)
+                }
+            }
+            TextField("Add a line (optional)", text: $extra, axis: .vertical)
+                .lineLimit(1...3)
+                .textFieldStyle(.roundedBorder)
+            HStack(spacing: 10) {
+                Button {
+                    if let image = UIPasteboard.general.image { picture = image } else { nothingToPaste = true }
+                } label: { Label("Paste picture", systemImage: "doc.on.clipboard") }
+                    .buttonStyle(.bordered)
+                PhotoChooser { picture = $0 }.buttonStyle(.bordered)
+                Spacer()
+                Button { Task { await tap() } } label: { Label("Send", systemImage: "paperplane.fill") }
+                    .buttonStyle(.borderedProminent)
+            }
+            .font(.footnote)
+            Text("Or say \"send this now\".").font(.caption).foregroundStyle(.secondary)
         }
         .padding(14)
         .frame(maxWidth: 520)
@@ -94,8 +130,13 @@ struct TalkButton: View {
         if recordingHere {
             talking = false
             UsageLog.shared.action("talk.send")
+            let image = picture, line = extra
+            picture = nil; extra = ""
             if let id = await session.stopRecording() {
                 session.send(noteId: id, to: claude)
+                if image != nil || !line.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                    Task { await pictureSender.send(image: image, caption: line, to: claude, about: id) }
+                }
                 show("Sent to Claude when it is written up. Hold the button to see your messages.")
             }
         } else {
