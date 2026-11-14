@@ -25,6 +25,8 @@ struct RecordView: View {
     /// Who the next recording is for: a recipient's link, or empty for "just me" (the owner's
     /// contact-driven flow, 14 November 2026). Remembered, so sending to the usual person is one tap.
     @AppStorage("vd.addressee") private var addressee = ""
+    /// True while the Talk to Claude button owns the recording, so this screen leaves it alone.
+    @AppStorage("vd.talking") private var talking = false
 
     private var addresseeRecipient: Recipient? {
         addressee.isEmpty ? nil : RecipientStore.shared.all.first { $0.link == addressee }
@@ -98,6 +100,10 @@ struct RecordView: View {
                 Task { @MainActor in UIApplication.shared.isIdleTimerDisabled = recording }
             }
             .sensoryFeedback(.impact, trigger: isRecording)
+            .onChange(of: session.finishRequests) { _, _ in
+                // A spoken "send this now", or a headphone or car button, finishes like the tick.
+                if isRecording, !talking { Task { await toggle() } }
+            }
             .task {
                 // Once per launch: what changed since the last time, then remember this time.
                 guard briefing == nil else { return }
@@ -123,7 +129,7 @@ struct RecordView: View {
                     .foregroundStyle(.red)
                 Text(since, style: .timer)
                     .font(.system(.largeTitle, design: .rounded).monospacedDigit())
-                Text("Saved to this device as you speak. If the recording is cut short, what was said is kept.")
+                Text("Saved to this device as you speak. To finish without a tap, say \"send this now\", or press play/pause on your headphones.")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
