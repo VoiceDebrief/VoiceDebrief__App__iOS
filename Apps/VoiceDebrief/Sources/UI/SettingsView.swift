@@ -66,17 +66,17 @@ struct SettingsView: View {
                 }
 
                 Section {
+                    NavigationLink("Lab: one prompt, tools on and off") { LabView(store: session.store) }
                     NavigationLink("Your words") { GlossaryView() }
                 } header: {
                     Text("Experiments")
                 } footer: {
-                    Text("Words and names you use, for the clean text a note can be rewritten into.")
+                    Text("The Lab tries Apple's model on one prompt at a time. Your words help the clean text a note can be rewritten into (open a note, then Clean text).")
                 }
 
                 Section("Advanced") {
-                    NavigationLink("Diagnostics and lane") { DiagnosticsView(session: session) }
+                    NavigationLink("Diagnostics") { DiagnosticsView(session: session) }
                     NavigationLink("Every step the vault engine took") { TrafficView(log: book.log) }
-                    NavigationLink("Lab") { LabView(store: session.store) }
                 }
 
                 Section("About") {
