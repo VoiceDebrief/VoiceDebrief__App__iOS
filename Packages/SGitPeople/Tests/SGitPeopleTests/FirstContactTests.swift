@@ -15,7 +15,7 @@ struct FirstContactTests {
         let benCard = try People.card(People.ben, "Ben", inbox: nil)
         let anaCard = try People.card(People.ana, "Ana", inbox: People.anaInbox)
         let text = try FirstContact.invitation(accessKey: accessKey, to: benCard, from: People.ana, myCard: anaCard, at: People.now)
-        #expect(text.hasPrefix("sgm1."))
+        #expect(text.hasPrefix("m1."))
         #expect(!text.contains("access-key-for-the-test"))
         let invitation = try FirstContact.open("Ana sent you: " + text, me: People.ben)
         #expect(invitation.accessKey == accessKey)
@@ -48,7 +48,7 @@ struct FirstContactTests {
     }
 
     @Test func aMessageThatIsNotAnAccessKeyIsNotAnInvitation() throws {
-        let note = PeopleMessage(kind: .text, from: People.ana.bundle.signingFingerprint, to: People.ben.bundle.fingerprint, text: "hi")
+        let note = PeopleMessage(kind: .text, from: People.ana.bundle.signingFingerprint, to: People.ben.bundle.signingFingerprint, text: "hi")
         let text = try note.sealedText(to: People.ben.bundle, from: People.ana)
         #expect(throws: FirstContact.Failure.notAnInvitation) { try FirstContact.open(text, me: People.ben) }
     }

@@ -121,7 +121,7 @@ public final class PeopleHub {
 
     private func outgoing(_ kind: MessageKind, to contact: Contact, text: String? = nil, secret: SharedSecret? = nil,
                           voiceNote: VoiceNoteReference? = nil, vault: VaultInvitation? = nil, withCard: Bool = false) -> PeopleMessage {
-        PeopleMessage(kind: kind, from: identity.bundle.signingFingerprint, to: contact.id,
+        PeopleMessage(kind: kind, from: identity.bundle.signingFingerprint, to: contact.card.signingFingerprint,
                       card: withCard ? myCardText : nil, text: text, secret: secret, voiceNote: voiceNote, vault: vault)
     }
 
@@ -242,14 +242,12 @@ public final class PeopleHub {
     /// The inviter's side: the access key in the store, sealed to a newcomer's card. `inPerson` leaves this
     /// person's card out, so the code fits a QR code (the newcomer has scanned it already).
     public func invite(newcomerCard text: String, inPerson: Bool, met: HowMet) throws -> String {
-        let newcomer = try ContactCard.parse(text)
-        try book.add(newcomer, met: met, myFingerprint: identity.bundle.fingerprint)
-        guard let kept = secretList.first(where: { $0.kind == .accessKey }) ?? secrets.all.first(where: { $0.kind == .accessKey }) else {
-            throw FirstContact.Failure.noAccessKey
-        }
-        let sealed = try FirstContact.invitation(accessKey: try secrets.outgoing(kept.id), to: newcomer, from: identity,
+        let newcomer = try FirstContact.newcomerKey(in: text)
+        if let card = newcomer.card { try book.add(card, met: met, myFingerprint: identity.bundle.fingerprint) }
+        guard let kept = secrets.all.first(where: { $0.kind == .accessKey }) else { throw FirstContact.Failure.noAccessKey }
+        let sealed = try FirstContact.invitation(accessKey: try secrets.outgoing(kept.id), to: newcomer.bundle, from: identity,
                                                  myCard: inPerson ? nil : myCard)
-        if let contact = book.contact(newcomer.fingerprint) { try secrets.recordShared(kept.id, with: contact) }
+        if let contact = book.contact(newcomer.bundle.fingerprint) { try secrets.recordShared(kept.id, with: contact) }
         reload()
         return sealed
     }

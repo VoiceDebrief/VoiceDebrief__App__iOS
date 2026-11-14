@@ -132,7 +132,7 @@ struct RepliesTests {
     @Test func aReplyIsFoundUnderTheNoteItAnswers() async throws {
         let ana = PeopleHub(identity: People.ana, name: "Ana", folder: nil, secrets: SecretsStore(keychain: MemoryKeychain()))
         // The developer (Ben) answers Ana's note "note-42", with his card inside so that Ana's app can check him.
-        var answer = PeopleMessage(kind: .text, from: People.ben.bundle.signingFingerprint, to: People.ana.bundle.fingerprint,
+        var answer = PeopleMessage(kind: .text, from: People.ben.bundle.signingFingerprint, to: People.ana.bundle.signingFingerprint,
                                    sentAt: People.now, card: try People.card(People.ben, "Claude (developer)", inbox: People.benInbox).text(),
                                    text: "Thanks, looking at it")
         answer.replyTo = "note-42"

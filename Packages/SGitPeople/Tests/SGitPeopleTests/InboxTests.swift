@@ -76,7 +76,7 @@ struct LaneClientTests {
 @Suite("Checking the inbox")
 struct InboxCheckTests {
     func payload(_ words: String, from: PKIIdentity = People.ana) throws -> String {
-        try PeopleMessage(kind: .text, from: from.bundle.signingFingerprint, to: People.ben.bundle.fingerprint, sentAt: People.now,
+        try PeopleMessage(kind: .text, from: from.bundle.signingFingerprint, to: People.ben.bundle.signingFingerprint, sentAt: People.now,
                           text: words).lanePayload(to: People.ben.bundle, from: from)
     }
 

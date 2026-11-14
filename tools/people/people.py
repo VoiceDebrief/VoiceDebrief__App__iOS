@@ -6,7 +6,7 @@ Cards, sealed and signed messages and inboxes exactly as Packages/SGitPeople wri
     people.py --home H setup "Name" [--inbox]   make a key pair (and an inbox, which needs the access key)
     people.py --home H card                     print this person's card (sgc1.…)
     people.py --home H add CARD                 add a contact from a card's text
-    people.py --home H invite CARD              seal the access key to a newcomer's card: prints sgm1.…
+    people.py --home H invite CARD              seal the access key to a newcomer's card or k1 key: prints m1.…
     people.py --home H accept SGM               open an invitation, keep the access key, make an inbox,
                                                 send the full card to the inviter
     people.py --home H send FINGERPRINT TEXT    a text message to a contact's inbox
@@ -16,7 +16,7 @@ Cards, sealed and signed messages and inboxes exactly as Packages/SGitPeople wri
     people.py --home H destroy                  delete this person's inbox vault from the server
 
 State lives in --home: private keys, the inbox's enumeration key and vault key, the access key. NEVER put
-that folder in a repository and never print its contents. A card and an `sgm1.` text are safe to hand over.
+that folder in a repository and never print its contents. A card and an `m1.` code are safe to hand over.
 
 The access key: pass --access-key, or set SGIT_TOKEN. In a Claude cloud session the proxy adds the real one to
 every request to dev.send.sgraph.ai: pass --access-key proxy-injected, and that placeholder is what an
@@ -34,7 +34,7 @@ from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 
 SERVER = os.environ.get('SGIT_BASE_URL', 'https://dev.send.sgraph.ai')
 OAEP = padding.OAEP(mgf=padding.MGF1(hashes.SHA256()), algorithm=hashes.SHA256(), label=None)
-REGISTRY, CARD_KIND, MESSAGE_FORMAT = 'sgit.ai/people', 'sgit.ai/people/card/v1', 'sgit.ai/people/message/v1'
+REGISTRY, CARD_KIND, MESSAGE_FORMAT = 'sgit.ai/people', 'sgit.ai/people/card/v1', 'pki.sgit.ai/message/v1'
 
 
 # --- encodings, as PKIKit writes them ---------------------------------------------------------------------
@@ -126,27 +126,56 @@ def unseal(enc_text, me):
 
 
 def message(me, to_card, kind, **parts):
-    m = {'v': 1, 'format': MESSAGE_FORMAT, 'id': secrets.token_hex(16), 'kind': kind,
-         'from': me['bundle']['signing_fingerprint'], 'to': to_card['bundle']['fingerprint'], 'sent_at': now()}
+    """pki.sgit.ai's message (message.js compose), with SGitPeople's fields, signed inside: canonical bytes without sig."""
+    m = {'v': 1, 'kind': MESSAGE_FORMAT, 'type': kind, 'id': secrets.token_hex(16), 'from': me['bundle']['signing_fingerprint'],
+         'to': to_card['bundle']['signing_fingerprint'], 'at': now()}
     m.update({k: v for k, v in parts.items() if v is not None})
-    return json.dumps(m, sort_keys=True, separators=(',', ':'), ensure_ascii=False).encode()
+    secret = m.get('secret')
+    if secret and secret.get('kind') == 'access-key':
+        m['grant'] = {'service': 'sg-send', 'endpoint': secret.get('server') or SERVER, 'token': secret['value'], 'name': secret['name']}
+    m.setdefault('text', {'card': 'A contact card', 'secret': 'A secret: ' + (secret or {}).get('name', '')}.get(kind, ''))
+    m['sig'] = b64(sign_raw(me['sign_private'], (canonical(m) + '\n').encode()))
+    return json.dumps(m, separators=(',', ':'), ensure_ascii=False).encode()
+
+
+def m1_code(enc_text, to_signing_fp):
+    """pki.sgit.ai's m1 code for an envelope."""
+    env = json.loads(base64.b64decode(enc_text))
+    parts = ['m1', to_signing_fp[7:], b64url(base64.b64decode(env['w'])), b64url(base64.b64decode(env['i'])), b64url(base64.b64decode(env['c']))]
+    if env.get('s') and env.get('f'): parts += [b64url(base64.b64decode(env['s'])), env['f'][7:]]
+    return '.'.join(parts)
+
+
+def from_m1(text):
+    p = text[text.index('m1.') + 3:].split()[0].split('.')
+    env = {'v': 2, 'w': b64(unb64url(p[1])), 'i': b64(unb64url(p[2])), 'c': b64(unb64url(p[3]))}
+    if len(p) >= 6: env['s'] = b64(unb64url(p[4])); env['f'] = 'sha256:' + p[5]
+    return b64(json.dumps(env).encode())
 
 
 def open_message(enc_text, me, contacts):
     """(message, trust), trust as SenderTrust: contact, card-inside, unknown, forged, unsigned."""
     plain, signer, signature, ciphertext = unseal(enc_text, me)
     m = json.loads(plain)
-    if not signer or not signature: return m, 'unsigned'
-    known = next((c for c in contacts.values() if c['bundle']['signing_fingerprint'] == signer), None)
+    if m.get('kind') != MESSAGE_FORMAT: raise ValueError('not a pki.sgit.ai message')
+    if not m.get('sig') or not m.get('from'): return m, 'unsigned'
+    def checks(sign_spki, signing_fp):
+        rest = {k: v for k, v in m.items() if k != 'sig'}
+        if not verify_raw(sign_spki, base64.b64decode(m['sig']), (canonical(rest) + '\n').encode()): return False
+        if signer: return signer == signing_fp and verify_raw(sign_spki, base64.b64decode(signature), ciphertext)
+        return True
+    known = next((c for c in contacts.values() if c['bundle']['signing_fingerprint'] == m['from']), None)
     if known:
-        trust = 'contact' if verify_raw(known['sign_spki'], base64.b64decode(signature), ciphertext) else 'forged'
+        trust = 'contact' if checks(known['sign_spki'], m['from']) else 'forged'
     elif m.get('card'):
         card = read_card(m['card'])
-        ok = card['bundle']['signing_fingerprint'] == signer and verify_raw(card['sign_spki'], base64.b64decode(signature), ciphertext)
-        trust = 'card-inside' if ok else ('forged' if card['bundle']['signing_fingerprint'] == signer else 'unknown')
+        if card['bundle']['signing_fingerprint'] == m['from']:
+            trust = 'card-inside' if checks(card['sign_spki'], m['from']) else 'forged'
+        else:
+            trust = 'unknown'
     else:
         trust = 'unknown'
-    if m.get('from') != signer or m.get('to') != me['bundle']['fingerprint']: trust = 'forged'
+    if m.get('to') != me['bundle']['signing_fingerprint'] or (signer and signer != m['from']): trust = 'forged'
     return m, trust
 
 
@@ -244,16 +273,17 @@ def card_text(home):
 def invite(home, text, access_key):
     me, newcomer = me_of(home), read_card(text)
     add_contact(home, newcomer, 'by-message')
+    exp = time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime(time.time() + 7 * 86400))
     secret = {'id': secrets.token_hex(8), 'kind': 'access-key', 'name': SERVER, 'value': access_key, 'server': SERVER, 'version': 1}
-    enc = seal(message(me, newcomer, 'secret', card=card_text(home), secret=secret), newcomer['encrypt_spki'], me)
-    return 'sgm1.' + b64url(base64.b64decode(enc))
+    enc = seal(message(me, newcomer, 'secret', card=card_text(home), secret=secret, expires=exp), newcomer['encrypt_spki'], me)
+    return m1_code(enc, newcomer['bundle']['signing_fingerprint'])
 
 
 def accept(home, text):
     me = me_of(home)
-    code = text[text.index('sgm1.') + 5:].split()[0]
-    m, trust = open_message(b64(unb64url(code)), me, contacts_of(home))
-    if m['kind'] != 'secret' or m['secret']['kind'] != 'access-key': sys.exit('not an invitation')
+    m, trust = open_message(from_m1(text), me, contacts_of(home))
+    if m.get('expires') and m['expires'] < now(): sys.exit('the invitation has expired')
+    if m.get('type') != 'secret' or m['secret']['kind'] != 'access-key': sys.exit('not an invitation')
     if trust not in ('contact', 'card-inside'): sys.exit(f'the invitation is {trust}: not accepted')
     inviter = read_card(m['card'])
     add_contact(home, inviter, 'by-message')
@@ -291,11 +321,12 @@ def check(home):
         for f in files:
             m, trust = open_message(base64.b64decode(f['content']).decode(), me, contacts_of(home))
             kept.append({'file_id': f['file_id'], 'trust': trust, 'message': m})
-            line = f"{m['kind']} from {m['from']} ({trust})"
-            if m['kind'] == 'card' and trust in ('contact', 'card-inside'):
+            kind = m.get('type', 'text')
+            line = f"{kind} from {m['from']} ({trust})"
+            if kind == 'card' and trust in ('contact', 'card-inside'):
                 card = read_card(m['card'])
                 line += f": {card['name']}, contact {add_contact(home, card, 'through-inbox')}, inbox {'yes' if card['inbox'] else 'no'}"
-            elif m['kind'] == 'text':
+            elif kind == 'text':
                 line += f": {m['text']!r}"
             print(line)
         save(home, 'messages.json', kept)
