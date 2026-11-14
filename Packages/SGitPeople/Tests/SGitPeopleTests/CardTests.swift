@@ -108,6 +108,19 @@ struct CardTests {
         #expect(People.anaInbox.url("list")?.absoluteString == "https://dev.send.sgraph.ai/api/vault/append/list/anainbox")
     }
 
+    /// Made by `tools/people/people.py` (Python, the `cryptography` package), with a made-up inbox: the other
+    /// implementation's card must check here. Public material only.
+    @Test func aCardMadeByPeoplePyChecks() throws {
+        let url = URL(fileURLWithPath: #filePath).deletingLastPathComponent().appendingPathComponent("card-made-by-people-py.txt")
+        let card = try ContactCard.parse(try String(contentsOf: url, encoding: .utf8))
+        #expect(card.name == "Zoë (made by people.py)")
+        #expect(card.fingerprint == "sha256:7fd896078dcc79f5")
+        #expect(card.signingFingerprint == "sha256:06aad0bc0aeeba1e")
+        #expect(card.inbox?.vault == "fixture1")
+        #expect(PKI.problems(of: card.bundle).isEmpty)
+        #expect(try card.text() + "\n" == (try String(contentsOf: url, encoding: .utf8)))
+    }
+
     /// The real size: a 4096-bit key, as every install makes.
     @Test func aFullSizeCardFitsAQRCode() throws {
         let identity = try PKI.generate(label: "Full size", rsaBits: 4096)

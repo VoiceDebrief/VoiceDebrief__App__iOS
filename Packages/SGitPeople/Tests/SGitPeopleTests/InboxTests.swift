@@ -67,7 +67,8 @@ struct LaneClientTests {
 
     @Test func randomTokensAreHexOfTheirLength() {
         #expect(LaneClient.randomHex(24).count == 48)
-        #expect(LaneClient.randomHex(32).allSatisfy(\.isHexDigit))
+        let hex = LaneClient.randomHex(32)
+        #expect(hex.allSatisfy { $0.isHexDigit })
         #expect(LaneClient.randomHex(24) != LaneClient.randomHex(24))
     }
 }

@@ -58,18 +58,17 @@ final class ReplayLaneHTTP: LaneHTTP, @unchecked Sendable {
     func post(_ url: URL, body: Data, headers: [String: String]) async throws -> (status: Int, body: Data) {
         let parsed = (try? JSONSerialization.jsonObject(with: body) as? [String: Any]) ?? [:]
         let call = Call(url: url, body: parsed, headers: headers)
-        lock.lock()
-        calls.append(call)
-        guard !answers.isEmpty else {
-            lock.unlock()
-            throw Unexpected(description: "no answer left for \(call.operation)")
-        }
-        let next = answers.removeFirst()
-        lock.unlock()
+        guard let next = take(call) else { throw Unexpected(description: "no answer left for \(call.operation)") }
         guard next.operation == call.operation else {
             throw Unexpected(description: "asked \(call.operation), the recording has \(next.operation) next")
         }
         return (next.status, Data(next.body.utf8))
+    }
+
+    private func take(_ call: Call) -> (operation: String, status: Int, body: String)? {
+        lock.lock(); defer { lock.unlock() }
+        calls.append(call)
+        return answers.isEmpty ? nil : answers.removeFirst()
     }
 
     func call(_ index: Int) -> Call {

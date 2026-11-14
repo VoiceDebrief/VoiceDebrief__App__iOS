@@ -22,7 +22,9 @@ let package = Package(
         .testTarget(
             name: "SGitPeopleTests",
             dependencies: ["SGitPeople", .product(name: "SGitVault", package: "SGitVault")],
-            path: "Tests/SGitPeopleTests"
+            path: "Tests/SGitPeopleTests",
+            // Read from beside the test file by its path, not as a bundle resource.
+            exclude: ["card-made-by-people-py.txt"]
         ),
     ],
     // The apps build in Swift 5 mode with complete concurrency checking; the package does the same.
