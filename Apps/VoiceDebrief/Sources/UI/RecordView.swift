@@ -155,9 +155,18 @@ struct RecordView: View {
             if let briefing, !briefing.isEmpty {
                 card {
                     if let version = briefing.upgradedTo {
-                        Link(destination: AppInfo.notes(for: version)) {
-                            Label("Updated to \(version): see what is new", systemImage: "sparkles")
-                                .font(.callout.weight(.semibold))
+                        if let history = VersionHistory.bundled() {
+                            NavigationLink {
+                                WhatsNewView(history: history)
+                            } label: {
+                                Label("Updated to \(version): see what is new", systemImage: "sparkles")
+                                    .font(.callout.weight(.semibold))
+                            }
+                        } else {
+                            Link(destination: AppInfo.notes(for: version)) {
+                                Label("Updated to \(version): see what is new", systemImage: "sparkles")
+                                    .font(.callout.weight(.semibold))
+                            }
                         }
                     }
                     ForEach(Array(briefing.lines.prefix(3)), id: \.self) { line in
@@ -206,6 +215,7 @@ struct RecordView: View {
                 tile("Lab", "Try Apple's model, tools on and off", "flask", .lab)
                 tile("Your words", "Names the clean text should know", "character.book.closed", .words)
                 tile("Your activity", "What you have used; send it", "chart.bar", .activity)
+                tile("Guide", "What is new, every idea, how things work", "book", .guide)
                 tile("What this build does", "Built, in test, not built", "checklist", .about)
             }
             Link(destination: AppInfo.notes()) {
