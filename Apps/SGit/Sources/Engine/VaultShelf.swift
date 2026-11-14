@@ -145,6 +145,11 @@ final class VaultShelf {
         if let data = store.get("vaults"), let saved = try? JSONDecoder().decode([SavedVault].self, from: data) {
             vaults = saved
         }
+        syncKeys = UserDefaults.standard.object(forKey: Self.syncKeysSetting) as? Bool ?? true
+        if syncKeys {
+            adoptSynchronised()
+            persist()
+        }
         hasToken = token != nil
         loadGalleryOwn()
     }
@@ -152,19 +157,78 @@ final class VaultShelf {
     // MARK: What is kept
 
     var token: String? {
-        guard let data = store.get("access-token"), let text = String(data: data, encoding: .utf8), !text.isEmpty else { return nil }
-        return text
+        let homes: [SecretHome] = syncKeys ? [.synchronised, .thisDeviceOnly] : [.thisDeviceOnly]
+        for home in homes {
+            if let data = store.get("access-token", home), let text = String(data: data, encoding: .utf8), !text.isEmpty { return text }
+        }
+        return nil
     }
 
     func setToken(_ text: String) {
         UsageLog.shared.action(text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "access-key.remove" : "access-key.save")
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        store.set("access-token", trimmed.isEmpty ? nil : Data(trimmed.utf8))
+        let value = trimmed.isEmpty ? nil : Data(trimmed.utf8)
+        store.set("access-token", value, .thisDeviceOnly)
+        if syncKeys { store.set("access-token", value, .synchronised) }
         hasToken = token != nil
+    }
+
+    // MARK: The same vaults on every device (issue 122)
+
+    static let syncKeysSetting = "sync.keys"
+    /// Whether vault keys and the access key are kept in iCloud Keychain as well, so that every device
+    /// signed in to the same Apple account opens the same vaults. On unless the person turns it off.
+    private(set) var syncKeys = true
+
+    /// One synchronised item per vault, so that two devices adding vaults at once lose neither.
+    static func syncedName(_ id: String) -> String { "vault." + id }
+
+    /// Adds the vaults another device put in iCloud Keychain. A vault that lives only on another device
+    /// never arrives: it is not put there until it is on a server.
+    @discardableResult
+    func adoptSynchronised() -> Int {
+        guard syncKeys else { return 0 }
+        var added = 0
+        for name in store.names(.synchronised) where name.hasPrefix("vault.") {
+            guard let data = store.get(name, .synchronised),
+                  let vault = try? JSONDecoder().decode(SavedVault.self, from: data),
+                  !vault.onDevice, !vaults.contains(where: { $0.id == vault.id }) else { continue }
+            vaults.append(vault)
+            added += 1
+        }
+        return added
+    }
+
+    /// Called when the app comes to the front: new vaults from other devices, and fresh contents for
+    /// the vaults already read.
+    func refreshFromOtherDevices() async {
+        if adoptSynchronised() > 0 { persist() }
+        for vault in vaults where !vault.onDevice && contents[vault.id] != nil {
+            _ = try? await load(vault)
+        }
+    }
+
+    func setSyncKeys(_ on: Bool) {
+        UsageLog.shared.action(on ? "sync.keys-on" : "sync.keys-off")
+        let token = self.token
+        syncKeys = on
+        UserDefaults.standard.set(on, forKey: Self.syncKeysSetting)
+        if on {
+            adoptSynchronised()
+            if let token { store.set("access-token", Data(token.utf8), .synchronised) }
+        } else if let token {
+            // This device keeps its own copy. Other devices keep theirs: turning it off here removes nothing there.
+            store.set("access-token", Data(token.utf8), .thisDeviceOnly)
+        }
+        persist()
     }
 
     private func persist() {
         store.set("vaults", try? JSONEncoder().encode(vaults))
+        guard syncKeys else { return }
+        for vault in vaults where !vault.onDevice {
+            store.set(Self.syncedName(vault.id), try? JSONEncoder().encode(vault), .synchronised)
+        }
     }
 
     /// The key this device signs its commits with: made once, kept in the Keychain, never sent anywhere.
@@ -338,6 +402,9 @@ final class VaultShelf {
         try? FileManager.default.removeItem(at: filesFolder.appending(path: vault.id, directoryHint: .isDirectory))
         // A vault that lives only on this device goes with it: the screen says so before asking.
         try? FileManager.default.removeItem(at: localRoot.appending(path: vault.id, directoryHint: .isDirectory))
+        // The key leaves iCloud Keychain too, so a device that has not opened this vault yet will not get it.
+        // A device that already has it keeps it until it is forgotten there as well.
+        if syncKeys { store.set(Self.syncedName(vault.id), nil, .synchronised) }
         persist()
     }
 
@@ -543,8 +610,23 @@ final class VaultShelf {
         return (try await open(vault), writeKey, token)
     }
 
+    /// Writes small bytes to one path as one signed commit: a new file, or a new version of one. The
+    /// plain bytes touch the disk only while they are sealed, in a file removed straight after.
+    func put(_ data: Data, at path: String, in vault: SavedVault, message: String) async throws {
+        let handle = try await open(vault)
+        let stager = try await handle.stager()
+        let plain = scratchFolder.appending(path: "put-\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: scratchFolder, withIntermediateDirectories: true)
+        try data.write(to: plain, options: [.atomic, .completeFileProtection])
+        defer { try? FileManager.default.removeItem(at: plain) }
+        let staged = try await stager.stage(file: plain, as: path, in: scratchFolder)
+        defer { try? FileManager.default.removeItem(at: staged.ciphertext) }
+        try await change(vault, staged: [staged], removing: [], message: message, uploaded: false)
+    }
+
     /// One commit that removes or renames, tried again when somebody else committed first.
-    private func change(_ vault: SavedVault, staged: [VaultStagedFile], removing: [String], message: String) async throws {
+    private func change(_ vault: SavedVault, staged: [VaultStagedFile], removing: [String], message: String,
+                        uploaded: Bool = true) async throws {
         let (handle, writeKey, token) = try await writing(to: vault)
         let signer = try commitSigner()
         var attempt = 0
@@ -553,7 +635,7 @@ final class VaultShelf {
             do {
                 _ = try await handle.commit(staged: staged, removing: removing, message: message, signer: signer,
                                             writeKey: writeKey, accessToken: token, transport: transport(for: vault),
-                                            alreadyUploaded: Set(staged.map(\.blobId)))
+                                            alreadyUploaded: uploaded ? Set(staged.map(\.blobId)) : [])
                 break
             } catch VaultError.pushConflict where attempt < 3 {
                 continue
