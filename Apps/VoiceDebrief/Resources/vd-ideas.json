@@ -2183,18 +2183,21 @@
    "versions": []
   },
   {
-   "id": "feature-the-guide-ideas-and-what-is-new",
+   "id": "feature-the-guide-ideas-what-is-new-feature-guides",
    "kind": "feature",
    "app": "VoiceDebrief",
-   "title": "The Guide: ideas and what is new",
+   "title": "The Guide: ideas, what is new, feature guides",
    "status": "built-untried",
    "why": "The reality file, Built: unverified: written, not yet proven by a run.",
-   "summary": "UI/Guide/GuideView.swift, IdeasView.swift, WhatsNewView.swift, Model/GuideData.swift; data from website/admin/ideas.mjs, bundled as vd-ideas.json and vd-versions.json: every idea and request (issues, articles, rows of both reality files) with its status (seen working, built untried, in progress, proposed, parked) decided by written rules and the sentence that decided it, searchable and filtered by...",
+   "summary": "UI/Guide/GuideView.swift, IdeasView.swift, WhatsNewView.swift, FeatureGuideView.swift, Model/GuideData.swift; data from website/admin/ideas.mjs, bundled as vd-ideas.json and vd-versions.json: every idea and request (issues, articles, rows of both reality files) with its status (seen working, built untried, in progress, proposed, parked) decided by written rules and the sentence that decided it...",
    "detail": [
-    "UI/Guide/GuideView.swift, IdeasView.swift, WhatsNewView.swift, Model/GuideData.swift; data from website/admin/ideas.mjs, bundled as vd-ideas.json and vd-versions.json: every idea and request (issues, articles, rows of both reality files) with its status (seen working, built untried, in progress, proposed, parked) decided by written rules and the sentence that decided it, searchable and filtered by status and app, with where it is in the app and the versions that named it; What is new lists every version newest first and marks those since the person last looked. The same list is the site's ideas page",
-    "Unit tests: the bundled data decodes, every status is known and explained, search, version order, since you last looked. The generator is checked by validate.mjs. Not reachable from the shell until it is given a place in the sidebar; not run on a device"
+    "UI/Guide/GuideView.swift, IdeasView.swift, WhatsNewView.swift, FeatureGuideView.swift, Model/GuideData.swift; data from website/admin/ideas.mjs, bundled as vd-ideas.json and vd-versions.json: every idea and request (issues, articles, rows of both reality files) with its status (seen working, built untried, in progress, proposed, parked) decided by written rules and the sentence that decided it, searchable and filtered by status and app, with where it is in the app and the versions that named it; What is new lists every version newest first and marks those since the person last looked. The same list is the site's ideas page. Seven feature guides (record, a note, the library, vaults, sending, the briefing, settings), each a picture of the screen with numbered arrows and what each number is, written in website/guides/guides.json, drawn by website/admin/guides.py from a screens artifact as...",
+    "Unit tests: the bundled data decodes, every status is known and explained, search, version order, since you last looked, every guide's pictures are in the app. The generator is checked by validate.mjs. Not reachable from the shell until it is given a place in the sidebar; not run on a device"
    ],
-   "places": [],
+   "places": [
+    "Library tab",
+    "Record tab: the briefing card"
+   ],
    "issues": [],
    "url": "https://ios.app.voicedebrief.ai/built/index.html",
    "source": "The reality file",

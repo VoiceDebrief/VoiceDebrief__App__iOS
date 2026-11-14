@@ -65,4 +65,17 @@ struct GuideTests {
         #expect(defaults.string(forKey: WhatsNewMemory.key) == "v0.1.10")
         #expect(WhatsNewMemory.unseen(in: Self.history, current: "v0.1.12", defaults: defaults).map(\.version) == ["v0.1.12"])
     }
+
+    @Test func everyGuideHasItsPicturesAndNumbersInOrder() throws {
+        let book = try #require(GuideBook.bundled())
+        let ideas = try #require(IdeaBook.bundled())
+        #expect(!book.guides.isEmpty)
+        for g in book.guides {
+            for id in g.ideas { #expect(ideas.ideas.contains { $0.id == id }, "\(g.id) names \(id)") }
+            for step in g.steps {
+                #expect(GuideBook.pictureURL(step.image) != nil, "\(step.image).jpg is not in the app")
+                #expect(step.callouts.map(\.n) == Array(1...step.callouts.count), "\(g.id): numbers out of order")
+            }
+        }
+    }
 }

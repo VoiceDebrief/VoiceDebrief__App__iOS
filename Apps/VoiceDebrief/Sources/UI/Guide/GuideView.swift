@@ -7,12 +7,13 @@ import SwiftUI
 struct GuideView: View {
     private let ideas = IdeaBook.bundled()
     private let history = VersionHistory.bundled()
+    private let guides = GuideBook.bundled()
     private let current = AppInfo.shortVersion()
     @AppStorage(WhatsNewMemory.key) private var lastSeen = ""
 
     var body: some View {
         NavigationStack {
-            GuideHome(ideas: ideas, history: history, current: current, lastSeen: lastSeen)
+            GuideHome(ideas: ideas, history: history, guides: guides, current: current, lastSeen: lastSeen)
                 .onAppear { WhatsNewMemory.seedIfNeeded(current: current) }
         }
     }
@@ -22,6 +23,7 @@ struct GuideView: View {
 struct GuideHome: View {
     let ideas: IdeaBook?
     let history: VersionHistory?
+    let guides: GuideBook?
     let current: String
     let lastSeen: String
 
@@ -52,6 +54,18 @@ struct GuideHome: View {
                     }
                 } else {
                     Text("This build carries no release notes.").foregroundStyle(.secondary)
+                }
+            }
+
+            Section("How to use it") {
+                if let guides, !guides.guides.isEmpty {
+                    ForEach(guides.guides) { g in
+                        NavigationLink { FeatureGuideView(guide: g, ideas: ideas, pictures: guides.pictures) } label: {
+                            Label(g.title, systemImage: "book.pages")
+                        }
+                    }
+                } else {
+                    Text("This build carries no feature guides.").foregroundStyle(.secondary)
                 }
             }
 

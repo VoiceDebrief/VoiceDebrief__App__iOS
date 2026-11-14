@@ -71,7 +71,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | Record while a note is written up | Feature | VoiceDebrief | Record tab |   | [reality file](../built/index.md) |
 | Play a recording | Feature | VoiceDebrief | A note: the player |   | [reality file](../built/index.md) |
 | A briefing on opening | Feature | VoiceDebrief | Record tab; Record tab: the briefing card |   | [reality file](../built/index.md) |
-| The Guide: ideas and what is new | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
+| The Guide: ideas, what is new, feature guides | Feature | VoiceDebrief | Library tab; Record tab: the briefing card |   | [reality file](../built/index.md) |
 | Where the work happens | Feature | VoiceDebrief | Record tab; Settings: Identity; Settings: Recipients |   | [reality file](../built/index.md) |
 | Record a note for someone | Feature | VoiceDebrief | Record tab; Settings: Recipients |   | [reality file](../built/index.md) |
 | A send that is not lost | Feature | VoiceDebrief | Record tab; Record tab: the briefing card; Settings: Recipients |   | [reality file](../built/index.md) |

@@ -130,3 +130,44 @@ struct VersionHistory: Codable, Sendable {
         return .orderedSame
     }
 }
+
+/// The feature guides: a page per feature, each step a picture of one screen with numbered arrows and
+/// what each number points at. Written by hand in website/guides/guides.json; the pictures are drawn by
+/// website/admin/guides.py and bundled as vd-guide-<guide>-<step>.jpg.
+struct FeatureGuide: Codable, Hashable, Identifiable, Sendable {
+    struct Callout: Codable, Hashable, Sendable {
+        let n: Int
+        let text: String
+    }
+    struct Step: Codable, Hashable, Sendable {
+        let screen: String
+        let caption: String
+        /// The picture's resource name, without its .jpg extension.
+        let image: String
+        let callouts: [Callout]
+    }
+    let id: String
+    let title: String
+    let app: String
+    let intro: String
+    /// Ideas (ids in vd-ideas.json) this guide is about: where each one stands.
+    let ideas: [String]
+    let steps: [Step]
+}
+
+struct GuideBook: Codable, Sendable {
+    let pictures: String
+    let guides: [FeatureGuide]
+
+    static let resource = "vd-guides"
+
+    static func bundled(_ bundle: Bundle = .main) -> GuideBook? {
+        guard let url = bundle.url(forResource: resource, withExtension: "json"),
+              let data = try? Data(contentsOf: url) else { return nil }
+        return try? JSONDecoder().decode(GuideBook.self, from: data)
+    }
+
+    static func pictureURL(_ name: String, bundle: Bundle = .main) -> URL? {
+        bundle.url(forResource: name, withExtension: "jpg")
+    }
+}

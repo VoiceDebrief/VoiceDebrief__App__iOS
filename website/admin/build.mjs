@@ -13,8 +13,11 @@ const ROOT    = join(dirname(fileURLToPath(import.meta.url)), '..');           /
 const CHECK   = process.argv.includes('--check');
 // The ideas tracker (ideas/index.md, ideas/ideas.json and the app's copies) is generated first, from the
 // issues, the articles, the reality files and the release history, so its page is current when it is built.
-try { execFileSync(process.execPath, [join(ROOT, 'admin/ideas.mjs'), ...(CHECK ? ['--check'] : [])], { stdio: ['ignore', 'ignore', 'inherit'] }); }
-catch { process.exit(1); }
+// The feature guides' pages come next, from guides/guides.json (they name ideas, so they follow them).
+try {
+  for (const script of ['ideas.mjs', 'guides.mjs'])
+    execFileSync(process.execPath, [join(ROOT, 'admin', script), ...(CHECK ? ['--check'] : [])], { stdio: ['ignore', 'ignore', 'inherit'] });
+} catch { process.exit(1); }
 // CI owns the version: it is stamped in when the site is deployed (SITE_VERSION). The pages committed
 // to the repository carry a placeholder, so that a version change never makes them out of date.
 const VERSION = process.env.SITE_VERSION || 'dev';
@@ -77,9 +80,16 @@ const PAGES = [
     description: 'How the repository is laid out, how CI compiles and tests the app on a Mac, how the site is built, and how a release is made.' },
   { path: 'ideas', nav: 'Ideas', title: 'Ideas for VoiceDebrief and SGit Vaults, and where each one stands',
     description: 'Every idea and request for the two apps, from the issues, the articles and the reality files, with its status (seen working, built untried, in progress, proposed, parked), where it lives in the app and the versions that brought it. Generated, not written by hand.' },
+  { path: 'guides', nav: 'Guides', title: 'Guides to every feature of VoiceDebrief for iOS',
+    description: 'A page per feature, with pictures of the screens and numbered arrows: recording, a note, the library, vaults, sending, the briefing and settings.' },
   { path: 'versions', nav: null,       title: 'VoiceDebrief for iOS release history',
     description: 'Every release of the VoiceDebrief iOS repository, with what changed.' },
 ];
+// One page per feature guide, from guides/guides.json (written by admin/guides.mjs). Found here, not listed by hand.
+for (const g of JSON.parse(readFileSync(join(ROOT, 'guides/guides.json'), 'utf8')).guides) {
+  PAGES.push({ path: `guides/${g.id}`, nav: null, title: `${g.title}: a guide to VoiceDebrief for iOS`,
+    description: g.intro.split('. ')[0].replace(/\.$/, '') + '.' });
+}
 // One page per released version, written by CI (admin/release.mjs). Found here, not listed by hand.
 for (const v of (existsSync(join(ROOT, 'versions')) ? readdirSync(join(ROOT, 'versions')) : [])
   .filter((d) => /^v\d+\.\d+\.\d+$/.test(d) && existsSync(join(ROOT, 'versions', d, 'index.md')))
