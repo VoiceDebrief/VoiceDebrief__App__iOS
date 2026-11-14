@@ -2,6 +2,7 @@ import CryptoKit
 import Foundation
 import Testing
 @testable import VoiceDebrief
+import SGitPeople
 
 /// The fixtures in `Tests/PKIFixtures/`: from the test bundle, or beside this file when they were not copied into it.
 enum PKIFixtureFiles {

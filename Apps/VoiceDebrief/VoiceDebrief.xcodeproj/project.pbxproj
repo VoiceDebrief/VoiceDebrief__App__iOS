@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		A1B2C3D4E5F60718293A4B5C /* SGitVault in Frameworks */ = {isa = PBXBuildFile; productRef = B2C3D4E5F60718293A4B5C6D /* SGitVault */; };
+		5E0A1B2C3D4E5F6071829301 /* SGitPeople in Frameworks */ = {isa = PBXBuildFile; productRef = 5E0A1B2C3D4E5F6071829302 /* SGitPeople */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,6 +64,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A1B2C3D4E5F60718293A4B5C /* SGitVault in Frameworks */,
+				5E0A1B2C3D4E5F6071829301 /* SGitPeople in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -127,6 +129,7 @@
 			name = VoiceDebrief;
 			packageProductDependencies = (
 				B2C3D4E5F60718293A4B5C6D /* SGitVault */,
+				5E0A1B2C3D4E5F6071829302 /* SGitPeople */,
 			);
 			productName = VoiceDebrief;
 			productReference = 610642B90E8AA3738B598607;
@@ -213,6 +216,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				C3D4E5F60718293A4B5C6D7E /* XCLocalSwiftPackageReference "../../Packages/SGitVault" */,
+				5E0A1B2C3D4E5F6071829303 /* XCLocalSwiftPackageReference "../../Packages/SGitPeople" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = BA0D98B62092BE1F80CD54D3 /* Products */;
@@ -490,6 +494,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../../Packages/SGitVault;
 		};
+		5E0A1B2C3D4E5F6071829303 /* XCLocalSwiftPackageReference "../../Packages/SGitPeople" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../Packages/SGitPeople;
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -497,6 +505,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = C3D4E5F60718293A4B5C6D7E /* XCLocalSwiftPackageReference "../../Packages/SGitVault" */;
 			productName = SGitVault;
+		};
+		5E0A1B2C3D4E5F6071829302 /* SGitPeople */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5E0A1B2C3D4E5F6071829303 /* XCLocalSwiftPackageReference "../../Packages/SGitPeople" */;
+			productName = SGitPeople;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

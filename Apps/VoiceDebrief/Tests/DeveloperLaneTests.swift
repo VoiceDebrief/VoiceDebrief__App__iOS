@@ -2,6 +2,7 @@ import Foundation
 import Security
 import Testing
 @testable import VoiceDebrief
+import SGitPeople
 
 @Suite("Developer lane")
 struct DeveloperLaneTests {
