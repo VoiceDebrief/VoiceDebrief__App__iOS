@@ -147,7 +147,7 @@ final class GameModelEngine {
     private var ready: (signature: String, session: LanguageModelSession, box: GameCallBox)?
     #endif
 
-    static func prompt(words: String, state: GameState) -> String {
+    nonisolated static func prompt(words: String, state: GameState) -> String {
         let line = state.oneLine
         return line.isEmpty ? "Sentence: \(words)" : "Game: \(line)\nSentence: \(words)"
     }
