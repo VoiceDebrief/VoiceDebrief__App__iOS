@@ -5,7 +5,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | Status | Meaning | How many |
 |---|---|---|
 | Seen working | Built, and a run proved it: CI, a device or a server. | 27 |
-| Built, untried | In the app or the repository, but not yet proven by a run on a device. | 82 |
+| Built, untried | In the app or the repository, but not yet proven by a run on a device. | 81 |
 | In progress | Begun: part of it is built or a release has touched it. | 38 |
 | Proposed | Asked for or described; nothing of it is built. | 61 |
 | Parked | Waiting: on the owner, on Apple, or scheduled for later. | 6 |
@@ -95,7 +95,6 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | Send without waiting | Feature | VoiceDebrief | A note: the send bar; Library, then a note; Settings: Recipients |   | [reality file](../built/index.md) |
 | The Lab, experiment L01: one prompt, tools on and off | Feature | VoiceDebrief | Settings: Experiments, the Lab; The repository: CI |   | [reality file](../built/index.md) |
 | The model door, first slice | Feature | VoiceDebrief | Settings: Experiments, the Lab |   | [reality file](../built/index.md) |
-| The Lab, experiment L02: the control centre | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
 | The Lab, experiment L03: a game played by voice | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
 | The Lab, experiment L02: the control centre | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
 | Recipients, added by QR code | Feature | VoiceDebrief | Settings: Recipients |   | [reality file](../built/index.md) |
