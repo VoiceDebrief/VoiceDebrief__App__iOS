@@ -62,42 +62,44 @@ struct RootView: View {
                 Tab(RootTab.identity.title, systemImage: RootTab.identity.symbol, value: RootTab.identity) {
                     NavigationStack { IdentityView(vaults: book) }.tracked("identity")
                 }
-            .defaultVisibility(.hidden, for: .tabBar)
+                .defaultVisibility(.hidden, for: .tabBar)
                 Tab(RootTab.credit.title, systemImage: RootTab.credit.symbol, value: RootTab.credit) {
                     NavigationStack { CreditView() }.tracked("credit")
                 }
-            .defaultVisibility(.hidden, for: .tabBar)
+                .defaultVisibility(.hidden, for: .tabBar)
                 Tab(RootTab.activity.title, systemImage: RootTab.activity.symbol, value: RootTab.activity) {
                     NavigationStack { ActivityView() }.tracked("activity")
                 }
-            .defaultVisibility(.hidden, for: .tabBar)
+                .defaultVisibility(.hidden, for: .tabBar)
             }
             TabSection("Experiments") {
                 Tab(RootTab.lab.title, systemImage: RootTab.lab.symbol, value: RootTab.lab) {
                     NavigationStack { LabView(store: session.store) }.tracked("lab")
                 }
-            .defaultVisibility(.hidden, for: .tabBar)
+                .defaultVisibility(.hidden, for: .tabBar)
                 Tab(RootTab.words.title, systemImage: RootTab.words.symbol, value: RootTab.words) {
                     NavigationStack { GlossaryView() }.tracked("words")
                 }
-            .defaultVisibility(.hidden, for: .tabBar)
+                .defaultVisibility(.hidden, for: .tabBar)
             }
             TabSection("More") {
                 Tab(RootTab.about.title, systemImage: RootTab.about.symbol, value: RootTab.about) {
                     NavigationStack { StatusView() }.tracked("about")
                 }
-            .defaultVisibility(.hidden, for: .tabBar)
+                .defaultVisibility(.hidden, for: .tabBar)
                 Tab(RootTab.settings.title, systemImage: RootTab.settings.symbol, value: RootTab.settings) {
                     launched(.settings) { SettingsView(session: session, book: book) }.tracked("settings")
                 }
-            .defaultVisibility(.hidden, for: .tabBar)
+                .defaultVisibility(.hidden, for: .tabBar)
+                // On an iPhone the tab bar is Record, Library, Contacts, Vaults and this list of the rest: the
+                // system's own More put a second navigation bar above each part's own (two back buttons).
+                // Inside this section only because a TabView takes at most ten items; it is hidden from the
+                // sidebar, so the section looks as before.
+                Tab(RootTab.more.title, systemImage: RootTab.more.symbol, value: RootTab.more) {
+                    MoreHubView(go: { tab = $0 }).tracked("more")
+                }
+                .defaultVisibility(.hidden, for: .sidebar)
             }
-            // On an iPhone the tab bar is Record, Library, Contacts, Vaults and this list of the rest: the
-            // system's own More put a second navigation bar above each part's own (two back buttons).
-            Tab(RootTab.more.title, systemImage: RootTab.more.symbol, value: RootTab.more) {
-                MoreHubView(go: { tab = $0 }).tracked("more")
-            }
-            .defaultVisibility(.hidden, for: .sidebar)
         }
         .tabViewStyle(.sidebarAdaptable)
         .welcomeOnFirstLaunch()
