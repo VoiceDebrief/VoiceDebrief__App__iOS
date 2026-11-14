@@ -504,14 +504,12 @@ struct NoteRow: View {
                 Text(subtitle)
                     .font(.footnote)
                     .foregroundStyle(.secondary)
+                // At most one mark, in words and its colour (the design; Model/NoteMark.swift).
+                NoteMarkPill(mark: NoteMark.of(note, working: working))
             }
             Spacer(minLength: 8)
             if working != nil {
                 ProgressView()
-            } else if note.processing || note.run.transcript == nil {
-                Image(systemName: "exclamationmark.triangle.fill")
-                    .foregroundStyle(.orange)
-                    .accessibilityLabel(note.stateLine)
             }
         }
     }
@@ -526,10 +524,10 @@ struct NoteRow: View {
         }
         var parts = [day + time]
         if let seconds = note.run.audioSeconds { parts.append(Timecode.duration(seconds: seconds)) }
-        if let working { parts.append(working) } else if note.stateLine != "On this device" { parts.append(note.stateLine) }
-        if working == nil {
-            if note.sendProblem != nil, let to = note.pendingSend?.name { parts.append("Not sent to \(to)") }
-            else if let to = note.pendingSend?.name { parts.append("Waiting to send to \(to)") }
+        // What is working, and a failed send, are said by the mark below; the rest is said here.
+        if working == nil, note.stateLine != "On this device" { parts.append(note.stateLine) }
+        if working == nil, note.sendProblem == nil {
+            if let to = note.pendingSend?.name { parts.append("Waiting to send to \(to)") }
             else if let sent = note.sends?.last { parts.append("Sent to \(sent.to) \(sent.at.formatted(.dateTime.hour(.twoDigits(amPM: .abbreviated)).minute(.twoDigits)))") }
         }
         return parts.joined(separator: " · ")

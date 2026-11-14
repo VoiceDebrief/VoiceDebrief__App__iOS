@@ -215,3 +215,35 @@ struct SectionBannerRow: View {
         }
     }
 }
+
+/// A note's one mark as a state pill, or nothing.
+struct NoteMarkPill: View {
+    let mark: NoteMark
+
+    var body: some View {
+        switch mark {
+        case .working(let text): StatusPill(text: text, kind: .working)
+        case .degraded(let text): StatusPill(text: text, kind: .warning)
+        case .failed(let text): StatusPill(text: text, kind: .failed)
+        case .inVault(let name): StatusPill(text: "In \(name)", kind: .vault)
+        case .none: EmptyView()
+        }
+    }
+}
+
+/// Any symbol on a colour in the section icon's rounded square: for rows that are not sections,
+/// such as the Lab's experiments.
+struct DSIconBadge: View {
+    let symbol: String
+    var tint: Color = .accentColor
+    var size: CGFloat = 32
+
+    var body: some View {
+        Image(systemName: symbol)
+            .font(.system(size: size * 0.48, weight: .semibold))
+            .foregroundStyle(.white)
+            .frame(width: size, height: size)
+            .background(tint.gradient, in: RoundedRectangle(cornerRadius: size * 0.28, style: .continuous))
+            .accessibilityHidden(true)
+    }
+}
