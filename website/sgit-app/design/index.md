@@ -22,7 +22,7 @@ The owner's words, 13 November 2026: the team needs to share photos, videos and 
 | The server's published API description | Reading needs no access token, including the signed URL for a large object. Writing needs the access token and the vault's write key |
 | The live server, with `sgit` itself | The exchange for a large object works on `dev.send.sgraph.ai` as the package describes it (a throwaway vault, destroyed afterwards) |
 
-The two source repositories could not be attached to this session. What is said about the web Vault UI's source is the parent session's reading of it, passed on; the rest is from published code.
+Both source repositories were read on 14 November 2026, once the owner asked for them to be cloned. From the web Vault's source: it opens a vault this app made from its vault key, without writing anything, and shows it as "Untitled Vault" because the app writes no settings file; its link is the site's root followed by `#` and the key; it chooses the signed URL for a file by size, not by the `large` flag; its own commits are unsigned, which the app's history shows as "Not signed"; and when it rewrites a folder it drops the `large` flag and the file types, which the app tolerates by going by size too. None of that has been tried between the two yet.
 
 ## Decisions
 

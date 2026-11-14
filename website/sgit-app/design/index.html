@@ -54,7 +54,7 @@
 <tr><td>The server's published API description</td><td>Reading needs no access token, including the signed URL for a large object. Writing needs the access token and the vault's write key</td></tr>
 <tr><td>The live server, with <code>sgit</code> itself</td><td>The exchange for a large object works on <code>dev.send.sgraph.ai</code> as the package describes it (a throwaway vault, destroyed afterwards)</td></tr>
 </tbody></table></div>
-<p>The two source repositories could not be attached to this session. What is said about the web Vault UI's source is the parent session's reading of it, passed on; the rest is from published code.</p>
+<p>Both source repositories were read on 14 November 2026, once the owner asked for them to be cloned. From the web Vault's source: it opens a vault this app made from its vault key, without writing anything, and shows it as &quot;Untitled Vault&quot; because the app writes no settings file; its link is the site's root followed by <code>#</code> and the key; it chooses the signed URL for a file by size, not by the <code>large</code> flag; its own commits are unsigned, which the app's history shows as &quot;Not signed&quot;; and when it rewrites a folder it drops the <code>large</code> flag and the file types, which the app tolerates by going by size too. None of that has been tried between the two yet.</p>
 <h2 id="decisions">Decisions</h2>
 <div class="tablewrap"><table>
 <thead><tr><th></th><th>Decision</th></tr></thead>
