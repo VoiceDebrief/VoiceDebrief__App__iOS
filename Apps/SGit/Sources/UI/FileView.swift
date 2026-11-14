@@ -20,6 +20,7 @@ struct FileView: View {
     @State private var newName = ""
     @State private var confirmingDelete = false
     @State private var working = false
+    @State private var inWebVault = false
     @Environment(\.dismiss) private var dismiss
 
     /// Files up to this size are fetched as soon as the screen opens; larger ones wait to be asked.
@@ -79,6 +80,17 @@ struct FileView: View {
                 }
             }
 
+            if !shelf.current(vault).onDevice {
+                Section {
+                    Button("Open in the web Vault", systemImage: "globe") {
+                        UsageLog.shared.action("web-vault.open-file")
+                        inWebVault = true
+                    }
+                } footer: {
+                    Text("The web Vault shows an HTML page as a page, renders Markdown and can edit text. It opens here, inside the app, on this file.")
+                }
+            }
+
             Section("Details") {
                 LabeledContent("Name", value: name)
                 LabeledContent("Folder", value: VaultListing.parent(of: file.path).isEmpty ? "the top of the vault" : VaultListing.parent(of: file.path))
@@ -104,6 +116,9 @@ struct FileView: View {
         .navigationTitle(name)
         .navigationBarTitleDisplayMode(.inline)
         .quickLookPreview($quickLook)
+        .fullScreenCover(isPresented: $inWebVault) {
+            WebVaultScreen(shelf: shelf, vault: vault, path: file.path).tracked("web-vault")
+        }
         .task {
             if shelf.isCached(file, in: vault) || file.size <= Self.fetchUnasked { await fetch() }
         }

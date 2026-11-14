@@ -32,6 +32,7 @@ struct VaultView: View {
     @State private var showingHistory = false
     @State private var dropping = false
     @State private var exporting: FolderExport?
+    @State private var inWebVault = false
 
     private var contents: VaultContents? { shelf.contents[vault.id] }
     private var onDevice: Bool { shelf.current(vault).onDevice }
@@ -72,6 +73,12 @@ struct VaultView: View {
                     sharing = true
                 }
                 Menu("More", systemImage: "ellipsis.circle") {
+                    if !onDevice {
+                        Button("Open in the web Vault", systemImage: "globe") {
+                            UsageLog.shared.action("web-vault.open")
+                            inWebVault = true
+                        }
+                    }
                     Button("History", systemImage: "clock.arrow.circlepath") {
                         UsageLog.shared.action("history.open")
                         showingHistory = true
@@ -125,6 +132,9 @@ struct VaultView: View {
         .navigationDestination(isPresented: $showingHistory) {
             HistoryView(shelf: shelf, vault: vault)
                 .tracked("history")
+        }
+        .fullScreenCover(isPresented: $inWebVault) {
+            WebVaultScreen(shelf: shelf, vault: vault).tracked("web-vault")
         }
         .sheet(item: $exporting) { export in
             FolderExporter(url: export.url).ignoresSafeArea()

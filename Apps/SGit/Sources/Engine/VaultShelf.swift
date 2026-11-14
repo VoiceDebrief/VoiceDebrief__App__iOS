@@ -184,6 +184,10 @@ final class VaultShelf {
         return made
     }
 
+    /// The server's access key, for the one place outside the engine that is handed it: the web Vault
+    /// inside the app, when the person allows changes there.
+    var accessKeyForTheWebVault: String? { token }
+
     /// The id this device's commits carry as their author.
     var deviceKeyId: String? { (try? commitSigner())?.keyId }
 

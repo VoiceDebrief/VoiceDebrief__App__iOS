@@ -47,4 +47,18 @@ struct UsageTests {
         #expect(ActivityView.duration(185) == "3 min 05 s")
         #expect(ActivityView.duration(3_720) == "1 h 02 min")
     }
+
+    @Test func theWebVaultIsGivenItsKeyByMessageAndKeptToItsOwnHost() {
+        #expect(WebVault.address.query() == "embed=1")
+        #expect(WebVault.address.fragment() == nil)
+        #expect(WebVault.open.contains("vault-open"))
+        #expect(!WebVault.open.contains("sgit_"))
+        #expect(WebVault.staysInside(URL(string: "https://dev.vault.sgraph.ai/en-gb/vault/?embed=1")))
+        #expect(!WebVault.staysInside(URL(string: "https://example.com/")))
+        #expect(!WebVault.staysInside(URL(string: "http://dev.vault.sgraph.ai/")))
+        #expect(WebVault.standing(sg: "vault-embed-ready", name: "", files: 0, message: "") == .waitingForKey)
+        #expect(WebVault.standing(sg: "vault-ready", name: "x", files: 4, message: "") == .open(files: 4))
+        #expect(WebVault.standing(sg: "vault-error", name: "", files: 0, message: "") == .failed("The web Vault could not open this vault."))
+        #expect(WebVault.standing(sg: "vault-open", name: "", files: 0, message: "") == nil)
+    }
 }
