@@ -179,6 +179,14 @@ Questions are also in the app (Settings, Questions) once step 1 is built.
 - **Recovery through people you trust** [[proposed]]: lose every device and get back in with three of five people each holding a sealed part; no company reset.
 - **Leaving someone out, honestly** [[proposed]]: removing a member makes a new vault key and shows the checklist of secrets they saw, with a change action for each.
 - **A spotted secret** [[proposed]]: Apple's on-device model notices a key pasted into a note or a file and offers to move it into a secret.
+- **A history that does not show the secret** [[proposed]]: someone with a read key on the history sees who changed which entry and when, and which fields, without ever seeing a value.
+- **Where each secret came from** [[proposed]]: every entry says who gave it to you and through which confirmed card, so a secret of unknown origin stands out.
+- **Proof you can check without the app** [[proposed]]: the open `sgit` command on any computer clones the vault and checks every signature; nothing rests on trusting this app or its maker.
+- **A lost phone, in one screen** [[proposed]]: which secrets that device held, one action to stop trusting its key, and the checklist of what to change.
+- **Break glass, with time to say no** [[proposed]]: a trusted person asks for a sealed secret through your inbox; it opens for them only if you have not refused within a set number of hours.
+- **A machine that hands in new keys** [[proposed]]: a server or CI job changes its own credential and drops the new one into your inbox; it can write there, never read the vault.
+- **Works on a plane** [[proposed]]: every secret is in a vault on the device; reading, adding and changing need no network, and sync happens when there is one.
+- **A share with an end date** [[proposed]]: one entry sealed to one card, with a date after which the app reminds you to change it, because a copy given cannot be taken back.
 - **The trust map** [[proposed]]: a drawing of the people you have met, with their photos, solid where both confirmed and dashed where one side only.
 - **The same vaults on every device** [[unverified]]: vault keys in iCloud Keychain, one item each, so an iPhone, iPad and Mac open the same vaults with nothing to set up.
 - **Secrets as files in vaults** [[unverified]]: each entry one encrypted JSON file, behind Face ID, with a strong-password maker.

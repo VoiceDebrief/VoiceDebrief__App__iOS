@@ -11,4 +11,4 @@ goes to the developers over the developer lane, sealed to their key, as `sgit/an
 was answered. The questions ship with the app as a resource, written by the developers. Later: a recorded voice
 answer (VoiceDebrief's recorder), and questions that arrive in the inbox instead of with a build.
 
-**Written (14 November 2026, not yet compiled):** Questions for you, on the home list and in Settings; nine questions in `Resources/sg-questions.json`.
+**Compiles and its tests pass (14 November 2026, `6b13fcb`); not yet used on a device:** Questions for you, on the home list and in Settings; nine questions in `Resources/sg-questions.json`.

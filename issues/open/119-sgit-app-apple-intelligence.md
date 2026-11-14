@@ -5,7 +5,7 @@
 The owner, 14 November 2026: "start thinking about how can we add Apple Intelligence to this app to make a lot of
 these things more straightforward ... let's start experimenting".
 
-**Written (14 November 2026, not yet compiled):** Ask this vault, after VoiceDebrief's Lab. One question, a fresh
+**Compiles and its tests pass (14 November 2026, `6b13fcb`); not yet used on a device:** Ask this vault, after VoiceDebrief's Lab. One question, a fresh
 session, four read-only tools over a copy of the listing and history, every call shown. See the reality file.
 
 **To learn from the owner's first tries on a device:** does the model call a tool before answering; are the

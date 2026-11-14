@@ -11,4 +11,4 @@ devices changing different secrets do not conflict; the same secret changed on t
 Needs an access key to reach the server; without one a vault stays on the device it was made on, and the app says
 so. Mac, iPad and iPhone are the same app.
 
-**Written (14 November 2026, not yet compiled):** see the reality file's row. Left: push after each change is what every write already does (a commit is pushed); a pull on a timer while the app is open; the same secret changed on two devices at once is decided by the server's compare-and-swap (the second write is retried on the newer head, so the later change wins and the earlier stays in history), not yet shown to the person.
+**Compiles and its tests pass (14 November 2026, `6b13fcb`); not yet used on a device:** see the reality file's row. Left: push after each change is what every write already does (a commit is pushed); a pull on a timer while the app is open; the same secret changed on two devices at once is decided by the server's compare-and-swap (the second write is retried on the newer head, so the later change wins and the earlier stays in history), not yet shown to the person.
