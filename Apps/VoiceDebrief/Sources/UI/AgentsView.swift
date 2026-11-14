@@ -154,7 +154,11 @@ private struct AgentRow: View {
     let agent: AgentsReport.Agent
     var body: some View {
         HStack(spacing: 10) {
-            Circle().fill(color).frame(width: 10, height: 10)
+            AvatarView(AvatarSubject(agent: agent), size: 44)
+                .overlay(alignment: .topTrailing) {
+                    Circle().fill(color).frame(width: 12, height: 12)
+                        .overlay(Circle().strokeBorder(Color(.systemBackground), lineWidth: 2))
+                }
             VStack(alignment: .leading, spacing: 2) {
                 Text(agent.name).lineLimit(1)
                 Text(agent.doing).font(.caption).foregroundStyle(.secondary).lineLimit(2)
@@ -163,8 +167,8 @@ private struct AgentRow: View {
     }
     private var color: Color {
         switch agent.status {
-        case "working": return .green
-        case "waiting", "blocked": return .orange
+        case "working": return DS.Palette.green
+        case "waiting", "blocked": return DS.Palette.amber
         default: return .secondary
         }
     }
