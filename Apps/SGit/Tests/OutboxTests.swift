@@ -225,6 +225,34 @@ struct LocalVaultTests {
         #expect(FileManager.default.fileExists(atPath: dropped.appending(path: "b.txt").path), "the originals are left where they were")
     }
 
+    @Test func whatWasSharedToTheAppBecomesAJob() async throws {
+        let shelf = try OutboxTests.shelf(FolderVaultTransport(root: try OutboxTests.folder("server")))
+        let inbox = try OutboxTests.folder("inbox")
+        shelf.sharedInbox = inbox
+        let vault = try #require(await shelf.create(name: "Mine"))
+        // The app tells the extension which vaults there are: names and ids, and no key.
+        let listed = SharedInbox.listed(in: inbox)
+        #expect(listed.map(\.id) == [vault.id])
+        let published = try String(contentsOf: SharedInbox.vaultList(in: inbox), encoding: .utf8)
+        #expect(!published.contains(vault.keyText))
+
+        // The extension keeps two files for that vault, and one for a vault this device does not know.
+        let picked = try OutboxTests.incoming([("a.jpg", OutboxTests.random(9_000)), ("b.mov", OutboxTests.random(30_000))])
+        try SharedInbox.keep(picked.map { (url: $0.url, name: $0.name) }, vaultId: vault.id, folder: "from phone", in: inbox)
+        try SharedInbox.keep([(url: picked[0].url, name: "c.jpg")], vaultId: "gone1234", folder: "", in: inbox)
+        #expect(SharedInbox.waiting(in: inbox).count == 2)
+
+        let outbox = Outbox(root: try OutboxTests.folder("outbox"))
+        #expect(outbox.takeShared(from: inbox, shelf: shelf) == 1)
+        #expect(SharedInbox.waiting(in: inbox).isEmpty)
+        let job = try #require(outbox.jobs.first)
+        await outbox.wait(for: job.id)
+        #expect(outbox.jobs.isEmpty, "\(outbox.jobs.first?.problem ?? "")")
+        let contents = try await shelf.load(vault)
+        #expect(contents.files.map(\.path) == ["from phone/a.jpg", "from phone/b.mov"])
+        #expect(outbox.takeShared(from: nil, shelf: shelf) == 0)
+    }
+
     @Test func aVaultSavedByTheFirstBuildIsOnTheServer() throws {
         let old = #"[{"id":"abcd1234","name":"Old","keyText":"some-pass:abcd1234","addedAt":0,"createdHere":true}]"#
         let vaults = try JSONDecoder().decode([SavedVault].self, from: Data(old.utf8))

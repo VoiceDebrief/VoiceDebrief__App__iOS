@@ -19,8 +19,17 @@ struct SGitApp: App {
         }
     }
 
+    @Environment(\.scenePhase) private var phase
+
     private var main: some View {
         RootView(shelf: shelf, outbox: outbox)
-            .task { outbox.resumeAll(shelf: shelf) }
+            .task {
+                shelf.publishForSharing()
+                outbox.resumeAll(shelf: shelf)
+            }
+            // What was shared to the app from Photos or Files while it was closed or in the background.
+            .onChange(of: phase, initial: true) { _, now in
+                if now == .active { outbox.takeShared(from: shelf.sharedInbox, shelf: shelf) }
+            }
     }
 }

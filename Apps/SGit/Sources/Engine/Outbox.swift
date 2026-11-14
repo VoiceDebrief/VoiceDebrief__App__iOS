@@ -168,6 +168,25 @@ final class Outbox {
         return job
     }
 
+    /// Takes in what the share extension left: each whole parcel becomes a job, for a vault this device
+    /// still knows and can write to. A parcel for a vault that has gone is removed. Returns how many
+    /// jobs were started.
+    @discardableResult
+    func takeShared(from inbox: URL?, shelf: VaultShelf) -> Int {
+        guard let inbox else { return 0 }
+        var started = 0
+        for parcel in SharedInbox.waiting(in: inbox) {
+            defer { SharedInbox.remove(parcel, in: inbox) }
+            guard let vault = shelf.vaults.first(where: { $0.id == parcel.vaultId }), vault.canWrite else { continue }
+            let files = parcel.names.enumerated().map { index, name in
+                IncomingFile(url: SharedInbox.file(index, of: parcel, in: inbox), name: name)
+            }
+            let taken = (shelf.contents[vault.id]?.files.map(\.path) ?? []) + jobs(for: vault).flatMap { $0.items.map(\.path) }
+            if (try? add(files, to: vault, folder: parcel.folder, existing: taken, shelf: shelf)) != nil { started += 1 }
+        }
+        return started
+    }
+
     // MARK: Running
 
     /// Starts every job that is not running: called when the app opens.

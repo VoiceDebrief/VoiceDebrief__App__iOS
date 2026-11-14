@@ -159,6 +159,16 @@ final class VaultShelf {
 
     private func persist() {
         store.set("vaults", try? JSONEncoder().encode(vaults))
+        publishForSharing()
+    }
+
+    /// Where the share extension is told which vaults there are (names and ids, never a key). Nil in
+    /// tests and in builds without the App Group.
+    var sharedInbox: URL? = SharedInbox.container
+
+    func publishForSharing() {
+        guard let sharedInbox else { return }
+        SharedInbox.publish(vaults.map { SharedInbox.Listed(id: $0.id, name: $0.name, canWrite: $0.canWrite) }, in: sharedInbox)
     }
 
     /// The key this device signs its commits with: made once, kept in the Keychain, never sent anywhere.

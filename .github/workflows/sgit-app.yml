@@ -16,6 +16,7 @@ on:
     paths:
       - 'Apps/SGit/**'
       - 'Packages/SGitVault/**'
+      - 'scripts/release/sgit-testflight.sh'
       - '.github/workflows/sgit-app.yml'
       - '.github/scripts/**'
   workflow_dispatch:
@@ -150,6 +151,7 @@ jobs:
           APPLE_TEAM_ID: ${{ vars.APPLE_TEAM_ID || secrets.APPLE_TEAM_ID }}
           EXPECTED_BUNDLE: ai.sgit.vaults.app
           ENTITLEMENTS: Apps/SGit/SGit.entitlements
+          EXTENSION_ENTITLEMENTS_DIR: Apps/SGit
         run: |
           missing=()
           for s in ASC_KEY_ID ASC_ISSUER_ID ASC_KEY_P8_BASE64 APPLE_TEAM_ID; do [ -n "${!s:-}" ] || missing+=("$s"); done
@@ -157,7 +159,30 @@ jobs:
             echo "### TestFlight skipped: not set: ${missing[*]}" | tee -a "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
-          scripts/release/testflight.sh
+          scripts/release/sgit-testflight.sh
+
+      # On the share-extension branch only: archive and sign for distribution exactly as the upload
+      # would, and stop there. An entitlement or an extension that cannot be signed shows here, not on dev.
+      - name: Sign for distribution, without uploading (a dry run)
+        if: startsWith(github.ref, 'refs/heads/work/sgit-app-share')
+        timeout-minutes: 30
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_P8_BASE64: ${{ secrets.ASC_KEY_P8_BASE64 }}
+          APPLE_TEAM_ID: ${{ vars.APPLE_TEAM_ID || secrets.APPLE_TEAM_ID }}
+          EXPECTED_BUNDLE: ai.sgit.vaults.app
+          ENTITLEMENTS: Apps/SGit/SGit.entitlements
+          EXTENSION_ENTITLEMENTS_DIR: Apps/SGit
+          DESTINATION: export
+        run: |
+          missing=()
+          for s in ASC_KEY_ID ASC_ISSUER_ID ASC_KEY_P8_BASE64 APPLE_TEAM_ID; do [ -n "${!s:-}" ] || missing+=("$s"); done
+          if [ ${#missing[@]} -gt 0 ]; then
+            echo "### Signing dry run skipped: not set: ${missing[*]}" | tee -a "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          scripts/release/sgit-testflight.sh
 
       - name: TestFlight is switched off
         if: github.ref == 'refs/heads/dev' && env.SGIT_APP_TESTFLIGHT != '1'
