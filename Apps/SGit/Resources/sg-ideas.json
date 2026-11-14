@@ -29,7 +29,7 @@
  ],
  "counts": {
   "seen-working": 7,
-  "built-untried": 18,
+  "built-untried": 19,
   "in-progress": 15,
   "proposed": 22,
   "parked": 1
@@ -1163,6 +1163,27 @@
    ],
    "places": [
     "SGit Vaults: a vault"
+   ],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
+   "id": "sgit-feature-a-small-picture-and-the-facts-beside-each-file",
+   "kind": "feature",
+   "app": "SGit Vaults",
+   "title": "A small picture and the facts beside each file",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "Engine/FileFacts.swift, Engine/Outbox.swift: while a file is added, before its plain copy goes, the app makes a small picture (480 pixels: the image itself, a frame of a video, the first page of a PDF or document) and a facts file, seals both like any file and puts them in the same commit. Layout, for any client: .sgit/thumbs/<content hash>.jpg and .sgit/meta/<content hash>.json, keyed by the...",
+   "detail": [
+    "Engine/FileFacts.swift, Engine/Outbox.swift: while a file is added, before its plain copy goes, the app makes a small picture (480 pixels: the image itself, a frame of a video, the first page of a PDF or document) and a facts file, seals both like any file and puts them in the same commit. Layout, for any client: .sgit/thumbs/<content hash>.jpg and .sgit/meta/<content hash>.json, keyed by the file's content hash (the 12 hex characters the tree already records), so a renamed or moved file keeps them. Schema sgit.ai/file-meta/v1: name, size, contentHash, contentType, kind, addedAt; for images width, height, orientation, taken, make, model, lens, iso, exposure, aperture, focal length; for video and audio duration, width, height, frame rate, codec, taken, make, model; location only when the person turns on Settings, Keep where photos and videos were taken (off by default); header, every...",
+    "Unit tests for the picture and facts of a photo, the layout, a QuickTime location, and the outbox writing a facts file per file in the same commit; not yet compiled when written. Files added before this have no picture kept; they are shown as before"
+   ],
+   "places": [
+    "SGit Vaults: a vault",
+    "SGit Vaults: Settings"
    ],
    "issues": [],
    "url": "https://ios.app.voicedebrief.ai/sgit-app/built/index.html",

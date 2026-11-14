@@ -55,7 +55,7 @@ struct VaultsView: View {
                                     .foregroundStyle(.secondary)
                                 let waiting = outbox.jobs(for: vault)
                                 if !waiting.isEmpty {
-                                    let files = waiting.reduce(0) { $0 + $1.items.count }
+                                    let files = waiting.reduce(0) { $0 + $1.shown.count }
                                     Label("\(files) file\(files == 1 ? "" : "s") on the way in", systemImage: "arrow.up.circle")
                                         .font(.footnote)
                                         .foregroundStyle(waiting.contains { $0.problem != nil } ? Color.red : Color.secondary)
