@@ -75,6 +75,10 @@ struct OutboxTests {
         // History: what the commit changed, and that this device signed it.
         let changes = try await shelf.changes(in: contents.head, of: vault)
         #expect(changes.map(\.kind) == [.added, .added, .added])
+        // The facts files went in the same commit, and are left out of what History shows.
+        let everything = try await shelf.allChanges(in: contents.head, of: vault)
+        #expect(everything.count > changes.count)
+        #expect(everything.allSatisfy { $0.kind == .added })
         let keyId = try #require(contents.head.authorKeyId)
         let fingerprint = await shelf.fingerprint(ofKey: keyId, in: vault)
         #expect(fingerprint != nil)

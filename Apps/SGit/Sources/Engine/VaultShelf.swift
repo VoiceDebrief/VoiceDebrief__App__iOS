@@ -613,7 +613,12 @@ final class VaultShelf {
     // MARK: History
 
     /// What a commit changed, against its first parent.
+    /// What a commit changed among the files a person browses: thumbnails, facts and other hidden files are left out.
     func changes(in commit: VaultCommit, of vault: SavedVault) async throws -> [VaultChange] {
+        try await allChanges(in: commit, of: vault).filter { VaultListing.isVisible($0.path) }
+    }
+
+    func allChanges(in commit: VaultCommit, of vault: SavedVault) async throws -> [VaultChange] {
         let handle = try await open(vault)
         let after = try await handle.files(in: commit)
         guard let parentId = commit.parents.first else { return VaultChange.between([], after) }
