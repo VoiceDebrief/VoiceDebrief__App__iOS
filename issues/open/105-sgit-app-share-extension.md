@@ -36,3 +36,7 @@ Automatic signing should register the App Group and the extension's identifier b
 2. The signing dry run in CI, on the branch, with the App Group entitlement alone. This is the step that may need the owner.
 3. The extension target: a small SwiftUI screen (vault, folder, a list of what is being kept), copying file to file.
 4. Pictures of it through the screens workflow is not possible (an extension cannot be launched alone by a UI test); a device is the test.
+
+## 14 November 2026, 04:15 UTC: the first dry run
+
+Step 1 compiles and its test passes on the branch `work/sgit-app-share` (a parcel left in the shared folder becomes a job; the list the extension is given holds no key). The signing dry run then failed, as it was there to: `exportArchive Authentication failed` and `No profiles for 'ai.sgit.vaults.app' were found`. That message does not say whether the App Group is the cause, so the next run signs twice: once with no entitlements, as the build on `dev` is signed today, and once with the App Group. If only the second fails, the App Group has to be registered by the owner (the three things listed above).
