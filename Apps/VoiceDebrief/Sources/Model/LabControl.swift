@@ -52,9 +52,55 @@ enum LabAction: String, Codable, CaseIterable, Sendable, Identifiable {
         }
     }
 
+    /// Whether this experiment carries the action out once it is confirmed. Only the two that are
+    /// safe to undo: showing a section, and a search that only reads.
+    var isCarriedOut: Bool { self == .openSection || self == .findNote }
+
     static func title(for id: String) -> String {
         LabAction(rawValue: id)?.title ?? (id == none ? "No action" : id)
     }
+}
+
+/// The sections of the app that can be shown by name.
+enum LabSections {
+    static let names = ["record", "library", "contacts", "vaults", "agents", "guide", "identity", "credit",
+                        "activity", "lab", "words", "about", "settings"]
+
+    /// The section an argument names: the first of its words that is a section.
+    static func name(in argument: String, names: [String] = LabSections.names) -> String? {
+        LabTriggerMatcher.words(argument).first { names.contains($0) }
+    }
+}
+
+/// A read-only search of the library, for the find action.
+enum LabNoteSearch {
+    private static let small: Set<String> = ["the", "a", "an", "about", "note", "notes", "my", "of", "on", "for", "to",
+                                             "that", "one", "where", "i", "said", "something", "find", "me", "please"]
+    static let limit = 5
+
+    static func needles(_ words: String) -> [String] {
+        LabTriggerMatcher.words(words).filter { !small.contains($0) }
+    }
+
+    /// The notes, newest first, whose title or transcript holds every word asked for (or a word that
+    /// starts with it).
+    static func find(_ words: String, in notes: [LabNote]) -> [LabNote] {
+        let wanted = needles(words)
+        guard !wanted.isEmpty else { return [] }
+        let found = notes.sorted { $0.createdAt > $1.createdAt }.filter { note in
+            let hay = LabTriggerMatcher.words(note.title + " " + (note.transcript ?? ""))
+            return wanted.allSatisfy { needle in hay.contains { $0.hasPrefix(needle) } }
+        }
+        return Array(found.prefix(limit))
+    }
+}
+
+/// What happened when a confirmed action was taken up: carried out or not, in words.
+struct LabOutcome: Codable, Equatable, Sendable {
+    let carriedOut: Bool
+    let words: String
+
+    static let recordedOnly = LabOutcome(carriedOut: false, words: "Recorded only. This action is not carried out yet.")
 }
 
 /// An action and what it applies to.
@@ -171,6 +217,8 @@ struct LabControlEntry: Codable, Equatable, Sendable, Identifiable {
     var edited = false
     var automatic = false
     var decidedAt: Date?
+    /// Set once, when a confirmed action is taken up.
+    var outcome: LabOutcome?
 
     init(id: String, heardAt: Date, words: String, source: String, expected: String? = nil, triggers: [LabTrigger], askModel: Bool,
          automatic: Set<String> = []) {

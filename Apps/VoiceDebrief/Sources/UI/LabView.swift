@@ -11,28 +11,36 @@ struct LabView: View {
                 NavigationLink {
                     LabOnePromptView(store: store)
                 } label: {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("L01: One prompt, tools on and off")
-                        Text("One request to Apple's on-device model with the tools you choose, and the full record of it.")
-                            .font(.footnote)
-                            .foregroundStyle(.secondary)
+                    Label {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("L01: One prompt, tools on and off")
+                            Text("One request to Apple's on-device model with the tools you choose, and the full record of it.")
+                                .font(.footnote)
+                                .foregroundStyle(.secondary)
+                        }
+                    } icon: {
+                        DSIconBadge(symbol: "text.bubble", tint: RootTab.lab.tint)
                     }
                 }
                 NavigationLink {
-                    LabControlView()
+                    LabControlView(store: store)
                 } label: {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("L02: Control centre")
-                        Text("Say or type an instruction. The fixed phrases and the model each propose an action, and you confirm, refuse or correct it.")
-                            .font(.footnote)
-                            .foregroundStyle(.secondary)
+                    Label {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("L02: Control centre")
+                            Text("Say or type an instruction. The fixed phrases and the model each propose an action, and you confirm, refuse or correct it.")
+                                .font(.footnote)
+                                .foregroundStyle(.secondary)
+                        }
+                    } icon: {
+                        DSIconBadge(symbol: "slider.horizontal.3", tint: RootTab.lab.tint)
                     }
                 }
                 NavigationLink { GamePlayView() } label: { VStack(alignment: .leading, spacing: 2) { Text("L03: Play"); Text("A small game played by voice. Each command is timed from the end of your words to the move, by the phrases or by the model.").font(.footnote).foregroundStyle(.secondary) } }
             } header: {
                 Text("Experiments")
             } footer: {
-                Text("An experiment changes nothing: its tools only read or take note, and what the model chooses is shown, not acted on.")
+                Text("An experiment changes nothing that is kept: its tools only read or take note. In L02, two confirmed actions are carried out: opening a section and searching the notes.")
             }
             Section("Apple's on-device model") {
                 LabeledContent("Status", value: OnDeviceModel.status.text)
@@ -188,7 +196,7 @@ struct LabRunRow: View {
             Text(run.record.prompt).lineLimit(2)
             Text(summary)
                 .font(.footnote.monospacedDigit())
-                .foregroundStyle(run.record.error == nil ? Color.secondary : Color.red)
+                .foregroundStyle(run.record.error == nil ? Color.secondary : DS.Palette.red)
         }
     }
 
@@ -230,7 +238,7 @@ struct LabRunSections: View {
         Section(title) {
             if let error = run.record.error {
                 Label(error.words, systemImage: "exclamationmark.triangle")
-                    .foregroundStyle(.red)
+                    .foregroundStyle(DS.Palette.red)
                 if !error.raw.isEmpty {
                     Text(error.raw).font(.caption.monospaced()).foregroundStyle(.secondary).textSelection(.enabled)
                 }
@@ -266,7 +274,7 @@ struct LabRunSections: View {
                     Text(arguments(call)).font(.footnote.monospaced())
                     Text(call.result)
                         .font(.footnote)
-                        .foregroundStyle(call.ok ? Color.secondary : Color.orange)
+                        .foregroundStyle(call.ok ? Color.secondary : DS.Palette.amber)
                         .textSelection(.enabled)
                 }
             }

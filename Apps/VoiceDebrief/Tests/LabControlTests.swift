@@ -278,3 +278,141 @@ struct LabControlCentreTests {
         #expect(centre.entries.isEmpty)
     }
 }
+
+@Suite("Lab L02: the two actions that are carried out")
+@MainActor
+struct LabControlActionTests {
+    static func centre(host: LabActionHost) -> LabControlCentre {
+        let centre = LabControlCentre(defaults: UserDefaults(suiteName: "lab-test-\(UUID().uuidString)")!, host: host)
+        centre.askModel = false
+        return centre
+    }
+
+    @Test func aSectionIsNamedByTheFirstWordThatIsOne() {
+        #expect(LabSections.name(in: "library") == "library")
+        #expect(LabSections.name(in: "the Settings, please") == "settings")
+        #expect(LabSections.name(in: "office") == nil)
+        #expect(LabSections.name(in: "library", names: ["record"]) == nil)
+    }
+
+    @Test func nothingIsOpenedUntilThePersonSaysDoIt() throws {
+        let host = LabActionHost()
+        var opened: [String] = []
+        host.openSection = { name in
+            opened.append(name)
+            return name == "library"
+        }
+        let centre = Self.centre(host: host)
+        let id = try #require(centre.hear("Open the library.", source: "typed"))
+        #expect(opened.isEmpty)
+        #expect(centre.entries[0].outcome == nil)
+        centre.doIt(id)
+        #expect(opened == ["library"])
+        #expect(centre.entries[0].outcome == LabOutcome(carriedOut: true, words: "Opened library."))
+        // Taken up once only.
+        centre.doIt(id)
+        centre.edit(id, action: "openSection", argument: "library")
+        #expect(opened == ["library"])
+    }
+
+    @Test func notThisOpensNothing() throws {
+        let host = LabActionHost()
+        var opened = 0
+        host.openSection = { _ in
+            opened += 1
+            return true
+        }
+        let centre = Self.centre(host: host)
+        let id = try #require(centre.hear("The vault needs a second remote before we open the office.", source: "typed"))
+        centre.notThis(id)
+        #expect(opened == 0)
+        #expect(centre.entries[0].outcome == nil)
+    }
+
+    @Test func aSectionThatDoesNotExistOrAHostThatIsNotConnectedSaysSo() throws {
+        let host = LabActionHost()
+        let centre = Self.centre(host: host)
+        let unwired = try #require(centre.hear("Open the library.", source: "typed"))
+        centre.doIt(unwired)
+        #expect(centre.entries[0].outcome?.carriedOut == false)
+        #expect(centre.entries[0].outcome?.words == "Not opened: this build has not connected the Lab to the app's sections.")
+
+        host.openSection = { _ in false }
+        let refused = try #require(centre.hear("Open the settings.", source: "typed"))
+        centre.doIt(refused)
+        #expect(centre.entries[0].outcome == LabOutcome(carriedOut: false, words: "Not opened: there is no section called settings."))
+
+        let unnamed = try #require(centre.hear("Open the office.", source: "typed"))
+        centre.doIt(unnamed)
+        #expect(centre.entries[0].outcome?.carriedOut == false)
+        #expect(centre.entries[0].outcome?.words == "Not opened: no section is named in the words office.")
+    }
+
+    @Test func anActionSwitchedToGoAheadIsCarriedOutAtOnce() {
+        let host = LabActionHost()
+        var opened: [String] = []
+        host.openSection = { name in
+            opened.append(name)
+            return true
+        }
+        let centre = Self.centre(host: host)
+        centre.setAutomatic("openSection", true)
+        centre.hear("Go to the vaults.", source: "typed")
+        #expect(opened == ["vaults"])
+        #expect(centre.entries[0].automatic)
+        #expect(centre.entries[0].outcome?.carriedOut == true)
+    }
+
+    @Test func theOtherActionsAreRecordedOnly() throws {
+        let centre = Self.centre(host: LabActionHost())
+        let id = try #require(centre.hear("Send this to Maria.", source: "typed"))
+        centre.doIt(id)
+        #expect(centre.entries[0].outcome == .recordedOnly)
+        #expect(LabAction.allCases.filter(\.isCarriedOut) == [.openSection, .findNote])
+    }
+
+    @Test func findingANoteReadsTheLibraryAndChangesNothing() throws {
+        let store = NoteStore(root: NoteStoreTests.temporaryRoot())
+        let boiler = try #require(store.create(audioAt: try NoteStoreTests.audioFile(), source: "Recorded here", localeId: "en-GB",
+                                               now: Date(timeIntervalSince1970: 1_794_500_000)))
+        _ = try #require(store.create(audioAt: try NoteStoreTests.audioFile(), source: "Recorded here", localeId: "en-GB",
+                                      now: Date(timeIntervalSince1970: 1_794_580_000)))
+        var run = boiler.run
+        run.transcript = Transcript(localeId: "en-GB", lines: [
+            TranscriptLine(startMs: 0, endMs: 2000, text: "The boilers were serviced on Tuesday."),
+        ])
+        store.update(boiler.id, run: run, processing: false)
+        let before = store.notes
+
+        let centre = Self.centre(host: LabActionHost())
+        let unsearched = try #require(centre.hear("Find the note about the boiler.", source: "typed"))
+        centre.doIt(unsearched)
+        #expect(centre.entries[0].outcome == LabOutcome(carriedOut: false, words: "Not searched: there is no library here."))
+
+        centre.store = store
+        let found = try #require(centre.hear("Find the note about the boiler.", source: "typed"))
+        centre.doIt(found)
+        #expect(centre.entries[0].outcome == LabOutcome(carriedOut: true, words: "Found 1: The boilers were serviced on Tuesday."))
+
+        let none = try #require(centre.hear("Find the note about the entitlement.", source: "typed"))
+        centre.doIt(none)
+        #expect(centre.entries[0].outcome == LabOutcome(carriedOut: true, words: "Searched: no note holds entitlement."))
+
+        let empty = try #require(centre.hear("Find the note about", source: "typed"))
+        centre.doIt(empty)
+        #expect(centre.entries[0].outcome?.carriedOut == false)
+        #expect(store.notes == before)
+    }
+
+    @Test func aSearchWantsEveryWordAndTakesNewestFirst() {
+        let notes = [
+            LabNote(id: "a", createdAt: Date(timeIntervalSince1970: 100), title: "Boiler quote", transcript: "The plumber quoted for the boiler."),
+            LabNote(id: "b", createdAt: Date(timeIntervalSince1970: 200), title: "Recording", transcript: "Ask the plumber about the kitchen tap."),
+            LabNote(id: "c", createdAt: Date(timeIntervalSince1970: 300), title: "Recording", transcript: nil),
+        ]
+        #expect(LabNoteSearch.find("the plumber", in: notes).map(\.id) == ["b", "a"])
+        #expect(LabNoteSearch.find("plumber boiler", in: notes).map(\.id) == ["a"])
+        #expect(LabNoteSearch.find("the note about", in: notes).isEmpty)
+        #expect(LabNoteSearch.find("garden", in: notes).isEmpty)
+    }
+}

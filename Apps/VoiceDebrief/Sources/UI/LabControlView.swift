@@ -3,6 +3,7 @@ import SwiftUI
 /// Experiment L02, the control centre: say, type or replay a sentence; see which action the fixed
 /// phrases and the model each propose; confirm, refuse or correct it. Nothing is carried out.
 struct LabControlView: View {
+    let store: NoteStore
     private let centre = LabControlCentre.shared
     @AppStorage("vd.localeId") private var localeId = ""
     @State private var typed = ""
@@ -59,7 +60,7 @@ struct LabControlView: View {
             } header: {
                 Text("Actions")
             } footer: {
-                Text("Do it records your choice. This experiment carries no action out: nothing is recorded, sent, saved or opened.")
+                Text("Two actions are carried out once confirmed, the two that are safe to undo: opening a section, and finding a note, which only reads. The others are recorded and nothing else happens: nothing is recorded, sent or saved.")
             }
 
             Section {
@@ -99,7 +100,7 @@ struct LabControlView: View {
             } header: {
                 Text("Without asking")
             } footer: {
-                Text("An action switched on here is marked done as soon as it is proposed. Everything else waits for you.")
+                Text("An action switched on here goes ahead as soon as it is proposed. Everything else waits for you. Opening a section leaves this screen, which stops the listening.")
             }
 
             Section {
@@ -159,6 +160,7 @@ struct LabControlView: View {
                 centre.edit(entry.id, action: action, argument: argument)
             }
         }
+        .onAppear { centre.store = store }
         .onDisappear {
             Task { await centre.stopListening() }
         }
@@ -192,6 +194,11 @@ struct LabControlCard: View {
                 Text(stateWords).font(.footnote.weight(.semibold)).foregroundStyle(stateColour)
             }
             Text(LabControlWords.engines(entry)).font(.footnote.monospacedDigit()).foregroundStyle(.secondary)
+            if let outcome = entry.outcome {
+                Label(outcome.words, systemImage: outcome.carriedOut ? "checkmark.circle" : "circle.dashed")
+                    .font(.footnote)
+                    .foregroundStyle(outcome.carriedOut ? Color.primary : Color.secondary)
+            }
             if entry.state == .waiting {
                 HStack(spacing: 16) {
                     Button("Do it", action: doIt).buttonStyle(.borderedProminent)
@@ -289,6 +296,9 @@ struct LabControlEntryView: View {
                     LabeledContent("Every tool it called", value: entry.modelCalls.joined(separator: ", "))
                 }
                 LabeledContent("You chose", value: chosenWords)
+                if let outcome = entry.outcome {
+                    LabeledContent("What happened", value: outcome.words)
+                }
                 LabeledContent("Model", value: LabControlWords.verdict(entry.modelVerdict))
                 LabeledContent("Phrases", value: LabControlWords.verdict(entry.phraseVerdict))
             }

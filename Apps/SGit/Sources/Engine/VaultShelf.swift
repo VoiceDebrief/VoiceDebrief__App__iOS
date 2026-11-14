@@ -1,3 +1,4 @@
+import AVFoundation
 import CryptoKit
 import Foundation
 import ImageIO
@@ -87,6 +88,15 @@ actor Limiter {
 }
 
 enum Thumbnail {
+    /// A small JPEG of a frame near the start of a video, turned the right way up.
+    static func videoFrame(of url: URL, maxPixel: Int) async -> Data? {
+        let generator = AVAssetImageGenerator(asset: AVURLAsset(url: url))
+        generator.appliesPreferredTrackTransform = true
+        generator.maximumSize = CGSize(width: maxPixel, height: maxPixel)
+        guard let frame = try? await generator.image(at: CMTime(seconds: 1, preferredTimescale: 600)).image else { return nil }
+        return UIImage(cgImage: frame).jpegData(compressionQuality: 0.8)
+    }
+
     /// A small JPEG of an image file, made without decoding the image at full size.
     static func jpeg(of url: URL, maxPixel: Int) -> Data? {
         guard let source = CGImageSourceCreateWithURL(url as CFURL, nil) else { return nil }
@@ -514,17 +524,23 @@ final class VaultShelf {
 
     /// The largest image a thumbnail is made for without being asked: making one fetches the whole file.
     static let largestAutomaticThumbnail = 40_000_000
+    static let largestAutomaticVideoThumbnail = 25_000_000
 
     func thumbnail(for file: VaultFile, in vault: SavedVault) async -> UIImage? {
-        guard VaultListing.kind(of: file.path) == .image else { return nil }
+        let kind = VaultListing.kind(of: file.path)
+        guard kind == .image || kind == .video else { return nil }
         let kept = thumbnailFolder.appending(path: String(file.blobId.suffix(32)) + ".jpg")
         if let image = UIImage(contentsOfFile: kept.path) { return image }
-        guard file.size <= Self.largestAutomaticThumbnail || isCached(file, in: vault) else { return nil }
+        // A video is decrypted for its picture only when it is small or already decrypted (played once).
+        let limit = kind == .video ? Self.largestAutomaticVideoThumbnail : Self.largestAutomaticThumbnail
+        guard file.size <= limit || isCached(file, in: vault) else { return nil }
         await thumbnails.acquire()
         let url = try? await localFile(for: file, in: vault)
         await thumbnails.release()
         guard let url else { return nil }
-        let data = await Task.detached(priority: .utility) { Thumbnail.jpeg(of: url, maxPixel: 480) }.value
+        let data: Data? = kind == .video
+            ? await Thumbnail.videoFrame(of: url, maxPixel: 480)
+            : await Task.detached(priority: .utility) { Thumbnail.jpeg(of: url, maxPixel: 480) }.value
         guard let data else { return nil }
         try? FileManager.default.createDirectory(at: thumbnailFolder, withIntermediateDirectories: true)
         try? data.write(to: kept, options: .atomic)

@@ -11,6 +11,7 @@ struct RecordView: View {
     var go: (RootTab) -> Void = { _ in }
     @AppStorage("vd.localeId") private var localeId = ""
     @State private var importing = false
+    @State private var showingMessages = false
     @State private var path: [String] = []
 
     private var isRecording: Bool {
@@ -27,6 +28,12 @@ struct RecordView: View {
     @AppStorage("vd.addressee") private var addressee = ""
     /// True while the Talk to Claude button owns the recording, so this screen leaves it alone.
     @AppStorage("vd.talking") private var talking = false
+
+    /// The chosen recipient as a face for the route strip; Claude (developer) is drawn as the conductor.
+    private var routeTo: [AvatarSubject] {
+        guard let to = addresseeRecipient else { return [] }
+        return [AvatarSubject(id: to.link, name: to.name, kind: to.name == RecipientStore.builtInName ? .conductor : .person)]
+    }
 
     private var addresseeRecipient: Recipient? {
         addressee.isEmpty ? nil : RecipientStore.shared.all.first { $0.link == addressee }
@@ -69,6 +76,18 @@ struct RecordView: View {
                 ToolbarItem(placement: .topBarTrailing) { WorkStatusIcons(session: session) }
                 if !isRecording {
                     ToolbarItem(placement: .topBarTrailing) {
+                        // Claude's replies to what you sent (the owner: "see what was acted on").
+                        Button { showingMessages = true } label: {
+                            Image(systemName: "bubble.left.and.bubble.right")
+                                .overlay(alignment: .topTrailing) {
+                                    if !(AgentsDesk.shared.report?.messages ?? []).filter({ $0.from != "you" }).isEmpty {
+                                        Circle().fill(Color.accentColor).frame(width: 8, height: 8).offset(x: 3, y: -3)
+                                    }
+                                }
+                        }
+                        .accessibilityLabel("Messages to and from Claude")
+                    }
+                    ToolbarItem(placement: .topBarTrailing) {
                         LanguageMenu()
                             .disabled(session.isBusy)
                     }
@@ -88,6 +107,9 @@ struct RecordView: View {
                             }
                     }
                 }
+            }
+            .sheet(isPresented: $showingMessages) {
+                NavigationStack { MessagesToClaudeView(session: session, book: book) }
             }
             .navigationDestination(for: String.self) { id in
                 NoteDetailView(noteId: id, session: session, book: book)
@@ -330,6 +352,10 @@ struct RecordView: View {
             if !isRecording {
                 Text("Record a voice note")
                     .font(.title2.weight(.semibold))
+                // Who it is from and who it goes to, at a glance (the owner: "me on the left, an arrow, who
+                // I'm sending it to").
+                SendRoute(from: MyLook.shared.subject(id: "me"), to: routeTo, size: 44)
+                    .padding(.vertical, 4)
                 Text("Record a note for")
                     .font(.caption)
                     .foregroundStyle(.secondary)
@@ -505,14 +531,12 @@ struct NoteRow: View {
                 Text(subtitle)
                     .font(.footnote)
                     .foregroundStyle(.secondary)
+                // At most one mark, in words and its colour (the design; Model/NoteMark.swift).
+                NoteMarkPill(mark: NoteMark.of(note, working: working))
             }
             Spacer(minLength: 8)
             if working != nil {
                 ProgressView()
-            } else if note.processing || note.run.transcript == nil {
-                Image(systemName: "exclamationmark.triangle.fill")
-                    .foregroundStyle(.orange)
-                    .accessibilityLabel(note.stateLine)
             }
         }
     }
@@ -527,10 +551,10 @@ struct NoteRow: View {
         }
         var parts = [day + time]
         if let seconds = note.run.audioSeconds { parts.append(Timecode.duration(seconds: seconds)) }
-        if let working { parts.append(working) } else if note.stateLine != "On this device" { parts.append(note.stateLine) }
-        if working == nil {
-            if note.sendProblem != nil, let to = note.pendingSend?.name { parts.append("Not sent to \(to)") }
-            else if let to = note.pendingSend?.name { parts.append("Waiting to send to \(to)") }
+        // What is working, and a failed send, are said by the mark below; the rest is said here.
+        if working == nil, note.stateLine != "On this device" { parts.append(note.stateLine) }
+        if working == nil, note.sendProblem == nil {
+            if let to = note.pendingSend?.name { parts.append("Waiting to send to \(to)") }
             else if let sent = note.sends?.last { parts.append("Sent to \(sent.to) \(sent.at.formatted(.dateTime.hour(.twoDigits(amPM: .abbreviated)).minute(.twoDigits)))") }
         }
         return parts.joined(separator: " · ")

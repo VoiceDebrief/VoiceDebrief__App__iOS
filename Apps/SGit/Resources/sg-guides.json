@@ -181,6 +181,96 @@
      ]
     }
    ]
+  },
+  {
+   "id": "sgit-secrets",
+   "title": "SGit Vaults: secrets, kept in a vault",
+   "app": "SGit Vaults",
+   "pictures": "SGit Vaults: iPhone, light, from sgit-app-screens.yml run 43592618173 (work/sgit-app at 6b13fcb, landed on dev as 9ea9212, 14 November 2026), before the design session's restyle.",
+   "intro": "A secret is a password, a Wi-Fi network, a server or a card, kept as one encrypted file in a vault, behind Face ID. A secret in a shared vault is seen by everyone who holds that vault's key, and each change is a signed commit.",
+   "ideas": [
+    "design.sgit.app.secrets.secrets.as.files.in.vaults",
+    "design.sgit.app.secrets.questions.for.the.owner.by.voice"
+   ],
+   "steps": [
+    {
+     "screen": "secrets",
+     "caption": "The Secrets list.",
+     "image": "sg-guide-sgit-secrets-1",
+     "callouts": [
+      {
+       "n": 1,
+       "text": "Your own secrets, in a vault of your own."
+      },
+      {
+       "n": 2,
+       "text": "Each kind has its own fields: a device, a website login, a Wi-Fi network, a server."
+      },
+      {
+       "n": 3,
+       "text": "Who can see them: every device and person with this vault's key."
+      },
+      {
+       "n": 4,
+       "text": "A team vault's secrets, listed under its name."
+      },
+      {
+       "n": 5,
+       "text": "Search by name, website or user."
+      },
+      {
+       "n": 6,
+       "text": "Add a secret."
+      }
+     ]
+    },
+    {
+     "screen": "secret",
+     "caption": "One secret.",
+     "image": "sg-guide-sgit-secrets-2",
+     "callouts": [
+      {
+       "n": 1,
+       "text": "Each field, with a button to copy it."
+      },
+      {
+       "n": 2,
+       "text": "Hidden values stay masked."
+      },
+      {
+       "n": 3,
+       "text": "Show hidden values, after Face ID."
+      },
+      {
+       "n": 4,
+       "text": "Which vault it is kept in, when it changed and by which device."
+      },
+      {
+       "n": 5,
+       "text": "Delete it: a commit like any other, so the vault's history keeps the earlier versions."
+      }
+     ]
+    },
+    {
+     "screen": "questions",
+     "caption": "Questions for you.",
+     "image": "sg-guide-sgit-secrets-3",
+     "callouts": [
+      {
+       "n": 1,
+       "text": "Questions from the people building the app. Answer by choosing, typing or speaking; answers are encrypted to the developers' key."
+      },
+      {
+       "n": 2,
+       "text": "How many are waiting."
+      },
+      {
+       "n": 3,
+       "text": "Tap one to answer it."
+      }
+     ]
+    }
+   ]
   }
  ]
 }

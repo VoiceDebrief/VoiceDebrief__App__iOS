@@ -80,7 +80,7 @@ struct RootView: View {
         .welcomeOnFirstLaunch()
         // Talk to Claude from every screen but Record, which has its own control.
         .overlay(alignment: .bottomTrailing) {
-            if tab != .record { TalkButton(session: session) }
+            if tab != .record { TalkButton(session: session, book: book) }
         }
         #if DEBUG
         .overlay(alignment: .topLeading) { LaunchMarker() }
@@ -91,6 +91,13 @@ struct RootView: View {
             // Finishing a note saves it to the chosen vault, unless that is switched off (issue 022).
             session.onNoteReady = { [store, book] id in
                 Task { await AutoSave.run(noteId: id, store: store, book: book) }
+            }
+            // Lab L02 may open a section by voice (issue 047): the names are the tabs' own.
+            LabActionHost.shared.sectionNames = RootTab.allCases.map(\.rawValue)
+            LabActionHost.shared.openSection = { name in
+                guard let found = RootTab(rawValue: name) else { return false }
+                tab = found
+                return true
             }
         }
     }

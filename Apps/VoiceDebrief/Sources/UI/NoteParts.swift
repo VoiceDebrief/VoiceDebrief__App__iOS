@@ -85,7 +85,7 @@ struct RunSections: View {
                     if !step.note.isEmpty {
                         Text(step.note)
                             .font(.footnote)
-                            .foregroundStyle(step.outcome == .done ? Color.secondary : Color.orange)
+                            .foregroundStyle(step.outcome == .done ? Color.secondary : DS.Palette.amber)
                     }
                 }
             }
@@ -180,7 +180,7 @@ struct PlayerSection: View {
                 Label("Share or save the recording", systemImage: "square.and.arrow.up")
             }
             if let problem = player.problem {
-                Label(problem, systemImage: "exclamationmark.triangle.fill").font(.footnote).foregroundStyle(.orange)
+                Label(problem, systemImage: "exclamationmark.triangle.fill").font(.footnote).foregroundStyle(DS.Palette.amber)
             }
         } header: {
             Text("Recording")
@@ -240,7 +240,7 @@ struct WhereWorkHappens: View {
     private func row(_ icon: String, _ title: String, _ detail: String, busy: Bool) -> some View {
         HStack(alignment: .firstTextBaseline, spacing: 10) {
             Image(systemName: icon)
-                .foregroundStyle(busy ? Color.green : Color.secondary)
+                .foregroundStyle(busy ? DS.Palette.green : Color.secondary)
                 .symbolEffect(.pulse, isActive: busy)
                 .frame(width: 22)
             Text(title).font(.footnote.weight(.semibold))
@@ -277,9 +277,9 @@ struct WorkStatusIcons: View {
         let net = WhereWorkHappens.network(session)
         Button { showing = true } label: {
             HStack(spacing: 6) {
-                Image(systemName: "iphone").foregroundStyle(device != nil ? Color.green : Color.secondary)
+                Image(systemName: "iphone").foregroundStyle(device != nil ? DS.Palette.green : Color.secondary)
                     .symbolEffect(.pulse, isActive: device != nil)
-                Image(systemName: "network").foregroundStyle(net != nil ? Color.green : Color.secondary)
+                Image(systemName: "network").foregroundStyle(net != nil ? DS.Palette.green : Color.secondary)
                     .symbolEffect(.pulse, isActive: net != nil)
             }
             .font(.footnote)

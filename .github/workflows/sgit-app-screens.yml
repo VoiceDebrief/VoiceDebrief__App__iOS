@@ -15,6 +15,7 @@ on:
       - 'Apps/SGit/Sources/App/**'
       - 'Apps/SGit/Sources/People/**'
       - 'Apps/SGit/Sources/Secrets/**'
+      - 'Apps/SGit/Sources/Guide/**'
       - 'Apps/SGit/Resources/**'
       - 'Apps/SGit/UITests/**'
       - 'Apps/SGit/SGit.xcodeproj/**'
@@ -27,7 +28,7 @@ env:
   PROJECT: Apps/SGit/SGit.xcodeproj
   SCHEME: SGitScreens
   # One per entry in ScreensTests.shots. Update both together.
-  SHOTS: vaults,vaults-empty,create,add,vault,vault.folder,vault.list,file,share,history,commit,settings,gallery,create-nokey,vault.local,vault.adding-adding,share.key,vault.adding-refused,vault-dark,share.key-dark,vault-large,share-large,secrets,secret,questions
+  SHOTS: vaults,vaults-empty,create,add,vault,vault.folder,vault.list,file,share,history,commit,settings,gallery,create-nokey,vault.local,vault.adding-adding,share.key,vault.adding-refused,vault-dark,share.key-dark,vault-large,share-large,secrets,secret,questions,guide
 
 jobs:
   shoot:

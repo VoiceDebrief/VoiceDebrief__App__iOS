@@ -18,6 +18,7 @@ struct IdentityView: View {
     var body: some View {
         List {
             userSection
+            MyLookSection(id: "me")
             SectionBannerRow(tab: .identity)
             deviceSection
             vouchingSection

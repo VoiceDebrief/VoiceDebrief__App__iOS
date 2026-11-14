@@ -73,7 +73,7 @@ struct VaultsView: View {
                     SecretsView(shelf: shelf)
                         .tracked("secrets")
                 } label: {
-                    Label("Secrets", systemImage: "key.viewfinder")
+                    sectionRow(.secrets)
                 }
                 NavigationLink {
                     QuestionsView()
@@ -81,8 +81,16 @@ struct VaultsView: View {
                 } label: {
                     Label("Questions for you", systemImage: "questionmark.bubble")
                 }
+                NavigationLink {
+                    GuideHome(ideas: IdeaBook.bundled(), history: VersionHistory.bundled(), guides: GuideBook.bundled(),
+                              current: AppInfo.shortVersion(), lastSeen: UserDefaults.standard.string(forKey: WhatsNewMemory.key) ?? "")
+                        .onAppear { WhatsNewMemory.seedIfNeeded() }
+                        .tracked("guide")
+                } label: {
+                    Label("Guide and what is new", systemImage: "book.pages")
+                }
             } footer: {
-                Text("Passwords, passcodes, Wi-Fi and keys, kept in vaults. Questions are from the people building this app, answered by typing or speaking.")
+                Text("Passwords, passcodes, Wi-Fi and keys, kept in vaults. Questions are from the people building this app, answered by typing or speaking. The Guide shows what changed in each version and how each part works.")
             }
             Section {
                 NavigationLink {

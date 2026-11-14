@@ -17,8 +17,12 @@ kept on the device; a tally and a JSON log. Compiled and unit tested; never run 
 
 ## What it does not do yet
 
-- **It carries no action out.** Do it records the choice. Wiring an action to the app (finish the recording,
-  send, save, open a section) touches `DebriefSession`, `RootView` and the send path, which other sessions own.
+- **It carries out two actions only**, the two that are safe to undo: opening a section (through
+  `LabActionHost.openSection`, a closure the session that owns `RootView` sets) and finding a note (a
+  read-only search, listed on the card; it does not open the note). Finish the recording, send, save, record
+  for a time and cancel are recorded only: they touch `DebriefSession` and the send path, which other sessions own.
+- Opening a section leaves the Lab screen, which stops the listening: a control mode that stays up while
+  the app moves beneath it needs a place of its own in the shell.
 - The model is asked about every settled piece of speech, with no pause rule of its own and no state handed
   to it (whether a recording is running, who the recipients are).
 - Portuguese: the phrases and the test sentences are English only.

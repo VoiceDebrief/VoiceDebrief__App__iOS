@@ -14,5 +14,6 @@ A page per feature, with pictures of the screens and numbered arrows. The same g
 | [SGit Vaults: open a vault you were sent, or make one](sgit-start/index.md) | SGit Vaults | SGit Vaults keeps photos, videos and large files in an encrypted vault that a teammate can open. |
 | [SGit Vaults: inside a vault, and its history](sgit-vault/index.md) | SGit Vaults | A vault holds folders and files, like a folder on a computer, with every change kept as a signed commit. |
 | [SGit Vaults: share a vault, and create one on the server](sgit-share/index.md) | SGit Vaults | Sharing gives somebody the vault's key. |
+| [SGit Vaults: secrets, kept in a vault](sgit-secrets/index.md) | SGit Vaults | A secret is a password, a Wi-Fi network, a server or a card, kept as one encrypted file in a vault, behind Face ID. |
 
 *Pictures: iPhone, light, from screens.yml run 39 on dev (commit 1d21781, 14 November 2026). Newer builds may differ: the record screen now chooses who a note is for above the record control. SGit Vaults: iPhone, light, from sgit-app-screens.yml run 19 on dev (commit e62bf68, 14 November 2026).*
