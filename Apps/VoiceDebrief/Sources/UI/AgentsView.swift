@@ -11,6 +11,8 @@ struct AgentsView: View {
     @State private var draft = ""
     @State private var sharing = false
     @State private var said: String?
+    /// The vault last given to Claude, so the button says so and is not pressed again by mistake.
+    @AppStorage("vd.agentsGiven") private var given: String?
 
     private var vault: SavedVault? { book.vaults.first { $0.id == desk.vaultId } }
 
@@ -89,18 +91,34 @@ struct AgentsView: View {
                     .font(.footnote).foregroundStyle(.orange)
             }
             Text("2. Give it to Claude (developer). Its key is sealed on this device to Claude's key; the server cannot read it.")
-            Button(sharing ? "Sending" : "Give this vault to Claude (developer)") {
+            // One clear button, a visible "sending", and an unmissable result (the owner tapped four times
+            // because nothing showed that it had gone).
+            Button {
                 guard let vault else { return }
                 Task {
                     sharing = true
                     defer { sharing = false }
-                    do { try await desk.shareVault(vault); said = "Sent. Claude will write the first report into it shortly." }
+                    do { try await desk.shareVault(vault); given = vault.id; said = nil }
                     catch { said = "Not sent: \(error.localizedDescription)" }
                 }
+            } label: {
+                HStack(spacing: 8) {
+                    if sharing { ProgressView().controlSize(.small) }
+                    else { Image(systemName: given == vault?.id ? "checkmark.circle.fill" : "paperplane.fill") }
+                    Text(sharing ? "Sending, sealed to Claude's key" : given == vault?.id ? "Given to Claude" : "Give this vault to Claude (developer)")
+                }
+                .frame(maxWidth: .infinity)
             }
-            .disabled(vault == nil || sharing)
+            .buttonStyle(.borderedProminent)
+            .controlSize(.large)
+            .disabled(vault == nil || sharing || given == vault?.id)
+            if given != nil, given == vault?.id {
+                Label("Sent. Claude has the key, sealed to its key; the first report and its replies arrive in this vault in a few minutes. Pull to refresh.", systemImage: "checkmark.seal.fill")
+                    .font(.callout.weight(.semibold))
+                    .foregroundStyle(.green)
+            }
             Text("3. Pull to refresh. The report appears here; nothing is invented by the app.")
-            if let said { Text(said).font(.footnote).foregroundStyle(.secondary) }
+            if let said { Text(said).font(.footnote).foregroundStyle(.red) }
         }
         .font(.callout)
     }
