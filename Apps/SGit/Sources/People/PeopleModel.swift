@@ -14,6 +14,8 @@ final class PeopleModel {
     static let secretsService = "ai.sgit.vaults.app.secrets"
 
     private(set) var hub: PeopleHub?
+    /// Opens a vault received in a message; returns why not, or nil. Set by the app (the vault shelf); nil hides the button.
+    @ObservationIgnored var openVault: ((VaultInvitation) async -> String?)?
     private(set) var making = false
     private(set) var problem: String?
 
