@@ -4,6 +4,7 @@ Every release of this repository. Every push to `dev` is a release: CI works out
 
 | Version | Date | What changed |
 |---|---|---|
+| next | 14 November 2026 | The sgit app: a vault someone sends you in a message can be opened from the message, when the message is signed by a contact or by the card it carries. |
 | v0.1.74 | 14 November 2026 | The sgit app plays videos: a play mark on each video, a Play button that decrypts and plays it with sound (even on silent), full screen, and a picture from the video on its tile once it has been played |
 | v0.1.74 | 14 November 2026 | The sgit app has a Guide on its home list: what is new in each version, a guide with numbered pictures for each part (getting started, inside a vault, sharing, secrets), and every idea with where it stands |
 | v0.1.73 | 14 November 2026 | The Lab's control centre (L02) now carries out two confirmed actions, the two that are safe to undo: opening a section of the app, and finding a note, which only reads the library and lists what it found on the card. Nothing happens before Do it, unless that action is switched to go ahead without asking. The other five actions are still recorded only, and each card says which it was. In test: no sentence has been put to a model. |
