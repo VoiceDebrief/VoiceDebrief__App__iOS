@@ -9,6 +9,7 @@ struct VaultsView: View {
     @State private var adding = false
     @State private var creating = false
     @State private var showSettings = false
+    @State private var forgetting: SavedVault?
 
     var body: some View {
         List {
@@ -44,7 +45,7 @@ struct VaultsView: View {
                         NavigationLink(value: FolderRoute(vault: vault, folder: "")) {
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(vault.name)
-                                Text("\(vault.id) · \(vault.canWrite ? "read and write" : "read only")")
+                                Text("\(vault.id) · \(vault.canWrite ? "read and write" : "read only") · \(vault.onDevice ? "on this device only" : "on \(shelf.serverName)")")
                                     .font(.footnote.monospaced())
                                     .foregroundStyle(.secondary)
                                 let waiting = outbox.jobs(for: vault)
@@ -56,6 +57,9 @@ struct VaultsView: View {
                                 }
                             }
                         }
+                        .swipeActions {
+                            Button("Forget", role: .destructive) { forgetting = vault }
+                        }
                     }
                 }
             }
@@ -63,15 +67,28 @@ struct VaultsView: View {
                 Button("Add a vault by its key", systemImage: "key") { adding = true }
                 Button("Create a vault", systemImage: "plus.square") { creating = true }
             } footer: {
-                if !shelf.hasToken {
-                    Text("Opening and reading a vault needs nothing but its key. Creating one, or adding files, also needs an access token for the server: add it in Settings.")
-                }
+                Text("A vault you create is kept on this device and needs no account, no token and no network. It goes to a server when you choose to share it.")
             }
         }
         .navigationTitle("sgit")
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button("Settings", systemImage: "gearshape") { showSettings = true }
+            }
+        }
+        .confirmationDialog(forgetting.map { "Forget \($0.name)?" } ?? "", isPresented: Binding(get: { forgetting != nil }, set: { if !$0 { forgetting = nil } }), titleVisibility: .visible) {
+            Button(forgetting?.onDevice == true ? "Delete the vault" : "Forget the vault", role: .destructive) {
+                if let vault = forgetting {
+                    for job in outbox.jobs(for: vault) { outbox.discard(job.id) }
+                    shelf.remove(vault)
+                }
+                forgetting = nil
+            }
+        } message: {
+            if forgetting?.onDevice == true {
+                Text("This vault exists only on this device. Forgetting it deletes it and everything in it, and it cannot be brought back.")
+            } else {
+                Text("The vault stays on the server. This device forgets its key: to open it again you will need the key from somewhere else.")
             }
         }
         .sheet(isPresented: $adding) { AddVaultSheet(shelf: shelf) }
@@ -162,13 +179,7 @@ struct CreateVaultSheet: View {
                 Section {
                     TextField("Name, for this device only", text: $name)
                 } footer: {
-                    Text("A new vault is a random key, an empty folder and one signed commit. The key is made on this device and is kept in its Keychain, on this device only: if the device is lost and the key was not written down or given to somebody, the vault cannot be opened again.")
-                }
-                if !shelf.hasToken {
-                    Section {
-                        Label("Creating a vault needs an access token for the server. Add one in Settings first.", systemImage: "info.circle")
-                            .font(.callout)
-                    }
+                    Text("A new vault is a random key, an empty folder and one signed commit, made and kept on this device: no account, no token, no network. You can add files to it at once. Nobody else can open it until you send it to a server, from its Share screen; that is the first time a token is asked for.")
                 }
                 if let busy = shelf.busy {
                     Section {
@@ -192,7 +203,7 @@ struct CreateVaultSheet: View {
                             if await shelf.create(name: name) != nil { dismiss() }
                         }
                     }
-                    .disabled(!shelf.hasToken || shelf.busy != nil)
+                    .disabled(shelf.busy != nil)
                 }
             }
             .onAppear { shelf.clearProblem() }

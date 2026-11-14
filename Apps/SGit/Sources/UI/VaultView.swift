@@ -25,6 +25,7 @@ struct VaultView: View {
     @State private var showingHistory = false
 
     private var contents: VaultContents? { shelf.contents[vault.id] }
+    private var onDevice: Bool { shelf.current(vault).onDevice }
     private var listing: VaultListing { VaultListing.of(contents?.files ?? [], in: folder) }
     private var jobs: [UploadJob] { outbox.jobs(for: vault) }
     private var title: String { folder.isEmpty ? vault.name : VaultListing.name(of: folder) }
@@ -39,6 +40,21 @@ struct VaultView: View {
                         ProgressView()
                         Text(intake)
                     }
+                    .padding(.horizontal)
+                }
+                if onDevice, folder.isEmpty {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Label("On this device only", systemImage: "iphone").font(.subheadline.weight(.semibold))
+                        Text("Nobody else can open this vault yet, and it is not copied anywhere. To share it, send it to the server.")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                        Button("Share…") { sharing = true }
+                            .buttonStyle(.bordered)
+                            .controlSize(.small)
+                    }
+                    .padding(12)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(.quaternary.opacity(0.5), in: RoundedRectangle(cornerRadius: 12))
                     .padding(.horizontal)
                 }
                 ForEach(jobs) { job in
@@ -162,7 +178,7 @@ struct VaultView: View {
             HistoryView(shelf: shelf, vault: vault)
         }
         .sheet(isPresented: $sharing) {
-            NavigationStack { ShareVaultView(shelf: shelf, vault: vault) }
+            NavigationStack { ShareVaultView(shelf: shelf, vault: vault, pending: !jobs.isEmpty) }
         }
     }
 
@@ -284,8 +300,8 @@ struct UploadCard: View {
         switch state.phase {
         case .waiting: return item.sealed == nil ? "waiting" : "encrypted, waiting"
         case .encrypting: return "encrypting \(Int(state.fraction * 100))%"
-        case .uploading: return "uploading \(Int(state.fraction * 100))%"
-        case .uploaded: return "uploaded"
+        case .uploading: return "storing \(Int(state.fraction * 100))%"
+        case .uploaded: return "stored"
         }
     }
 }

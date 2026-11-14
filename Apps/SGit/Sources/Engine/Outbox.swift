@@ -262,7 +262,7 @@ final class Outbox {
             do {
                 _ = try await handle.commit(
                     staged: staged, message: ready.message, signer: signer, writeKey: writeKey, accessToken: token,
-                    transport: shelf.transport, alreadyUploaded: already,
+                    transport: shelf.transport(for: vault), alreadyUploaded: already,
                     uploaded: { blobId in
                         Task { @MainActor in
                             guard let entry = lookup[blobId] else { return }

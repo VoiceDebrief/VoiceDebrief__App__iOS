@@ -65,12 +65,12 @@
 <tr><td>Large files</td><td>Encrypted and decrypted from disk to disk, a megabyte at a time. Uploaded in parts, three at a time; downloaded in ranges, three at a time. See &quot;Limits&quot;</td></tr>
 <tr><td>Where a file goes</td><td>Into the folder that is open, under its own name. A name already taken gets a number</td></tr>
 <tr><td>Reading</td><td>A file is fetched and decrypted when it is opened. The decrypted copy is in the app's cache folder only, which the system may empty, and which Settings can empty</td></tr>
-<tr><td>Server</td><td>One server (<code>dev.send.sgraph.ai</code>) and one access token, as the engine has them today. Local-first vaults with named remotes (issue 011) are adopted when they land</td></tr>
+<tr><td>Where a vault lives</td><td>A vault you create is made and kept on this device: no account, no token, no network, and it takes files at once. It goes to a server when you choose to share it, which is the first time an access token is asked for, with the reason. From then on the server is where it lives and this device reads and writes it there, as it does a vault added by its key. One server (<code>dev.send.sgraph.ai</code>) for now</td></tr>
 <tr><td>Keys</td><td>Vault keys, the access token and the device's commit-signing key are in this app's Keychain, on this device only. This app does not share a Keychain with VoiceDebrief</td></tr>
 <tr><td>Honesty</td><td>No screen says a file is in the vault before the commit that names it has been pushed and read back</td></tr>
 </tbody></table></div>
 <h2 id="the-words">The words</h2>
-<p>The owner's and sgit's: <strong>vault</strong>, <strong>vault key</strong> (reads and writes), <strong>read key</strong> (reads only), <strong>access token</strong> (the web UI calls it an access key), <strong>commit</strong>, <strong>history</strong>, <strong>branch</strong>. The app says <strong>Add</strong> for putting files in and <strong>Refresh</strong> for fetching the latest; the web UI's Push and Pull arrive with local-first vaults, when there is something local to push.</p>
+<p>The owner's and sgit's: <strong>vault</strong>, <strong>vault key</strong> (reads and writes), <strong>read key</strong> (reads only), <strong>access token</strong> (the web UI calls it an access key), <strong>commit</strong>, <strong>history</strong>, <strong>branch</strong>. The app says <strong>Add</strong> for putting files in, <strong>Refresh</strong> for fetching the latest, and <strong>Send to the server</strong> for the one push a vault made on the device needs.</p>
 <h2 id="the-screens">The screens</h2>
 <p><strong>Vaults.</strong> The vaults this device knows. Add one by pasting its key or scanning a QR code; create one. Each row says whether the key can write.</p>
 <p><strong>A vault.</strong> The folder that is open: folders first, then files, as a grid of thumbnails or a list. Add (from Photos, from Files), New folder by naming one when adding, Refresh, Share, History. Uploads in progress sit at the top with a bar for each file and one for the whole selection, and a failed one says why and offers Try again and Discard.</p>
@@ -96,6 +96,7 @@
 <li><strong>The format encrypts a file as one AES-GCM message.</strong> sgit and the web UI therefore hold a whole file, and its whole ciphertext, in memory. The app does not: it computes the same bytes as a stream. Its limit is free space on the device (the staged copy and the ciphertext exist together until the upload ends, so about twice the file), and AES-GCM's own limit of about 64 GB a message.</li>
 <li><strong>What could not be avoided.</strong> Each upload part is held in memory while it is sent: three parts of 10 MB. A blob that sgit deflated and that is over 4 MB is inflated in memory, up to 64 MB. A server without signed URLs (a self-hosted one) takes a large object in one request, which the app allows up to 64 MB. Thumbnails are made from the full image, so a folder of photographs is fetched whole the first time it is shown.</li>
 <li><strong>The other end.</strong> A teammate opening a large video in the web UI needs it to fit in the browser's memory; <code>sgit clone</code> on a computer needs it to fit in memory once.</li>
+<li><strong>A vault on this device only is on this device only.</strong> Until it is sent to a server there is one copy. Forgetting it deletes it, and the app says so before it does.</li>
 <li><strong>An upload stops when the app is suspended.</strong> It is taken up again when the app returns: parts already sent in an unfinished object are sent again, finished objects are not. Background uploads are after milestone one.</li>
 <li><strong>A vault with packs</strong> (objects stored as zips) is refused, as it is by the engine today.</li>
 </ul>
@@ -110,7 +111,7 @@
 </ol>
 <h2 id="after-it-in-this-order">After it, in this order</h2>
 <ol>
-<li>Local-first vaults and named remotes (issue 011), then keys in iCloud Keychain (017), as the VoiceDebrief app adopts them.</li>
+<li>A vault that stays on the device after it is shared, with push and pull and a choice of servers, as VoiceDebrief has since issue 011. That needs two things first: a merge for when two people add at once (today the app commits straight to the server, where a refused push is simply tried again), and a way to keep a vault's trees on the device without fetching every video in it. Then keys in iCloud Keychain (017).</li>
 <li>A share extension: &quot;send to vault&quot; from Photos and Files.</li>
 <li>Background uploads.</li>
 <li>A file-level merge for edits and deletions that collide (adding already needs none).</li>

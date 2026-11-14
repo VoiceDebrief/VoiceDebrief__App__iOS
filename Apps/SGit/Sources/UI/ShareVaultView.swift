@@ -6,6 +6,9 @@ import SwiftUI
 struct ShareVaultView: View {
     let shelf: VaultShelf
     let vault: SavedVault
+    /// Files are still on their way into this vault.
+    var pending = false
+    @State private var token = ""
     @State private var showingKey = false
     @State private var showingReadKey = false
     @State private var readKey: String?
@@ -14,6 +17,42 @@ struct ShareVaultView: View {
 
     var body: some View {
         List {
+            if shelf.current(vault).onDevice {
+                Section {
+                    Text("This vault is on this device only. Before anybody else can open it, it has to be on a server they can reach. Sending it uploads every file, encrypted; the server cannot read them. From then on this device reads and writes the vault there.")
+                        .font(.callout)
+                    if !shelf.hasToken {
+                        Text("\(shelf.serverName) takes new vaults only from people it knows: that is what an access token is for. It is kept in this device's Keychain and sent only to that server.")
+                            .font(.callout)
+                            .foregroundStyle(.secondary)
+                        SecureField("Access token", text: $token)
+                            .textInputAutocapitalization(.never)
+                            .autocorrectionDisabled()
+                        Button("Save the token") {
+                            shelf.setToken(token)
+                            token = ""
+                        }
+                        .disabled(token.trimmingCharacters(in: .whitespaces).isEmpty)
+                    }
+                    if pending {
+                        Label("Files are still on their way into this vault. Send it when they are in.", systemImage: "clock")
+                            .font(.callout)
+                    }
+                    if let busy = shelf.busy {
+                        HStack(spacing: 12) {
+                            ProgressView()
+                            Text(busy)
+                        }
+                    }
+                    if let problem = shelf.problem { ProblemLabel(text: problem) }
+                    Button("Send the vault to \(shelf.serverName)", systemImage: "arrow.up.circle") {
+                        Task { await shelf.sendToServer(vault, pending: pending) }
+                    }
+                    .disabled(!shelf.hasToken || pending || shelf.busy != nil)
+                } header: {
+                    Text("First, put it on a server")
+                }
+            }
             if vault.canWrite {
                 Section {
                     Label {
