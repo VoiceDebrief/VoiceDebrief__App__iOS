@@ -6,6 +6,7 @@ struct LabView: View {
 
     var body: some View {
         List {
+            SectionBannerRow(tab: .lab)
             Section {
                 NavigationLink {
                     LabOnePromptView(store: store)

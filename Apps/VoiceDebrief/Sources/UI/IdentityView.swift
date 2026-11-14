@@ -17,6 +17,7 @@ struct IdentityView: View {
     var body: some View {
         List {
             userSection
+            SectionBannerRow(tab: .identity)
             deviceSection
             vouchingSection
             registerSection

@@ -148,12 +148,13 @@ struct SectionHero: View {
     let tab: RootTab
     var title: String?
     var line: String?
+    var height: CGFloat = 150
 
     var body: some View {
         Image(tab.art)
             .resizable()
             .scaledToFill()
-            .frame(height: 150)
+            .frame(height: height)
             .frame(maxWidth: .infinity)
             .clipped()
             .overlay(alignment: .bottomLeading) {
@@ -167,5 +168,48 @@ struct SectionHero: View {
             }
             .clipShape(RoundedRectangle(cornerRadius: DS.Radius.hero, style: .continuous))
             .accessibilityElement(children: .combine)
+    }
+}
+
+/// Nothing here yet: the section's drawing, what will be here, and how it gets here.
+struct DSEmptyState: View {
+    let tab: RootTab
+    let title: String
+    let message: String
+
+    var body: some View {
+        VStack(spacing: DS.Space.m) {
+            Image(tab.art)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 220, height: 165)
+                .clipShape(RoundedRectangle(cornerRadius: DS.Radius.hero, style: .continuous))
+                .accessibilityHidden(true)
+            VStack(spacing: DS.Space.xs) {
+                Text(title).font(DS.TypeScale.title)
+                Text(message)
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+            }
+        }
+        .padding(DS.Space.l)
+        .frame(maxWidth: 420)
+        .accessibilityElement(children: .combine)
+    }
+}
+
+/// The first row of a section's list: its banner, edge to edge in the row, with no row background.
+/// Put it first inside the section's `List` or `Form`.
+struct SectionBannerRow: View {
+    let tab: RootTab
+    var line: String?
+
+    var body: some View {
+        Section {
+            SectionHero(tab: tab, line: line, height: 128)
+                .listRowInsets(EdgeInsets())
+                .listRowBackground(Color.clear)
+        }
     }
 }

@@ -5,6 +5,7 @@ struct StatusView: View {
     var body: some View {
         Group {
             List {
+                SectionBannerRow(tab: .about)
                 Section {
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Voice note in, transcript and debrief out, on this device.")
