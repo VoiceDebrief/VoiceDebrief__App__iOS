@@ -12,3 +12,5 @@ it runs out.
 To do: either mark the counter as a test where it is shown (a word, or a different look from money), or keep it
 off the record screen until charging is real. The Credit screen's opening sentence could also state the starting
 balance, which is nowhere on it.
+
+Round 2: unchanged, and reported again by all three users who see the record screen. One asked whether recording stops when it reaches zero.

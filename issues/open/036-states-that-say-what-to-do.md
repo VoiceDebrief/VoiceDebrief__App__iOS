@@ -21,3 +21,5 @@ Small things that left a user without a next step or with a wrong reading:
 - The language is "en-GB" on Settings and in the toolbar, and "English (United Kingdom)" on a note.
 - "1 lines" under Transcript. "Machine arm64" on Diagnostics is not a device model on a simulator; check what a
   device shows.
+
+Round 2: fixed in the main. Left: a Library title cut in the middle of a word where Recent cuts at a word; a time just after midnight printed "0:03" beside a length; lengths as "49.0 s" in a row and "00:49" in the player; an interrupted row with no length; "Transcribe and debrief again" and the transcript hint on a note that has no transcript; nothing while recording that says how much is saved so far.

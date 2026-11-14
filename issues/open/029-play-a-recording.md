@@ -13,3 +13,5 @@ no player either. A person who has lost a recording does not believe a sentence;
 To do: a player on every note that has audio (the design's build B), and for a note with no transcript at least
 the audio's length and size, so that "kept" can be checked. Playing a note's audio is listed as proposed in the
 reality file; this finding is the case for doing it before anything else on the note screen.
+
+Round 2 (14 November 2026): seen fixed in the pictures. A player with length and size on every note with audio, including an interrupted one. Left open for the owning session to close.

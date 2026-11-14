@@ -13,3 +13,5 @@ experiment to find it.
 
 To do: the one sentence as the note's heading (the date beneath it), then key points and actions; the clean
 text experiment below the debrief or behind one row; leave room so the send bar does not cover the last line.
+
+Round 2 (14 November 2026): seen fixed in the pictures. The one sentence is the heading; the clean text is below the transcript. The send bar covering the key points is carried in issue 031. Left open for the owning session to close.

@@ -19,3 +19,5 @@ one signed commit") to mean the note was not yet safe. What the privacy user cou
 Also: the address filled in for a new server ("https://dev.send.sgraph.ai", in the same dark text as a saved
 row, directly under the saved server) reads as a second server; and "sgit clone followed by this key" gives no
 command and is true only once the vault is on a server.
+
+Round 2: unchanged. Added: the switch "Save each finished note to a vault" does not say where that vault is or whether one with a server sends by itself; neither a note nor the confirmation before deleting says whether the note is in a vault; no one place lists everything that can leave the phone, and backups are not mentioned.

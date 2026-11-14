@@ -60,6 +60,8 @@ const PAGES = [
     description: 'Rounds of reading pictures of every screen: what is plainly wrong, what synthetic users expected and found, and the status of each finding.' },
   { path: 'reviews/round-1', nav: null, title: 'Review, round 1: the first sight of every screen',
     description: 'The first pictures of every screen of VoiceDebrief for iOS, read by the agent that made them and by four synthetic users: 21 findings and ten issues.' },
+  { path: 'reviews/round-2', nav: null, title: 'Review, round 2: what the fixes changed',
+    description: 'The same four synthetic users on new pictures after the fixes: which of round 1\'s findings are fixed, which are not, who changed their mind, and twelve new findings.' },
   { path: 'develop',  nav: 'Build',    title: 'Build, test and release VoiceDebrief for iOS',
     description: 'How the repository is laid out, how CI compiles and tests the app on a Mac, how the site is built, and how a release is made.' },
   { path: 'versions', nav: null,       title: 'VoiceDebrief for iOS release history',

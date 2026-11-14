@@ -42,6 +42,9 @@ Every page has a markdown twin: replace index.html with index.md.
 - https://ios.app.voicedebrief.ai/reviews/round-1/index.html : round 1 (13 November 2026): what is
   plainly wrong, four synthetic users (a driver, a careful reader of privacy, a developer, someone
   who lost a recording), 21 findings with their owners, issues 029 to 038.
+- https://ios.app.voicedebrief.ai/reviews/round-2/index.html : round 2 (14 November 2026): the same
+  four users after the fixes. Each round 1 finding marked fixed, fixed in part or unchanged; two
+  users changed their minds; twelve new findings; issues 039 to 041.
 - https://ios.app.voicedebrief.ai/identity/return/index.html : not documentation. The page pki.sgit.ai
   sends a person back to after they vouch for the app on a device; it says how to hand the answer in
   the address to the app. No script: the answer stays in the address.

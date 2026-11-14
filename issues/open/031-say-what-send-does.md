@@ -18,3 +18,5 @@ sends the audio and the words, encrypted to their key"); name the built-in recip
 build, in lower case ("the developer of this test build"); once a person has added a recipient of their own,
 put that one first. Consider not offering the built-in recipient as the primary control until it has been used
 once on purpose.
+
+Round 2: fixed in the main (the name, the quieter look, the line saying what goes and that it asks first, not shown on an interrupted note). Left: the confirmation names the key but not the server, who the developer is, or how long a sent note is kept; the bar and its small print cover about a fifth of an iPhone screen; the "Add" control is cut off at the right edge; "The developer" has a capital in the queued-send line.

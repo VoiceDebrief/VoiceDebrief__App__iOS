@@ -14,3 +14,5 @@ lose a recording".
 To do: let a recording start whatever the pipeline is doing. The session takes one note through the pipeline at
 a time, so this needs a queue of notes waiting to be processed, or a recording that waits its turn. If it cannot
 be done at once, say how long is left and keep the control its normal colour.
+
+Round 2 (14 November 2026): seen fixed in the pictures. The control stays live, the caption counts the notes waiting, a waiting row says so. Left open for the owning session to close.

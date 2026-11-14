@@ -39,6 +39,9 @@ One file per piece of work: `open/NNN-slug.md`, moved to `done/` when it is done
 | 036 | States that say what to do next | the main session |
 | 037 | A vault, for someone who has never met one | the session that owns the vaults |
 | 038 | What the pictures could not show; round 2 | the screens session |
+| 039 | A copy off the phone that anyone can make | the main session; the vaults session |
+| 040 | A way to say no in each confirmation | the main session; a device |
+| 041 | Diagnostics describes a pasted lane that nothing uses | the main session |
 | 100 | The sgit app, milestone one | a device and the live server |
 | 102 | Prove the sgit app's large files against the live server | 100 on a device |
 | 103 | The sgit app after milestone one | 100; 011 and 017 |

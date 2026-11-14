@@ -14,3 +14,5 @@ To do: in each request row, where it went (the server's host, or "this device"),
 day; group rows under the action that caused them; in the totals, count the device and each server apart, and
 add what was uploaded. Timings under a millisecond should not print as "0 ms". Sending a note to a recipient
 makes requests too and they appear in no log: see issues 013 and 020.
+
+Round 2: unchanged. "Requests 18, Downloaded 1.6 MB" on a vault that needs no network; the privacy user noticed that 1.6 MB is the size of the recording.

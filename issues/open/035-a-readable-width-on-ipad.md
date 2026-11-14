@@ -13,3 +13,5 @@ width, as the design asks of every screen ("so that a wide window is not a stret
 
 To do: one modifier, used by every list, that holds content to a readable width and centres it; file paths in
 a vault should break at a slash, not in the middle of a name.
+
+Round 2: fixed for a note, the Library and Settings. The Vaults screens remain.
