@@ -41,10 +41,14 @@ final class VoiceRecorder {
     }
 
     /// How loud the microphone is now, from 0 (silence) to 1. Zero when not recording.
-    func level() -> Double {
-        guard let recorder, recorder.isRecording else { return 0 }
+    func level() -> Double { VoiceRecorder.level(decibels: decibels()) }
+
+    /// The meter's last reading in decibels: 0 is full scale, a quiet room is about -60, and -160 is
+    /// nothing at all reaching the microphone.
+    func decibels() -> Double {
+        guard let recorder, recorder.isRecording else { return -160 }
         recorder.updateMeters()
-        return VoiceRecorder.level(decibels: Double(recorder.averagePower(forChannel: 0)))
+        return Double(recorder.averagePower(forChannel: 0))
     }
 
     /// The meter's decibels (0 is full scale, about -55 is a quiet room) as 0 to 1, on a curve, so that
