@@ -1,13 +1,12 @@
 import CryptoKit
 import Foundation
+import SGitPeople
 
 /// The developer's lane, as in VoiceDebrief (`Apps/VoiceDebrief/Sources/Engine/DeveloperLane.swift`, copied
 /// 14 November 2026 without the part that packs a voice note). An sgit append lane is a write-only
 /// channel on a vault server: what is sent is encrypted on this device to the developer's public key,
 /// so the server stores bytes it cannot read. Nothing is sent without a button.
-///
-/// This copy, and `LaneCrypto.swift` beside it, go when the shared package `SGitPeople` gives both apps
-/// one implementation.
+/// The encryption is `LaneCrypto` in the shared package `SGitPeople`.
 struct DeveloperLane: Equatable, Sendable {
     let vault: String
     let token: String

@@ -48,6 +48,7 @@ struct CreditView: View {
     var body: some View {
         List {
             balance
+            SectionBannerRow(tab: .credit)
             topUp
             Section {
                 NavigationLink("Takings by feature") { TakingsView() }

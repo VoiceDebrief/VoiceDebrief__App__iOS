@@ -16,6 +16,7 @@ struct RecipientsView: View {
 
     var body: some View {
         Form {
+            SectionBannerRow(tab: .contacts)
             Section {
                 ForEach(recipients.all) { recipient in
                     NavigationLink {

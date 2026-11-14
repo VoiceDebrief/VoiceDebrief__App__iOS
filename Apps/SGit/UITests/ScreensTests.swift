@@ -13,7 +13,8 @@ final class ScreensTests: XCTestCase {
     static let shots = ["vaults", "vaults-empty", "create", "add", "vault", "vault.folder", "vault.list",
                         "file", "share", "history", "commit", "settings", "gallery",
                         "create-nokey", "vault.local", "vault.adding-adding", "share.key",
-                        "vault.adding-refused", "vault-dark", "share.key-dark", "vault-large", "share-large"]
+                        "vault.adding-refused", "vault-dark", "share.key-dark", "vault-large", "share-large",
+                        "secrets", "secret", "questions"]
 
     @MainActor func test01_vaults() { shoot("vaults") }
     @MainActor func test02_vaults_empty() { shoot("vaults", set: "empty") }
@@ -39,9 +40,13 @@ final class ScreensTests: XCTestCase {
     @MainActor func test20_share_key_dark() { shoot("share.key", look: "dark") }
     @MainActor func test21_vault_large() { shoot("vault", look: "large", wait: 6) }
     @MainActor func test22_share_large() { shoot("share", look: "large") }
+    // The secrets manager (issues 120, 121).
+    @MainActor func test23_secrets() { shoot("secrets", wait: 8) }
+    @MainActor func test24_secret() { shoot("secret", wait: 8) }
+    @MainActor func test25_questions() { shoot("questions") }
 
     func testTheListMatchesTheTestMethods() {
-        XCTAssertEqual(Self.shots.count, 22)
+        XCTAssertEqual(Self.shots.count, 25)
         XCTAssertEqual(Set(Self.shots).count, Self.shots.count)
     }
 
