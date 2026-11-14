@@ -72,7 +72,7 @@ struct CommitView: View {
                 if let fingerprint {
                     LabeledContent("Fingerprint", value: VaultNaming.grouped(fingerprint))
                     if fingerprint == shelf.deviceFingerprint {
-                        Label("This device's key", systemImage: "iphone").font(.callout)
+                        Label("This device's key", systemImage: "checkmark.shield").font(.callout)
                     }
                 }
             } header: {

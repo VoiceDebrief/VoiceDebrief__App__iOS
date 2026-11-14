@@ -67,7 +67,7 @@ struct VaultsView: View {
                 Button("Add a vault by its key", systemImage: "key") { adding = true }
                 Button("Create a vault", systemImage: "plus.square") { creating = true }
             } footer: {
-                Text("A vault you create is kept on this device and needs no account, no token and no network. It goes to a server when you choose to share it.")
+                Text("A vault you create is kept on this device and needs no account, no access key and no network. It goes to a server when you choose to share it.")
             }
         }
         .navigationTitle("sgit")

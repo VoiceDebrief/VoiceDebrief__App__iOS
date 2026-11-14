@@ -178,6 +178,7 @@ struct VaultView: View {
                             .buttonStyle(.plain)
                     } else {
                         NavigationLink(value: FolderRoute(vault: vault, folder: entry.path)) { FolderRow(entry: entry) }
+                            .buttonStyle(.plain)
                     }
                 }
                 if asList {
@@ -186,18 +187,20 @@ struct VaultView: View {
                             FileRow(shelf: shelf, vault: vault, file: file)
                                 .padding(.horizontal)
                         }
+                        .buttonStyle(.plain)
                         .onDrag { shelf.itemProvider(for: file, in: vault) }
                     }
                 } else {
-                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 104), spacing: 6)], spacing: 6) {
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 104, maximum: 180), spacing: 8)], alignment: .leading, spacing: 10) {
                         ForEach(listing.files) { file in
                             NavigationLink(value: FileRoute(vault: vault, file: file)) {
                                 FileTile(shelf: shelf, vault: vault, file: file)
                             }
+                            .buttonStyle(.plain)
                             .onDrag { shelf.itemProvider(for: file, in: vault) }
                         }
                     }
-                    .padding(.horizontal, 6)
+                    .padding(.horizontal, 12)
                 }
                 if let contents, here.isEmpty {
                     Text(Self.summary(contents))
@@ -397,16 +400,19 @@ struct FileTile: View {
 
     var body: some View {
         VStack(spacing: 4) {
-            ZStack {
-                Rectangle().fill(.quaternary)
-                if let image {
-                    Image(uiImage: image).resizable().scaledToFill()
-                } else {
-                    Image(systemName: FileRow.icon(for: file.path)).font(.largeTitle).foregroundStyle(.secondary)
+            // A square that takes its size from the grid, with the picture laid over it and cut to it:
+            // a picture given the square's frame directly pushes the tile wider than its column.
+            Color.clear
+                .aspectRatio(1, contentMode: .fit)
+                .overlay {
+                    if let image {
+                        Image(uiImage: image).resizable().scaledToFill()
+                    } else {
+                        Image(systemName: FileRow.icon(for: file.path)).font(.largeTitle).foregroundStyle(.secondary)
+                    }
                 }
-            }
-            .aspectRatio(1, contentMode: .fit)
-            .clipShape(RoundedRectangle(cornerRadius: 8))
+                .background(.quaternary)
+                .clipShape(RoundedRectangle(cornerRadius: 8))
             Text(VaultListing.name(of: file.path))
                 .font(.caption2)
                 .lineLimit(1)
@@ -428,16 +434,17 @@ struct FileRow: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 6).fill(.quaternary)
-                if let image {
-                    Image(uiImage: image).resizable().scaledToFill()
-                } else {
-                    Image(systemName: Self.icon(for: file.path)).foregroundStyle(.secondary)
+            Color.clear
+                .frame(width: 44, height: 44)
+                .overlay {
+                    if let image {
+                        Image(uiImage: image).resizable().scaledToFill()
+                    } else {
+                        Image(systemName: Self.icon(for: file.path)).foregroundStyle(.secondary)
+                    }
                 }
-            }
-            .frame(width: 44, height: 44)
-            .clipShape(RoundedRectangle(cornerRadius: 6))
+                .background(.quaternary)
+                .clipShape(RoundedRectangle(cornerRadius: 6))
             VStack(alignment: .leading, spacing: 2) {
                 Text(VaultListing.name(of: file.path)).lineLimit(1).truncationMode(.middle).foregroundStyle(.primary)
                 Text(file.size.fileSizeText).font(.footnote).foregroundStyle(.secondary)
