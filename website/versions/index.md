@@ -4,6 +4,7 @@ Every release of this repository. Every push to `dev` is a release: CI works out
 
 | Version | Date | What changed |
 |---|---|---|
+| next | 14 November 2026 | The Lab's control centre shows more of what it is doing, after the owner tried it ("really cool") and asked to see everything being heard and to follow the flow. While it listens, a strip at the top shows the words as they arrive, the ones that may still change in grey. Below, every sentence heard has its own numbered card, newest first, whether or not it led to an action: what was heard, what the fixed phrases made of it and which phrase it was, what the model made of it and how long it took, what was proposed, and what happened. |
 | v0.1.95 | 14 November 2026 | External TestFlight: the newest build replaces any still waiting for Apple's Beta App Review (the waiting one is expired), at the owner's direction; a build already in review is left to finish. |
 | v0.1.94 | 14 November 2026 | Play is a section of its own in the sidebar (after Agents), with the voice games that were in the Lab as L03, at the owner's request ("brilliant; make them a top-level item"). L03 stays in the Lab too. |
 | v0.1.93 | 14 November 2026 | Command-Return sends: in the picture sheet, the Talk banner and an agent's message box, at the owner's request. |
