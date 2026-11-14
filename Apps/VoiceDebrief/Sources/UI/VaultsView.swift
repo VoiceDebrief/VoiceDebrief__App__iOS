@@ -25,14 +25,15 @@ struct VaultsView: View {
                     }
                     ForEach(book.vaults) { vault in
                         NavigationLink(value: vault) {
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(vault.name)
-                                Text("\(vault.id) · \(vault.canWrite ? "read and write" : "read only")")
-                                    .font(.footnote.monospaced())
-                                    .foregroundStyle(.secondary)
-                                Text(book.status(of: vault))
-                                    .font(.footnote)
-                                    .foregroundStyle(vault.pushProblem == nil ? Color.secondary : Color.red)
+                            HStack(alignment: .top, spacing: DS.Space.s) {
+                                DSIconBadge(symbol: vault.canWrite ? "lock.shield.fill" : "eye.fill", tint: DS.Palette.indigo, size: 36)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(vault.name)
+                                    Text("\(vault.id) · \(vault.canWrite ? "read and write" : "read only")")
+                                        .font(.footnote.monospaced())
+                                        .foregroundStyle(.secondary)
+                                    VaultPlaceLabel(place: VaultPlace.of(book.current(vault)), text: book.status(of: vault))
+                                }
                             }
                         }
                     }
@@ -568,5 +569,29 @@ struct SaveToVaultSection: View {
         } catch {
             problem = VaultBook.describe(error)
         }
+    }
+}
+
+/// A vault's status line with the symbol and colour of where it is. The words are the status line's own.
+struct VaultPlaceLabel: View {
+    let place: VaultPlace
+    let text: String
+
+    private var look: (symbol: String, tint: Color) {
+        switch place {
+        case .thisDeviceOnly: (Icon.onDevice, .secondary)
+        case .anotherDevice: ("laptopcomputer.and.iphone", .secondary)
+        case .serverOnly: ("server.rack", DS.Palette.indigo)
+        case .notYetPushed: ("arrow.up.circle", DS.Palette.amber)
+        case .ahead: ("arrow.up.circle.fill", DS.Palette.amber)
+        case .inStep: (Icon.done, DS.Palette.green)
+        case .pushFailed: (Icon.failed, DS.Palette.red)
+        }
+    }
+
+    var body: some View {
+        Label(text, systemImage: look.symbol)
+            .font(.footnote)
+            .foregroundStyle(look.tint)
     }
 }
