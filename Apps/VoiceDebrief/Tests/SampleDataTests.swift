@@ -68,6 +68,7 @@ struct SampleDataTests {
         let finishedId = try #require(world.noteIds[.finished])
         let finished = try #require(world.store.note(finishedId))
         #expect(finished.title.hasPrefix("Invented sample"))
+        #expect(finished.sends?.map(\.to) == [SampleData.recipientName])
         #expect(world.book.remotes.map(\.name) == [SampleData.serverName])
         #expect(world.book.localRoot.path.hasPrefix(world.root.path))
         #expect(world.book.localRoot != VaultBook.localFolder)
@@ -87,6 +88,12 @@ struct SampleDataTests {
         let world = SampleWorld(set: .full, screen: .noteQueued)
         let working = try #require(world.noteIds[.working])
         #expect(world.session.queuedSends[working] == RecipientStore.builtInName)
+    }
+
+    @Test func aNoteOnItsWayIsShownWithoutSendingAnything() {
+        let world = SampleWorld(set: .full, screen: .recordSending)
+        #expect(world.session.sendingTo == SampleData.recipientName)
+        #expect(world.session.phase == .idle)
     }
 
     @Test func theEmptySetIsEmpty() {

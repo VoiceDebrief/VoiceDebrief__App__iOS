@@ -54,6 +54,8 @@ const PAGES = [
     description: 'The page pki.sgit.ai sends a person back to after they vouch for the VoiceDebrief app on a device: how to hand the answer in the address to the app.' },
   { path: 'sgit-app/design', nav: null, title: 'The sgit app for iPhone, iPad and Mac: design for milestone one',
     description: 'sgit as a native app: put photos, videos and large files in an encrypted vault, browse them, share the vault and read its history. The jobs, the decisions, the screens, the share mechanisms and the limits.' },
+  { path: 'sgit-app/reviews/round-1', nav: null, title: 'The sgit app, review round 1: three people who were sent a key',
+    description: 'The first reading of the sgit app\'s screens by synthetic users: a teammate adding photos, an editor getting them onto a Mac, and someone who has never heard of a vault. Seventeen findings.' },
   { path: 'sgit-app/built', nav: null, title: 'What is built in the sgit app',
     description: 'The reality file for the sgit app: what exists, how it is tested, and what does not exist yet.' },
   { path: 'reviews', nav: null, title: 'Reviews of the VoiceDebrief iOS screens',

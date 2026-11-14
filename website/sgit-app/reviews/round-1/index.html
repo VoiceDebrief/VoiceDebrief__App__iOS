@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The sgit app, review round 1: three people who were sent a key</title>
+<meta name="description" content="The first reading of the sgit app's screens by synthetic users: a teammate adding photos, an editor getting them onto a Mac, and someone who has never heard of a vault. Seventeen findings.">
+<link rel="canonical" href="https://ios.app.voicedebrief.ai/sgit-app/reviews/round-1/index.html">
+<meta property="og:url" content="https://ios.app.voicedebrief.ai/sgit-app/reviews/round-1/index.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="VoiceDebrief for iOS">
+<meta property="og:title" content="The sgit app, review round 1: three people who were sent a key">
+<meta property="og:description" content="The first reading of the sgit app's screens by synthetic users: a teammate adding photos, an editor getting them onto a Mac, and someone who has never heard of a vault. Seventeen findings.">
+<link rel="alternate" type="text/markdown" href="index.md" title="This page as markdown">
+<link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../../assets/vd-tokens.css">
+<link rel="stylesheet" href="../../../assets/site.css">
+</head>
+<body>
+
+<nav class="site"><div class="row">
+  <a class="brand" href="../../../index.html">Voice<em>Debrief</em> <span>iOS</span></a>
+  <span class="beta" title="In development: there is nothing to install yet">IN DEVELOPMENT</span>
+  <a class="parent" href="https://voicedebrief.ai" title="A VoiceDebrief product">&#8599; part of <b>voicedebrief.ai</b></a>
+  <a class="ver" href="../../../versions/index.html" title="Release history">dev</a>
+  <a class="nl" href="../../../built/index.html">Built</a>
+  <a class="nl" href="../../../architecture/index.html">How it works</a>
+  <a class="nl" href="../../../design/index.html">Design</a>
+  <a class="nl" href="../../../plan/index.html">Plan</a>
+  <a class="nl" href="../../../articles/index.html">Articles</a>
+  <a class="nl" href="../../../develop/index.html">Build</a>
+  <a class="gh" href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">&#9733; GitHub</a>
+</div></nav>
+
+<main class="doc">
+<div class="crumb"><a href="../../../index.html">VoiceDebrief iOS</a> / sgit-app / reviews / round-1</div>
+<h1 id="the-sgit-app-review-round-1-three-people-who-were-sent-a-key">The sgit app, review round 1: three people who were sent a key</h1>
+<p>14 November 2026. The first reading of the sgit app's screens by people who did not build it. The method is the one used for <a href="../../../reviews/index.html">VoiceDebrief's screens</a>; what the app is meant to be is on <a href="../../design/index.html">its design page</a>, and what exists on <a href="../../built/index.html">its reality file</a>.</p>
+<h2 id="the-pictures">The pictures</h2>
+<p>Run 4 of the workflow <code>sgit app screens</code>, at commit <code>695fd02</code> on the branch <code>work/sgit-app-share</code>: twelve screens on one iPhone and one iPad, light appearance, in the artifacts <code>sgit-screens-iPhone</code> and <code>sgit-screens-iPad</code>. The run asked for, on <code>dev</code> at <code>0b4852a</code>, was still waiting for a Mac; the screens' code is the same in the two commits (no file under <code>Apps/SGit/Sources/UI</code> differs), and the three layout fixes that followed the first pictures are in both. Everything shown is an invented vault in temporary folders.</p>
+<p><img class="shot" src="contact-iphone-light.jpg" alt="The twelve screens on iPhone as one contact sheet" loading="lazy"></p>
+<p><img class="shot" src="contact-ipad-light.jpg" alt="The twelve screens on iPad as one contact sheet" loading="lazy"></p>
+<h2 id="method">Method</h2>
+<p>The agent looked first. Then three synthetic users, each a separate agent given a persona, a task and only the iPhone pictures that person would see: no source code, no documentation. Each said what they would tap and what they expected, where they stopped and where the next picture disagreed. What they reported was checked against the code before it was written here; where a user guessed at a screen that was not pictured, the code says what is really there and this page says so.</p>
+<h2 id="what-is-plainly-wrong-before-any-user">What is plainly wrong, before any user</h2>
+<ul>
+<li><strong>The Create sheet is pictured in one state, and not the one that mattered.</strong> It shows &quot;Put it on the server, to share it&quot; switched on and &quot;Access key: In the Keychain&quot;. The owner's first report was of a Create sheet that demanded an access key. The fix (a vault is made on the device, with no key) cannot be judged from this picture, because the sample holds an access key: the sheet a person sees on a first launch, with none, is not pictured.</li>
+<li><strong>Two screens disagree.</strong> The first screen says a vault you create &quot;needs no account, no access key and no network&quot;. The Create sheet, one tap later, shows a server switch that is on and an access key.</li>
+<li><strong>The first sentence under the name field is for an engineer</strong>: &quot;A new vault is a random key, an empty folder and one signed commit&quot;.</li>
+<li><strong>On iPad, lists are as wide as the window</strong>: the list of vaults, History, a commit and Settings run from edge to edge. A folder's tiles stay phone-sized in a wide window.</li>
+<li><strong>The two controls at the top of a vault are symbols with no words</strong>, a plus and three dots, and nothing behind either is pictured. Sharing and History are both behind the dots.</li>
+<li><strong>A vault's row reads &quot;ibbbo1kt · read and write · on dev.send.sgraph.ai&quot;</strong> in typewriter text, and wraps on an iPhone.</li>
+<li><strong>Nothing is clipped or overlapping.</strong> Thumbnails stay inside their tiles and a file's picture leaves room for its actions, as the fixes intended.</li>
+</ul>
+<h2 id="the-three-users">The three users</h2>
+<h3 id="a-teammate-at-the-summit-who-was-sent-a-vault-key">A teammate at the summit who was sent a vault key</h3>
+<p>Task: get into the team's vault with what a colleague sent, add twenty photos and a two-minute video to the right folder, be sure they arrived, and look at a colleague's photo.</p>
+<p>Got in at once: &quot;Add a vault by its key&quot; were the colleague's own words, and the first screen's two sentences on what a vault is were enough. Found the folders and a colleague's photo without thought. Then stopped at Settings: &quot;Creating a vault or changing one also needs an access key&quot;. The colleague sent one string. Could not tell whether adding photos was possible at all. Tapping the plus, expected a choice of Photos or Files and a count while it worked; no picture shows either. Could not complete &quot;be sure they arrived&quot;: no screen says whether what is shown is up to date or whether an addition has reached the server. Looked in History for a name and found codes and &quot;Signature verified&quot;.</p>
+<h3 id="the-person-who-edits-the-video-on-a-mac">The person who edits the video, on a Mac</h3>
+<p>Task: see what the team added today and who added it; get the stage folder, with a large video, onto a Mac at full quality; give a freelance designer a look without the power to change anything; and learn what each kind of access gives away.</p>
+<p>Called the share sheet &quot;unusually honest&quot;: it says plainly what a vault key and a read key each allow, and that neither can be taken back. Could answer when and what from History and a commit, and not who: a change carries a key's fingerprint, and the screen itself says &quot;nothing in the vault yet ties a key to a name&quot;. Found two ways to a Mac, both one file at a time (Share, and Save to Photos), and no way to take a folder; nothing says either hands over the original. The route that would give everything, &quot;the sgit command&quot;, is named and never explained. A designer on a laptop is stuck: the read key &quot;does not yet&quot; open in the web Vault UI.</p>
+<h3 id="someone-organising-a-family-reunion-who-has-never-heard-of-a-vault">Someone organising a family reunion who has never heard of a vault</h3>
+<p>Task: understand what the app is for, make a place for the weekend's photos, send the family the way in, and decide whether it is private and what happens if the phone is lost.</p>
+<p>Understood &quot;Create a vault&quot; as &quot;make a place&quot; and believed it was private from &quot;encrypted on this device before anything leaves it&quot;. Was stopped by &quot;Access key: In the Keychain&quot; on the Create sheet: &quot;am I someone it knows? I never signed up&quot;. Could not find how to send the way in from the vault (it is behind the three dots), and at the share sheet found a warning and &quot;Show the vault key&quot; where an invitation was expected: nothing says what an aunt does with a key. Was frightened by &quot;It cannot be taken back&quot; and by any relative being able to delete everybody's photos. Found nothing anywhere about a lost phone.</p>
+<p>Would not use it for the reunion. The deciding thing: a key that cannot be taken back and lets anyone delete everything, with no word on how the family uses it to get in.</p>
+<h2 id="findings">Findings</h2>
+<p>Most serious first. &quot;Who&quot; is T (the teammate), M (the editor on a Mac), F (the family organiser), A (the agent). Every finding is for the sgit app session; &quot;checked&quot; says what the code shows.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>#</th><th>Screen</th><th>Who</th><th>Finding</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td>1</td><td><code>settings</code>, <code>add</code></td><td>T, F</td><td>A person sent a vault key cannot add to a vault on the server without a second thing, an access key, and nothing they were sent or shown says where one comes from. Checked: writing to a server vault without one fails with &quot;writing to it needs an access key. Add one in Settings&quot;. This is the app's first job, a teammate adding photos, and it stops here</td><td>open, issue 110</td></tr>
+<tr><td>2</td><td><code>vault</code>, <code>vault.folder</code>, <code>vault.list</code></td><td>T</td><td>Nothing says whether an addition has reached the server, or whether what is shown is the latest. The design promises that no screen says a file is in the vault before its commit is pushed and read back; no picture shows a file on its way, so neither the promise nor its opposite can be seen</td><td>open, issue 111</td></tr>
+<tr><td>3</td><td><code>history</code>, <code>commit</code></td><td>M, T</td><td>&quot;Who added it&quot; cannot be answered. A change shows a key's id and fingerprint and whether it is this device's; no person, no device name. The commit screen says so itself</td><td>open, issue 112</td></tr>
+<tr><td>4</td><td><code>share</code>, <code>vault</code></td><td>F, M</td><td>Sharing is written for someone who knows what a key is. It says what a key allows and not what the person receiving it does with it. The way to it is behind three dots. Checked: the sheet does have a link that opens the vault in a browser, a button that copies the key and a QR code, none of them pictured; the family organiser saw only a warning and &quot;Show the vault key&quot;</td><td>open, issue 113</td></tr>
+<tr><td>5</td><td><code>share</code></td><td>F</td><td>Any holder of the vault key can delete everything and cannot be removed. For thirty relatives there is no &quot;may add, may not delete&quot;, and the only cure is a new vault. Said honestly on the screen; it still decided this user against the app. Issue 104 (a share that can be taken back) covers reading only</td><td>open, with issue 113</td></tr>
+<tr><td>6</td><td><code>settings</code>, <code>create</code></td><td>F</td><td>Nothing anywhere says what happens to a vault if the phone is lost. &quot;Its key is kept in this device's Keychain&quot; suggests it goes with the phone</td><td>open, with issue 113</td></tr>
+<tr><td>7</td><td><code>vault.folder</code>, <code>file</code></td><td>M</td><td>No way to take a folder out: a file at a time, by Share or Save to Photos, and nothing says either gives the original. The full route, the <code>sgit</code> command on a computer, is named on the share sheet with no command and no address</td><td>open, issue 114</td></tr>
+<tr><td>8</td><td><code>share</code></td><td>M</td><td>A read key cannot be used in a browser (&quot;the web Vault UI does not yet&quot;), so somebody on a laptop who should only look needs this app or the command line</td><td>open, with issue 114</td></tr>
+<tr><td>9</td><td><code>create</code></td><td>A, F</td><td>The Create sheet: the first-launch state is not pictured; the pictured state disagrees with the first screen about needing an access key; &quot;a random key, an empty folder and one signed commit&quot; is the first thing read; &quot;Name, for this device only&quot; left two users unsure what name others would see</td><td>open, issue 115</td></tr>
+<tr><td>10</td><td><code>settings</code>, <code>share</code>, <code>add</code>, <code>vaults</code></td><td>M, T, F</td><td>Four keys with near names: vault key, read key, access key, this device's signing key. &quot;Add a vault by its key&quot; does not say which; the add field offers three kinds at once. A row's subtitle is an id, an access level and a server name. &quot;Remove the access key&quot; is red and says nothing of what follows</td><td>open, issue 115</td></tr>
+<tr><td>11</td><td><code>vault</code></td><td>A, M, T</td><td>The plus and the three dots carry no words. Checked: the plus holds &quot;Photos and videos&quot;, &quot;Files&quot; and &quot;New folder&quot;; the dots hold &quot;Share the vault&quot;, &quot;History&quot; and &quot;Refresh&quot;. Three users guessed; two guessed right</td><td>open, with issue 115</td></tr>
+<tr><td>12</td><td><code>settings</code></td><td>T</td><td>&quot;Convert to JPEG and H.264 when adding&quot; is off, explained with &quot;HEIC and HEVC&quot; and &quot;not every browser can show it&quot;. A person adding photos for a colleague cannot tell which setting lets the colleague see them</td><td>open, with issue 115</td></tr>
+<tr><td>13</td><td>all lists on iPad</td><td>A</td><td>Lists as wide as the window on iPad; tiles phone-sized</td><td>open, with issue 115</td></tr>
+<tr><td>14</td><td><code>file</code>, <code>history</code>, <code>commit</code></td><td>T, M</td><td>Small things: a photo needs a second tap, &quot;Open&quot;, to fill the screen; &quot;The decrypted copy is in this app's cache&quot; reads as a warning; History has no days and a commit's title is a hash; a grid in one folder and a list in another with no visible switch</td><td>open, with issue 115</td></tr>
+<tr><td>15</td><td>the pictures</td><td>A, T, M, F</td><td>What this round could not see: the Create sheet with no access key; what the plus and the dots open; the picker; a file on its way, and one that failed; a key shown, with its link and QR code; a video opened; a vault on this device only</td><td>open, issue 116</td></tr>
+<tr><td>16</td><td><code>commit</code>, <code>settings</code></td><td>M</td><td>The signing key's fingerprint differs between two screens</td><td>not a fault: each picture is a separate launch with a new key</td></tr>
+<tr><td>17</td><td><code>vault</code>, <code>history</code></td><td>M</td><td>&quot;last change at 3:46&quot; on one screen and 3:47 on another</td><td>not a fault: separate launches</td></tr>
+</tbody></table></div>
+<h2 id="what-worked">What worked</h2>
+<p>Said without being asked: the first screen explains a vault in two plain sentences, and &quot;Add a vault by its key&quot; matched the words a colleague would use; folders, thumbnails, sizes, &quot;Save to Photos&quot; and &quot;Share&quot; read like the Files and Photos apps; &quot;What changed&quot; in a commit, with a plus beside each file, was understood at once; and the share sheet's account of what each key gives away, and that it cannot be taken back, was called unusually honest by the user best placed to judge it.</p>
+</main>
+
+<footer class="site"><div class="cols">
+  <div>
+    <div class="brandline">Voice<em>Debrief</em> <span>iOS</span></div>
+    <p>The VoiceDebrief transcript and debrief as a native iPhone and iPad app, on Apple's own models, with the results in a vault you own. In development: there is nothing to install yet. Content CC BY 4.0; code Apache 2.0.</p>
+    <p class="partnote">This site is static and has no analytics.</p>
+    <p class="verline">site dev · <a href="index.md">this page as markdown</a> · <a href="../../../llms.txt">llms.txt</a></p>
+  </div>
+  <div>
+    <h4>The app</h4>
+    <a href="../../../built/index.html">What is built</a>
+    <a href="../../../plan/index.html">The plan</a>
+    <a href="../../../develop/index.html">Build and test</a>
+    <a href="../../../versions/index.html">Release history</a>
+    <a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">GitHub</a>
+  </div>
+  <div>
+    <h4>VoiceDebrief</h4>
+    <a href="https://voicedebrief.ai">voicedebrief.ai</a>
+    <a href="https://meetscribe.chrome-extension.voicedebrief.ai">MeetScribe for Google Meet</a>
+  </div>
+  <div>
+    <h4>Built on</h4>
+    <a href="https://sgit.ai">sgit.ai</a>
+    <a href="https://pki.sgit.ai">pki.sgit.ai</a>
+    <a href="https://sgit.ai/security/index.html">The vault security model</a>
+  </div>
+</div></footer>
+</body>
+</html>

@@ -20,6 +20,7 @@ final class SampleWorld {
         guard let set = LaunchOptions.sampleSet() else { return nil }
         let world = SampleWorld(set: set, screen: LaunchOptions.screen() ?? .record, root: LaunchOptions.sampleRoot)
         SampleNetwork.start()
+        world.addSampleRecipient()
         world.preparing = Task { await world.prepareVault() }
         return world
     }()
@@ -52,11 +53,16 @@ final class SampleWorld {
             store.update(made.note.id, run: sample.run, processing: sample.processing)
             ids[sample.kind] = made.note.id
         }
+        // The finished note was sent to somebody twenty minutes ago, so a note can show where it went.
+        if let finished = ids[.finished] {
+            store.recordSend(finished, to: SampleData.recipientName, at: now.addingTimeInterval(-20 * 60))
+        }
 
         if set == .full {
             switch screen {
             case .recordRecording:
                 session.showSample(phase: .recording(since: now.addingTimeInterval(-SampleData.recordingSeconds)),
+                                   recordingNote: ids[.recording],
                                    liveSettled: SampleData.liveSettled, liveVolatile: SampleData.liveVolatile,
                                    levels: SampleData.levels)
             case .library, .recordWorking, .noteWorking, .noteQueued:
@@ -66,6 +72,9 @@ final class SampleWorld {
                 if screen == .noteQueued, let id = ids[.working], let recipient = RecipientStore.shared.builtIn {
                     session.send(noteId: id, to: recipient)
                 }
+            case .recordSending:
+                // A note on its way to somebody, part 2 of 5. Nothing is sent: the network is off.
+                session.showSample(phase: .idle, sendingTo: SampleData.recipientName)
             default:
                 break
             }
@@ -86,6 +95,15 @@ final class SampleWorld {
         self.session = session
         self.book = book
         self.noteIds = ids
+    }
+
+    /// One invented recipient, kept in the sample's own recipients file. Her lane has an invented
+    /// vault and token and borrows the public key built into the test build, so the link is well
+    /// formed; no key is written here, and with the network off nothing can reach it.
+    func addSampleRecipient() {
+        guard set == .full, let key = DeveloperLane.builtInLink.split(separator: ".").last else { return }
+        let link = "sgi1.mariainvented." + String(repeating: "0", count: 16) + "." + key
+        RecipientStore.shared.add(name: SampleData.recipientName, text: link)
     }
 
     func noteId(for screen: LaunchScreen) -> String? {
