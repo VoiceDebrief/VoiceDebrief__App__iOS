@@ -4,7 +4,7 @@ Every release of this repository. Every push to `dev` is a release: CI works out
 
 | Version | Date | What changed |
 |---|---|---|
-| next | 14 November 2026 | Talking to Claude from any screen now shows what is being heard: a banner above the button with the live words, the time, the level and how to send, at the owner's request ("I need a visual clue, show me the text"). |
+| v0.1.85 | 14 November 2026 | Talking to Claude from any screen now shows what is being heard: a banner above the button with the live words, the time, the level and how to send, at the owner's request ("I need a visual clue, show me the text"). |
 | v0.1.84 | 14 November 2026 | The pictures of every screen: the picture of what the app asks before sending to the developer finds its button by a word in its name, after the button was renamed and the run failed with every picture taken. Nothing in the app has changed. |
 | v0.1.82 | 14 November 2026 | The sgit app draws who you trust: you in the middle, each person around you with their photo, the line solid when you both have each other's card and dashed when only you have theirs. From the map, make a shared vault for chosen people: the vault's key is sealed to each person's key and sent to their inbox, and the vault shows who it is shared with |
 | v0.1.82 | 14 November 2026 | The sgit app gains People: your card as a QR code, contacts you add by scanning (with a photo of the person, kept on your device), an inbox for sealed messages, and Keys and access under Secrets |
