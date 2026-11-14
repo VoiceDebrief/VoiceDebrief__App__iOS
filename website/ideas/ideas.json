@@ -29,8 +29,8 @@
  ],
  "counts": {
   "seen-working": 27,
-  "built-untried": 61,
-  "in-progress": 33,
+  "built-untried": 62,
+  "in-progress": 34,
   "proposed": 36,
   "parked": 6
  },
@@ -1021,6 +1021,34 @@
    ],
    "url": "https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/045-two-sentences-that-say-the-wrong-thing.md",
    "source": "A review by synthetic users"
+  },
+  {
+   "id": "issue-046",
+   "kind": "issue",
+   "number": "046",
+   "app": "VoiceDebrief",
+   "title": "The lab, second experiment (L02): the control centre",
+   "status": "in-progress",
+   "why": "The issue says: \"Built and in the Lab: sentences in (spoken, typed, or fourteen test sentences); two engines, the fixed phrases and the on-device model with one tool for each of...\"",
+   "summary": "Giving instructions is a different mode from thinking aloud. In a control mode the screen shows the actions and the reactions, not the transcript: an instruction is heard, an action is proposed, and the person says do it, not this, or edits it. No black magic: choose, see the pipeline, then trigger it. The phrases that trigger an action are listed and can be changed.",
+   "detail": [
+    "Giving instructions is a different mode from thinking aloud. In a control mode the screen shows the actions and the reactions, not the transcript: an instruction is heard, an action is proposed, and the person says do it, not this, or edits it. No black magic: choose, see the pipeline, then trigger it. The phrases that trigger an action are listed and can be changed.",
+    "Where it stands (14 November 2026)",
+    "Built and in the Lab: sentences in (spoken, typed, or fourteen test sentences); two engines, the fixed phrases and the on-device model with one tool for each of seven actions; a card for each proposal with its state and Do it, Not this, Edit; actions that may go ahead without asking; the phrase list, editable and kept on the device; a tally and a JSON log. Compiled and unit tested; never run against a model.",
+    "What it does not do yet",
+    "- It carries no action out. Do it records the choice. Wiring an action to the app (finish the recording, send, save, open a section) touches DebriefSession, RootView and the send path, which other sessions own. - The model is asked about every settled piece of speech, with no pause rule of its own and no state handed to it (whether a recording is running, who the recipients are). - Portuguese: the phrases and the test sentences are English only.",
+    "What decides the next step",
+    "The owner runs the test sentences on an iPhone, an iPad and a Mac and sends back the log. If the model proposes the right action often enough and fast enough, wire the actions that are safe to undo first. If it does not, the phrases are the engine and the model is not asked."
+   ],
+   "statusLine": "Status: open. From three voice notes the owner recorded while driving, 14 November 2026, relayed by the parent session. See the articles \"The lab\" and \"Two decision engines\".",
+   "places": [
+    "Settings: Recipients",
+    "Settings: Experiments, the Lab"
+   ],
+   "versions": [],
+   "features": [],
+   "url": "https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/046-lab-control-centre.md",
+   "source": "The owner's voice note"
   },
   {
    "id": "issue-100",
@@ -2485,14 +2513,32 @@
    "title": "The model door, first slice",
    "status": "built-untried",
    "why": "The reality file, Built: unverified: written, not yet proven by a run.",
-   "summary": "ModelDoor in Engine/LabModelDoor.swift: the one place the Lab's requests to the model are made, with a policy (which tools this request is offered) and a record (prompt, tool calls, answer, timings, the session's transcript). Only the Lab uses it; the debrief pipeline does not. Not a security boundary: one process, a way to organise and to see",
+   "summary": "ModelDoor in Engine/LabModelDoor.swift: the one place the Lab's requests to the model are made, with a policy (which tools this request is offered) and a record (prompt, tool calls, answer, timings, the session's transcript). Only the Lab uses it (L01 and L02, each with its own set of tools); the debrief pipeline does not. Not a security boundary: one process, a way to organise and to see",
    "detail": [
-    "ModelDoor in Engine/LabModelDoor.swift: the one place the Lab's requests to the model are made, with a policy (which tools this request is offered) and a record (prompt, tool calls, answer, timings, the session's transcript). Only the Lab uses it; the debrief pipeline does not. Not a security boundary: one process, a way to organise and to see",
+    "ModelDoor in Engine/LabModelDoor.swift: the one place the Lab's requests to the model are made, with a policy (which tools this request is offered) and a record (prompt, tool calls, answer, timings, the session's transcript). Only the Lab uses it (L01 and L02, each with its own set of tools); the debrief pipeline does not. Not a security boundary: one process, a way to organise and to see",
     "Unit tests: the policy offers only what it names, the recorder keeps calls in order, errors are sorted into plain words. The request itself is untested, as above"
    ],
    "places": [
     "Settings: Experiments, the Lab"
    ],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
+   "id": "feature-the-lab-experiment-l02-the-control-centre",
+   "kind": "feature",
+   "app": "VoiceDebrief",
+   "title": "The Lab, experiment L02: the control centre",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "UI/LabControlView.swift, Engine/LabControlCentre.swift, Model/LabControl.swift, reached from Settings, Lab: a sentence comes in (heard through the live words, typed, or one of fourteen test sentences) and two engines each say which of seven actions it asks for, or none: a list of fixed phrases that can be seen and changed and is kept on the device, and Apple's on-device model, asked one sentence...",
+   "detail": [
+    "UI/LabControlView.swift, Engine/LabControlCentre.swift, Model/LabControl.swift, reached from Settings, Lab: a sentence comes in (heard through the live words, typed, or one of fourteen test sentences) and two engines each say which of seven actions it asks for, or none: a list of fixed phrases that can be seen and changed and is kept on the device, and Apple's on-device model, asked one sentence at a time through the model door with one tool for each action. Each proposal is a card with its state (asking, waiting for you, done, not this) and Do it, Not this and Edit; an action can be marked to go ahead without asking. A tally of how often each engine proposed the right action and how long the model took, and the log exported as JSON, word for word. No action is carried out: nothing is recorded, sent, saved or opened, and the screen says so",
+    "Unit tests: the phrases (arguments, refusals, the longest phrase), the states and what each button does, the judging and the tally, the phrase list and the automatic marks kept across a reopen, the test sentences through the phrases alone (10 of 14 right), the log's JSON. No sentence has been put to a model, and listening has not been tried on a device: L01, which would show whether the model calls tools at all, has not been reported back either"
+   ],
+   "places": [],
    "issues": [],
    "url": "https://ios.app.voicedebrief.ai/built/index.html",
    "source": "The reality file",
