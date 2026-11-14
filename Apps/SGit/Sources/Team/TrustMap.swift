@@ -165,8 +165,15 @@ struct TrustMapView: View {
                 }
             }
             .frame(width: size, height: size)
+            // Opaque, so the lines drawn beneath stop at the edge instead of crossing the face or the initial.
+            .background(Circle().fill(Color(uiColor: .systemBackground)))
             .overlay(Circle().stroke(isMe ? Color.accentColor : .clear, lineWidth: 3))
-            Text(isMe ? "You" : name).font(.caption2).lineLimit(1).frame(maxWidth: 90)
+            Text(isMe ? "You" : name)
+                .font(.caption2)
+                .lineLimit(1)
+                .frame(maxWidth: 90)
+                .padding(.horizontal, 4)
+                .background(Capsule().fill(Color(uiColor: .systemBackground)))
         }
     }
 

@@ -69,13 +69,14 @@ struct VaultListing: Equatable, Sendable {
     }
 
     /// The files a person browses: not those in a hidden folder or with a hidden name (`.sgit/` holds
-    /// thumbnails and facts; `secrets/.my-secrets` marks a vault of secrets).
+    /// thumbnails and facts; `secrets/.my-secrets` marks a vault of secrets), and not the secrets themselves.
     static func visible(_ all: [VaultFile]) -> [VaultFile] {
         all.filter { isVisible($0.path) }
     }
 
     static func isVisible(_ path: String) -> Bool {
-        !path.split(separator: "/").contains { $0.hasPrefix(".") }
+        // A secret is shown only in Secrets, behind Face ID: opened as a file it would be decrypted into the cache.
+        !path.split(separator: "/").contains { $0.hasPrefix(".") } && !SecretEntry.isSecretPath(path)
     }
 
     /// Every file in a folder and beneath it; the whole vault for the empty folder.

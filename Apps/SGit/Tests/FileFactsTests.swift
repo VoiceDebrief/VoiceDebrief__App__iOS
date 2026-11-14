@@ -33,7 +33,7 @@ struct FileFactsTests {
     @Test func theLayoutIsKeyedByContentAndHiddenFromBrowsing() {
         #expect(FileFacts.thumbPath("abc") == ".sgit/thumbs/abc.jpg")
         #expect(FileFacts.metaPath("abc") == ".sgit/meta/abc.json")
-        let paths = [".sgit/thumbs/abc.jpg", "secrets/.my-secrets", "trip/a.jpg", "README.md"]
+        let paths = [".sgit/thumbs/abc.jpg", "secrets/.my-secrets", "secrets/1234.json", "trip/a.jpg", "README.md"]
         #expect(paths.filter(VaultListing.isVisible) == ["trip/a.jpg", "README.md"])
     }
 
