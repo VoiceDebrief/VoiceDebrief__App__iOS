@@ -209,7 +209,10 @@ struct VersionBadge: View {
 struct WhereWorkHappens: View {
     let session: DebriefSession
 
-    private var onDevice: String? {
+    static func onDevice(_ session: DebriefSession) -> String? { WhereWorkHappens(session: session).onDevice }
+    static func network(_ session: DebriefSession) -> String? { WhereWorkHappens(session: session).network }
+
+    fileprivate var onDevice: String? {
         if session.recordingNote != nil { return "Listening and writing the words as you speak" }
         if let id = session.currentNoteId, let text = session.workingText(for: id) {
             return text == "Writing the debrief" ? "Apple's model is writing the debrief" : "Apple's speech model: \(text.lowercased())"
@@ -217,7 +220,7 @@ struct WhereWorkHappens: View {
         return nil
     }
 
-    private var network: String? {
+    fileprivate var network: String? {
         guard let name = session.sendingTo else { return nil }
         if case .sending(let done, let total) = session.sharing, total > 0 { return "Sending to \(name), part \(done) of \(total), encrypted" }
         return "Sending to \(name), encrypted"
@@ -243,6 +246,69 @@ struct WhereWorkHappens: View {
             Text(title).font(.footnote.weight(.semibold))
             Text(detail).font(.footnote).foregroundStyle(busy ? Color.primary : Color.secondary)
             Spacer(minLength: 0)
+        }
+    }
+}
+
+/// What happened where, while the app is open: each time the device's models or the network started
+/// on something. Behind the two small icons in the bar.
+@MainActor
+@Observable
+final class WorkLog {
+    static let shared = WorkLog()
+    struct Entry: Identifiable { let id = UUID(); let at: Date; let place: String; let what: String }
+    private(set) var entries: [Entry] = []
+    func note(_ place: String, _ what: String) {
+        if entries.first?.what == what && entries.first?.place == place { return }
+        entries.insert(Entry(at: Date(), place: place, what: what), at: 0)
+        if entries.count > 50 { entries.removeLast(entries.count - 50) }
+    }
+}
+
+/// Two small icons in the bar: this device and the network, green while each is in use, steady and in
+/// the same place whatever the screen does (the owner: the panel "moves down as I speak" and "goes on and
+/// off"). Tap for what each is, and what has happened.
+struct WorkStatusIcons: View {
+    let session: DebriefSession
+    @State private var showing = false
+
+    var body: some View {
+        let device = WhereWorkHappens.onDevice(session)
+        let net = WhereWorkHappens.network(session)
+        Button { showing = true } label: {
+            HStack(spacing: 6) {
+                Image(systemName: "iphone").foregroundStyle(device != nil ? Color.green : Color.secondary)
+                    .symbolEffect(.pulse, isActive: device != nil)
+                Image(systemName: "network").foregroundStyle(net != nil ? Color.green : Color.secondary)
+                    .symbolEffect(.pulse, isActive: net != nil)
+            }
+            .font(.footnote)
+        }
+        .accessibilityLabel("Where the work happens: this device \(device ?? "idle"), network \(net ?? "not in use")")
+        .onChange(of: device) { _, value in if let value { WorkLog.shared.note("This device", value) } }
+        .onChange(of: net) { _, value in if let value { WorkLog.shared.note("Network", value) } }
+        .sheet(isPresented: $showing) {
+            NavigationStack {
+                List {
+                    Section {
+                        Label { Text("This device: \(device ?? "nothing running")") } icon: { Image(systemName: "iphone") }
+                        Label { Text("Network: \(net ?? "not in use, nothing is leaving this device")") } icon: { Image(systemName: "network") }
+                    } footer: {
+                        Text("Green while in use. On this device: Apple's speech and language models, which never send your words anywhere. Network: only a note you send, encrypted, or a vault you push or pull.")
+                    }
+                    Section("What has happened") {
+                        if WorkLog.shared.entries.isEmpty { Text("Nothing yet since the app opened.").foregroundStyle(.secondary) }
+                        ForEach(WorkLog.shared.entries) { e in
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(e.what)
+                                Text("\(e.place) · \(e.at.formatted(date: .omitted, time: .standard))").font(.caption).foregroundStyle(.secondary)
+                            }
+                        }
+                    }
+                }
+                .navigationTitle("Where the work happens")
+                .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { showing = false } } }
+            }
         }
     }
 }

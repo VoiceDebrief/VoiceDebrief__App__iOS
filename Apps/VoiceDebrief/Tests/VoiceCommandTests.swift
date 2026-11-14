@@ -15,3 +15,13 @@ struct VoiceCommandTests {
         #expect(VoiceCommand.detect("") == nil)
     }
 }
+
+@Suite("Not a command")
+struct VoiceCommandNegationTests {
+    @Test func aNegatedPhraseDoesNotFinish() {
+        #expect(VoiceCommand.detect("ok, but don't send it now") == nil)
+        #expect(VoiceCommand.detect("please do not send this now") == nil)
+        #expect(VoiceCommand.detect("never send now") == nil)
+        #expect(VoiceCommand.detect("that is all, send it now") == .finish)
+    }
+}

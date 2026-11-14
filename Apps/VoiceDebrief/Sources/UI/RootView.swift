@@ -42,6 +42,12 @@ struct RootView: View {
             Tab("Vaults", systemImage: "lock.shield", value: RootTab.vaults) {
                 launched(.vaults) { VaultsView(book: book) }.tracked("vaults")
             }
+            Tab("Agents", systemImage: "person.3", value: RootTab.agents) {
+                AgentsView(book: book).tracked("agents")
+            }
+            Tab("Guide", systemImage: "book", value: RootTab.guide) {
+                GuideView().tracked("guide")
+            }
             TabSection("You") {
                 Tab("Identity", systemImage: "person.badge.key", value: RootTab.identity) {
                     NavigationStack { IdentityView(vaults: book) }.tracked("identity")
@@ -71,6 +77,7 @@ struct RootView: View {
             }
         }
         .tabViewStyle(.sidebarAdaptable)
+        .welcomeOnFirstLaunch()
         // Talk to Claude from every screen but Record, which has its own control.
         .overlay(alignment: .bottomTrailing) {
             if tab != .record { TalkButton(session: session) }
