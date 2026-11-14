@@ -8,12 +8,13 @@ struct GuideView: View {
     private let ideas = IdeaBook.bundled()
     private let history = VersionHistory.bundled()
     private let guides = GuideBook.bundled()
+    private let articles = ArticleBook.bundled()
     private let current = AppInfo.shortVersion()
     @AppStorage(WhatsNewMemory.key) private var lastSeen = ""
 
     var body: some View {
         NavigationStack {
-            GuideHome(ideas: ideas, history: history, guides: guides, current: current, lastSeen: lastSeen)
+            GuideHome(ideas: ideas, history: history, guides: guides, articles: articles, current: current, lastSeen: lastSeen)
                 .onAppear { WhatsNewMemory.seedIfNeeded(current: current) }
         }
     }
@@ -24,6 +25,7 @@ struct GuideHome: View {
     let ideas: IdeaBook?
     let history: VersionHistory?
     let guides: GuideBook?
+    var articles: ArticleBook? = nil
     let current: String
     let lastSeen: String
 
@@ -90,6 +92,18 @@ struct GuideHome: View {
                 Text("Ideas and where they stand")
             } footer: {
                 Text("From the project's issues, articles and reality files, as they were when this build was made.")
+            }
+
+            if let articles, !articles.articles.isEmpty {
+                Section {
+                    NavigationLink { ArticlesView(book: articles) } label: {
+                        Label("Articles (\(articles.articles.count))", systemImage: "doc.richtext")
+                    }
+                } header: {
+                    Text("Where the project is going")
+                } footer: {
+                    Text("Positions, briefs and journeys, as the project's site has them.")
+                }
             }
 
             Section("On the web") {

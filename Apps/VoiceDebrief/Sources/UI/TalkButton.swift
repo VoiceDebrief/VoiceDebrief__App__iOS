@@ -5,6 +5,7 @@ import SwiftUI
 /// sends"). Saying "send this now", or pressing play/pause on headphones, also finishes it.
 struct TalkButton: View {
     let session: DebriefSession
+    var book: VaultBook? = nil
     @AppStorage("vd.localeId") private var localeId = ""
     @AppStorage("vd.talking") private var talking = false
     @State private var showingMessages = false
@@ -45,7 +46,7 @@ struct TalkButton: View {
             if recordingHere { Task { await tap() } }
         }
         .sheet(isPresented: $showingMessages) {
-            NavigationStack { MessagesToClaudeView(session: session) }
+            NavigationStack { MessagesToClaudeView(session: session, book: book) }
         }
     }
 
@@ -80,7 +81,9 @@ struct TalkButton: View {
 /// an inbox of its own (the people session's work); until then Claude answers in the developer's chat.
 struct MessagesToClaudeView: View {
     let session: DebriefSession
+    var book: VaultBook? = nil
     @Environment(\.dismiss) private var dismiss
+    private var desk: AgentsDesk { AgentsDesk.shared }
 
     private var notes: [Note] {
         session.store.notes.filter { note in
@@ -88,24 +91,59 @@ struct MessagesToClaudeView: View {
         }
     }
 
+    /// Claude's answers, written into the vault you gave it on the Agents screen: those that answer a note
+    /// (by its id), and those that answer nothing in particular.
+    private var replies: [AgentsReport.Message] { (desk.report?.messages ?? []).filter { $0.from != "you" } }
+    private func replies(to note: Note) -> [AgentsReport.Message] {
+        replies.filter { $0.replyTo == note.id }.sorted { $0.at < $1.at }
+    }
+    private var general: [AgentsReport.Message] {
+        let noteIds = Set(notes.map(\.id))
+        return replies.filter { $0.replyTo == nil || !noteIds.contains($0.replyTo!) }.sorted { $0.at > $1.at }
+    }
+
     var body: some View {
         List {
-            if notes.isEmpty {
-                Text("Nothing sent to Claude yet. Tap the button and speak.").foregroundStyle(.secondary)
+            if !general.isEmpty {
+                Section("From Claude") {
+                    ForEach(general.prefix(10)) { reply($0) }
+                }
             }
-            ForEach(notes) { note in
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(note.title).lineLimit(2)
-                    Text(state(note)).font(.caption).foregroundStyle(.secondary)
+            Section("Your messages") {
+                if notes.isEmpty {
+                    Text("Nothing sent to Claude yet. Tap the button and speak.").foregroundStyle(.secondary)
+                }
+                ForEach(notes) { note in
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text(note.title).lineLimit(2)
+                        Text(state(note)).font(.caption).foregroundStyle(.secondary)
+                        ForEach(replies(to: note)) { reply($0) }
+                    }
+                    .padding(.vertical, 2)
                 }
             }
             Section {
             } footer: {
-                Text("Replies will appear here once the app has its own inbox, which is being built. Until then Claude answers in the developer's chat.")
+                Text(desk.vaultId.isEmpty
+                     ? "To see Claude's replies here, give it a vault on the Agents screen: it writes its answers into that vault, encrypted, and only your devices can read them."
+                     : "Replies come from your agents vault, refreshed when you open this or pull down.")
             }
         }
         .navigationTitle("Messages to Claude")
         .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } } }
+        .refreshable { if let book { await desk.refresh(book: book) } }
+        .task { if let book { await desk.refresh(book: book) } }
+    }
+
+    private func reply(_ message: AgentsReport.Message) -> some View {
+        VStack(alignment: .leading, spacing: 3) {
+            Text(message.text).font(.callout)
+            Text("Claude, " + message.at.formatted(date: .abbreviated, time: .shortened))
+                .font(.caption2).foregroundStyle(.secondary)
+        }
+        .padding(10)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color.accentColor.opacity(0.12), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
     }
 
     private func state(_ note: Note) -> String {

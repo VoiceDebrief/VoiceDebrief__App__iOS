@@ -134,7 +134,15 @@ def drain(inbox, out):
                 note['audio'][header['part']] = body; note['header'] = header
             elif kind.startswith(('voicedebrief/', 'sgit/')):
                 # run, clean, usage, and any later kind: filed under the note (or report) id by its name
-                note['files'][os.path.basename(header.get('name') or kind.split('/')[1] + '.json')] = body
+                name = os.path.basename(header.get('name') or kind.split('/')[1] + '.json')
+                if int(header.get('of', 1) or 1) > 1:
+                    # a picture or other file in parts: joined in order once all are here
+                    parts = note.setdefault('parts', {}).setdefault(name, {})
+                    parts[int(header.get('part', 1))] = body
+                    if len(parts) == int(header['of']):
+                        note['files'][name] = b''.join(parts[i] for i in sorted(parts))
+                else:
+                    note['files'][name] = body
             done.append(entry)
     for note_id, note in notes.items():
         folder = os.path.join(out, note_id); os.makedirs(folder, exist_ok=True)

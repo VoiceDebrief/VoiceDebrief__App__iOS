@@ -126,7 +126,7 @@ struct LevelBars: View {
         HStack(alignment: .center, spacing: 3) {
             ForEach(Array(padded.enumerated()), id: \.offset) { _, level in
                 Capsule()
-                    .fill(DS.Palette.red.opacity(0.35 + 0.65 * level))
+                    .fill(Color.accentColor.opacity(0.3 + 0.7 * level))
                     .frame(width: barWidth, height: 4 + (height - 6) * level)
             }
         }
