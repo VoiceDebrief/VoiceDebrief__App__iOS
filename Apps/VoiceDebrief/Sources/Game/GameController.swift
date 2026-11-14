@@ -64,6 +64,11 @@ final class GameController {
     }
 
     var stats: GameStats { GameStats.of(entries) }
+    /// The words of the sentence being said now: settled but not yet taken, then the part that may still change.
+    var hearingSettled: String { String(liveSettled.dropFirst(min(consumed, liveSettled.count))).trimmingCharacters(in: .whitespacesAndNewlines) }
+    var hearingVolatile: String { liveVolatile.trimmingCharacters(in: .whitespacesAndNewlines) }
+    /// The sentences heard through the microphone, newest first, with what became of each.
+    var heard: [GameLogEntry] { entries.filter { $0.source == "spoken" || $0.source == "player" } }
     /// The newest sentence that changed or tried to change the game.
     var latest: GameLogEntry? { entries.first { $0.appliedAt != nil } }
     var tools: [GameToolSpec] { GameToolScope.tools(for: state) }
