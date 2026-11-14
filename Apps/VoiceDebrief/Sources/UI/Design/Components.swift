@@ -247,3 +247,33 @@ struct DSIconBadge: View {
             .accessibilityHidden(true)
     }
 }
+
+/// One message in a conversation: yours on the right in the accent colour, theirs on the left beside
+/// their avatar, each with a small caption (who and when, or its state).
+struct ChatBubble<Content: View>: View {
+    let mine: Bool
+    var from: AvatarSubject? = nil
+    var caption: String? = nil
+    @ViewBuilder var content: Content
+
+    var body: some View {
+        HStack(alignment: .bottom, spacing: DS.Space.xs) {
+            if mine { Spacer(minLength: DS.Space.xxl) }
+            if !mine, let from { AvatarView(from, size: 28) }
+            VStack(alignment: mine ? .trailing : .leading, spacing: DS.Space.xxs) {
+                VStack(alignment: .leading, spacing: DS.Space.xxs) { content }
+                    .font(.callout)
+                    .foregroundStyle(mine ? Color.white : Color.primary)
+                    .padding(.horizontal, DS.Space.s)
+                    .padding(.vertical, DS.Space.xs + 1)
+                    .background(mine ? AnyShapeStyle(Color.accentColor.gradient) : AnyShapeStyle(Color(.tertiarySystemFill)),
+                                in: RoundedRectangle(cornerRadius: DS.Radius.card, style: .continuous))
+                if let caption {
+                    Text(caption).font(.caption2).foregroundStyle(.secondary)
+                }
+            }
+            if !mine { Spacer(minLength: DS.Space.xxl) }
+        }
+        .frame(maxWidth: .infinity)
+    }
+}
