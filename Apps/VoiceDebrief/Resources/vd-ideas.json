@@ -30,7 +30,7 @@
  "counts": {
   "seen-working": 27,
   "built-untried": 86,
-  "in-progress": 38,
+  "in-progress": 39,
   "proposed": 60,
   "parked": 6
  },
@@ -2020,6 +2020,31 @@
    ],
    "url": "https://ios.app.voicedebrief.ai/articles/people-messages-and-secrets/index.html",
    "source": "Kind: an architecture and a brief. From: the owner, 14 November 2026: \"anybody who installs the app has a public and private key straight away ... register..."
+  },
+  {
+   "id": "article-secrets-app",
+   "kind": "article",
+   "app": "Both",
+   "title": "A secrets app that keeps one file where you already keep things",
+   "status": "in-progress",
+   "why": "An article; work it names has begun: issue 006.",
+   "summary": "The idea in one line: a cheap password and secrets manager that just works, where the vault is one small encrypted file in your own iCloud Drive, rewritten on every change, opened by a key that never reaches us, with our server only ever an extra copy.",
+   "detail": [
+    "Kind: research, a storage design and a build plan. From: the owner's voice note of 14 November 2026, after trying the Secrets part of SGit Vaults: \"even just that is a crazy feature; we should just ship it\". Written up by the secrets-app research session the same day. Nothing on this page is built unless it says so. The only record of what exists is what is built (and, for SGit Vaults, its own reality file).",
+    "The idea in one line: a cheap password and secrets manager that just works, where the vault is one small encrypted file in your own iCloud Drive, rewritten on every change, opened by a key that never reaches us, with our server only ever an extra copy.",
+    "His words where they matter:",
+    "- Ship the Secrets screens as their own product: \"an easy, cheap password and secrets manager\" that \"just works\", on what exists: an encrypted, version-controlled vault, all cryptography on the device, a server that sees only ciphertext. - Do not depend on our server by default. \"Our services are not ready to provide that level of resilience; this becomes mission critical\", and a server connection \"breaks the whole model\". Keep the vault as one small encrypted file (a zip of the vault) in storage the person already has, above all iCloud Drive, rewritten on every change, with a few past versions kept, and refreshed when the app opens. - Several stores at once: iCloud Drive, a local file, a downloaded copy that the sgit command can open, and optionally SG/Send for online access. Never the server as the default. - Options for the key: today it is in iCloud Keychain; also a passkey wrapping...",
+    "Read on 14 November 2026. Labels as in the reality files: built is tested in CI, unverified is written and compiled but not yet proven on a device, proposed does not exist.",
+    "| Part | Where | Status | |---|---|---| | Secrets screens: kinds login, device passcode, Wi-Fi, card, note, token, vault key, read key, access key, recovery codes; each secret one encrypted JSON file (sgit.ai/secret/v1) in a vault's secrets/ folder, each change one signed commit; values behind Face ID, copied for two minutes; a strong-password maker; \"My secrets\" made on first use | Apps/SGit/Sources/Secrets/ (SecretEntry.swift, SecretsView.swift, VaultShelf+Secrets.swift) | Unverified | | Vaults on the device with no server: the server's own layout (bare/data, refs, indexes, keys) in a folder under Application Support | VaultBook, VaultShelf, Packages/SGitVault | Unverified (CI tests with folders) | | Vault keys and access keys in iCloud Keychain, one synchronisable item each, a switch to keep them on one device | Engine/SecretStore.swift in both apps | Unverified; iCloud Keychain...",
+    "Two things were checked for this article with the real sgit command (sgit-ai 0.27.0, from PyPI, in this session):"
+   ],
+   "places": [],
+   "issues": [
+    "003",
+    "006"
+   ],
+   "url": "https://ios.app.voicedebrief.ai/articles/secrets-app/index.html",
+   "source": "Kind: research, a storage design and a build plan. From: the owner's voice note of 14 November 2026, after trying the Secrets part of SGit Vaults: \"even just..."
   },
   {
    "id": "article-synthetic-users",

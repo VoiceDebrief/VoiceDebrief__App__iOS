@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>A secrets app that keeps one file where you already keep things</title>
+<meta name="description" content="Research, a storage design and a build plan: other password managers compared; the vault as one encrypted file in iCloud Drive, merged after offline edits, with several stores and locks you choose; names and per-use pricing. Proposed.">
+<link rel="canonical" href="https://ios.app.voicedebrief.ai/articles/secrets-app/index.html">
+<meta property="og:url" content="https://ios.app.voicedebrief.ai/articles/secrets-app/index.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="VoiceDebrief for iOS">
+<meta property="og:title" content="A secrets app that keeps one file where you already keep things">
+<meta property="og:description" content="Research, a storage design and a build plan: other password managers compared; the vault as one encrypted file in iCloud Drive, merged after offline edits, with several stores and locks you choose; names and per-use pricing. Proposed.">
+<link rel="alternate" type="text/markdown" href="index.md" title="This page as markdown">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/vd-tokens.css">
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+
+<nav class="site"><div class="row">
+  <a class="brand" href="../../index.html">Voice<em>Debrief</em> <span>iOS</span></a>
+  <span class="beta" title="In development: there is nothing to install yet">IN DEVELOPMENT</span>
+  <a class="parent" href="https://voicedebrief.ai" title="A VoiceDebrief product">&#8599; part of <b>voicedebrief.ai</b></a>
+  <a class="ver" href="../../versions/index.html" title="Release history">dev</a>
+  <a class="nl" href="../../built/index.html">Built</a>
+  <a class="nl" href="../../architecture/index.html">How it works</a>
+  <a class="nl" href="../../design/index.html">Design</a>
+  <a class="nl" href="../../plan/index.html">Plan</a>
+  <a class="nl here" href="../../articles/index.html">Articles</a>
+  <a class="nl" href="../../develop/index.html">Build</a>
+  <a class="nl" href="../../ideas/index.html">Ideas</a>
+  <a class="nl" href="../../guides/index.html">Guides</a>
+  <a class="gh" href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">&#9733; GitHub</a>
+</div></nav>
+
+<main class="doc">
+<div class="crumb"><a href="../../index.html">VoiceDebrief iOS</a> / articles / secrets-app</div>
+<h1 id="a-secrets-app-that-keeps-one-file-where-you-already-keep-things">A secrets app that keeps one file where you already keep things</h1>
+<p><strong>Kind:</strong> research, a storage design and a build plan. <strong>From:</strong> the owner's voice note of 14 November 2026, after trying the Secrets part of SGit Vaults: &quot;even just that is a crazy feature; we should just ship it&quot;. Written up by the secrets-app research session the same day. <strong>Nothing on this page is built unless it says so.</strong> The only record of what exists is <a href="../../built/index.html">what is built</a> (and, for SGit Vaults, <a href="../../sgit-app/built/index.html">its own reality file</a>).</p>
+<p>The idea in one line: <strong>a cheap password and secrets manager that just works, where the vault is one small encrypted file in your own iCloud Drive, rewritten on every change, opened by a key that never reaches us, with our server only ever an extra copy.</strong></p>
+<p><a href="../../assets/diagrams/secrets-app-storage.svg"><img class="shot" src="../../assets/diagrams/secrets-app-storage.svg" alt="Three locks open the vault key: iCloud Keychain, a passkey, a printed recovery code. The vault lives on the device. After every change it is written to four stores: one file in iCloud Drive, this device, a copy you keep, and optionally the SG/Send server. Two devices that edited offline join by union of objects, then merge." loading="lazy"></a></p>
+<h2 id="1-what-the-owner-asked-for">1. What the owner asked for</h2>
+<p>His words where they matter:</p>
+<ul>
+<li><strong>Ship the Secrets screens as their own product</strong>: &quot;an easy, cheap password and secrets manager&quot; that &quot;just works&quot;, on what exists: an encrypted, version-controlled vault, all cryptography on the device, a server that sees only ciphertext.</li>
+<li><strong>Do not depend on our server by default.</strong> &quot;Our services are not ready to provide that level of resilience; this becomes mission critical&quot;, and a server connection &quot;breaks the whole model&quot;. Keep the vault as <strong>one small encrypted file</strong> (a zip of the vault) in storage the person already has, above all iCloud Drive, rewritten on every change, with a few past versions kept, and refreshed when the app opens.</li>
+<li><strong>Several stores at once</strong>: iCloud Drive, a local file, a downloaded copy that the <code>sgit</code> command can open, and optionally SG/Send for online access. Never the server as the default.</li>
+<li><strong>Options for the key</strong>: today it is in iCloud Keychain; also a passkey wrapping the file, or something else.</li>
+<li><strong>Sharing later</strong>: swap public keys by QR code or copy and paste, seal a vault key to the other person, share with a browser session.</li>
+<li><strong>Pricing per use</strong>, like VoiceDebrief's credit, in 1p steps.</li>
+</ul>
+<h2 id="2-what-exists-in-this-repository-today">2. What exists in this repository today</h2>
+<p>Read on 14 November 2026. Labels as in the reality files: <em>built</em> is tested in CI, <em>unverified</em> is written and compiled but not yet proven on a device, <em>proposed</em> does not exist.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Part</th><th>Where</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td>Secrets screens: kinds login, device passcode, Wi-Fi, card, note, token, vault key, read key, access key, recovery codes; each secret one encrypted JSON file (<code>sgit.ai/secret/v1</code>) in a vault's <code>secrets/</code> folder, each change one signed commit; values behind Face ID, copied for two minutes; a strong-password maker; &quot;My secrets&quot; made on first use</td><td><code>Apps/SGit/Sources/Secrets/</code> (<code>SecretEntry.swift</code>, <code>SecretsView.swift</code>, <code>VaultShelf+Secrets.swift</code>)</td><td>Unverified</td></tr>
+<tr><td>Vaults on the device with no server: the server's own layout (<code>bare/data</code>, <code>refs</code>, <code>indexes</code>, <code>keys</code>) in a folder under Application Support</td><td><code>VaultBook</code>, <code>VaultShelf</code>, <code>Packages/SGitVault</code></td><td>Unverified (CI tests with folders)</td></tr>
+<tr><td>Vault keys and access keys in iCloud Keychain, one synchronisable item each, a switch to keep them on one device</td><td><code>Engine/SecretStore.swift</code> in both apps</td><td>Unverified; iCloud Keychain itself cannot be tested in CI</td></tr>
+<tr><td>Push and pull to a server: creation and fast-forward only. <strong>When both sides have changed it says so and writes nothing: merge is not built in Swift</strong></td><td><code>Packages/SGitVault/Sources/SGitVault/VaultSync.swift</code></td><td>Unverified against the live server</td></tr>
+<tr><td>The passkey door: a vault key derived from a passkey's PRF output, or from a 26-character recovery code in its place</td><td><code>VaultDoor.swift</code></td><td>The derivation is built and matches the website's vectors; <strong>the passkey ceremony in a native app is not built</strong> (issue 003)</td></tr>
+<tr><td>Cards, sealed messages, first contact (an access key sealed to a newcomer's card), a secrets store that remembers who gave what</td><td><code>Packages/SGitPeople</code></td><td>Unverified, on no screen</td></tr>
+<tr><td>Paying for anything</td><td><code>Model/Prices.swift</code>, the credit ledger in VoiceDebrief</td><td>Ledger and price list built; the App Store purchase is written and switched off, so no money moves</td></tr>
+<tr><td>A vault as one file in iCloud Drive, several stores, a merge after offline edits, a third app</td><td></td><td><strong>Proposed: this page</strong></td></tr>
+</tbody></table></div>
+<p>Two things were checked for this article with the real <code>sgit</code> command (sgit-ai 0.27.0, from PyPI, in this session):</p>
+<ol>
+<li><strong>A vault zipped as one file opens with the command line.</strong> A vault was made in sgit's in-memory server, its store written out as a folder (<code>bare/data</code>, <code>bare/refs</code>, <code>bare/indexes</code>, <code>bare/keys</code>) and zipped: 31 objects after five commits, <strong>17,125 bytes</strong>. Unzipped elsewhere, <code>sgit clone --transport local --base-url &lt;folder&gt; &lt;vault key&gt; out</code> cloned it, the files were there and <code>sgit history log</code> showed every commit, including the merge.</li>
+<li><strong>sgit merges two copies that changed apart.</strong> Two clones of one vault each committed while &quot;offline&quot; (different secrets). The second push pulled, merged into a merge commit, and pushed: all three secrets present. When both changed <strong>the same</strong> secret, <code>pull</code> reported <code>conflicts: ['secrets/wifi.json']</code> and asked for a resolution.</li>
+</ol>
+<p>So the format and the merge exist in sgit's Python. What does not exist is the same merge in Swift, and the file store.</p>
+<h2 id="3-the-field-how-other-managers-store-sync-recover-and-share">3. The field: how other managers store, sync, recover and share</h2>
+<p>Prices move often and many come from aggregators; treat them as approximate. The fuller field study, with sharing and team features, is the <a href="../../sgit-app/secrets/opportunity/index.html">opportunity brief</a> written for SGit Vaults.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Product</th><th>Where the vault lives</th><th>Sync</th><th>If every device is lost</th><th>Sharing</th><th>Price (approx.)</th></tr></thead>
+<tbody>
+<tr><td>Apple Passwords</td><td>iCloud Keychain, end-to-end encrypted</td><td>Apple, invisible</td><td>Apple Account recovery: trusted number plus a recovery contact or recovery key; without them the data can be gone</td><td>Shared groups; owner and members, no roles</td><td><strong>Free, built in</strong></td></tr>
+<tr><td>1Password</td><td>Vendor cloud</td><td>Vendor</td><td>Secret Key plus account password (an Emergency Kit to print)</td><td>Shared vaults</td><td>About $48 a year individual, $72 family, from March 2026; no free plan</td></tr>
+<tr><td>Bitwarden</td><td>Vendor cloud, or self-hosted</td><td>Vendor or your server</td><td>Master password; emergency access on paid plans</td><td>Organisations; a free one holds two people</td><td>Free; Premium $19.80 a year, Families $47.88 (raised in 2026)</td></tr>
+<tr><td>Proton Pass</td><td>Vendor cloud</td><td>Vendor</td><td>Proton account recovery</td><td>Shared vaults on paid plans</td><td>Free; Plus about $2 to $3 a month</td></tr>
+<tr><td>Dashlane</td><td>Vendor cloud</td><td>Vendor</td><td>Account recovery options</td><td>Sharing, groups</td><td>Free plan reported withdrawn in 2025; paid plans only</td></tr>
+<tr><td>Keeper</td><td>Vendor cloud</td><td>Vendor</td><td>Account recovery</td><td>Shared folders with permissions</td><td>Limited free; Family about $46 a year</td></tr>
+<tr><td>Enpass</td><td><strong>A file in your own cloud</strong> (iCloud, Dropbox, Google Drive, OneDrive, WebDAV) or Wi-Fi sync; no Enpass servers</td><td>The cloud you chose</td><td>Master password; nothing at Enpass to recover</td><td>Share an item; a shared vault through a shared cloud folder</td><td>Subscription or a one-off licence; figures vary widely</td></tr>
+<tr><td>KeePass, KeePassXC</td><td><strong>One <code>.kdbx</code> file</strong> wherever you put it</td><td>Whatever syncs the file</td><td>Master password and optional key file; nothing to recover</td><td>Share the file and its password</td><td>Free, open source</td></tr>
+<tr><td>Strongbox (KeePass on Apple)</td><td>A <code>.kdbx</code> file, by default in <strong>its own iCloud Drive folder</strong>; or Strongbox Sync on CloudKit</td><td>iCloud Drive or CloudKit</td><td>As KeePass</td><td>As KeePass</td><td>Free with a Pro tier or lifetime</td></tr>
+</tbody></table></div>
+<p>What the file-based ones teach, because they are closest to the owner's idea:</p>
+<ul>
+<li><strong>A file in iCloud Drive works, and it has a known failure.</strong> Strongbox recommends keeping the database in its own iCloud folder, which the app watches; it blames numbered duplicate copies on slow iCloud sync; and it now recommends its own CloudKit sync instead. Guides on KeePass sync warn that iCloud and Google Drive behave as last-writer-wins: the losing device's change leaves the active file unless the app merges.</li>
+<li><strong>KeePass merges at the entry level.</strong> KeePassXC and Strongbox can merge two databases using each entry's modification time and its own history. That is good, but it is a merge by timestamp of a whole entry; there is no common ancestor, so an entry changed on both sides keeps the later one and puts the other in its history.</li>
+<li><strong>Enpass proves people will choose their own cloud</strong> to avoid trusting a vendor's servers.</li>
+</ul>
+<h2 id="4-where-an-sgit-vault-is-genuinely-different-and-where-it-is-not">4. Where an sgit vault is genuinely different, and where it is not</h2>
+<p><strong>Not different, and we should say so:</strong></p>
+<ul>
+<li><strong>Apple Passwords is free, built in, fills passwords and passkeys everywhere, and syncs with no thought.</strong> For one person who lives on Apple devices and never needs a file, a history or a non-Apple share, it is enough. We do not beat it on convenience; AutoFill alone is a capability we have not switched on.</li>
+<li><strong>Strongbox already keeps an encrypted file in iCloud Drive</strong>, with Face ID, AutoFill, history per entry and a merge. KeePass history exists too.</li>
+<li><strong>Enpass already lets you choose your own cloud.</strong></li>
+<li><strong>Encryption on the device and a server that sees only ciphertext</strong> is what every serious manager claims.</li>
+</ul>
+<p><strong>Genuinely different:</strong></p>
+<ol>
+<li><strong>A merge with a common ancestor, not a timestamp.</strong> Each copy of the vault is a commit graph. Two devices that changed different secrets merge with no question; one secret changed on both is shown side by side, with the version both started from. KeePass guesses by time; iCloud alone drops one side.</li>
+<li><strong>The file cannot be half-merged into nonsense.</strong> Objects are named by the hash of their ciphertext, so two copies of the file join by plain union: the same name is always the same bytes. Only the two heads need merging.</li>
+<li><strong>Signed history of every change</strong>: which device changed the Wi-Fi password and when, with the earlier value one step back, kept in the format itself rather than per entry.</li>
+<li><strong>Secrets and files together.</strong> A secret is a file in a vault; the same vault can hold the scan of a passport, a recovery sheet, an SSH key file, a 300 MB backup.</li>
+<li><strong>One format, several stores, no lock-in.</strong> The same vault can be a file in iCloud Drive, a folder on a Mac, a copy on a USB stick and a remote on SG/Send, all at once, and the open <code>sgit</code> command reads any of them.</li>
+<li><strong>Sharing by key exchange that no server takes part in.</strong> The key you seal to comes from a card you scanned in person, not from a vendor's directory: the weakness behind the 2026 ETH Zurich attacks on Bitwarden, LastPass and Dashlane (see the brief).</li>
+<li><strong>Agents.</strong> An AI session has a card and an inbox in this design; it can be given one secret, sealed to it, with a record.</li>
+</ol>
+<p>The honest summary: the first product competes with Strongbox and Enpass on &quot;your file, your cloud&quot;, and adds a real merge, history and a path to sharing. It does not compete with Apple Passwords on convenience until AutoFill is in.</p>
+<h2 id="5-the-storage-design">5. The storage design</h2>
+<h3 id="5-1-the-vault-on-the-device-is-the-truth">5.1 The vault on the device is the truth</h3>
+<p>Every device keeps the whole vault in the layout the SGit app already uses (<code>Application Support/vaults/&lt;vault id&gt;/bare/…</code>). Reading, adding and changing need no network and no store. Each store is a copy that is <strong>written after every change</strong> and <strong>read and merged when the app opens or comes to the front</strong>. This is the &quot;a vault is local first and a server is a remote&quot; position, with iCloud Drive as the first remote.</p>
+<p>A consequence that matters for &quot;mission critical&quot;: <strong>a write that iCloud loses is not a lost secret.</strong> The device still holds its commits, and its next write carries them, merged.</p>
+<h3 id="5-2-store-a-one-file-in-icloud-drive-proposed">5.2 Store A: one file in iCloud Drive <em>(proposed)</em></h3>
+<pre><code>  iCloud Drive / Secrets (the app's own folder, visible in Files)
+  ├── My secrets.sgvault             the vault: a zip of bare/, about 20 KB to a few MB
+  └── .versions/
+      ├── My secrets 2026-11-14T09-12-03Z iPhone.sgvault
+      ├── My secrets 2026-11-14T08-40-51Z iPad.sgvault
+      └── ...                        the last five, oldest removed</code></pre>
+<ul>
+<li><strong>The container.</strong> The app's own ubiquity container, with <code>NSUbiquitousContainerIsDocumentScopePublic</code> so the folder shows in Files and on a Mac's iCloud Drive. It needs the iCloud capability with iCloud Documents and a container identifier registered in the developer portal: an owner step.</li>
+<li><strong>What the file is.</strong> A zip of the vault's <code>bare/</code> folder (compression helps little: the objects are already encrypted), plus a small cleartext header file naming the format and holding the wrapped copies of the vault key (5.6). It is already encrypted object by object; zipping it adds no secrecy and needs none.</li>
+<li><strong>Writing.</strong> After each commit: build the new zip in a temporary file, then <code>NSFileCoordinator.coordinate(writingItemAt:options: .forReplacing)</code> and <code>FileManager.replaceItemAt</code> so that iCloud sees one atomic replacement, never a half-written file. Before replacing, move the previous file into <code>.versions/</code> and remove the oldest beyond five.</li>
+<li><strong>Reading.</strong> On launch and on coming to the front: an <code>NSMetadataQuery</code> on the container finds the file; if it is not downloaded, <code>startDownloadingUbiquitousItem(at:)</code>; read it with a coordinated read; unpack into a temporary folder; treat it as a remote and merge (5.3). While the app is open, an <code>NSFilePresenter</code> hears of changes from other devices.</li>
+<li><strong>Conflicts.</strong> When two devices replaced the file while apart, iCloud keeps one as current and the others as <code>NSFileVersion.unresolvedConflictVersionsOfItem(at:)</code>. The app merges each into the current one, writes the result, marks each conflict version resolved and calls <code>removeOtherVersionsOfItem</code>. Nothing is chosen by time.</li>
+<li><strong>Size.</strong> Measured: 31 objects, 17 KB. Estimated, not measured: a change to one secret adds about three small objects (blob, tree, commit), so a few hundred secrets with a few thousand changes is a few megabytes. When it grows, <code>sgit pack compact</code> (which exists in the command line) or a Swift equivalent can fold history into fewer objects. A whole-file rewrite of a few megabytes is nothing for iCloud; many small files were the problem the owner remembers, and this avoids it.</li>
+</ul>
+<h3 id="5-3-two-devices-that-edited-offline-proposed-in-swift-works-in-sgit-today">5.3 Two devices that edited offline <em>(proposed in Swift; works in sgit today)</em></h3>
+<pre><code>   before          iPhone, on a plane           iPad, at home
+   ──────          ─────────────────            ─────────────
+     O ──────────── A  &quot;Add bank&quot;
+      \
+       └─────────── B  &quot;Add router&quot;
+
+   back online: iCloud holds two versions of My secrets.sgvault
+
+   1. union the objects:  objects(A-file) ∪ objects(B-file)
+                          (a name is a hash, so equal names are equal bytes)
+   2. two heads, A and B; their common ancestor O is in both
+   3. three-way merge of the trees, path by path:
+        only A changed secrets/bank.json     → take A
+        only B changed secrets/router.json   → take B
+        both changed secrets/wifi.json       → a conflict: keep both, ask
+   4. a merge commit M with parents A and B, signed by this device
+   5. write M as the new file; resolve the iCloud conflict versions
+
+     O ── A ──┐
+      \       M   one file again, nothing lost
+       └─ B ──┘</code></pre>
+<p>Because each secret is its own file, step 3 almost never finds a conflict. When it does, the app keeps both values (one under a conflict name) and shows them side by side with the value both started from, and the person picks. Exactly this ran in sgit 0.27 in this session; in Swift, the merge is the main piece of new engine work (issue 006 lists it among the vault engine's gaps).</p>
+<h3 id="5-4-stores-b-c-and-d">5.4 Stores B, C and D</h3>
+<div class="tablewrap"><table>
+<thead><tr><th>Store</th><th>What it is</th><th>Written</th><th>Read</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td>A · iCloud Drive</td><td>One file and five past copies in the app's folder</td><td>After every change</td><td>On open, on coming to the front, on a change notice</td><td>Proposed</td></tr>
+<tr><td>B · This device</td><td>The vault folder in Application Support</td><td>Always: it is the vault</td><td>Always</td><td>Unverified (the SGit app keeps vaults this way)</td></tr>
+<tr><td>C · A copy you keep</td><td>The same <code>.sgvault</code> file, saved with the share sheet to Files, AirDrop, a USB stick; also a scheduled copy to another folder of the person's choice through a security-scoped bookmark</td><td>On request, or after each change if a folder was chosen</td><td>Imported and merged like any store</td><td>Proposed (the command line reading it is checked)</td></tr>
+<tr><td>D · SG/Send server</td><td>The vault pushed to <code>dev.send.sgraph.ai</code> (later production)</td><td>After every change, when switched on</td><td>On open</td><td>Unverified (push and pull built, fast-forward only)</td></tr>
+</tbody></table></div>
+<p><strong>Opening a copy on a computer</strong> (checked with sgit-ai 0.27.0):</p>
+<pre><code>pip install sgit-ai
+mkdir vault &amp;&amp; cd vault &amp;&amp; unzip &quot;../My secrets.sgvault&quot;
+sgit clone --transport local --base-url &quot;$PWD&quot; &quot;&lt;vault key&gt;&quot; ../my-secrets
+cd ../my-secrets &amp;&amp; ls secrets &amp;&amp; sgit history log</code></pre>
+<p>The vault key is shown in the app behind Face ID, or derived from the recovery code (a small <code>sgit</code> addition would accept the code directly: proposed). The local transport is read-only: the computer can read and check every signature, and writing back goes through the app or a server.</p>
+<p><strong>The server, if switched on</strong>, adds a browser view and a copy that is not Apple's, and it is the only store that can reach someone outside the person's own Apple account. It is never needed to open, read or change a secret.</p>
+<h3 id="5-5-multiple-stores-one-rule">5.5 Multiple stores, one rule</h3>
+<p>Every store is a remote; the device's vault is the only working copy. On open the app reads every store it can reach, unions objects, and merges heads, in a fixed order (this device, iCloud, the server, any copy folder). After a change it writes to every store that is switched on, and shows one line per store: &quot;iCloud: saved 09:12&quot;, &quot;Server: not switched on&quot;, &quot;Copy on USB: last saved 3 days ago&quot;. A store that fails is retried and said, never silent; a store that is behind is simply written again.</p>
+<h3 id="5-6-who-holds-the-key-custody-options">5.6 Who holds the key: custody options</h3>
+<p>The vault key opens everything, so the design separates <strong>the file</strong> from <strong>the locks that open it</strong>, the way disk encryption keeps several key slots. The file's header holds the vault key wrapped once for each lock the person has set up; any one lock opens it.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Lock</th><th>How it works</th><th>What it protects against</th><th>What it does not</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td>1. iCloud Keychain</td><td>The vault key as a synchronisable Keychain item, as the SGit app keeps it today</td><td>Losing one device; nothing to remember; Apple cannot read Keychain items</td><td>Someone who takes over the Apple Account and knows a device passcode gets <strong>both the key and the file</strong>: one account is a single point. A synchronised item cannot also demand Face ID</td><td>Unverified (SGit app)</td></tr>
+<tr><td>2. A passkey</td><td>A passkey made for the app; the WebAuthn PRF extension (<code>ASAuthorizationPublicKeyCredentialPRFAssertionInput</code>, iOS 18 and later) returns the same 32 bytes for the same passkey and input, after Face ID; HKDF of those bytes wraps the vault key in the header. The same derivation as the passkey door already built</td><td>Face ID every time; the passkey can live on a hardware security key or in another passkey manager, <strong>outside the Apple Account</strong>, which breaks the single point above</td><td>A passkey in iCloud Keychain is in the same account as lock 1. Needs a relying party domain and associated domains (issue 003). Apple fixed a bug where PRF output differed between local and cross-device use in iOS 18.4</td><td>Derivation built; ceremony proposed</td></tr>
+<tr><td>3. A recovery code</td><td>26 base32 characters (128 bits), shown once at setup with a page to print; it wraps the vault key in the header (the door's recovery code path)</td><td>Losing every device <strong>and</strong> the Apple Account: the file in any store plus the paper opens it</td><td>Whoever finds the paper and a copy of the file has everything. Lost paper is no harm while another lock remains</td><td>Derivation built; screens proposed</td></tr>
+<tr><td>4. People you trust (later)</td><td>Parts of the vault key sealed to three of five confirmed contacts (SGitPeople)</td><td>Losing everything, with no paper</td><td>Hard to get right; later</td><td>Proposed</td></tr>
+</tbody></table></div>
+<p><strong>Recommended default:</strong> lock 1 on, so that it &quot;just works&quot; on every Apple device; lock 3 offered at setup and again after the tenth secret, until it is done; lock 2 as the choice for people who want the key away from Apple, ideally on a hardware key. The app always shows which locks exist (&quot;This vault opens with: iCloud Keychain, recovery code&quot;).</p>
+<h3 id="5-7-threat-model-store-by-store">5.7 Threat model, store by store</h3>
+<div class="tablewrap"><table>
+<thead><tr><th>Who</th><th>Gets</th><th>Can read secrets?</th><th>Notes</th></tr></thead>
+<tbody>
+<tr><td>Apple, or a breach of iCloud Drive</td><td>The <code>.sgvault</code> file and its past copies</td><td>No: objects are encrypted with keys from the vault key</td><td>Sees size, change times, and that the person uses this app. iCloud Drive is not end-to-end encrypted without Advanced Data Protection; it does not need to be</td></tr>
+<tr><td>Apple, iCloud Keychain</td><td>The vault key, if lock 1 is on</td><td>Keychain is end-to-end encrypted; Apple states it cannot read it</td><td>The real risk is account takeover plus a device passcode: then file and key together. Lock 2 on a hardware key, with lock 1 off, closes it</td></tr>
+<tr><td>A thief with an unlocked phone</td><td>The app</td><td>Only after Face ID or the passcode for each hidden value</td><td>The app covers itself in the app switcher (already built)</td></tr>
+<tr><td>A thief with a locked phone</td><td>Nothing usable</td><td>No</td><td>Data protection classes; the vault folder is encrypted at rest by iOS as well</td></tr>
+<tr><td>Someone who finds the USB copy</td><td>The file</td><td>Not without a lock</td><td>The same as Apple's position</td></tr>
+<tr><td>Someone who finds the printed code</td><td>A lock</td><td>Only with a copy of the file too</td><td>Keep the paper away from the computer</td></tr>
+<tr><td>The SG/Send server, if switched on</td><td>The objects and the hash of the write key</td><td>No</td><td>It can refuse or delete, so it is never the only store. It cannot substitute keys for sharing, because keys come from cards</td></tr>
+<tr><td>Two devices writing at once</td><td>Two versions</td><td>n/a</td><td>Merged; nothing chosen by time; past copies kept</td></tr>
+<tr><td>A corrupt or truncated file</td><td>One bad version</td><td>n/a</td><td>Each object checked against its hash before use; the five past copies and every device's own copy remain</td></tr>
+</tbody></table></div>
+<h2 id="6-sharing-and-collaboration-later">6. Sharing and collaboration, later</h2>
+<p>The pieces are in <code>SGitPeople</code> (unverified, on no screen): signed cards as text, a link or a QR code; sealed messages; first contact. Sharing a vault is then: scan or paste the other person's card, seal the vault key (or a read key, for read-only) to their key, drop it in their inbox or hand it over as an <code>m1.</code> code. Their copy of the vault needs a store both can reach, and two Apple Accounts do not share an iCloud folder, so a shared vault is where the server (store D), or a shared iCloud folder, becomes useful. A browser session is the same: it gets a card of its own and a sealed read key for a while. None of this is in the first version.</p>
+<h2 id="7-names">7. Names</h2>
+<p>Checked roughly on 14 November 2026: an App Store search for an app of that name, an obvious trademark, and whether the <code>.app</code>, <code>.ai</code> or <code>.com</code> domain is registered (RDAP lookups; registered means someone holds it, not that it is in use). None of this is a trademark search.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Name</th><th>The case for it</th><th>Rough check</th></tr></thead>
+<tbody>
+<tr><td><strong>SGit Secrets</strong></td><td>Says the family and the thing; one product line with SGit Vaults; <code>secrets.sgit.ai</code> is already ours as a design page</td><td>&quot;Secrets&quot; alone is taken (Outer Corner's Secrets 4, a long-standing Apple password manager), so always with the prefix. Clear</td></tr>
+<tr><td><strong>Tinvault</strong></td><td>A tin: small, cheap, yours, kept on a shelf you own. Short, friendly</td><td><code>tinvault.app</code> and <code>tinvault.ai</code> unregistered; <code>tinvault.com</code> registered. No app found</td></tr>
+<tr><td><strong>Keyfold</strong></td><td>Every key folded into one small file</td><td><code>keyfold.ai</code> unregistered; <code>.app</code> and <code>.com</code> registered. No app found</td></tr>
+<tr><td><strong>Postern</strong></td><td>A small back gate in a castle wall: the door design, and a way out that does not depend on the main gate (our server)</td><td><code>postern.app</code> and <code>.ai</code> registered; no app found. Obscure word, needs explaining</td></tr>
+<tr><td><strong>Pennysafe</strong></td><td>Says the pricing: a safe that costs pennies</td><td><code>pennysafe.app</code> unregistered, <code>.com</code> registered. &quot;Safe&quot; is a crowded word</td></tr>
+<tr><td><strong>Vaultfile</strong></td><td>Says exactly what it is: your vault, as a file</td><td><code>vaultfile.app</code> unregistered. Generic, hard to protect</td></tr>
+<tr><td><strong>Strongroom</strong></td><td>Solid and British</td><td>An App Store app &quot;strong room&quot; (a password manager) exists; <code>.app</code> and <code>.ai</code> registered. <strong>Clash</strong></td></tr>
+<tr><td><strong>Coffer</strong></td><td>A box for valuables</td><td>&quot;Coffre Noir&quot; is a password manager; <code>coffer.app</code> and <code>.ai</code> registered. Weak</td></tr>
+<tr><td><strong>Sealbox</strong></td><td>Sealed, a box</td><td><code>sealbox.app</code> registered; &quot;SealPass&quot; is a password manager. Weak</td></tr>
+<tr><td><strong>Wicket</strong></td><td>A small door in a larger gate</td><td>Apache Wicket is a well-known web framework; <code>wicket.app</code> registered. <strong>Clash</strong></td></tr>
+</tbody></table></div>
+<p><strong>Recommended, in order:</strong> <strong>SGit Secrets</strong> (no clash, uses the brand we are building, and says what it is), <strong>Tinvault</strong> (a name of its own if the product should stand apart from sgit; the <code>.app</code> and <code>.ai</code> are free), <strong>Keyfold</strong> (the file idea in one word). The owner decides; a proper trademark search comes before any public listing.</p>
+<h2 id="8-a-build-plan">8. A build plan</h2>
+<h3 id="8-1-shape">8.1 Shape</h3>
+<p>A <strong>third app target in this repository</strong>, <code>Apps/Secrets/</code> (bundle identifier to be chosen with the name, for example <code>ai.sgit.secrets.app</code>), reusing:</p>
+<ul>
+<li><code>Packages/SGitVault</code>: the engine, plus two additions recorded in its <code>SOURCE.md</code>: a <strong>file store</strong> (zip a vault folder, unzip into a temporary folder, union two object sets) and a <strong>three-way merge</strong> of two heads with per-path conflicts.</li>
+<li>The SGit Secrets code: <code>SecretEntry</code>, <code>SecretKindOfEntry</code> and <code>PasswordMaker</code> move into a small new local package (<code>Packages/SGitSecrets</code>) that both apps use; the screens are adapted to it rather than to <code>VaultShelf</code>, which belongs to SGit Vaults.</li>
+<li><code>Packages/SGitPeople</code> later, for sharing.</li>
+</ul>
+<p>Adding a target and a package means editing the hand-written Xcode project, which one session at a time may do (CLAUDE.md); a new CI workflow on the pattern of <code>sgit-app.yml</code>; a TestFlight group of its own.</p>
+<h3 id="8-2-steps-each-green-in-ci-before-the-next">8.2 Steps, each green in CI before the next</h3>
+<div class="tablewrap"><table>
+<thead><tr><th>Step</th><th>What</th><th>Tested by</th></tr></thead>
+<tbody>
+<tr><td>1</td><td><code>SGitSecrets</code> package: the entry format and password maker moved out of the SGit app, SGit Vaults switched to it, nothing else changed</td><td>Its unit tests and the SGit app's, green</td></tr>
+<tr><td>2</td><td>The file store in <code>SGitVault</code>: zip, unzip, union, atomic replace into a folder, five past copies</td><td>Unit tests with temporary folders; the zip written by Swift read by <code>sgit clone --transport local</code> in CI (as <code>sgit_reads_swift.py</code> does today)</td></tr>
+<tr><td>3</td><td>Merge in Swift: common ancestor, three-way tree merge, conflict files, a signed merge commit with two parents</td><td>Unit tests; a merge made by Swift checked by <code>sgit</code> and a merge made by <code>sgit</code> read by Swift, in CI</td></tr>
+<tr><td>4</td><td>The app target: one vault, &quot;My secrets&quot;, the Secrets screens, Face ID, history of a secret</td><td>Unit tests on the CI simulators</td></tr>
+<tr><td>5</td><td>Store A: iCloud Drive with <code>NSFileCoordinator</code>, <code>NSMetadataQuery</code>, <code>NSFileVersion</code> conflicts</td><td>Unit tests with a folder in iCloud's place; <strong>iCloud itself only on the owner's devices</strong></td></tr>
+<tr><td>6</td><td>Locks: iCloud Keychain (from SGit), the recovery code and its printable page; the key header in the file</td><td>Unit tests, the door vectors</td></tr>
+<tr><td>7</td><td>Store C: export, a chosen copy folder, import and merge; the command-line instructions in the app</td><td>Unit tests; the CI check of step 2</td></tr>
+<tr><td>8</td><td>Credit: the VoiceDebrief ledger and price list, the purchase still switched off until the owner says</td><td>Unit tests</td></tr>
+<tr><td>Later</td><td>Lock 2 (passkey PRF, after issue 003), store D (server), AutoFill (an owner step in the portal), import from Apple Passwords, Bitwarden and 1Password CSV or Credential Exchange, sharing through SGitPeople</td><td></td></tr>
+</tbody></table></div>
+<h3 id="8-3-the-first-version-does">8.3 The first version does</h3>
+<p>One person, on iPhone, iPad and Mac (the Mac as a &quot;designed for iPad&quot; or Catalyst build, as SGit Vaults is). One vault. The ten kinds of secret from SGit, the password maker, Face ID, copy with expiry, the history of each secret. iCloud Drive and the device as stores, with a merge after offline edits and five past copies. Export a copy, and instructions to open it with <code>sgit</code>. iCloud Keychain and a printed recovery code as locks. Credit, counted, with no money taken until the purchase is switched on.</p>
+<h3 id="8-4-the-first-version-does-not-do">8.4 The first version does not do</h3>
+<p>AutoFill in Safari and other apps (until the capability is switched on, the app copies). Storing passkeys. Sharing with another person or a browser. The server. Passkey as a lock. Import from other managers. Android, Windows or a web app. Any model, on the device or elsewhere. Each of these is said in the app where a person would look for it, not hidden.</p>
+<h3 id="8-5-owner-steps">8.5 Owner steps</h3>
+<ol>
+<li>Choose the name and the bundle identifier.</li>
+<li>In the developer portal: the App ID with iCloud (iCloud Documents, a container), and later AutoFill Credential Provider and an App Group.</li>
+<li>A TestFlight group.</li>
+<li>Decide the default locks (recommended above) and the prices (below).</li>
+</ol>
+<h2 id="9-pricing">9. Pricing</h2>
+<p>Per use, in the same honesty-box model as VoiceDebrief's <a href="../../credit/index.html">credit</a>: a balance in micro-credits (a penny is 10,000), charged after something is done, never blocking. One rule above all for a secrets manager: <strong>reading, searching, copying and opening a vault are never charged and never blocked</strong>, even below zero, in the way VoiceDebrief never charges or stops a recording. A person must always be able to reach their own passwords.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>What</th><th>Placeholder</th></tr></thead>
+<tbody>
+<tr><td>Reading, copying, searching, opening, exporting a copy, the recovery code</td><td>Free, always</td></tr>
+<tr><td>Adding or changing a secret</td><td>1p</td></tr>
+<tr><td>Merging two devices' changes</td><td>Free (it is the app's job)</td></tr>
+<tr><td>A second or further vault</td><td>10p, as creating a vault in VoiceDebrief</td></tr>
+<tr><td>Keeping a copy on the SG/Send server (later)</td><td>1p a day while switched on, or per push; to be measured</td></tr>
+<tr><td>Sharing a vault with a person (later)</td><td>10p</td></tr>
+<tr><td>Starting credit</td><td>£2.00, a placeholder</td></tr>
+</tbody></table></div>
+<p>Someone who adds or changes twenty secrets a month spends 20p, against £3 to £4 a month for the paid plans in section 3. Top-ups go through the App Store in packs (Apple takes its share, which is one reason for packs and not single pennies); until the owner switches the purchase on, top-ups are simulated, as in VoiceDebrief.</p>
+<h2 id="10-questions-for-the-owner">10. Questions for the owner</h2>
+<ol>
+<li><strong>The name</strong>: SGit Secrets, Tinvault or Keyfold, or another?</li>
+<li><strong>The default locks</strong>: iCloud Keychain on, the recovery code strongly offered, the passkey optional (recommended), or the passkey as the default?</li>
+<li><strong>One file per vault or one file for everything?</strong> Proposed: one file per vault, so that a later shared vault can live in a different store from &quot;My secrets&quot;.</li>
+<li><strong>Should the first version include the server as an option</strong>, or leave it for later (proposed: later)?</li>
+<li><strong>Prices</strong>: are 1p per change and free reading right?</li>
+</ol>
+<h2 id="sources">Sources</h2>
+<ul>
+<li>Strongbox on iCloud Drive and duplicates: <a href="https://strongbox.reamaze.com/kb/troubleshooting-and-errors/resolve-common-sync-issues">Strongbox support: syncing</a>, <a href="https://strongbox.reamaze.com/kb/troubleshooting-and-errors/my-icloud-database-has-numbers-after-it-or-multiple-copies-of-my-database-keep-showing-up-when-i-save">duplicate copies</a>; last-writer-wins on iCloud: <a href="https://www.panicvault.org/cloud-sync/sync-conflicts/">PanicVault on sync conflicts</a>.</li>
+<li>Enpass storage and pricing: <a href="https://www.panicvault.org/password-managers/enpass-review/">PanicVault review</a>, <a href="https://gauravtiwari.org/enpass-review">Gaurav Tiwari review</a>.</li>
+<li>Prices: <a href="https://vpnoverview.com/news/1password-price-increase-march-27/">1Password increase, March 2026</a>, <a href="https://alternativeto.net/news/2026/1/bitwarden-enhances-premium-and-families-plans-with-more-security-features-and-raises-prices">Bitwarden 2026 changes</a>, <a href="https://password-manager.cybernews.com/proton-pass-vs-1password/">Proton Pass and 1Password</a>, and the <a href="../../sgit-app/secrets/opportunity/index.html">opportunity brief</a> for Keeper and Dashlane.</li>
+<li>Apple Account recovery: <a href="https://support.apple.com/guide/security/secafa525057/web">Apple Platform Security: recovery contacts</a>, <a href="https://support.apple.com/109345">recovery key</a>, <a href="https://support.apple.com/en-al/102641">recovery contact</a>.</li>
+<li>Passkey PRF on Apple platforms: <a href="https://developer.apple.com/documentation/authenticationservices/asauthorizationpublickeycredentialprfassertioninput-swift.struct">ASAuthorizationPublicKeyCredentialPRFAssertionInput</a>, <a href="https://developer.apple.com/forums/thread/764730">the PRF output bug, fixed in 18.4</a>.</li>
+<li>Names: App Store listings for <a href="https://apps.apple.com/us/app/strong-room/id945235429">strong room</a>, <a href="https://apps.apple.com/us/app/coffre-noir-password-manager/id1473071687">Coffre Noir</a>, <a href="https://apps.apple.com/us/app/sealpass-password-manager/id1573117747">SealPass</a>, <a href="https://apps.apple.com/app/id1591056366">Secrets 4</a>; domains from rdap.org.</li>
+<li>sgit: sgit-ai 0.27.0 from PyPI, run in this session (<code>clone --transport local</code>, <code>pull</code> with merge and conflicts).</li>
+</ul>
+<h2 id="ideas">Ideas</h2>
+<ul>
+<li><strong>A vault as one file in your iCloud Drive</strong> <span class="chip chip-proposed">proposed</span>: the whole vault is one small encrypted file in the app's iCloud folder, replaced on every change, with five past copies; no server of ours needed.</li>
+<li><strong>Offline edits on two devices merge</strong> <span class="chip chip-proposed">proposed</span>: two copies of the file join by union of objects and a three-way merge, so nothing is chosen by time and nothing is lost.</li>
+<li><strong>Several stores at once</strong> <span class="chip chip-proposed">proposed</span>: iCloud Drive, the device, a copy on a USB stick and optionally the server, each a remote, with one line saying when each was last written.</li>
+<li><strong>Open your vault on any computer</strong> <span class="chip chip-proposed">proposed</span>: the exported file opens with the open <code>sgit</code> command (<code>--transport local</code>), no app and no account.</li>
+<li><strong>Locks you can see</strong> <span class="chip chip-proposed">proposed</span>: the vault key wrapped once per lock (iCloud Keychain, a passkey, a printed code), and the app says which locks open it.</li>
+<li><strong>A passkey on a hardware key as the lock</strong> <span class="chip chip-proposed">proposed</span>: the vault key away from the Apple Account, opened by a security key's PRF.</li>
+<li><strong>Reading is never charged</strong> <span class="chip chip-proposed">proposed</span>: per-use pricing in pennies where opening and copying your own passwords is always free, even below zero.</li>
+</ul>
+</main>
+
+<footer class="site"><div class="cols">
+  <div>
+    <div class="brandline">Voice<em>Debrief</em> <span>iOS</span></div>
+    <p>The VoiceDebrief transcript and debrief as a native iPhone and iPad app, on Apple's own models, with the results in a vault you own. In development: there is nothing to install yet. Content CC BY 4.0; code Apache 2.0.</p>
+    <p class="partnote">This site is static and has no analytics.</p>
+    <p class="verline">site dev · <a href="index.md">this page as markdown</a> · <a href="../../llms.txt">llms.txt</a></p>
+  </div>
+  <div>
+    <h4>The app</h4>
+    <a href="../../built/index.html">What is built</a>
+    <a href="../../plan/index.html">The plan</a>
+    <a href="../../develop/index.html">Build and test</a>
+    <a href="../../versions/index.html">Release history</a>
+    <a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">GitHub</a>
+  </div>
+  <div>
+    <h4>VoiceDebrief</h4>
+    <a href="https://voicedebrief.ai">voicedebrief.ai</a>
+    <a href="https://meetscribe.chrome-extension.voicedebrief.ai">MeetScribe for Google Meet</a>
+  </div>
+  <div>
+    <h4>Built on</h4>
+    <a href="https://sgit.ai">sgit.ai</a>
+    <a href="https://pki.sgit.ai">pki.sgit.ai</a>
+    <a href="https://sgit.ai/security/index.html">The vault security model</a>
+  </div>
+</div></footer>
+</body>
+</html>
