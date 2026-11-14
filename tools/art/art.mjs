@@ -13,7 +13,7 @@ export const C = {
 export const T = {
   record: '#0E9E72', library: '#2F80ED', vaults: '#4F5BD5', recipients: '#E5577E', identity: '#8E5CF7',
   credit: '#D4A12A', lab: '#13A8C8', words: '#2BB39A', diagnostics: '#7B8DA3', status: '#12C08A',
-  settings: '#8A9BB0', activity: '#F08A4B', contacts: '#E5577E', about: '#12C08A', gallery: '#E07A3F', share: '#E5577E', history: '#13A8C8', webVault: '#4F5BD5', inbox: '#2F80ED', secrets: '#8E5CF7', people: '#E5577E',
+  settings: '#8A9BB0', guide: '#2BA3D9', activity: '#F08A4B', contacts: '#E5577E', about: '#12C08A', gallery: '#E07A3F', share: '#E5577E', history: '#13A8C8', webVault: '#4F5BD5', inbox: '#2F80ED', secrets: '#8E5CF7', people: '#E5577E',
 };
 
 // A deterministic sequence, so a picture is the same every time it is drawn.
@@ -232,6 +232,21 @@ export const tiles = {
       <circle r="44" fill="url(#acc)"/><circle r="16" fill="${C.navy}"/>
       <rect x="-9" y="40" width="18" height="100" rx="6" fill="url(#acc)"/>
       <rect x="9" y="96" width="26" height="14" rx="5" fill="url(#acc)"/><rect x="9" y="122" width="18" height="14" rx="5" fill="url(#acc)"/>
+    </g>`),
+
+  guide: () => frame(W, H, T.guide, `
+    <g filter="url(#soft)">
+      <path d="M170 170 Q265 140 360 172 V420 Q265 390 170 418 Z" fill="url(#card)"/>
+      <path d="M550 170 Q455 140 360 172 V420 Q455 390 550 418 Z" fill="#DCE6EF"/>
+    </g>
+    ${lines(200, 210, 130, 5, 34, C.navy, 0.2)}
+    <rect x="392" y="204" width="60" height="60" rx="16" fill="${T.guide}"/>
+    <path d="M406 236 l12 12 l22 -24" fill="none" stroke="#FFFFFF" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+    ${lines(392, 290, 130, 3, 32, C.navy, 0.2)}
+    <g filter="url(#soft)" transform="translate(470 120)">
+      <circle r="56" fill="url(#acc)"/>
+      <path d="M0 -38 L12 -6 L0 38 L-12 -6 Z" fill="#FFFFFF"/>
+      <path d="M0 38 L-12 -6 L0 2 Z" fill="${C.navy}" fill-opacity="0.35"/>
     </g>`),
 
   gallery: () => frame(W, H, T.gallery, [[-10, 180, 130], [4, 300, 110], [14, 400, 160]].map(([rot, x, y], i) => `

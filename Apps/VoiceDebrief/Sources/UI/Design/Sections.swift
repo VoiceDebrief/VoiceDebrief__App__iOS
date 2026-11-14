@@ -4,7 +4,7 @@ import SwiftUI
 /// alike by the tab bar, the sidebar, the record screen's tiles and the section's own header.
 extension RootTab: CaseIterable, Identifiable {
     static var allCases: [RootTab] {
-        [.record, .library, .contacts, .vaults, .identity, .credit, .activity, .lab, .words, .about, .settings]
+        [.record, .library, .contacts, .vaults, .guide, .identity, .credit, .activity, .lab, .words, .about, .settings]
     }
 
     var id: String { rawValue }
@@ -15,6 +15,7 @@ extension RootTab: CaseIterable, Identifiable {
         case .library: "Library"
         case .contacts: "Contacts"
         case .vaults: "Vaults"
+        case .guide: "Guide"
         case .identity: "Identity"
         case .credit: "Credit"
         case .activity: "Your activity"
@@ -31,6 +32,7 @@ extension RootTab: CaseIterable, Identifiable {
         case .library: "tray.full"
         case .contacts: "person.2"
         case .vaults: "lock.shield"
+        case .guide: "book"
         case .identity: "person.badge.key"
         case .credit: "sterlingsign.circle"
         case .activity: "chart.bar"
@@ -48,6 +50,7 @@ extension RootTab: CaseIterable, Identifiable {
         case .library: "Every note, by day"
         case .contacts: "Who notes go to; add one by QR code"
         case .vaults: "Encrypted copies that you own"
+        case .guide: "What is new, every idea, how things work"
         case .identity: "Your keys and your devices"
         case .credit: "What each thing costs"
         case .activity: "What you have used; send it"
@@ -64,6 +67,7 @@ extension RootTab: CaseIterable, Identifiable {
         case .library: Color(dsHex: 0x2F80ED)
         case .contacts: Color(dsHex: 0xE5577E)
         case .vaults: DS.Palette.indigo
+        case .guide: Color(dsHex: 0x2BA3D9)
         case .identity: Color(dsHex: 0x8E5CF7)
         case .credit: Color(dsHex: 0xD4A12A)
         case .activity: Color(dsHex: 0xF08A4B)

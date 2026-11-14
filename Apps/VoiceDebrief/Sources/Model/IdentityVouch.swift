@@ -1,4 +1,8 @@
 import Foundation
+// The PKI interop tool compiles this file with the package's PKI files as one module, where there is nothing to import.
+#if canImport(SGitPeople)
+import SGitPeople
+#endif
 
 /// The statement that links a device key to a person: "this device key is mine, from this date, for these uses".
 /// It is written in the register's statement envelope (pki.sgit.ai: `{ v, type, registry, record, signer,

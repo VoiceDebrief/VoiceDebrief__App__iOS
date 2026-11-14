@@ -1,5 +1,6 @@
 import CryptoKit
 import Foundation
+import SGitPeople
 
 /// Sending a voice note to the developer, by the user's choice, for judging Apple's models on real
 /// notes. The note goes to an sgit append lane: a write-only channel on a vault server. It is

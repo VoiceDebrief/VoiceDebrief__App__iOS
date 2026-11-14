@@ -1,5 +1,6 @@
 // Copied from PrompTugal__App__iOS, Packages/PTLanes/Sources/PTLanes/LaneCrypto.swift, at bf76d29
-// (release v0.4.103), on 13 November 2026. Changed here: the PTCore import removed. Nothing else.
+// (release v0.4.103), on 13 November 2026. Changed here: the PTCore import removed. Moved from
+// Apps/VoiceDebrief/Sources/Engine/ into the SGitPeople package on 14 November 2026 and made public.
 import CryptoKit
 import Foundation
 import Security
@@ -9,10 +10,10 @@ import Security
 /// SHA-256 (and MGF1-SHA-256) wraps that key to the recipient, and the result is base64 of
 /// `{"v": 2, "w": <wrapped key>, "i": <iv>, "c": <ciphertext>}` with each field base64.
 /// An append lane stores base64 of that text again ("encoded twice", sgit.ai /api/append-lanes).
-enum LaneCrypto {
-    enum Failure: Error, Equatable, LocalizedError {
+public enum LaneCrypto {
+    public enum Failure: Error, Equatable, LocalizedError {
         case badPEM, notRSA, keyImport(String), encrypt(String), decrypt(String), badEnvelope, fingerprintMismatch
-        var errorDescription: String? {
+        public var errorDescription: String? {
             switch self {
             case .badPEM: "The public key is not a PEM block."
             case .notRSA: "The public key is not an RSA key."
@@ -28,7 +29,7 @@ enum LaneCrypto {
     // MARK: Keys
 
     /// DER bytes of a `-----BEGIN PUBLIC KEY-----` (SubjectPublicKeyInfo) block.
-    static func der(fromPEM pem: String) throws -> Data {
+    public static func der(fromPEM pem: String) throws -> Data {
         let body = pem.split(whereSeparator: \.isNewline)
             .filter { !$0.hasPrefix("-----") }
             .joined()
@@ -38,12 +39,12 @@ enum LaneCrypto {
     }
 
     /// `sha256:` and the first 16 hex characters of SHA-256 over the SPKI DER (sgit's `compute_fingerprint`).
-    static func fingerprint(spki: Data) -> String {
+    public static func fingerprint(spki: Data) -> String {
         "sha256:" + SHA256.hash(data: spki).map { String(format: "%02x", $0) }.joined().prefix(16)
     }
 
     /// The RSAPublicKey (PKCS#1) inside an RSA SubjectPublicKeyInfo, which is what `SecKeyCreateWithData` takes.
-    static func pkcs1(fromSPKI spki: Data) throws -> Data {
+    public static func pkcs1(fromSPKI spki: Data) throws -> Data {
         var reader = DERReader(Array(spki))
         var outer = try reader.read(tag: 0x30)                  // SubjectPublicKeyInfo
         var algorithm = try outer.read(tag: 0x30)               // AlgorithmIdentifier
@@ -55,18 +56,18 @@ enum LaneCrypto {
     }
 
     /// SubjectPublicKeyInfo for an RSA PKCS#1 public key (what `SecKeyCopyExternalRepresentation` gives).
-    static func spki(fromPKCS1 pkcs1: Data) -> Data {
+    public static func spki(fromPKCS1 pkcs1: Data) -> Data {
         let algorithm: [UInt8] = [0x30, 0x0D, 0x06, 0x09, 0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 0x01, 0x01, 0x01, 0x05, 0x00]
         let bitString = DERReader.encode(tag: 0x03, [0x00] + Array(pkcs1))
         return Data(DERReader.encode(tag: 0x30, algorithm + bitString))
     }
 
-    static func pem(spki: Data) -> String {
+    public static func pem(spki: Data) -> String {
         let lines = spki.base64EncodedString(options: [.lineLength64Characters, .endLineWithLineFeed])
         return "-----BEGIN PUBLIC KEY-----\n\(lines)\n-----END PUBLIC KEY-----\n"
     }
 
-    static func publicKey(pem: String) throws -> SecKey {
+    public static func publicKey(pem: String) throws -> SecKey {
         let pkcs1 = try pkcs1(fromSPKI: der(fromPEM: pem))
         let attributes: [String: Any] = [kSecAttrKeyType as String: kSecAttrKeyTypeRSA,
                                          kSecAttrKeyClass as String: kSecAttrKeyClassPublic]
@@ -78,7 +79,7 @@ enum LaneCrypto {
     }
 
     /// An RSA private key from PKCS#8 bytes (WebCrypto's `exportKey('pkcs8')`, as the newsroom inbox keeps it).
-    static func privateKey(pkcs8: Data) throws -> SecKey {
+    public static func privateKey(pkcs8: Data) throws -> SecKey {
         var reader = DERReader(Array(pkcs8))
         var outer = try reader.read(tag: 0x30)                  // PrivateKeyInfo
         _ = try outer.read(tag: 0x02)                           // version
@@ -96,17 +97,26 @@ enum LaneCrypto {
 
     // MARK: Envelope
 
-    struct Envelope: Codable, Equatable {
-        let v: Int
-        let w: String
-        let i: String
-        let c: String
-        var f: String?
-        var s: String?
+    public struct Envelope: Codable, Equatable {
+        public let v: Int
+        public let w: String
+        public let i: String
+        public let c: String
+        public var f: String?
+        public var s: String?
+
+        public init(v: Int, w: String, i: String, c: String, f: String? = nil, s: String? = nil) {
+            self.v = v
+            self.w = w
+            self.i = i
+            self.c = c
+            self.f = f
+            self.s = s
+        }
     }
 
     /// The `.enc` text: base64 of the JSON envelope.
-    static func encrypt(_ plaintext: Data, to recipient: SecKey) throws -> String {
+    public static func encrypt(_ plaintext: Data, to recipient: SecKey) throws -> String {
         let contentKey = SymmetricKey(size: .bits256)
         let nonce = AES.GCM.Nonce()
         let sealed: AES.GCM.SealedBox
@@ -123,7 +133,7 @@ enum LaneCrypto {
     }
 
     /// Decrypts an `.enc` text with the recipient's private key.
-    static func decrypt(_ encText: String, with privateKey: SecKey) throws -> Data {
+    public static func decrypt(_ encText: String, with privateKey: SecKey) throws -> Data {
         guard let json = Data(base64Encoded: encText.trimmingCharacters(in: .whitespacesAndNewlines)),
               let envelope = try? JSONDecoder().decode(Envelope.self, from: json),
               envelope.v == 1 || envelope.v == 2,
@@ -142,12 +152,12 @@ enum LaneCrypto {
     }
 
     /// What goes in the lane's `payload`: base64 of the `.enc` text.
-    static func lanePayload(encText: String) -> String {
+    public static func lanePayload(encText: String) -> String {
         Data(encText.utf8).base64EncodedString()
     }
 
     /// The `.enc` text from a lane's stored content (decode once).
-    static func encText(fromLaneContent content: String) throws -> String {
+    public static func encText(fromLaneContent content: String) throws -> String {
         guard let data = Data(base64Encoded: content.trimmingCharacters(in: .whitespacesAndNewlines)),
               let text = String(data: data, encoding: .utf8) else { throw Failure.badEnvelope }
         return text
@@ -155,15 +165,16 @@ enum LaneCrypto {
 }
 
 /// Just enough DER to unwrap and wrap an RSA public key.
-struct DERReader {
+public struct DERReader {
     private var bytes: [UInt8]
     private var index = 0
 
-    init(_ bytes: [UInt8]) { self.bytes = bytes }
+    public init(_ bytes: [UInt8]) { self.bytes = bytes }
 
-    struct Element {
-        let bytes: [UInt8]
-        mutating func read(tag: UInt8) throws -> Element {
+    public struct Element {
+        public let bytes: [UInt8]
+        public init(bytes: [UInt8]) { self.bytes = bytes }
+        public mutating func read(tag: UInt8) throws -> Element {
             var reader = DERReader(bytes)
             let element = try reader.read(tag: tag)
             self = Element(bytes: Array(bytes[reader.index...]))
@@ -171,7 +182,7 @@ struct DERReader {
         }
     }
 
-    mutating func read(tag: UInt8) throws -> Element {
+    public mutating func read(tag: UInt8) throws -> Element {
         guard index < bytes.count, bytes[index] == tag else { throw LaneCrypto.Failure.keyImport("DER tag") }
         index += 1
         guard index < bytes.count else { throw LaneCrypto.Failure.keyImport("DER length") }
@@ -189,7 +200,7 @@ struct DERReader {
         return element
     }
 
-    static func encode(tag: UInt8, _ content: [UInt8]) -> [UInt8] {
+    public static func encode(tag: UInt8, _ content: [UInt8]) -> [UInt8] {
         let count = content.count
         let length: [UInt8]
         if count < 0x80 {

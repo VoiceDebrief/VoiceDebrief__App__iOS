@@ -42,6 +42,8 @@ struct RecordView: View {
             ScrollViewReader { proxy in
                 ScrollView {
                     VStack(spacing: 24) {
+                        // At the top when idle; while recording it is pinned above the growing words.
+                        if !isRecording { controls }
                         content
                         // The live words grow downwards: this is what the screen follows while recording.
                         Color.clear.frame(height: 1).id(Self.bottomId)
@@ -56,7 +58,9 @@ struct RecordView: View {
                     withAnimation(.easeOut(duration: 0.2)) { proxy.scrollTo(Self.bottomId, anchor: .bottom) }
                 }
             }
-            .safeAreaInset(edge: .bottom) { controls }
+            .safeAreaInset(edge: .top) {
+                if isRecording { controls.background(.bar) }
+            }
             .navigationTitle("VoiceDebrief")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -141,20 +145,10 @@ struct RecordView: View {
             WhereWorkHappens(session: session)
         } else {
             if session.store.notes.isEmpty {
-                // The first visit: the front door says what happens, in a picture and one line.
+                // The first visit: below the control, what happens, in a picture and one line.
                 SectionHero(tab: .record, title: "Your first voice note",
-                            line: "Tap the green button. Saved as you speak, then transcribed and debriefed on this device.",
+                            line: "Saved as you speak, then transcribed and debriefed on this device.",
                             height: 210, image: "VDArt-hero")
-            } else {
-                VStack(spacing: 6) {
-                    Text("Record a voice note")
-                        .font(DS.TypeScale.title)
-                    Text("Saved as you speak, then transcribed and debriefed on this device.")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                }
-                .multilineTextAlignment(.center)
-                .padding(.top, 8)
             }
 
             if case .failed(let why) = session.phase {
@@ -168,9 +162,18 @@ struct RecordView: View {
             if let briefing, !briefing.isEmpty {
                 card {
                     if let version = briefing.upgradedTo {
-                        Link(destination: AppInfo.notes(for: version)) {
-                            Label("Updated to \(version): see what is new", systemImage: "sparkles")
-                                .font(.callout.weight(.semibold))
+                        if let history = VersionHistory.bundled() {
+                            NavigationLink {
+                                WhatsNewView(history: history)
+                            } label: {
+                                Label("Updated to \(version): see what is new", systemImage: "sparkles")
+                                    .font(.callout.weight(.semibold))
+                            }
+                        } else {
+                            Link(destination: AppInfo.notes(for: version)) {
+                                Label("Updated to \(version): see what is new", systemImage: "sparkles")
+                                    .font(.callout.weight(.semibold))
+                            }
                         }
                     }
                     ForEach(Array(briefing.lines.prefix(3)), id: \.self) { line in
@@ -179,19 +182,9 @@ struct RecordView: View {
                     Button("Dismiss") { self.briefing = nil }
                 }
             }
-            if let name = queuedFor {
-                card {
-                    Label("Your last note will be sent to \(name) as soon as it is written up. You can record the next one now.", systemImage: "paperplane.fill")
-                        .font(.callout)
-                    HStack {
-                        Button("Do not send", role: .destructive) {
-                            if let id = queuedNoteId { session.cancelQueuedSend(id) }
-                            queuedFor = nil
-                            queuedNoteId = nil
-                        }
-                        Spacer()
-                        Button("OK") { queuedFor = nil; queuedNoteId = nil }
-                    }
+            if let name = queuedFor, let id = queuedNoteId {
+                SendProgressCard(noteId: id, to: name, session: session) {
+                    withAnimation { queuedFor = nil; queuedNoteId = nil }
                 }
             }
             if let notice = session.notice {
@@ -297,7 +290,14 @@ struct RecordView: View {
     // MARK: The control, pinned where a thumb reaches
 
     private var addresseeChips: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
+        ViewThatFits(in: .horizontal) {
+            chipRow
+            ScrollView(.horizontal, showsIndicators: false) { chipRow.padding(.horizontal, 16) }
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    private var chipRow: some View {
             HStack(spacing: 8) {
                 chip("Just me", systemImage: "person", selected: addresseeRecipient == nil) { addressee = "" }
                 ForEach(RecipientStore.shared.all) { recipient in
@@ -314,8 +314,6 @@ struct RecordView: View {
                 }
                 .buttonStyle(.plain)
             }
-            .padding(.horizontal, 16)
-        }
     }
 
     private func chip(_ title: String, systemImage: String, selected: Bool, action: @escaping () -> Void) -> some View {
@@ -334,6 +332,8 @@ struct RecordView: View {
     private var controls: some View {
         VStack(spacing: 10) {
             if !isRecording {
+                Text("Record a voice note")
+                    .font(.title2.weight(.semibold))
                 Text("Record a note for")
                     .font(.caption)
                     .foregroundStyle(.secondary)
@@ -349,15 +349,15 @@ struct RecordView: View {
                 ZStack {
                     Circle()
                         .fill(localeId.isEmpty ? AnyShapeStyle(Color.gray) : AnyShapeStyle(DS.Palette.green.gradient))
-                        .frame(width: 88, height: 88)
+                        .frame(width: 120, height: 120)
                     Circle()
                         .strokeBorder(.white.opacity(0.35), lineWidth: 2)
-                        .frame(width: 88, height: 88)
+                        .frame(width: 120, height: 120)
                     Circle()
-                        .strokeBorder(DS.Palette.green.opacity(isRecording ? 0.5 : 0.18), lineWidth: 6)
-                        .frame(width: 104, height: 104)
+                        .strokeBorder(DS.Palette.green.opacity(isRecording ? 0.5 : 0.18), lineWidth: 8)
+                        .frame(width: 140, height: 140)
                     Image(systemName: isRecording ? "checkmark" : "mic.fill")
-                        .font(.system(size: 34, weight: .semibold))
+                        .font(.system(size: 46, weight: .semibold))
                         .foregroundStyle(.white)
                         .contentTransition(.symbolEffect(.replace))
                 }
@@ -409,10 +409,8 @@ struct RecordView: View {
                 .disabled(localeId.isEmpty)
             }
         }
-        .padding(.top, 12)
-        .padding(.bottom, 8)
+        .padding(.vertical, 8)
         .frame(maxWidth: .infinity)
-        .background(.bar)
     }
 
     private var caption: String {

@@ -16,8 +16,8 @@ on:
   push:
     branches: [dev, 'work/**']
     paths:
-      - 'Apps/VoiceDebrief/Sources/Engine/PKI*.swift'
-      - 'Apps/VoiceDebrief/Sources/Engine/LaneCrypto.swift'
+      - 'Packages/SGitPeople/Sources/SGitPeople/PKIKit.swift'
+      - 'Packages/SGitPeople/Sources/SGitPeople/LaneCrypto.swift'
       - 'Apps/VoiceDebrief/Sources/Model/PKI*.swift'
       - 'Apps/VoiceDebrief/Sources/Model/IdentityVouch.swift'
       - 'Apps/VoiceDebrief/Tests/PKIFixtureChecks.swift'

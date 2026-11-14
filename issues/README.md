@@ -56,3 +56,4 @@ One file per piece of work: `open/NNN-slug.md`, moved to `done/` when it is done
 | 114 | sgit app: getting a folder out, at full quality | the sgit app session |
 | 115 | sgit app: the Create sheet, the four keys, smaller things | the sgit app session |
 | 116 | sgit app: what the pictures could not show; round 2 | the sgit app session, then the screens session |
+| 200 | People, messages and secrets: the SGitPeople package | the people session; the owner's four decisions |

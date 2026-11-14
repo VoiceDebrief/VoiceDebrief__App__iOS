@@ -2,6 +2,7 @@ import CryptoKit
 import Foundation
 import Security
 import SGitVault
+import SGitPeople
 
 /// This device's key pair: which device, or which install of the app, did something. It never leaves the device.
 ///
