@@ -543,8 +543,23 @@ final class VaultShelf {
         return (try await open(vault), writeKey, token)
     }
 
+    /// Writes small bytes to one path as one signed commit: a new file, or a new version of one. The
+    /// plain bytes touch the disk only while they are sealed, in a file removed straight after.
+    func put(_ data: Data, at path: String, in vault: SavedVault, message: String) async throws {
+        let handle = try await open(vault)
+        let stager = try await handle.stager()
+        let plain = scratchFolder.appending(path: "put-\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: scratchFolder, withIntermediateDirectories: true)
+        try data.write(to: plain, options: [.atomic, .completeFileProtection])
+        defer { try? FileManager.default.removeItem(at: plain) }
+        let staged = try await stager.stage(file: plain, as: path, in: scratchFolder)
+        defer { try? FileManager.default.removeItem(at: staged.ciphertext) }
+        try await change(vault, staged: [staged], removing: [], message: message, uploaded: false)
+    }
+
     /// One commit that removes or renames, tried again when somebody else committed first.
-    private func change(_ vault: SavedVault, staged: [VaultStagedFile], removing: [String], message: String) async throws {
+    private func change(_ vault: SavedVault, staged: [VaultStagedFile], removing: [String], message: String,
+                        uploaded: Bool = true) async throws {
         let (handle, writeKey, token) = try await writing(to: vault)
         let signer = try commitSigner()
         var attempt = 0
@@ -553,7 +568,7 @@ final class VaultShelf {
             do {
                 _ = try await handle.commit(staged: staged, removing: removing, message: message, signer: signer,
                                             writeKey: writeKey, accessToken: token, transport: transport(for: vault),
-                                            alreadyUploaded: Set(staged.map(\.blobId)))
+                                            alreadyUploaded: uploaded ? Set(staged.map(\.blobId)) : [])
                 break
             } catch VaultError.pushConflict where attempt < 3 {
                 continue

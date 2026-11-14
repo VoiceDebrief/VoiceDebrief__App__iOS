@@ -75,6 +75,8 @@ Every page has a markdown twin: replace index.html with index.md.
 - https://ios.app.voicedebrief.ai/sgit-app/secrets/index.html : the design for the secrets manager in
   the sgit app (intention): secrets as files in vaults, teams as the people a vault key was sealed to,
   the trust map, sync through iCloud Keychain and the vault server, the build order, the owner's questions.
+- https://ios.app.voicedebrief.ai/sgit-app/secrets/opportunity/index.html : the research brief behind it:
+  the field, the pain points with sources, ten openings, the iOS constraints (AutoFill, passkeys, Keychain).
 - https://ios.app.voicedebrief.ai/sgit-app/guide/index.html : the sgit app explained screen by screen,
   with numbered callouts on pictures taken by CI, how it came to be, and what was asked for next.
 - https://ios.app.voicedebrief.ai/sgit-app/built/index.html : its reality file. If it is not listed

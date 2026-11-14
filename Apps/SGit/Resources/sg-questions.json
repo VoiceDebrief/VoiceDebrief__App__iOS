@@ -1,0 +1,65 @@
+[
+  {
+    "id": "secrets-home",
+    "asked": "2026-11-14",
+    "question": "Where should My secrets live?",
+    "why": "It decides whether your secrets reach your other devices without an access key, and whether the sgit command and the web Vault can read them.",
+    "options": ["A vault like any other: on this device first, on the server once there is an access key (proposed)", "iCloud Keychain only: syncs for free, but cannot be shared or read outside the app"]
+  },
+  {
+    "id": "vault-keys-in-icloud",
+    "asked": "2026-11-14",
+    "question": "May the app keep vault keys in iCloud Keychain, so that all your devices open the same vaults with no setup?",
+    "why": "This is what makes sync between your iPhone, iPad and Mac need no steps. It also makes your Apple account a way back into your vaults.",
+    "options": ["Yes, on by default, with a switch to keep them on one device (proposed)", "Off by default, a switch to turn it on", "Never"]
+  },
+  {
+    "id": "teammate-access-key",
+    "asked": "2026-11-14",
+    "question": "How should a teammate who was sent a vault get the right to add to it? (issue 110)",
+    "why": "Today they need an access key for the server as well as the vault key, and nothing gives them one.",
+    "options": ["The access key arrives as the first sealed secret when we swap cards (the people session's proposal)", "It travels with the vault invitation", "A server change: the vault key is enough", "Something else"]
+  },
+  {
+    "id": "photos-of-people",
+    "asked": "2026-11-14",
+    "question": "Where should the photo of a person you met be kept?",
+    "why": "A photo makes the trust map human. In the card it would travel to everyone that person meets, and a card must stay small enough for one QR code.",
+    "options": ["On my device only (proposed)", "In their card, sent with it", "Both: mine on my device, theirs if they add one"]
+  },
+  {
+    "id": "autofill",
+    "asked": "2026-11-14",
+    "question": "Shall I prepare AutoFill, so the app fills passwords and passkeys in Safari and other apps?",
+    "why": "It is what makes a password manager a daily habit. It needs you to switch on the AutoFill Credential Provider capability and an App Group for ai.sgit.vaults.app in the Apple developer portal.",
+    "options": ["Yes, tell me exactly what to switch on", "Later"]
+  },
+  {
+    "id": "recovery",
+    "asked": "2026-11-14",
+    "question": "If someone loses every device, how should they get back in?",
+    "why": "There is no company to reset a password. Recovery is where most password managers are weakest.",
+    "options": ["Three of five people I trust each hold a sealed part (proposed, later)", "A printed recovery sheet", "Both", "iCloud Keychain is enough for now"]
+  },
+  {
+    "id": "team-confirmation",
+    "asked": "2026-11-14",
+    "question": "Before someone can be put in a shared vault, who must have confirmed them?",
+    "why": "It decides how strict the team is. A key that came from a confirmed card cannot be swapped by a server.",
+    "options": ["The person making the vault must have confirmed each member (proposed)", "Everyone must have confirmed everyone", "Anyone in the team is enough"]
+  },
+  {
+    "id": "pinned-root",
+    "asked": "2026-11-14",
+    "question": "Should the app show who is vouched for by you (sha256:db7f79fdd87e030a), as pki.sgit.ai does?",
+    "why": "A brief from another session asked for it. The design here has every team trust independently, with no root.",
+    "options": ["No root: every team is its own (proposed)", "Show 'vouched by Dinis' as extra information", "Yes, pin it"]
+  },
+  {
+    "id": "send-activity-automatically",
+    "asked": "2026-11-14",
+    "question": "Should each device send its activity record on its own when the app opens? (issue 117)",
+    "why": "Today it is a button on each device, so the picture across your three devices depends on remembering to press it.",
+    "options": ["Yes, with a switch, off by default", "Yes, on by default in test builds", "No, keep the button"]
+  }
+]

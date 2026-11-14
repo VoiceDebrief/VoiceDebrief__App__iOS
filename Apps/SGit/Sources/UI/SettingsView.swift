@@ -68,6 +68,7 @@ struct SettingsView: View {
                 LabeledContent("Errors", value: "\(shelf.log.totals.errors)")
                 NavigationLink("Every step") { TrafficView(log: shelf.log).tracked("traffic") }
                 NavigationLink("Your activity") { ActivityView().tracked("activity") }
+                NavigationLink("Questions for you") { QuestionsView().tracked("questions") }
             }
 
             Section("About") {

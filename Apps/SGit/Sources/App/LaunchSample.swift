@@ -88,6 +88,22 @@ final class SampleWorld {
         }
         await shelf.sendToServer(made)
         local = await shelf.create(name: "Drafts, not shared")
+        // Secrets for the pictures: plainly invented values, in a vault of their own and one in the team's vault.
+        if let home = await shelf.makeSecretsHome() {
+            for (kind, name, values) in Self.sampleSecrets {
+                var entry = SecretEntry.new(kind)
+                entry.name = name
+                for (index, value) in values.enumerated() where index < entry.fields.count { entry.fields[index].value = value }
+                try? await shelf.save(entry, in: shelf.current(home), isNew: true)
+            }
+        }
+        if let team = shelf.vaults.first(where: { $0.id == made.id }) {
+            var entry = SecretEntry.new(.wifi)
+            entry.name = "Booth Wi-Fi"
+            entry.fields[0].value = "Summit-Booth-12"
+            entry.fields[1].value = "sample-not-a-real-password"
+            try? await shelf.save(entry, in: team, isNew: true)
+        }
         vault = shelf.current(made)
         if set == "adding", let vault {
             // Three files taken in and kept, not yet sent: what a person sees between choosing and arriving.
@@ -112,6 +128,14 @@ final class SampleWorld {
         if let vault { _ = try? await shelf.load(vault) }
         await shelf.refreshGallery()
     }
+
+    static let sampleSecrets: [(SecretKindOfEntry, String, [String])] = [
+        (.wifi, "Office Wi-Fi", ["SGit-Office", "sample-wifi-password"]),
+        (.device, "Meeting-room iPad", ["iPad Air, meeting room", "Everyone", "sample-000000"]),
+        (.device, "Booth laptop", ["MacBook Air, booth", "Ana and Ben", "sample-passcode"]),
+        (.login, "Conference portal", ["portal.example.com", "team@example.com", "sample-password"]),
+        (.accessKey, "Vault server", ["dev.send.sgraph.ai", "sample-access-key"]),
+    ]
 
     /// A picture that is plainly a sample: two colours and its own name.
     static func picture(_ name: String, _ a: UIColor, _ b: UIColor) -> Data {
@@ -186,6 +210,14 @@ struct ScreenshotRoot: View {
             NavigationStack { VaultView(shelf: shelf, outbox: outbox, vault: vault, folder: "stage") }
         case ("share.key", let vault?):
             NavigationStack { ShareVaultView(shelf: shelf, vault: vault, showingKey: true) }
+        case ("secrets", _):
+            NavigationStack { SecretsView(shelf: shelf) }
+        case ("secret", _):
+            if let home = shelf.secretsHome {
+                SampleSecret(shelf: shelf, vault: home)
+            }
+        case ("questions", _):
+            NavigationStack { QuestionsView() }
         case ("share", let vault?):
             NavigationStack { ShareVaultView(shelf: shelf, vault: vault) }
         case ("history", let vault?):
@@ -201,6 +233,24 @@ struct ScreenshotRoot: View {
         default:
             Text("No screen called \(screen)")
         }
+    }
+}
+
+/// One secret of the sample, opened as a person would see it before Face ID.
+private struct SampleSecret: View {
+    let shelf: VaultShelf
+    let vault: SavedVault
+    @State private var entry: SecretEntry?
+
+    var body: some View {
+        NavigationStack {
+            if let entry {
+                SecretView(shelf: shelf, vault: vault, entry: entry) {}
+            } else {
+                ProgressView()
+            }
+        }
+        .task { entry = try? await shelf.secrets(in: vault).first { $0.name == "Office Wi-Fi" } }
     }
 }
 #endif

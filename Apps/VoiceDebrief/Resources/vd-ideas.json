@@ -29,9 +29,9 @@
  ],
  "counts": {
   "seen-working": 27,
-  "built-untried": 65,
-  "in-progress": 33,
-  "proposed": 45,
+  "built-untried": 67,
+  "in-progress": 36,
+  "proposed": 42,
   "parked": 6
  },
  "ideas": [
@@ -1486,7 +1486,8 @@
    "summary": "The owner, 14 November 2026: \"you need a way that you can start to ask questions from me throughout the app, so I can answer them even with voice\".",
    "detail": [
     "The owner, 14 November 2026: \"you need a way that you can start to ask questions from me throughout the app, so I can answer them even with voice\".",
-    "To do: Settings, Questions. Each question has an id, the words, why it matters, and proposed answers. The owner answers by choosing one, typing, or dictating (the keyboard's microphone: speech to text on the device). The answer goes to the developers over the developer lane, sealed to their key, as sgit/answer/v1; the app remembers what was answered. The questions ship with the app as a resource, written by the developers. Later: a recorded voice answer (VoiceDebrief's recorder), and questions that arrive in the inbox instead of with a build."
+    "To do: Settings, Questions. Each question has an id, the words, why it matters, and proposed answers. The owner answers by choosing one, typing, or dictating (the keyboard's microphone: speech to text on the device). The answer goes to the developers over the developer lane, sealed to their key, as sgit/answer/v1; the app remembers what was answered. The questions ship with the app as a resource, written by the developers. Later: a recorded voice answer (VoiceDebrief's recorder), and questions that arrive in the inbox instead of with a build.",
+    "Written (14 November 2026, not yet compiled): Questions for you, on the home list and in Settings; nine questions in Resources/sg-questions.json."
    ],
    "statusLine": "Status: open. Owner: the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB).",
    "owner": "the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB)",
@@ -1508,7 +1509,8 @@
    "why": "Open, with nothing built yet: \"Status: open. Owner: the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB). Design: website/sgit-app/secrets/index.md.\"",
    "summary": "To do: a Secrets section listing the entries of every vault that has a secrets/ folder, grouped by vault (\"My secrets\", \"Team: devices\"); kinds login, device, Wi-Fi, card, note, token, vault key, read key, access key, recovery code; add, edit, delete, each as one signed commit of one JSON file; values behind Face ID, copied for two minutes, hidden in the app switcher; a secret's history from the...",
    "detail": [
-    "To do: a Secrets section listing the entries of every vault that has a secrets/ folder, grouped by vault (\"My secrets\", \"Team: devices\"); kinds login, device, Wi-Fi, card, note, token, vault key, read key, access key, recovery code; add, edit, delete, each as one signed commit of one JSON file; values behind Face ID, copied for two minutes, hidden in the app switcher; a secret's history from the vault's commits; \"My secrets\" made on first use as a vault on this device. Not in this issue: sync (122), sharing (124), AutoFill (125)."
+    "To do: a Secrets section listing the entries of every vault that has a secrets/ folder, grouped by vault (\"My secrets\", \"Team: devices\"); kinds login, device, Wi-Fi, card, note, token, vault key, read key, access key, recovery code; add, edit, delete, each as one signed commit of one JSON file; values behind Face ID, copied for two minutes, hidden in the app switcher; a secret's history from the vault's commits; \"My secrets\" made on first use as a vault on this device. Not in this issue: sync (122), sharing (124), AutoFill (125).",
+    "Written (14 November 2026, not yet compiled): Sources/Secrets/; see the reality file's row. Left: a secret's own history (each change is a commit, not yet shown per secret), tags, import from other managers, a sheet covered in the app switcher."
    ],
    "statusLine": "Status: open. Owner: the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB). Design: website/sgit-app/secrets/index.md.",
    "owner": "the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB)",
@@ -1527,8 +1529,8 @@
    "number": "122",
    "app": "SGit Vaults",
    "title": "sgit app: the same vaults on every device, without setting anything up",
-   "status": "proposed",
-   "why": "Open, with nothing built yet: \"Status: open. Owner: the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB).\"",
+   "status": "in-progress",
+   "why": "Open, and the reality file lists for it: Secrets.",
    "summary": "The owner: \"the synchronisation between devices ... has to be completely transparent and straightforward\".",
    "detail": [
     "The owner: \"the synchronisation between devices ... has to be completely transparent and straightforward\".",
@@ -1540,7 +1542,9 @@
     "SGit Vaults"
    ],
    "versions": [],
-   "features": [],
+   "features": [
+    "Secrets"
+   ],
    "url": "https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/122-sgit-app-sync-between-my-devices.md",
    "source": "The owner"
   },
@@ -1572,8 +1576,8 @@
    "number": "124",
    "app": "SGit Vaults",
    "title": "sgit app: a shared vault for chosen people",
-   "status": "proposed",
-   "why": "Open, with nothing built yet: \"Status: open. Owner: the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB), on SGitPeople's sendVault (a vault invitation sealed to a contact).\"",
+   "status": "in-progress",
+   "why": "Open, and the reality file lists for it: Secrets.",
    "summary": "To do: on the trust map or in a vault's Share, choose people and send them the vault, each copy sealed to their key and dropped in their inbox; on their side, the invitation opens the vault in one tap and it appears with its members. The vault keeps a member list file so each member's app can draw who is in it. For now a member holds the vault key and can do everything (the owner: \"for now, the...",
    "detail": [
     "To do: on the trust map or in a vault's Share, choose people and send them the vault, each copy sealed to their key and dropped in their inbox; on their side, the invitation opens the vault in one tap and it appears with its members. The vault keeps a member list file so each member's app can draw who is in it. For now a member holds the vault key and can do everything (the owner: \"for now, the shared vault means you share the vault key, which is okay\"). The share sheet stops showing a raw vault key as a QR code once this exists."
@@ -1584,7 +1588,9 @@
     "SGit Vaults: Share"
    ],
    "versions": [],
-   "features": [],
+   "features": [
+    "Secrets"
+   ],
    "url": "https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/124-sgit-app-shared-vaults-for-people.md",
    "source": "The owner"
   },
@@ -1594,8 +1600,8 @@
    "number": "125",
    "app": "SGit Vaults",
    "title": "sgit app: AutoFill, passwords and passkeys in other apps and in Safari",
-   "status": "proposed",
-   "why": "Open, with nothing built yet: \"Status: open, needs the owner. Owner: the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB).\"",
+   "status": "in-progress",
+   "why": "Open, and the reality file lists for it: Secrets.",
    "summary": "iOS lets a third-party app fill passwords and passkeys elsewhere only as an AutoFill credential provider: an app extension (ASCredentialProviderViewController) with the AutoFill Credential Provider capability, which the account holder switches on for ai.sgit.vaults.app in the developer portal, plus an App Group shared with the extension (the same one issue 105 waits for). Until then, the app...",
    "detail": [
     "iOS lets a third-party app fill passwords and passkeys elsewhere only as an AutoFill credential provider: an app extension (ASCredentialProviderViewController) with the AutoFill Credential Provider capability, which the account holder switches on for ai.sgit.vaults.app in the developer portal, plus an App Group shared with the extension (the same one issue 105 waits for). Until then, the app records which passkeys exist and where."
@@ -1606,7 +1612,9 @@
     "SGit Vaults: Share"
    ],
    "versions": [],
-   "features": [],
+   "features": [
+    "Secrets"
+   ],
    "url": "https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/125-sgit-app-autofill-passwords-and-passkeys.md",
    "source": "The owner"
   },
@@ -3830,6 +3838,50 @@
    "places": [
     "SGit Vaults: a vault",
     "SGit Vaults: History"
+   ],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
+   "id": "sgit-feature-secrets",
+   "kind": "feature",
+   "app": "SGit Vaults",
+   "title": "Secrets",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "Sources/Secrets/: a Secrets row on the home list; every vault with a secrets/ folder, grouped, searchable; kinds login, device passcode, Wi-Fi, card, note, token, vault key, read key, access key, recovery codes; add, change and delete, each one signed commit of one encrypted JSON file (sgit.ai/secret/v1), read into memory, never into the file cache; hidden values behind Face ID or the passcode...",
+   "detail": [
+    "Sources/Secrets/: a Secrets row on the home list; every vault with a secrets/ folder, grouped, searchable; kinds login, device passcode, Wi-Fi, card, note, token, vault key, read key, access key, recovery codes; add, change and delete, each one signed commit of one encrypted JSON file (sgit.ai/secret/v1), read into memory, never into the file cache; hidden values behind Face ID or the passcode, copied for two minutes; \"Make a strong password\"; \"My secrets\" made on this device with the first secret; the app covered when not in front (the home stack; a sheet open at the time is not yet covered)",
+    "Unit tests for the format, the paths, the kinds and the password maker; written before its CI run, so not yet compiled when this row was written. Nobody has used it on a device. Sync between devices (issue 122), sharing with people (124) and AutoFill (125) are not built"
+   ],
+   "places": [
+    "SGit Vaults: a vault"
+   ],
+   "issues": [
+    "122",
+    "124",
+    "125"
+   ],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
+   "id": "sgit-feature-questions-for-you",
+   "kind": "feature",
+   "app": "SGit Vaults",
+   "title": "Questions for you",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "UI/QuestionsView.swift, Resources/sg-questions.json: questions from the people building the app, on the home list and in Settings; answer by choosing, typing, or the keyboard's dictation; sent sealed over the developer's lane as sgit/answer/v1",
+   "detail": [
+    "UI/QuestionsView.swift, Resources/sg-questions.json: questions from the people building the app, on the home list and in Settings; answer by choosing, typing, or the keyboard's dictation; sent sealed over the developer's lane as sgit/answer/v1",
+    "Unit tests for the bundled questions and the lane message; not yet compiled when written; nothing has been sent from a device"
+   ],
+   "places": [
+    "SGit Vaults: Settings"
    ],
    "issues": [],
    "url": "https://ios.app.voicedebrief.ai/sgit-app/built/index.html",

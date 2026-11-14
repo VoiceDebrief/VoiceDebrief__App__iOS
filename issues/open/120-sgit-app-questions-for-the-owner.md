@@ -10,3 +10,5 @@ answers by choosing one, typing, or dictating (the keyboard's microphone: speech
 goes to the developers over the developer lane, sealed to their key, as `sgit/answer/v1`; the app remembers what
 was answered. The questions ship with the app as a resource, written by the developers. Later: a recorded voice
 answer (VoiceDebrief's recorder), and questions that arrive in the inbox instead of with a build.
+
+**Written (14 November 2026, not yet compiled):** Questions for you, on the home list and in Settings; nine questions in `Resources/sg-questions.json`.

@@ -65,6 +65,22 @@ struct VaultsView: View {
             }
             Section {
                 NavigationLink {
+                    SecretsView(shelf: shelf)
+                        .tracked("secrets")
+                } label: {
+                    Label("Secrets", systemImage: "key.viewfinder")
+                }
+                NavigationLink {
+                    QuestionsView()
+                        .tracked("questions")
+                } label: {
+                    Label("Questions for you", systemImage: "questionmark.bubble")
+                }
+            } footer: {
+                Text("Passwords, passcodes, Wi-Fi and keys, kept in vaults. Questions are from the people building this app, answered by typing or speaking.")
+            }
+            Section {
+                NavigationLink {
                     GalleryView(shelf: shelf)
                         .tracked("gallery")
                 } label: {

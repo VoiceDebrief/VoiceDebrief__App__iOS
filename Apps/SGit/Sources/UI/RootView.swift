@@ -16,6 +16,7 @@ struct FileRoute: Hashable {
 struct RootView: View {
     let shelf: VaultShelf
     let outbox: Outbox
+    @Environment(\.scenePhase) private var phase
 
     var body: some View {
         NavigationStack {
@@ -29,6 +30,16 @@ struct RootView: View {
                     FileView(shelf: shelf, vault: route.vault, file: route.file)
                         .tracked("file")
                 }
+        }
+        // In the app switcher, and whenever the app is not in front, nothing of a vault or a secret is shown.
+        .overlay {
+            if phase != .active {
+                ZStack {
+                    Rectangle().fill(.regularMaterial)
+                    Label("sgit", systemImage: "lock.fill").font(.title2.weight(.semibold))
+                }
+                .ignoresSafeArea()
+            }
         }
     }
 }

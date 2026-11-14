@@ -1,6 +1,6 @@
 # A secrets manager made of people and vaults
 
-The design for the secrets manager in SGit Vaults, asked for by the owner on 14 November 2026. **This page is intention: nothing on it is built yet.** What is built is in [the reality file](../built/index.md), and this page will say plainly as each part arrives.
+The design for the secrets manager in SGit Vaults, asked for by the owner on 14 November 2026. **This page is intention.** Built so far, compiled and tested but not yet used on a device: questions for the owner and the first secrets screens (steps 1 and 2 below), described in the reality file. What is built is in [the reality file](../built/index.md), and this page will say plainly as each part arrives.
 
 The owner's words: "a full-blown secrets manager ... passwords, secrets, passkeys", "the synchronisation between devices ... has to be completely transparent", "the collaboration of secrets between people", "how do we go from one person to two people, three, five, the whole group, where each one trusts the other", "a visual representation of the trust", "every team can do this independently", "it is also going to be the foundation for things like the CRM vault".
 
@@ -46,7 +46,17 @@ Ordinary password managers keep your secrets in their company's cloud, behind an
 - **Agents are people too.** An AI session has a key and an inbox, and can be given exactly one secret, with a record that it was.
 - **Nothing to export.** The format is open and the files are yours; the `sgit` command reads them on any computer.
 
-A fuller map of the field and the opportunity, from a research brief, will be added below when it is in.
+### What the research says
+
+[The field and the opportunity](opportunity/index.md) is a research brief on eleven managers and secret tools. Its points that change this design:
+
+- **Every major manager's sharing trusts its own server to hand over the other person's public key.** A 2026 ETH Zurich study found more than 25 attacks on Bitwarden, LastPass and Dashlane by a dishonest server, sharing among them. Here the key comes from a card confirmed in person, never from the server. That is the strongest case for the in-person step, so the app should make it quick, not skip it.
+- **Small-team sharing is where the others are weakest**: free plans stop at two people, and Apple's shared groups have no roles. A team of five with no admin and no account is the opening.
+- **Agents leak secrets at scale** (about 28.65 million new secrets in public GitHub commits in 2025). Giving an agent one sealed secret, with a record, is a feature nobody has.
+- **Removing someone** means a new vault key *and* changing what they saw. The app must say so, and offer a checklist.
+- **Recovery** is where people give up and where security weakens. Proposed later: three of five people you trust each hold a sealed part.
+
+Ten things this design could do better than all of them are ranked in the brief, each with its risk.
 
 ## From one person to a team
 
