@@ -3756,7 +3756,7 @@
    "summary": ".github/workflows/screens.yml, Apps/VoiceDebrief/UITests/ScreensTests.swift, the scheme VoiceDebriefScreens: one UI test per screen launches the app over sample data and keeps a screenshot; 26 screens, six of them also scrolled to their end and three confirmations taken after a tap, on one iPhone (portrait) and one iPad (landscape) simulator, in light and dark, exported at most 1600 px, with a...",
    "detail": [
     ".github/workflows/screens.yml, Apps/VoiceDebrief/UITests/ScreensTests.swift, the scheme VoiceDebriefScreens: one UI test per screen launches the app over sample data and keeps a screenshot; 26 screens, six of them also scrolled to their end and three confirmations taken after a tap, on one iPhone (portrait) and one iPad (landscape) simulator, in light and dark, exported at most 1600 px, with a contact sheet per set, as the artifact screens-<commit sha>. By hand, and on a push that touches the screens",
-    "Run 1 of screens.yml (13 November 2026) produced all 68 pictures of the first 17 screens, and run 4 all 100 of the 25 there are now; both sets were downloaded and read from a Linux container. The run fails if a picture is missing"
+    "Run 1 of screens.yml (13 November 2026) produced all 68 pictures of the first 17 screens, and run 4 all 100 of the 25 there are now; both sets were downloaded and read from a Linux container. The run fails if a picture is missing. Five more ids added for the Guide and Play (40 pictures per set): proven when the next run of screens.yml is green"
    ],
    "places": [
     "The repository: pictures of every screen",

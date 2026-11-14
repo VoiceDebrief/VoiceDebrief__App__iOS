@@ -50,7 +50,7 @@ struct RootView: View {
                 NavigationStack { GamePlayView() }.tracked("play")
             }
             Tab(RootTab.guide.title, systemImage: RootTab.guide.symbol, value: RootTab.guide) {
-                GuideView(go: { tab = $0 }).tracked("guide")
+                GuideView(go: { tab = $0 }, opening: guideOpening).tracked("guide")
             }
             TabSection("You") {
                 Tab(RootTab.identity.title, systemImage: RootTab.identity.symbol, value: RootTab.identity) {
@@ -131,6 +131,15 @@ struct RootView: View {
                 return (true, "Recording, for \(recipient.name) (sent when you finish).")
             }
         }
+    }
+
+    /// Screenshots only (issue 016): the item a sample launch opens the Guide on. Nil otherwise.
+    private var guideOpening: GuideItem? {
+        #if DEBUG
+        return SampleWorld.launched?.guideOpening
+        #else
+        return nil
+        #endif
     }
 
     /// A tab's own first screen, or, in a sample launch that names a screen reached by a tap from

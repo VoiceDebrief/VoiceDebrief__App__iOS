@@ -25,6 +25,7 @@ final class ScreensTests: XCTestCase {
         "recipients", "words", "settings-end", "lab", "lab.prompt", "credit", "identity",
         "note.queued", "note.finished-send", "note.finished-delete", "record.recording-discard",
         "record.sending", "record-briefing",
+        "guide", "guide.feature", "guide.card", "play", "play.game",
     ]
 
     @MainActor func test01_record() { shoot("record") }
@@ -68,8 +69,17 @@ final class ScreensTests: XCTestCase {
     }
     @MainActor func test33_discard_asks() { shoot("record.recording", tap: "Discard", as: "record.recording-discard") }
 
+    // The Guide (two columns on an iPad: the list, and the latest release card beside it), one feature
+    // guide, the release card on its own, and Play as it opens and some way into a game. The record
+    // screen's two columns are `record` and `record.recording` on the iPad, which is in landscape.
+    @MainActor func test36_guide() { shoot("guide", wait: 5) }
+    @MainActor func test37_guide_feature() { shoot("guide.feature", wait: 5) }
+    @MainActor func test38_guide_card() { shoot("guide.card", wait: 5) }
+    @MainActor func test39_play() { shoot("play", wait: 5) }
+    @MainActor func test40_play_game() { shoot("play.game", wait: 5) }
+
     func testTheListMatchesTheTestMethods() {
-        XCTAssertEqual(Self.shots.count, 35)
+        XCTAssertEqual(Self.shots.count, 40)
         XCTAssertEqual(Set(Self.shots).count, Self.shots.count)
     }
 

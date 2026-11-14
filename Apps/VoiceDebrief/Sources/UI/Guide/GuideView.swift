@@ -24,6 +24,13 @@ struct GuideView: View {
     @State private var forward: [GuideItem] = []
     @State private var movingInHistory = false
 
+    /// `opening` is a seam for the screenshots (issue 016, the screens session): the item shown first.
+    /// The app itself always passes nil, which is the Guide as it was.
+    init(go: @escaping (RootTab) -> Void = { _ in }, opening: GuideItem? = nil) {
+        self.go = go
+        _selection = State(initialValue: opening)
+    }
+
     var body: some View {
         Group {
             if sizeClass == .regular {

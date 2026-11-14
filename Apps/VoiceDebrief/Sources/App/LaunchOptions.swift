@@ -86,6 +86,11 @@ enum LaunchScreen: String, CaseIterable, Sendable {
     case diagnostics
     case traffic
     case about
+    case guide
+    case guideFeature = "guide.feature"
+    case guideCard = "guide.card"
+    case play
+    case playGame = "play.game"
 
     var tab: RootTab {
         switch self {
@@ -93,6 +98,8 @@ enum LaunchScreen: String, CaseIterable, Sendable {
         case .record, .recordRecording, .recordWorking, .recordSending, .noteWorking, .noteQueued: return .record
         case .library, .noteFinished, .noteTranscript, .noteInterrupted: return .library
         case .vaults, .vaultDetail: return .vaults
+        case .guide, .guideFeature, .guideCard: return .guide
+        case .play, .playGame: return .play
         case .settings, .recipients, .words, .credit, .identity, .lab, .labPrompt, .diagnostics, .traffic, .about: return .settings
         }
     }
@@ -102,6 +109,8 @@ enum LaunchScreen: String, CaseIterable, Sendable {
     var isPushed: Bool {
         switch self {
         case .record, .recordRecording, .recordWorking, .recordSending, .library, .vaults, .settings: return false
+        // The Guide and Play are their own tabs, shown as they are: the Guide opens its own item.
+        case .guide, .guideFeature, .guideCard, .play, .playGame: return false
         default: return true
         }
     }

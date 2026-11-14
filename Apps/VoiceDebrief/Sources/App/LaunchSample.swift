@@ -21,6 +21,7 @@ final class SampleWorld {
         let world = SampleWorld(set: set, screen: LaunchOptions.screen() ?? .record, root: LaunchOptions.sampleRoot)
         SampleNetwork.start()
         world.addSampleRecipient()
+        world.prepareGame()
         world.preparing = Task { await world.prepareVault() }
         return world
     }()
@@ -152,6 +153,28 @@ final class SampleNetwork: URLProtocol {
     }
 
     override func stopLoading() {}
+}
+
+extension SampleWorld {
+    /// What the Guide opens on: one feature guide (the first in the bundle), or the latest release
+    /// card. Nil for the Guide's own first screen, which on a wide screen shows the card beside the list.
+    var guideOpening: GuideItem? {
+        switch screen {
+        case .guideFeature: return GuideBook.bundled()?.guides.first.map { .guide($0.id) }
+        case .guideCard: return .latestCard
+        default: return nil
+        }
+    }
+
+    /// A game some way in, for `play.game`: the other game, with two commands given as taps, so the
+    /// board, the score and the timing card have something to show. `play` is the game as it opens.
+    func prepareGame() {
+        guard screen == .playGame else { return }
+        let game = GameController.shared
+        game.choose(.lantern)
+        game.tap(.move(.right, 2))
+        game.tap(.jump(.right))
+    }
 }
 
 /// A screen that is reached by a tap, shown pushed on a stand-in for its tab's first screen, so
