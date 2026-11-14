@@ -34,7 +34,8 @@ final class SampleWorld {
         let store = MemoryStore()
         if accessKey { store.set("access-token", Data("sample".utf8)) }
         shelf = VaultShelf(store: store, transport: FolderVaultTransport(root: root.appending(path: "server")),
-                           cacheRoot: root.appending(path: "cache"), localRoot: root.appending(path: "local"))
+                           cacheRoot: root.appending(path: "cache"), localRoot: root.appending(path: "local"),
+                           writesNeedAccessKey: true)
         outbox = Outbox(root: root.appending(path: "outbox"))
     }
 
@@ -95,6 +96,16 @@ final class SampleWorld {
                 held.append(IncomingFile(url: url, name: name))
             }
             _ = try? outbox.add(held, to: vault, folder: "stage", existing: [], shelf: shelf, starting: false)
+        }
+        if set == "refused", let vault {
+            // A teammate who was sent the vault key and has no access key: the app's own refusal (issue 110).
+            shelf.setToken("")
+            let url = folder.appending(path: UUID().uuidString)
+            if (try? Data(count: 2_400_000).write(to: url)) != nil,
+               let job = try? outbox.add([IncomingFile(url: url, name: "IMG_0701.jpg")], to: vault, folder: "stage",
+                                         existing: [], shelf: shelf) {
+                await outbox.wait(for: job.id)
+            }
         }
         if let vault { _ = try? await shelf.load(vault) }
         await shelf.refreshGallery()

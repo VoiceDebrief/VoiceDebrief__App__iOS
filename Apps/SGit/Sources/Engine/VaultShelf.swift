@@ -133,8 +133,10 @@ final class VaultShelf {
     private let thumbnails = Limiter(3)
 
     init(store: any SecretStore = KeychainStore(), server: URL = VaultAddress.defaultServer,
-         transport: (any VaultFileTransport)? = nil, cacheRoot: URL? = nil, localRoot: URL? = nil) {
+         transport: (any VaultFileTransport)? = nil, cacheRoot: URL? = nil, localRoot: URL? = nil,
+         writesNeedAccessKey: Bool? = nil) {
         self.store = store
+        self.writesNeedAccessKey = writesNeedAccessKey ?? (transport == nil)
         self.server = server
         self.transport = transport ?? HTTPVaultTransport(server: server)
         self.cacheRoot = cacheRoot ?? FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
@@ -210,7 +212,11 @@ final class VaultShelf {
     }
 
     /// Whether writing to the server needs a token that is not there.
-    private var serverNeedsToken: Bool { token == nil && transport is HTTPVaultTransport }
+    private var serverNeedsToken: Bool { token == nil && writesNeedAccessKey }
+
+    /// A real server takes writes only with an access key; a folder standing in for one (tests) does not,
+    /// unless it is asked to behave as a server would (the pictures).
+    private let writesNeedAccessKey: Bool
 
     /// Creates a new vault on this device and remembers its key. No server, no token, no network.
     @discardableResult
