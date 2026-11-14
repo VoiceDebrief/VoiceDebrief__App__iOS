@@ -73,6 +73,11 @@ final class PeopleModel {
         }
     }
 
+    #if DEBUG
+    /// For the pictures: a hub made by `PeopleModel.sample`.
+    func useSample(_ sample: PeopleHub) { hub = sample }
+    #endif
+
     /// A new key for the inbox vault's first commit. The inbox vault holds only its lane; nothing else is committed to it.
     func commitSigner() -> any VaultCommitSigner { SoftwareCommitSigner() }
 }
