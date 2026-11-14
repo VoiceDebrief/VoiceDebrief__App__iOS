@@ -20,6 +20,13 @@ struct RecordView: View {
     @State private var confirmingDiscard = false
     /// The recipient the last note was finished and sent to with one press, to say so on this screen.
     @State private var queuedFor: String?
+    /// Who the next recording is for: a recipient's link, or empty for "just me" (the owner's
+    /// contact-driven flow, 14 November 2026). Remembered, so sending to the usual person is one tap.
+    @AppStorage("vd.addressee") private var addressee = ""
+
+    private var addresseeRecipient: Recipient? {
+        addressee.isEmpty ? nil : RecipientStore.shared.all.first { $0.link == addressee }
+    }
     @State private var queuedNoteId: String?
     /// What is new since the app was last opened, worked out once when the screen first appears (issue 025).
     @State private var briefing: Briefing?
@@ -248,8 +255,53 @@ struct RecordView: View {
 
     // MARK: The control, pinned where a thumb reaches
 
+    private var addresseeChips: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                chip("Just me", systemImage: "person", selected: addresseeRecipient == nil) { addressee = "" }
+                ForEach(RecipientStore.shared.all) { recipient in
+                    chip(recipient.name, systemImage: "paperplane", selected: addressee == recipient.link) { addressee = recipient.link }
+                }
+                NavigationLink {
+                    RecipientsView()
+                } label: {
+                    Label("Add", systemImage: "plus")
+                        .font(.subheadline)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 7)
+                        .background(Color(.tertiarySystemFill), in: Capsule())
+                }
+                .buttonStyle(.plain)
+            }
+            .padding(.horizontal, 16)
+        }
+    }
+
+    private func chip(_ title: String, systemImage: String, selected: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Label(title, systemImage: selected ? "checkmark" : systemImage)
+                .font(.subheadline.weight(selected ? .semibold : .regular))
+                .padding(.horizontal, 12)
+                .padding(.vertical, 7)
+                .foregroundStyle(selected ? Color.white : Color.primary)
+                .background(selected ? Color.accentColor : Color(.tertiarySystemFill), in: Capsule())
+        }
+        .buttonStyle(.plain)
+        .accessibilityAddTraits(selected ? .isSelected : [])
+    }
+
     private var controls: some View {
         VStack(spacing: 10) {
+            if !isRecording {
+                Text("Record a note for")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                addresseeChips
+            } else if let to = addresseeRecipient {
+                Label("For \(to.name): sent when you finish", systemImage: "paperplane.fill")
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(Color.accentColor)
+            }
             Button {
                 Task { await toggle() }
             } label: {
@@ -268,7 +320,7 @@ struct RecordView: View {
             // Live whatever the pipeline is doing: a thought that arrives while the last note is being
             // written up is recorded, and waits its turn (issue 030).
             .disabled(localeId.isEmpty)
-            .accessibilityLabel(isRecording ? "Finish and debrief" : "Record")
+            .accessibilityLabel(isRecording ? (addresseeRecipient.map { "Finish and send to \($0.name)" } ?? "Finish and debrief") : "Record")
 
             Text(caption)
                 .font(.caption)
@@ -276,10 +328,10 @@ struct RecordView: View {
 
             // Finish and send in one press, then stay here to record the next (issue 026). Only the
             // person's own recipients: the developer of the test build always asks first.
-            if isRecording, !RecipientStore.shared.added.isEmpty {
+            if isRecording, !RecipientStore.shared.added.filter({ $0.link != addressee }).isEmpty {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 8) {
-                        ForEach(RecipientStore.shared.added) { recipient in
+                        ForEach(RecipientStore.shared.added.filter { $0.link != addressee }) { recipient in
                             Button {
                                 Task {
                                     if let id = await session.stopRecording() {
@@ -317,18 +369,29 @@ struct RecordView: View {
     }
 
     private var caption: String {
-        if isRecording { return "Tap to finish: the note is kept, then transcribed and debriefed" }
+        if isRecording {
+            if let to = addresseeRecipient { return "Tap to finish: kept, written up, and sent to \(to.name)" }
+            return "Tap to finish: the note is kept, then transcribed and debriefed"
+        }
         if session.isProcessing {
             let more = session.waiting.isEmpty ? "" : ", \(session.waiting.count) more waiting"
             return "Tap to record. The last note is being written up\(more)."
         }
+        if let to = addresseeRecipient { return "Tap to record for \(to.name). It is saved as you speak and sent when you finish." }
         return "Tap to record. It is saved as you speak."
     }
 
     private func toggle() async {
         if isRecording {
             if let id = await session.stopRecording() {
-                path.append(id)
+                if let to = addresseeRecipient {
+                    // Chosen before recording, so finishing is the send: no second question.
+                    session.send(noteId: id, to: to)
+                    queuedFor = to.name
+                    queuedNoteId = id
+                } else {
+                    path.append(id)
+                }
             }
         } else {
             await session.startRecording(localeId: localeId)

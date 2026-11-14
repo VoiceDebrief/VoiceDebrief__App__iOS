@@ -12,7 +12,7 @@ final class RecipientStore {
         if let file = LaunchOptions.sampleFile("recipients.json") { return RecipientStore(file: file) }
         return RecipientStore()
     }()
-    static let builtInName = "The developer"
+    static let builtInName = "Claude (developer)"
 
     let file: URL
     private(set) var added: [Recipient] = []
