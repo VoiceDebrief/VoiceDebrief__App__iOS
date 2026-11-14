@@ -85,7 +85,19 @@ struct VaultsView: View {
                 } header: {
                     Text("Servers")
                 } footer: {
-                    Text("A server is somewhere a vault can be pushed to and pulled from. It stores only encrypted objects it cannot read. Its access token is needed to write to it, not to read; the token is kept in this device's Keychain and sent only to that server.")
+                    Text("A server is somewhere a vault can be pushed to and pulled from. It stores only encrypted objects it cannot read. Its access token is needed to write to it, not to read; the token is kept in the Keychain (see Keys, below) and sent only to that server.")
+                }
+
+                Section {
+                    Toggle("Keep keys in iCloud Keychain", isOn: Binding(
+                        get: { book.keysInICloud },
+                        set: { book.setKeysInICloud($0) }))
+                    LabeledContent("Vault keys and server tokens", value: book.keysInICloud ? "In iCloud Keychain, on your devices" : "On this device only")
+                    LabeledContent("This device's signing key", value: "On this device only")
+                } header: {
+                    Text("Keys")
+                } footer: {
+                    Text(Self.keysFooter(inICloud: book.keysInICloud))
                 }
 
                 Section {
@@ -134,9 +146,20 @@ struct VaultsView: View {
                 RemoteDetailView(book: book, remote: remote)
             }
             .onAppear {
+                book.refreshKeys()
                 if book.remote(pastedFrom) == nil { pastedFrom = book.remotes.first?.id ?? "" }
             }
         }
+    }
+}
+
+extension VaultsView {
+    /// What the switch means, either way. The app says what it has not been shown to do.
+    static func keysFooter(inICloud: Bool) -> String {
+        if inICloud {
+            return "Vault keys and server tokens are kept on this device and in iCloud Keychain, which carries them to your other devices signed in to the same Apple account, encrypted so that Apple cannot read them. A vault made here should then appear there, and survive losing this device. The key that signs this device's commits never leaves it. Not yet confirmed between two devices."
+        }
+        return "Vault keys and server tokens are kept on this device only, and were removed from iCloud Keychain when this was turned off. If this device is lost, so are they: copy a vault's key somewhere safe. Another of your devices that still shares its keys keeps its own copies."
     }
 }
 
@@ -198,7 +221,7 @@ struct RemoteDetailView: View {
             } header: {
                 Text("Access token")
             } footer: {
-                Text("Pushing a vault to \(remote.name) needs its access token. Reading needs none. The token is kept in this device's Keychain and sent only to \(remote.url.host() ?? "this server").")
+                Text("Pushing a vault to \(remote.name) needs its access token. Reading needs none. The token is kept in the Keychain, where the vault keys are, and sent only to \(remote.url.host() ?? "this server").")
             }
             VaultActivitySection(book: book)
             Section {
@@ -265,6 +288,10 @@ struct VaultDetailView: View {
                     Text("Until then this vault is read from, and written to, \(remote.name) directly, and needs the network.")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
+                } else {
+                    Text("This device has the vault's key, which came through iCloud Keychain, but not the vault: it is on another of your devices and has not been pushed to a server. Push it from that device, and it can be copied here.")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
                 }
             } header: {
                 Text("Where it lives")
@@ -328,6 +355,7 @@ struct VaultDetailView: View {
             Section {
                 LabeledContent("Vault id", value: vault.id)
                 LabeledContent("Access", value: vault.canWrite ? "Read and write" : "Read only")
+                LabeledContent("Kept", value: book.keyHome(of: vault))
                 if showKey {
                     Text(vault.keyText)
                         .font(.footnote.monospaced())
