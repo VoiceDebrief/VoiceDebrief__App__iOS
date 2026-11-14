@@ -229,7 +229,6 @@ struct LocalVaultTests {
         let store = MemoryStore()
         let shelf = VaultShelf(store: store, transport: FolderVaultTransport(root: try OutboxTests.folder("server")),
                                cacheRoot: try OutboxTests.folder("cache"), localRoot: try OutboxTests.folder("local"))
-        shelf.sharedInbox = nil
         #expect(shelf.gallery.isEmpty)
         // A vault that holds showcase.json at its top.
         let vault = try #require(await shelf.create(name: "Showcase"))
