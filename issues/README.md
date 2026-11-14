@@ -44,3 +44,5 @@ One file per piece of work: `open/NNN-slug.md`, moved to `done/` when it is done
 | 103 | The sgit app after milestone one | 100; 011 and 017 |
 | 104 | A read-only share that can be taken back | the owner's decision |
 | 105 | "Send to vault" from Photos and Files: a share extension | signing; perhaps the owner (an App Group) |
+| 106 | A viewer for chat-archive results, as a separate app | later; not in the sgit app |
+| 107 | A gallery of vaults in the sgit app | the owner: a showcase vault, or the links |

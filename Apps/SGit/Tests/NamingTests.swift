@@ -62,6 +62,49 @@ struct NamingTests {
         #expect(VaultListing.tree(paths: ["only.txt"]).isEmpty)
     }
 
+    @Test func aShowcaseFileIsReadInEitherShape() {
+        let whole = Data(#"{"v":1,"entries":[{"name":"Costs","description":"What it costs to run","topic":"Running it","link":"https://vault.sgraph.ai/#ro-quiet-river-1234"},{"link":"  "},{"link":"some-pass:abcd1234"}]}"#.utf8)
+        let entries = Gallery.entries(in: whole)
+        #expect(entries.map(\.name) == ["Costs", "A vault"])
+        #expect(entries[0].topic == "Running it")
+        let bare = Data(#"[{"name":"Setup","link":"some-pass:abcd1234"}]"#.utf8)
+        #expect(Gallery.entries(in: bare).map(\.name) == ["Setup"])
+        #expect(Gallery.entries(in: Data("not json".utf8)).isEmpty)
+        #expect(Gallery.entries(in: Gallery.file(entries)) == entries)
+    }
+
+    @Test func anEntryOpensInTheWebVault() {
+        #expect(Gallery.webAddress(of: "https://dev.vault.sgraph.ai/#some-pass:abcd1234")?.absoluteString == "https://dev.vault.sgraph.ai/#some-pass:abcd1234")
+        #expect(Gallery.webAddress(of: "some-pass:abcd1234")?.absoluteString == "https://vault.sgraph.ai/#some-pass:abcd1234")
+        #expect(Gallery.webAddress(of: "ro-quiet-river-1234")?.absoluteString == "https://vault.sgraph.ai/#ro-quiet-river-1234")
+        let hex = String(repeating: "ab", count: 32)
+        #expect(Gallery.webAddress(of: "sgit_private_read_" + hex + ":abcd1234")?.absoluteString == "https://vault.sgraph.ai/#" + hex + ":abcd1234")
+        // Never plain http, and never nothing.
+        #expect(Gallery.webAddress(of: "http://example.com/#x") == nil)
+        #expect(Gallery.webAddress(of: "  ") == nil)
+    }
+
+    @Test func onlyAKeyCanBeAddedToMyVaults() {
+        #expect(Gallery.nativeKey(of: "some-pass:abcd1234") == "some-pass:abcd1234")
+        #expect(Gallery.nativeKey(of: "https://vault.sgraph.ai/#some-pass:abcd1234|notes/a.md") == "some-pass:abcd1234")
+        #expect(Gallery.nativeKey(of: "ro-quiet-river-1234") == nil)
+        #expect(Gallery.nativeKey(of: "https://vault.sgraph.ai/#ro-quiet-river-1234") == nil)
+        #expect(Gallery.nativeKey(of: "https://example.com/page") == nil)
+    }
+
+    @Test func theGalleryIsGroupedAndSearched() {
+        let entries = [GalleryEntry(name: "Zebra", topic: "Animals", link: "a:aaaa1111"),
+                       GalleryEntry(name: "Costs", description: "What it costs", topic: "Running it", link: "b:bbbb1111"),
+                       GalleryEntry(name: "Ant", topic: "Animals", link: "c:cccc1111"),
+                       GalleryEntry(name: "Loose", link: "d:dddd1111"),
+                       GalleryEntry(name: "Ant again", topic: "Animals", link: "c:cccc1111")]
+        let groups = Gallery.grouped(entries)
+        #expect(groups.map(\.topic) == ["Animals", "Running it", ""])
+        #expect(groups[0].entries.map(\.name) == ["Ant", "Zebra"])
+        #expect(Gallery.grouped(entries, search: "costs").map(\.topic) == ["Running it"])
+        #expect(Gallery.grouped(entries, search: "nothing like it").isEmpty)
+    }
+
     @Test func aFileIsKnownByItsName() {
         #expect(VaultListing.kind(of: "a/IMG_1.HEIC") == .image)
         #expect(VaultListing.kind(of: "clip.MOV") == .video)

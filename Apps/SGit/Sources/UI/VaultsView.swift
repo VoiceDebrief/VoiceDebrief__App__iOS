@@ -64,6 +64,15 @@ struct VaultsView: View {
                 }
             }
             Section {
+                NavigationLink {
+                    GalleryView(shelf: shelf)
+                } label: {
+                    Label("Gallery", systemImage: "square.grid.2x2")
+                }
+            } footer: {
+                Text("Vaults to show somebody, each opened in the web Vault inside the app.")
+            }
+            Section {
                 Button("Add a vault by its key", systemImage: "key") { adding = true }
                 Button("Create a vault", systemImage: "plus.square") { creating = true }
             } footer: {

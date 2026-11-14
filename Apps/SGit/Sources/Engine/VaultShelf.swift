@@ -142,6 +142,7 @@ final class VaultShelf {
             vaults = saved
         }
         hasToken = token != nil
+        loadGalleryOwn()
     }
 
     // MARK: What is kept
@@ -441,6 +442,51 @@ final class VaultShelf {
         return UIImage(data: data)
     }
 
+    // MARK: The gallery
+
+    /// Entries the user added on this device. They may carry keys, so they are kept in the Keychain.
+    private(set) var galleryOwn: [GalleryEntry] = []
+    /// Entries read from `showcase.json` in the vaults on this device, by vault id. In memory only.
+    private(set) var galleryFromVaults: [String: [GalleryEntry]] = [:]
+
+    var gallery: [GalleryEntry] {
+        galleryOwn + vaults.flatMap { galleryFromVaults[$0.id] ?? [] }
+    }
+
+    func loadGalleryOwn() {
+        guard let data = store.get("gallery") else { return }
+        galleryOwn = Gallery.entries(in: data)
+    }
+
+    func addToGallery(_ entry: GalleryEntry) {
+        galleryOwn.removeAll { $0.link == entry.link }
+        galleryOwn.append(entry)
+        store.set("gallery", Gallery.file(galleryOwn))
+    }
+
+    func removeFromGallery(_ entry: GalleryEntry) {
+        galleryOwn.removeAll { $0.link == entry.link }
+        store.set("gallery", galleryOwn.isEmpty ? nil : Gallery.file(galleryOwn))
+    }
+
+    func isOwn(_ entry: GalleryEntry) -> Bool { galleryOwn.contains { $0.link == entry.link } }
+
+    /// Reads `showcase.json` from every vault on this device that has one. A vault that cannot be
+    /// reached is left out, quietly: the gallery is shown from whatever answered.
+    func refreshGallery() async {
+        for vault in vaults {
+            guard let contents = try? await load(vault),
+                  contents.files.contains(where: { $0.path == Gallery.fileName }),
+                  let handle = try? await open(vault),
+                  let data = try? await handle.read(Gallery.fileName) else {
+                galleryFromVaults[vault.id] = nil
+                continue
+            }
+            galleryFromVaults[vault.id] = Gallery.entries(in: data)
+        }
+    }
+
+    // MARK: History
     // MARK: History
 
     /// What a commit changed, against its first parent.

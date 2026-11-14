@@ -11,7 +11,7 @@ import XCTest
 final class ScreensTests: XCTestCase {
     /// sgit-app-screens.yml expects one PNG per entry. Keep it equal to the test methods below.
     static let shots = ["vaults", "vaults-empty", "create", "add", "vault", "vault.folder", "vault.list",
-                        "file", "share", "history", "commit", "settings"]
+                        "file", "share", "history", "commit", "settings", "gallery"]
 
     @MainActor func test01_vaults() { shoot("vaults") }
     @MainActor func test02_vaults_empty() { shoot("vaults", set: "empty") }
@@ -25,9 +25,10 @@ final class ScreensTests: XCTestCase {
     @MainActor func test10_history() { shoot("history") }
     @MainActor func test11_commit() { shoot("commit", wait: 5) }
     @MainActor func test12_settings() { shoot("settings") }
+    @MainActor func test13_gallery() { shoot("gallery", wait: 6) }
 
     func testTheListMatchesTheTestMethods() {
-        XCTAssertEqual(Self.shots.count, 12)
+        XCTAssertEqual(Self.shots.count, 13)
         XCTAssertEqual(Set(Self.shots).count, Self.shots.count)
     }
 

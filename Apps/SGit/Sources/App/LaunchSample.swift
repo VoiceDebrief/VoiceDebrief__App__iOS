@@ -69,10 +69,23 @@ final class SampleWorld {
         if let job = try? outbox.add([IncomingFile(url: notes, name: "README.md")], to: made, folder: "", existing: [], shelf: shelf) {
             await outbox.wait(for: job.id)
         }
+        // A showcase kept in the vault itself, as a gallery would be. The links are plainly invented.
+        let showcase = folder.appending(path: UUID().uuidString)
+        try? Gallery.file([
+            GalleryEntry(name: "What a vault costs to run", description: "A month of storage and requests, with the bill beside it.", topic: "Running it", link: "ro-sample-ledger-0001"),
+            GalleryEntry(name: "Set one up in ten minutes", description: "The steps, with a screenshot of each.", topic: "Running it", link: "ro-sample-steps-0002"),
+            GalleryEntry(name: "How the encryption works", description: "Keys, objects and commits, drawn.", topic: "How it works", link: "ro-sample-drawing-0003"),
+            GalleryEntry(name: "Web Summit 2026: the team's photographs", description: "Three days in Lisbon.", topic: "Examples", link: "ro-sample-summit-0004"),
+            GalleryEntry(name: "A newsroom in a vault", description: "Articles, sources and their history.", topic: "Examples", link: "ro-sample-newsroom-0005"),
+        ]).write(to: showcase)
+        if let job = try? outbox.add([IncomingFile(url: showcase, name: Gallery.fileName)], to: made, folder: "", existing: [], shelf: shelf) {
+            await outbox.wait(for: job.id)
+        }
         await shelf.sendToServer(made)
         await shelf.create(name: "Drafts, not shared")
         vault = shelf.current(made)
         if let vault { _ = try? await shelf.load(vault) }
+        await shelf.refreshGallery()
     }
 
     /// A picture that is plainly a sample: two colours and its own name.
@@ -146,6 +159,8 @@ struct ScreenshotRoot: View {
             if let commit = shelf.contents[vault.id]?.history.dropFirst().first {
                 NavigationStack { CommitView(shelf: shelf, vault: vault, commit: commit) }
             }
+        case ("gallery", _):
+            NavigationStack { GalleryView(shelf: shelf) }
         case ("settings", _):
             NavigationStack { SettingsView(shelf: shelf) }
         default:

@@ -225,6 +225,30 @@ struct LocalVaultTests {
         #expect(FileManager.default.fileExists(atPath: dropped.appending(path: "b.txt").path), "the originals are left where they were")
     }
 
+    @Test func theGalleryIsReadFromAVaultAndKeptOnTheDevice() async throws {
+        let store = MemoryStore()
+        let shelf = VaultShelf(store: store, transport: FolderVaultTransport(root: try OutboxTests.folder("server")),
+                               cacheRoot: try OutboxTests.folder("cache"), localRoot: try OutboxTests.folder("local"))
+        shelf.sharedInbox = nil
+        #expect(shelf.gallery.isEmpty)
+        // A vault that holds showcase.json at its top.
+        let vault = try #require(await shelf.create(name: "Showcase"))
+        let listed = [GalleryEntry(name: "Costs", description: "What it costs", topic: "Running it", link: "ro-quiet-river-1234")]
+        let outbox = Outbox(root: try OutboxTests.folder("outbox"))
+        let job = try outbox.add(try OutboxTests.incoming([(Gallery.fileName, Gallery.file(listed))]), to: vault, folder: "", existing: [], shelf: shelf)
+        await outbox.wait(for: job.id)
+        await shelf.refreshGallery()
+        #expect(shelf.gallery == listed)
+
+        // One added by hand is kept in the Keychain, and is there when the app opens again.
+        shelf.addToGallery(GalleryEntry(name: "Mine", link: "some-pass:abcd1234"))
+        #expect(shelf.gallery.map(\.name) == ["Mine", "Costs"])
+        let reopened = VaultShelf(store: store, transport: shelf.transport, cacheRoot: shelf.cacheRoot, localRoot: shelf.localRoot)
+        #expect(reopened.galleryOwn.map(\.name) == ["Mine"])
+        reopened.removeFromGallery(reopened.galleryOwn[0])
+        #expect(store.get("gallery") == nil)
+    }
+
     @Test func aVaultSavedByTheFirstBuildIsOnTheServer() throws {
         let old = #"[{"id":"abcd1234","name":"Old","keyText":"some-pass:abcd1234","addedAt":0,"createdHere":true}]"#
         let vaults = try JSONDecoder().decode([SavedVault].self, from: Data(old.utf8))
