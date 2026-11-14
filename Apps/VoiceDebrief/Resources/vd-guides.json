@@ -18,6 +18,7 @@
     {
      "screen": "record",
      "caption": "The Record tab, before you start.",
+     "lead": "This is where every note starts. First say who the note is for, because that decides what finishing does: a note for Just me stays on the device, a note for someone is sent to them, encrypted, as soon as it is written up.",
      "image": "vd-guide-record-1",
      "callouts": [
       {
@@ -49,6 +50,7 @@
     {
      "screen": "record.recording",
      "caption": "While recording.",
+     "lead": "Once you tap the button the recording is already being written into the note, so nothing is lost if a call comes in or the app is closed. You can finish with the button, with your voice, or from your headphones.",
      "image": "vd-guide-record-2",
      "callouts": [
       {
@@ -97,6 +99,7 @@
     {
      "screen": "note.finished",
      "caption": "The top of a finished note.",
+     "lead": "A note opens on its one-sentence summary, then what has happened to it. This is the screen to check that a note was kept, sent or saved, and to listen to it again.",
      "image": "vd-guide-note-1",
      "callouts": [
       {
@@ -124,6 +127,7 @@
     {
      "screen": "note.finished-end",
      "caption": "The end of the same note.",
+     "lead": "Further down are the things you do less often: the clean-text experiment, saving to a particular vault, running the note again in another language, and deleting it.",
      "image": "vd-guide-note-2",
      "callouts": [
       {
@@ -165,6 +169,7 @@
     {
      "screen": "library",
      "caption": "The Library tab.",
+     "lead": "Every note on this device, newest first, by day. Each row says what the note is doing right now or what you can do with it, so you can see at a glance whether anything needs you.",
      "image": "vd-guide-library-1",
      "callouts": [
       {
@@ -211,6 +216,7 @@
     {
      "screen": "vaults",
      "caption": "The Vaults tab.",
+     "lead": "A vault is an encrypted, version-controlled folder you own. It is made on this device and needs no server; adding a server later keeps a copy elsewhere.",
      "image": "vd-guide-vaults-1",
      "callouts": [
       {
@@ -234,6 +240,7 @@
     {
      "screen": "vault.detail",
      "caption": "Inside a vault.",
+     "lead": "Inside a vault you can see where it lives, push it to a server or pull from one, and check its latest commit and signature. Each saved note is a folder in it.",
      "image": "vd-guide-vaults-2",
      "callouts": [
       {
@@ -272,6 +279,7 @@
     {
      "screen": "recipients",
      "caption": "Contacts, Recipients.",
+     "lead": "A contact is anyone who can receive a note: a person, another device or an agent session. You add one by their QR code or link; what you send is sealed to their key before it leaves.",
      "image": "vd-guide-recipients-1",
      "callouts": [
       {
@@ -308,6 +316,7 @@
     {
      "screen": "record-briefing",
      "caption": "The briefing card on the Record tab.",
+     "lead": "When you open the app after an update, or after time away, this card says what changed and what happened to your notes. It is worked out by the app from the library, not written by a model.",
      "image": "vd-guide-briefing-1",
      "callouts": [
       {
@@ -342,6 +351,7 @@
     {
      "screen": "settings",
      "caption": "More, Settings.",
+     "lead": "Settings is under More. The first things are the ones to set once: the language you speak in, and whether each finished note is saved to a vault.",
      "image": "vd-guide-settings-1",
      "callouts": [
       {
@@ -365,6 +375,7 @@
     {
      "screen": "settings-end",
      "caption": "Further down.",
+     "lead": "Further down are the places for the rest: who you can send to, the experiments, and what the app has done, for when something needs explaining.",
      "image": "vd-guide-settings-2",
      "callouts": [
       {
@@ -406,6 +417,7 @@
     {
      "screen": "vaults",
      "caption": "The first screen.",
+     "lead": "The first screen of SGit Vaults lists your vaults and everything else the app holds: secrets, questions from the people building it, the Guide and the gallery.",
      "image": "vd-guide-sgit-start-1",
      "callouts": [
       {
@@ -437,6 +449,7 @@
     {
      "screen": "add",
      "caption": "Add a vault you were sent.",
+     "lead": "If someone sent you a vault, this is where it goes in. What you paste decides what you can do: a vault key can add and change, a read key can only look.",
      "image": "vd-guide-sgit-start-2",
      "callouts": [
       {
@@ -470,6 +483,7 @@
     {
      "screen": "vault",
      "caption": "A vault.",
+     "lead": "A vault looks like a folder on a computer. The line at the top tells you whether everything in it has reached the server, which matters before you tell a teammate it is there.",
      "image": "vd-guide-sgit-vault-1",
      "callouts": [
       {
@@ -501,6 +515,7 @@
     {
      "screen": "history",
      "caption": "History.",
+     "lead": "Every change to a vault is kept as a signed commit, so you can see who added what and when, and that nobody has altered it since.",
      "image": "vd-guide-sgit-vault-2",
      "callouts": [
       {
@@ -534,6 +549,7 @@
     {
      "screen": "share",
      "caption": "Share.",
+     "lead": "Sharing gives someone the vault's key. Read the warning first: whoever holds the key can read everything in the vault, and it cannot be taken back.",
      "image": "vd-guide-sgit-share-1",
      "callouts": [
       {
@@ -557,6 +573,7 @@
     {
      "screen": "create",
      "caption": "Create a vault.",
+     "lead": "A new vault is made on this device. Turn on Share it to put it on the server straight away; leave it off to keep it here until you choose to share.",
      "image": "vd-guide-sgit-share-2",
      "callouts": [
       {
@@ -589,6 +606,7 @@
     {
      "screen": "secrets",
      "caption": "The Secrets list.",
+     "lead": "Secrets are passwords, Wi-Fi networks, servers and the like, each kept as an encrypted file in a vault. Those in a shared vault are seen by everyone who holds its key.",
      "image": "vd-guide-sgit-secrets-1",
      "callouts": [
       {
@@ -620,6 +638,7 @@
     {
      "screen": "secret",
      "caption": "One secret.",
+     "lead": "One secret, with its fields. Hidden values stay masked until Face ID; every change is a commit, so an earlier version is never lost.",
      "image": "vd-guide-sgit-secrets-2",
      "callouts": [
       {
@@ -647,6 +666,7 @@
     {
      "screen": "questions",
      "caption": "Questions for you.",
+     "lead": "The people building the app ask the owner questions here, and the answers go back to them encrypted. It is how decisions reach the code without a meeting.",
      "image": "vd-guide-sgit-secrets-3",
      "callouts": [
       {

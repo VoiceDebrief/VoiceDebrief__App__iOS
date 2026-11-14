@@ -18,6 +18,11 @@ struct GuideView: View {
     @AppStorage(WhatsNewMemory.key) private var lastSeen = ""
     @Environment(\.horizontalSizeClass) private var sizeClass
     @State private var selection: GuideItem?
+    /// Browser-like history on a wide screen (the owner: swiping back worked, swiping forward should
+    /// return): what was shown before, and what was left by going back.
+    @State private var back: [GuideItem] = []
+    @State private var forward: [GuideItem] = []
+    @State private var movingInHistory = false
 
     var body: some View {
         Group {
@@ -26,7 +31,34 @@ struct GuideView: View {
                     home(wide: true)
                         .navigationSplitViewColumnWidth(min: 340, ideal: 420, max: 520)
                 } detail: {
-                    NavigationStack { detail(selection ?? .latestCard) }
+                    NavigationStack {
+                        detail(selection ?? .latestCard)
+                            .id(selection ?? .latestCard)
+                            .toolbar {
+                                ToolbarItemGroup(placement: .navigation) {
+                                    Button { goBack() } label: { Image(systemName: "chevron.left") }
+                                        .disabled(back.isEmpty)
+                                        .accessibilityLabel("Back")
+                                        .keyboardShortcut("[", modifiers: .command)
+                                    Button { goForward() } label: { Image(systemName: "chevron.right") }
+                                        .disabled(forward.isEmpty)
+                                        .accessibilityLabel("Forward")
+                                        .keyboardShortcut("]", modifiers: .command)
+                                }
+                            }
+                            .simultaneousGesture(
+                                DragGesture(minimumDistance: 40).onEnded { v in
+                                    guard abs(v.translation.width) > 100, abs(v.translation.height) < 60 else { return }
+                                    if v.translation.width > 0 { goBack() } else { goForward() }
+                                }
+                            )
+                    }
+                }
+                .onChange(of: selection) { old, new in
+                    if movingInHistory { movingInHistory = false; return }
+                    guard (old ?? .latestCard) != (new ?? .latestCard) else { return }
+                    back.append(old ?? .latestCard)
+                    forward.removeAll()
                 }
             } else {
                 NavigationStack {
@@ -36,6 +68,20 @@ struct GuideView: View {
             }
         }
         .onAppear { WhatsNewMemory.seedIfNeeded(current: current) }
+    }
+
+    private func goBack() {
+        guard let previous = back.popLast() else { return }
+        forward.append(selection ?? .latestCard)
+        movingInHistory = previous != selection
+        selection = previous
+    }
+
+    private func goForward() {
+        guard let next = forward.popLast() else { return }
+        back.append(selection ?? .latestCard)
+        movingInHistory = next != selection
+        selection = next
     }
 
     private func home(wide: Bool) -> some View {

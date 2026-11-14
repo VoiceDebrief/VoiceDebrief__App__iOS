@@ -6,6 +6,8 @@ Choose who the note is for, then one button records. The recording is saved into
 
 ## 1. The Record tab, before you start.
 
+This is where every note starts. First say who the note is for, because that decides what finishing does: a note for Just me stays on the device, a note for someone is sent to them, encrypted, as soon as it is written up.
+
 ![The Record tab, before you start. Numbered arrows mark the parts described below.](../img/record-1.jpg)
 
 1. Tap to record. It is saved as you speak.
@@ -16,6 +18,8 @@ Choose who the note is for, then one button records. The recording is saved into
 6. The version: tap it to see what changed. Beside it, the test credit; no money is taken.
 
 ## 2. While recording.
+
+Once you tap the button the recording is already being written into the note, so nothing is lost if a call comes in or the app is closed. You can finish with the button, with your voice, or from your headphones.
 
 ![While recording. Numbered arrows mark the parts described below.](../img/record-2.jpg)
 

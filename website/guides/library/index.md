@@ -6,6 +6,8 @@ Every note kept on this device, newest first, by day. Each row says what the not
 
 ## 1. The Library tab.
 
+Every note on this device, newest first, by day. Each row says what the note is doing right now or what you can do with it, so you can see at a glance whether anything needs you.
+
 ![The Library tab. Numbered arrows mark the parts described below.](../img/library-1.jpg)
 
 1. Waiting its turn: notes are written up one at a time, and you can keep recording meanwhile.

@@ -198,6 +198,8 @@ struct FeatureGuide: Codable, Hashable, Identifiable, Sendable {
     struct Step: Codable, Hashable, Sendable {
         let screen: String
         let caption: String
+        /// A sentence or two before the picture: what you are looking at and why it matters.
+        var lead: String? = nil
         /// The picture's resource name, without its .jpg extension.
         let image: String
         let callouts: [Callout]

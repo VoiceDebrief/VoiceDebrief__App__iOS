@@ -11,63 +11,87 @@ struct FeatureGuideView: View {
     @Environment(\.horizontalSizeClass) private var sizeClass
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: DS.Space.l) {
-                Text(guide.intro).font(.title3).foregroundStyle(.secondary)
-                if let raw = guide.open, let tab = RootTab(rawValue: raw) {
-                    Button { go(tab) } label: { Label("Open \(tab.title)", systemImage: tab.symbol) }
-                        .buttonStyle(.borderedProminent)
-                        .tint(tab.tint)
-                }
-                ForEach(Array(guide.steps.enumerated()), id: \.offset) { index, step in
-                    VStack(alignment: .leading, spacing: DS.Space.s) {
-                        Text("\(index + 1). \(step.caption)").font(DS.TypeScale.heading)
-                        if sizeClass == .regular {
-                            HStack(alignment: .top, spacing: DS.Space.l) {
-                                GuidePicture(name: step.image, caption: step.caption).frame(width: 320)
+        ScrollViewReader { reader in
+            ScrollView {
+                VStack(alignment: .leading, spacing: DS.Space.l) {
+                    Text(guide.intro).font(.title3).foregroundStyle(.secondary)
+                    HStack(spacing: DS.Space.s) {
+                        if let raw = guide.open, let tab = RootTab(rawValue: raw) {
+                            Button { go(tab) } label: { Label("Open \(tab.title)", systemImage: tab.symbol) }
+                                .buttonStyle(.borderedProminent)
+                                .tint(tab.tint)
+                        }
+                        if guide.steps.count > 1 {
+                            // the table of contents: jump to a part of this guide, as on a web page
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                HStack(spacing: DS.Space.xs) {
+                                    ForEach(Array(guide.steps.enumerated()), id: \.offset) { index, step in
+                                        Button("\(index + 1). \(step.caption)") {
+                                            withAnimation { reader.scrollTo(index, anchor: .top) }
+                                        }
+                                        .buttonStyle(.bordered)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    ForEach(Array(guide.steps.enumerated()), id: \.offset) { index, step in
+                        VStack(alignment: .leading, spacing: DS.Space.s) {
+                            Text("\(index + 1). \(step.caption)").font(DS.TypeScale.title)
+                            if let lead = step.lead { Text(lead).font(.body).lineSpacing(3) }
+                            if sizeClass == .regular {
+                                HStack(alignment: .top, spacing: DS.Space.l) {
+                                    GuidePicture(name: step.image, caption: step.caption).frame(width: 340)
+                                    Callouts(callouts: step.callouts)
+                                }
+                            } else {
+                                GuidePicture(name: step.image, caption: step.caption)
                                 Callouts(callouts: step.callouts)
                             }
-                        } else {
-                            GuidePicture(name: step.image, caption: step.caption)
-                            Callouts(callouts: step.callouts)
                         }
-                    }
-                    .padding(DS.Space.m)
-                    .dsSurface()
-                }
-                if let ideas {
-                    let related = guide.ideas.compactMap { id in ideas.ideas.first { $0.id == id } }
-                    if !related.isEmpty {
-                        DSSectionHeader(title: "Where this stands", symbol: "lightbulb")
-                        VStack(spacing: 0) {
-                            ForEach(related) { idea in
-                                NavigationLink {
-                                    IdeaDetailView(idea: idea, book: ideas)
-                                } label: {
-                                    HStack {
-                                        IdeaRow(idea: idea, status: ideas.status(idea.status) ?? IdeaStatus(id: idea.status, label: idea.status, meaning: ""))
-                                        Spacer()
-                                        Image(systemName: "chevron.right").font(.footnote).foregroundStyle(.tertiary)
-                                    }
-                                    .padding(DS.Space.s)
-                                    .contentShape(Rectangle())
-                                }
-                                .buttonStyle(.plain)
-                                Divider()
-                            }
-                        }
+                        .padding(DS.Space.m)
                         .dsSurface()
+                        .id(index)
                     }
+                    related
+                    Text("Pictures: \(pictures)").font(.footnote).foregroundStyle(.secondary)
                 }
-                Text("Pictures: \(pictures)").font(.footnote).foregroundStyle(.secondary)
+                .padding(DS.Space.l)
+                .frame(maxWidth: 1100, alignment: .leading)
+                .frame(maxWidth: .infinity)
             }
-            .padding(DS.Space.l)
-            .frame(maxWidth: 960, alignment: .leading)
-            .frame(maxWidth: .infinity)
         }
         .background(DS.Palette.ground)
         .navigationTitle(guide.title)
         .navigationBarTitleDisplayMode(.inline)
+    }
+
+    @ViewBuilder
+    private var related: some View {
+        if let ideas {
+            let found = guide.ideas.compactMap { id in ideas.ideas.first { $0.id == id } }
+            if !found.isEmpty {
+                DSSectionHeader(title: "Where this stands", symbol: "lightbulb")
+                VStack(spacing: 0) {
+                    ForEach(found) { idea in
+                        NavigationLink {
+                            IdeaDetailView(idea: idea, book: ideas)
+                        } label: {
+                            HStack {
+                                IdeaRow(idea: idea, status: ideas.status(idea.status) ?? IdeaStatus(id: idea.status, label: idea.status, meaning: ""))
+                                Spacer()
+                                Image(systemName: "chevron.right").font(.footnote).foregroundStyle(.tertiary)
+                            }
+                            .padding(DS.Space.s)
+                            .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.plain)
+                        Divider()
+                    }
+                }
+                .dsSurface()
+            }
+        }
     }
 }
 

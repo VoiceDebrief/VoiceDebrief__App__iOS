@@ -6,6 +6,8 @@ When you open the app, a card on the Record tab says what is new: an update, wit
 
 ## 1. The briefing card on the Record tab.
 
+When you open the app after an update, or after time away, this card says what changed and what happened to your notes. It is worked out by the app from the library, not written by a model.
+
 ![The briefing card on the Record tab. Numbered arrows mark the parts described below.](../img/briefing-1.jpg)
 
 1. The app was updated: tap to see what is new in this version, in the Guide.
