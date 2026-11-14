@@ -1,5 +1,7 @@
 # 025: The version in plain sight, release notes worth reading, and a briefing on opening
 
+**Items 3 and 4 begun (untried on a device): the app notices an update and links its page; a briefing card says what happened since the last opening, worked out by the code. The model writing it in its own words, and the vault's state ("the vault is fine"), are not done. Item 2's pictures are the screens session's per-version pages.**
+
 **Status:** open. Asked for by the owner in a voice note, 13 November 2026 (build 0.1.9).
 
 1. The version is easy to find in the app and links to the release notes. Started: a line on the record
