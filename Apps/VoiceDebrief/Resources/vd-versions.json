@@ -6,6 +6,17 @@
  ],
  "versions": [
   {
+   "version": "v0.1.58",
+   "date": "14 November 2026",
+   "notes": [
+    "The sgit app keeps a record of what you do in it (Settings, Your activity): every screen and how long it was open, and every action, with no file names, vault names or keys. A button sends it, encrypted, to the developer. Each device keeps its own. The whole web Vault opens inside the app on the vault or the file you are looking at (three dots, Open in the web Vault): folders, HTML preview, Markdown, editing. It opens looking only; Allow changes lets it save. Also new on the site: a guide to the app in pictures, with the things to press numbered"
+   ],
+   "hasPage": true,
+   "url": "https://ios.app.voicedebrief.ai/versions/v0.1.58/index.html",
+   "pictures": 0,
+   "issues": []
+  },
+  {
    "version": "v0.1.57",
    "date": "14 November 2026",
    "notes": [
