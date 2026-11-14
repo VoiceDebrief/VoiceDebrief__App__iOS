@@ -5,7 +5,9 @@ import SwiftUI
 import UIKit
 import UniformTypeIdentifiers
 
-/// The people layer's one entry: You, Contacts, Inbox, Secrets. Placed on the root list by the sgit app.
+/// The people layer's one entry: You, Contacts, Inbox. Placed on the root list by the sgit app. The secrets that
+/// belong to the identity (access keys, keys received from people) are `KeysAndAccessView`, which the sgit app's
+/// Secrets screen shows; its own entries live in vaults.
 struct PeopleHome: View {
     @Bindable var model: PeopleModel
     @Environment(\.scenePhase) private var scenePhase
@@ -23,9 +25,6 @@ struct PeopleHome: View {
                         }
                         NavigationLink { InboxView(hub: hub) } label: {
                             Label(hub.unread > 0 ? "Inbox, \(hub.unread) new" : "Inbox", systemImage: "tray")
-                        }
-                        NavigationLink { SecretsView(hub: hub) } label: {
-                            Label("Secrets (\(hub.secretList.count))", systemImage: "key")
                         }
                     }
                     if hub.inbox == nil {
@@ -336,16 +335,18 @@ struct MessageView: View {
     }
 }
 
-// MARK: Secrets
+// MARK: Keys and access
 
-struct SecretsView: View {
+/// The secrets the identity holds (the store in iCloud Keychain): access keys, keys and passwords received from
+/// people or given to them. For the sgit app's Secrets screen to place as one section or one screen.
+struct KeysAndAccessView: View {
     let hub: PeopleHub
     @State private var adding = false
 
     var body: some View {
         List {
             if hub.secretList.isEmpty {
-                Text("No secrets yet. Add an access key, a vault key, a password or a token, and give it to a contact in one step.")
+                Text("No keys yet. An access key arrives when someone invites you; add one yourself, or a key or token, and give it to a contact in one step.")
                     .foregroundStyle(.secondary)
             }
             ForEach(hub.secretList) { secret in
@@ -364,7 +365,7 @@ struct SecretsView: View {
                     .font(.footnote).foregroundStyle(.secondary)
             }
         }
-        .navigationTitle("Secrets")
+        .navigationTitle("Keys and access")
         .toolbar { Button { adding = true } label: { Label("Add", systemImage: "plus") } }
         .sheet(isPresented: $adding) { AddSecretSheet(hub: hub) }
     }

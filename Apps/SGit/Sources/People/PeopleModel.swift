@@ -39,6 +39,8 @@ final class PeopleModel {
 
     var hasIdentity: Bool { hub != nil }
     var unreadCount: Int { hub?.unread ?? 0 }
+    /// The identity's own keys, for the sgit app's Secrets screen (`KeysAndAccessView`).
+    var keysAndAccess: [KeptSecret] { hub?.secretList ?? [] }
 
     var name: String {
         get { UserDefaults.standard.string(forKey: nameKey) ?? "" }
