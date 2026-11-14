@@ -4,7 +4,7 @@ import SwiftUI
 /// alike by the tab bar, the sidebar, the record screen's tiles and the section's own header.
 extension RootTab: CaseIterable, Identifiable {
     static var allCases: [RootTab] {
-        [.record, .library, .contacts, .vaults, .agents, .guide, .identity, .credit, .activity, .lab, .words, .about, .settings]
+        [.record, .library, .contacts, .vaults, .agents, .play, .guide, .identity, .credit, .activity, .lab, .words, .about, .settings]
     }
 
     var id: String { rawValue }
@@ -16,6 +16,7 @@ extension RootTab: CaseIterable, Identifiable {
         case .contacts: "Contacts"
         case .vaults: "Vaults"
         case .agents: "Agents"
+        case .play: "Play"
         case .guide: "Guide"
         case .identity: "Identity"
         case .credit: "Credit"
@@ -34,6 +35,7 @@ extension RootTab: CaseIterable, Identifiable {
         case .contacts: "person.2"
         case .vaults: "lock.shield"
         case .agents: "person.3"
+        case .play: "gamecontroller"
         case .guide: "book"
         case .identity: "person.badge.key"
         case .credit: "sterlingsign.circle"
@@ -53,6 +55,7 @@ extension RootTab: CaseIterable, Identifiable {
         case .contacts: "Who notes go to; add one by QR code"
         case .vaults: "Encrypted copies that you own"
         case .agents: "Who is working for you; talk to them"
+        case .play: "Games played by voice, on Apple's model"
         case .guide: "What is new, every idea, how things work"
         case .identity: "Your keys and your devices"
         case .credit: "What each thing costs"
@@ -71,6 +74,7 @@ extension RootTab: CaseIterable, Identifiable {
         case .contacts: Color(dsHex: 0xE5577E)
         case .vaults: DS.Palette.indigo
         case .agents: Color(dsHex: 0xC94FD6)
+        case .play: Color(dsHex: 0xF28C28)
         case .guide: Color(dsHex: 0x2BA3D9)
         case .identity: Color(dsHex: 0x8E5CF7)
         case .credit: Color(dsHex: 0xD4A12A)
@@ -83,5 +87,5 @@ extension RootTab: CaseIterable, Identifiable {
     }
 
     /// The section's drawing in the asset catalogue (drawn by tools/art).
-    var art: String { "VDArt-\(rawValue)" }
+    var art: String { self == .play ? "VDArt-lab" : "VDArt-\(rawValue)" }   // Play has no drawing of its own yet
 }
