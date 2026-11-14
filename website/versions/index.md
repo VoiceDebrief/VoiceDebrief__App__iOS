@@ -4,6 +4,7 @@ Every release of this repository. Every push to `dev` is a release: CI works out
 
 | Version | Date | What changed |
 |---|---|---|
+| next | 14 November 2026 | The pictures of every screen: the picture of what the app asks before sending to the developer finds its button by a word in its name, after the button was renamed and the run failed with every picture taken. Nothing in the app has changed. |
 | v0.1.77 | 14 November 2026 | Three notes from 0.1.72 arrived as pure silence (-91 dB throughout): nothing reached the microphone. While recording, the app now says so after three seconds of true silence ("No sound is reaching the microphone: another app may be using it"), so a silent recording is noticed at once. A quiet room does not trigger it. |
 | v0.1.76 | 14 November 2026 | The record screen shows who a note is from and who it goes to: your face, an arrow, and the chosen contact's (Claude drawn as the conductor), at the owner's request. Choose your own photo or another generated look under Identity. |
 | v0.1.76 | 14 November 2026 | Avatars, at the owner's request: every person and agent has a face, a photo if one is set (kept on the device) or a character generated from their key or id, the same on every device. Kinds have frames: green for you, gold with a baton for a conductor, indigo for a session, dashed for a sub-agent. A route picture (you, an arrow, who the note goes to, or several) and a "How you look" section are ready to be placed on the record and Identity screens. |
