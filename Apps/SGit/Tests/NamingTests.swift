@@ -138,4 +138,13 @@ struct NamingTests {
         #expect(VaultListing.parent(of: "a/b/c.txt") == "a/b")
         #expect(VaultListing.parent(of: "c.txt") == "")
     }
+
+    @Test func aFolderSavedOutKeepsItsShapeAndSaysItsSize() {
+        #expect(VaultListing.relative("stage/day1/a.jpg", to: "stage") == "day1/a.jpg")
+        #expect(VaultListing.relative("stage/a.jpg", to: "") == "stage/a.jpg")
+        #expect(VaultListing.relative("stagecraft/a.jpg", to: "stage") == "stagecraft/a.jpg")
+        #expect(VaultNaming.saveOut(count: 1, bytes: 10).hasPrefix("Save this file to Files ("))
+        #expect(VaultNaming.saveOut(count: 12, bytes: 10).hasPrefix("Save these 12 files to Files ("))
+        #expect(VaultNaming.cloneCommand(keyText: "abc:def") == "pip install sgit-ai && sgit clone abc:def")
+    }
 }

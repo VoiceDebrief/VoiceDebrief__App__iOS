@@ -11,7 +11,8 @@ import XCTest
 final class ScreensTests: XCTestCase {
     /// sgit-app-screens.yml expects one PNG per entry. Keep it equal to the test methods below.
     static let shots = ["vaults", "vaults-empty", "create", "add", "vault", "vault.folder", "vault.list",
-                        "file", "share", "history", "commit", "settings", "gallery"]
+                        "file", "share", "history", "commit", "settings", "gallery",
+                        "create-nokey", "vault.local", "vault.adding-adding", "share.key"]
 
     @MainActor func test01_vaults() { shoot("vaults") }
     @MainActor func test02_vaults_empty() { shoot("vaults", set: "empty") }
@@ -26,9 +27,14 @@ final class ScreensTests: XCTestCase {
     @MainActor func test11_commit() { shoot("commit", wait: 5) }
     @MainActor func test12_settings() { shoot("settings") }
     @MainActor func test13_gallery() { shoot("gallery", wait: 6) }
+    // What round 1 of the review could not see (issue 116).
+    @MainActor func test14_create_no_access_key() { shoot("create", set: "nokey") }
+    @MainActor func test15_vault_local() { shoot("vault.local", wait: 6) }
+    @MainActor func test16_vault_adding() { shoot("vault.adding", set: "adding", wait: 6) }
+    @MainActor func test17_share_key() { shoot("share.key") }
 
     func testTheListMatchesTheTestMethods() {
-        XCTAssertEqual(Self.shots.count, 13)
+        XCTAssertEqual(Self.shots.count, 17)
         XCTAssertEqual(Set(Self.shots).count, Self.shots.count)
     }
 

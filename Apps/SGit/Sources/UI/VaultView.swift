@@ -1,6 +1,7 @@
 import PhotosUI
 import SGitVault
 import SwiftUI
+import UIKit
 import UniformTypeIdentifiers
 
 /// One folder of a vault: what is on its way in, the folders, then the files.
@@ -28,6 +29,7 @@ struct VaultView: View {
     @State private var opened: FolderRoute?
     @State private var showingHistory = false
     @State private var dropping = false
+    @State private var exporting: FolderExport?
 
     private var contents: VaultContents? { shelf.contents[vault.id] }
     private var onDevice: Bool { shelf.current(vault).onDevice }
@@ -67,6 +69,11 @@ struct VaultView: View {
                 Menu("More", systemImage: "ellipsis.circle") {
                     Button("History", systemImage: "clock.arrow.circlepath") { showingHistory = true }
                     Button("Refresh", systemImage: "arrow.clockwise") { Task { await load() } }
+                    let inside = VaultListing.under(contents?.files ?? [], folder: here)
+                    if !inside.isEmpty {
+                        Button(VaultNaming.saveOut(count: inside.count, bytes: inside.reduce(0) { $0 + $1.size }),
+                               systemImage: "square.and.arrow.down.on.square") { Task { await saveOut() } }
+                    }
                     Button(asList ? "Show as a grid" : "Show as a list",
                            systemImage: asList ? "square.grid.2x2" : "list.bullet") { asList.toggle() }
                 }
@@ -104,8 +111,39 @@ struct VaultView: View {
         .navigationDestination(isPresented: $showingHistory) {
             HistoryView(shelf: shelf, vault: vault)
         }
+        .sheet(item: $exporting) { export in
+            FolderExporter(url: export.url).ignoresSafeArea()
+        }
         .sheet(isPresented: $sharing) {
             NavigationStack { ShareVaultView(shelf: shelf, vault: vault, pending: !jobs.isEmpty) }
+        }
+    }
+
+    /// Fetches every file in the open folder and beneath it, lays them out as they are in the vault, and
+    /// hands the folder to the Files app. The files are the originals: decrypted, not converted.
+    private func saveOut() async {
+        let wanted = VaultListing.under(contents?.files ?? [], folder: here)
+        guard !wanted.isEmpty, intake == nil else { return }
+        let name = here.isEmpty ? VaultNaming.clean(vault.name) : VaultListing.name(of: here)
+        let target = FileManager.default.temporaryDirectory
+            .appending(path: "out-\(UUID().uuidString)", directoryHint: .isDirectory)
+            .appending(path: name, directoryHint: .isDirectory)
+        problem = nil
+        defer { intake = nil }
+        do {
+            for (index, file) in wanted.enumerated() {
+                intake = "Getting file \(index + 1) of \(wanted.count) ready to save"
+                let local = try await shelf.localFile(for: file, in: vault)
+                let place = target.appending(path: VaultListing.relative(file.path, to: here))
+                try FileManager.default.createDirectory(at: place.deletingLastPathComponent(), withIntermediateDirectories: true)
+                // A link costs no space; a copy is the fallback across volumes.
+                if (try? FileManager.default.linkItem(at: local, to: place)) == nil {
+                    try FileManager.default.copyItem(at: local, to: place)
+                }
+            }
+            exporting = FolderExport(url: target)
+        } catch {
+            problem = "The folder could not be saved: \(error.localizedDescription)"
         }
     }
 
@@ -474,4 +512,21 @@ struct FileRow: View {
         case .document: return "doc"
         }
     }
+}
+
+/// A folder made ready to leave the app.
+struct FolderExport: Identifiable {
+    let id = UUID()
+    let url: URL
+}
+
+/// The system's "save to Files" for a whole folder.
+struct FolderExporter: UIViewControllerRepresentable {
+    let url: URL
+
+    func makeUIViewController(context: Context) -> UIDocumentPickerViewController {
+        UIDocumentPickerViewController(forExporting: [url], asCopy: true)
+    }
+
+    func updateUIViewController(_ controller: UIDocumentPickerViewController, context: Context) {}
 }

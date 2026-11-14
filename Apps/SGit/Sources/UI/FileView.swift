@@ -72,7 +72,7 @@ struct FileView: View {
                 }
             } footer: {
                 if local != nil {
-                    Text("The decrypted copy is in this app's cache on this device. Settings can empty it.")
+                    Text("Open and Share hand over the original file, byte for byte as it was added. A copy of it is kept on this device so that it opens quickly; Settings can remove the copies.")
                 }
             }
 

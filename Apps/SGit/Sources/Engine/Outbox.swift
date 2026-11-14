@@ -135,7 +135,7 @@ final class Outbox {
     /// - Parameter existing: the paths already in the vault, so that names do not collide.
     @discardableResult
     func add(_ files: [IncomingFile], to vault: SavedVault, folder: String, existing: [String],
-             shelf: VaultShelf, moving: Bool = true) throws -> UploadJob {
+             shelf: VaultShelf, moving: Bool = true, starting: Bool = true) throws -> UploadJob {
         let id = UUID()
         try FileManager.default.createDirectory(at: plainFolder(id), withIntermediateDirectories: true)
         var taken = existing
@@ -164,7 +164,7 @@ final class Outbox {
         let job = UploadJob(id: id, vaultId: vault.id, vaultName: vault.name, folder: folder, createdAt: Date(),
                             message: VaultNaming.addMessage(items.map(\.name)), items: items)
         save(job)
-        start(id, shelf: shelf)
+        if starting { start(id, shelf: shelf) }
         return job
     }
 
