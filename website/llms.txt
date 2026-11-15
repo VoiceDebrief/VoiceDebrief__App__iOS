@@ -90,6 +90,9 @@ Every page has a markdown twin: replace index.html with index.md.
 - https://ios.app.voicedebrief.ai/articles/the-lab/index.html : the app as a laboratory; experiments L01 to L10.
 - https://ios.app.voicedebrief.ai/lab/l03/index.html : results of Lab experiment L03, the voice game: latency from the
   end of speaking to the move, phrases against the model, from the logs the app exports.
+- https://ios.app.voicedebrief.ai/articles/three-layers/index.html : a position: three layers do work in this
+  project, the app's code (exact, free, offline), Apple's model on the device (free, private, small) and agents in a
+  loop (capable, slow, paid per run); examples from what exists, and how a voice note moves between them.
 - https://ios.app.voicedebrief.ai/articles/two-decision-engines/index.html : the code owns the states; the
   model is asked one question at a time through function calls, with no long history.
 - https://ios.app.voicedebrief.ai/articles/a-harness-inside-the-app/index.html : the doors of SHarness (network,
