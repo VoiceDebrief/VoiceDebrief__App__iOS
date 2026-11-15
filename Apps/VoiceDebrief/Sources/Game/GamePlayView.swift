@@ -142,6 +142,7 @@ struct GameScreen: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
             HStack {
                 TextField("Or type: go left two", text: $typed)
+                    .voiceInput($typed)
                     .textFieldStyle(.roundedBorder)
                     .submitLabel(.go)
                     .onSubmit(sendTyped)

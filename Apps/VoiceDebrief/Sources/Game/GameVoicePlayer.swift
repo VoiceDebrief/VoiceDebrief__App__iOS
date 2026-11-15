@@ -86,13 +86,15 @@ final class GameVoicePlayer {
     private let synthesizer = AVSpeechSynthesizer()
     private let delegate = GameSpeechDelegate()
     private var loop: Task<Void, Never>?
+    private weak var game: GameController?
 
     init() {
         synthesizer.delegate = delegate
     }
 
     func start(_ game: GameController, localeId: String) {
-        guard !playing else { return }
+        guard !playing, game.claimTurnForPlayer() else { return }
+        self.game = game
         playing = true
         turns = 0
         loop = Task { [weak self] in
@@ -106,6 +108,7 @@ final class GameVoicePlayer {
         loop?.cancel()
         loop = nil
         synthesizer.stopSpeaking(at: .immediate)
+        game?.playerReleasedTurn()
     }
 
     private func run(_ game: GameController, localeId: String) async {
@@ -136,6 +139,7 @@ final class GameVoicePlayer {
         }
         playing = false
         saying = nil
+        game.playerReleasedTurn()
     }
 
     private func speak(_ line: String, localeId: String) async -> Date {

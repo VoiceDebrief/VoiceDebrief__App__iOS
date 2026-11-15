@@ -349,6 +349,25 @@ final class GameController {
     /// Goes up on every stop, so that a start still waiting (for permission, or for the speech model)
     /// when it was stopped gives up instead of taking the microphone afterwards.
     private var listenGeneration = 0
+    /// This game's place in the app's one microphone turn, shared by its listening and its voice player.
+    private let micTurn = UUID()
+    private var playerHoldsTurn = false
+
+    /// The voice player speaks for the game, so it takes the game's turn; false if something else holds it.
+    func claimTurnForPlayer() -> Bool {
+        guard MicrophoneTurn.shared.take(micTurn) else {
+            problem = MicrophoneTurn.busy
+            return false
+        }
+        playerHoldsTurn = true
+        return true
+    }
+
+    /// The voice player has stopped: the turn goes back unless the game is still listening.
+    func playerReleasedTurn() {
+        playerHoldsTurn = false
+        if !listening && !starting { MicrophoneTurn.shared.giveBack(micTurn) }
+    }
 
     /// Whether a voice note is being recorded: as the owner of recording says through the Lab's host,
     /// or, where it has not said, the recorder's own flag.
@@ -378,6 +397,11 @@ final class GameController {
         }
         // Stopped while asking, or a recording began meanwhile: give up.
         guard mine == listenGeneration, !Self.noteRecording else { return }
+        // One listener for the whole app: a voice field, the Lab or this game, never two at once.
+        guard MicrophoneTurn.shared.take(micTurn) else {
+            problem = MicrophoneTurn.busy
+            return
+        }
         do {
             let session = AVAudioSession.sharedInstance()
             // Play and record, out of the speaker, so the voice player can be heard by the microphone.
@@ -397,10 +421,12 @@ final class GameController {
                 // A stop overtook this start while the speech model was being readied.
                 listening = false
                 await live.stop()
+                if !playerHoldsTurn { MicrophoneTurn.shared.giveBack(micTurn) }
             }
         } catch {
             listening = false
             await live.stop()
+            if !playerHoldsTurn { MicrophoneTurn.shared.giveBack(micTurn) }
             problem = "Listening could not start: \(error.localizedDescription)"
         }
     }
@@ -409,6 +435,8 @@ final class GameController {
     /// off a recording or playback that another part of the app has started since.
     func stopListening() async {
         listenGeneration += 1
+        // A start still under way gives the turn back itself when it sees it was overtaken.
+        defer { if !starting && !playerHoldsTurn { MicrophoneTurn.shared.giveBack(micTurn) } }
         guard listening else { return }
         listening = false
         earlyTask?.cancel()
