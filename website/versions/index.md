@@ -4,7 +4,7 @@ Every release of this repository. Every push to `dev` is a release: CI works out
 
 | Version | Date | What changed |
 |---|---|---|
-| next | 14 November 2026 | On iPhone, a part of the app reached through More no longer shows two back buttons: the tab bar is Record, Library, Contacts, Vaults and More, and More is now the app's own list of the other parts, grouped as the sidebar groups them, each opening with its own single navigation bar. The Guide leaves room at the bottom for the Talk button. |
+| v0.1.110 | 14 November 2026 | On iPhone, a part of the app reached through More no longer shows two back buttons: the tab bar is Record, Library, Contacts, Vaults and More, and More is now the app's own list of the other parts, grouped as the sidebar groups them, each opening with its own single navigation bar. The Guide leaves room at the bottom for the Talk button. |
 | v0.1.109 | 14 November 2026 | The Guide on iPad: a guide's numbered notes sit beside its picture only when they have room (260 points or more), otherwise under it; before, in a narrow column they were squeezed to a letter or two wide. |
 | v0.1.108 | 14 November 2026 | iPad and Mac record screen, from the screenshots: the recipient chips wrap onto a second line instead of being cut ("Maria (in"), and while recording the time sits above the button. |
 | v0.1.108 | 14 November 2026 | Pictures of the Guide and of Play: five more screens photographed by CI on every device and appearance (the Guide, one feature guide, the latest release card, Play as it opens, and a game two commands in), 40 in each set. The Guide takes the item to open first, used only by the pictures. Nothing a user sees has changed. |
