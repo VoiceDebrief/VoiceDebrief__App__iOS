@@ -34,6 +34,24 @@ struct InboxView: View {
                     ForEach(decisions) { decision in decisionRow(decision) }
                 }
             }
+            let offers = (desk.report?.contactOffers ?? []).filter { offer in !RecipientStore.shared.all.contains { $0.link == offer.link } }
+            if !offers.isEmpty {
+                Section("Contacts offered to you") {
+                    ForEach(offers) { offer in
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text(offer.name).font(.headline)
+                            if let why = offer.why { Text(why).font(.callout).foregroundStyle(.secondary) }
+                            Text("From \(offer.from). Adding it lets you send notes to it; it cannot read anything of yours.")
+                                .font(.caption).foregroundStyle(.secondary)
+                            Button("Add to Contacts") {
+                                if RecipientStore.shared.add(name: offer.name, text: offer.link) { UsageLog.shared.action("inbox.contact-added") }
+                            }
+                            .buttonStyle(.borderedProminent)
+                        }
+                        .padding(.vertical, 4)
+                    }
+                }
+            }
             if !nextSteps.isEmpty {
                 Section("What happens next") {
                     ForEach(Array(nextSteps.enumerated()), id: \.offset) { index, step in

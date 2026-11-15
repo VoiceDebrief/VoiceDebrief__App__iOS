@@ -12,7 +12,51 @@ struct RecordView: View {
     @AppStorage("vd.localeId") private var localeId = ""
     @State private var importing = false
     @State private var showingMessages = false
+    @State private var tuning = false
+    // The record screen's look, tuned by the owner on the screen itself (15 November 2026: "a settings button
+    // on this page: the sensitivity of the bars, the colour of the green button, the height of the wave").
+    @AppStorage("vd.tune.sensitivity") private var sensitivity = 0.7
+    @AppStorage("vd.tune.barHeight") private var barHeight = 32.0
+    @AppStorage("vd.tune.buttonColour") private var buttonColour = "green"
     @Environment(\.horizontalSizeClass) private var sizeClass
+    /// The big button's colour, as tuned.
+    private var tunedColour: Color {
+        switch buttonColour {
+        case "blue": .blue
+        case "orange": .orange
+        case "purple": .purple
+        case "teal": .teal
+        default: DS.Palette.green
+        }
+    }
+
+    /// The tune panel: changes apply as you move them, also while recording.
+    private var tunePanel: some View {
+        NavigationStack {
+            Form {
+                Section("Level bars") {
+                    LabeledContent("Sensitivity") { Slider(value: $sensitivity, in: 0.3...1.5) }
+                    LabeledContent("Height") { Slider(value: $barHeight, in: 16...80) }
+                    LevelBars(levels: (0..<DebriefSession.levelCount).map { i in pow(0.5 + 0.5 * sin(Double(i) / 3), 1 / max(sensitivity, 0.2)) },
+                              height: barHeight, barWidth: 4)
+                }
+                Section("The record button") {
+                    Picker("Colour", selection: $buttonColour) {
+                        ForEach(["green", "blue", "teal", "orange", "purple"], id: \.self) { Text($0.capitalized).tag($0) }
+                    }
+                    .pickerStyle(.segmented)
+                }
+                Section {
+                    Button("Back to how it was") { sensitivity = 0.7; barHeight = 32; buttonColour = "green" }
+                }
+            }
+            .navigationTitle("Tune this screen")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { tuning = false } } }
+        }
+        .presentationDetents([.medium, .large])
+    }
+
     /// iPad and Mac at full width: the two-column record screen.
     private var wide: Bool { sizeClass == .regular }
     /// A picture added while recording (pasted or chosen) and a line, sent with the note when it goes.
@@ -138,6 +182,7 @@ struct RecordView: View {
             }
             // The shared vault's report says whether a newer build is waiting, and carries Claude's replies.
             .task { await AgentsDesk.shared.refresh(book: book) }
+            .sheet(isPresented: $tuning) { tunePanel }
             .sheet(isPresented: $showingMessages) {
                 NavigationStack { MessagesToClaudeView(session: session, book: book) }
             }
@@ -485,22 +530,50 @@ struct RecordView: View {
                         .font(.footnote.weight(.semibold))
                         .foregroundStyle(Color.accentColor)
                 }
-                LevelBars(levels: session.levels, height: 32, barWidth: 4)
+                LevelBars(levels: session.levels.map { pow($0, 1 / max(sensitivity, 0.2)) }, height: barHeight, barWidth: 4)
                     .accessibilityElement(children: .ignore)
                     .accessibilityLabel("Microphone level")
+                // A small counter: that it is still recording and still hearing words (the owner).
+                TimelineView(.periodic(from: .now, by: 1)) { _ in
+                    HStack(spacing: 10) {
+                        if session.paused { Label("Paused", systemImage: "pause.fill").foregroundStyle(.orange) }
+                        Text(Timecode.duration(seconds: session.recordedSeconds)).monospacedDigit()
+                        Text("·")
+                        Text("\(session.wordsHeard) words").monospacedDigit()
+                        Button { tuning = true } label: { Image(systemName: "slider.horizontal.3") }
+                            .accessibilityLabel("Tune this screen")
+                    }
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                }
+            }
+            HStack(spacing: 24) {
+            if isRecording {
+                // Pause and carry on, in the same note (the owner: "a pause button and the finish button").
+                Button {
+                    Task { if session.paused { await session.resumeRecording() } else { await session.pauseRecording() } }
+                } label: {
+                    Image(systemName: session.paused ? "play.fill" : "pause.fill")
+                        .font(.system(size: 26, weight: .semibold))
+                        .foregroundStyle(.white)
+                        .frame(width: 64, height: 64)
+                        .background(Color.orange, in: Circle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(session.paused ? "Carry on recording" : "Pause")
             }
             Button {
                 Task { await toggle() }
             } label: {
                 ZStack {
                     Circle()
-                        .fill(localeId.isEmpty ? AnyShapeStyle(Color.gray) : AnyShapeStyle(DS.Palette.green.gradient))
+                        .fill(localeId.isEmpty ? AnyShapeStyle(Color.gray) : AnyShapeStyle(tunedColour.gradient))
                         .frame(width: 120, height: 120)
                     Circle()
                         .strokeBorder(.white.opacity(0.35), lineWidth: 2)
                         .frame(width: 120, height: 120)
                     Circle()
-                        .strokeBorder(DS.Palette.green.opacity(isRecording ? 0.5 : 0.18), lineWidth: 8)
+                        .strokeBorder(tunedColour.opacity(isRecording ? 0.5 : 0.18), lineWidth: 8)
                         .frame(width: 140, height: 140)
                     Image(systemName: isRecording ? "checkmark" : "mic.fill")
                         .font(.system(size: 46, weight: .semibold))
@@ -514,6 +587,7 @@ struct RecordView: View {
             // written up is recorded, and waits its turn (issue 030).
             .disabled(localeId.isEmpty)
             .accessibilityLabel(isRecording ? (addresseeRecipient.map { "Finish and send to \($0.name)" } ?? "Finish and debrief") : "Record")
+            }
 
             Text(caption)
                 .font(.caption)
