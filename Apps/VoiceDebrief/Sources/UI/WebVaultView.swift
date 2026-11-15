@@ -10,6 +10,10 @@ enum WebVault {
     /// The host that answers the embed handshake. Tried on 14 November 2026: dev.vault.sgraph.ai does,
     /// vault.sgraph.ai does not yet.
     static let address = URL(string: "https://dev.vault.sgraph.ai/en-gb/vault/?embed=1")!
+    /// The page that runs a vault's own app. Which page loads decides app or files: the `mode` field of
+    /// vault-open is ignored by both (tested on the live page by the sgit app session, 15 November 2026).
+    /// The workbench always has an app, so VoiceDebrief opens it here.
+    static let appAddress = URL(string: "https://dev.vault.sgraph.ai/en-gb/app/?embed=1")!
     static let handler = "sgit"
 
     /// Runs in the page before anything else: passes the web Vault's own announcements to the app.
@@ -24,9 +28,7 @@ enum WebVault {
     """
 
     /// Hands the page the key. `key` and `path` arrive as arguments, never as text in the script.
-    /// `mode: 'auto'` opens the vault's own app (its app.json and index.html) when it has one, straight away,
-    /// and the file browser only when it has none (the owner, 15 November 2026: "open in the vault app directly").
-    static let open = "window.postMessage({ sg: 'vault-open', key: key, mode: 'auto', deepLink: path }, '*');"
+    static let open = "window.postMessage({ sg: 'vault-open', key: key, mode: 'vault', deepLink: path }, '*');"
 
     /// Gives the opened page the server's access key, which is what lets it save changes.
     static let allowChanges = """
@@ -84,7 +86,8 @@ struct WebVaultPage: UIViewRepresentable {
             WKUserScript(source: WebVault.listener, injectionTime: .atDocumentStart, forMainFrameOnly: true))
         let view = WKWebView(frame: .zero, configuration: configuration)
         view.navigationDelegate = context.coordinator
-        view.load(URLRequest(url: WebVault.address))
+        // The vault's own app (the workbench always has one), straight away (the owner: "open in the vault app directly").
+        view.load(URLRequest(url: WebVault.appAddress))
         return view
     }
 
