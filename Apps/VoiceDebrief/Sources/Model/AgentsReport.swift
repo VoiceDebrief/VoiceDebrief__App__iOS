@@ -25,6 +25,8 @@ struct AgentsReport: Codable, Equatable, Sendable {
         var replyTo: String?
         /// What it answers, in your words (the start of your note's transcript), so the reply makes sense on its own.
         var quote: String? = nil
+        /// A picture that goes with it (an infographic), as a path in the same vault, e.g. "agents/images/x.png".
+        var image: String? = nil
     }
 
     var v: Int
@@ -41,6 +43,15 @@ struct AgentsReport: Codable, Equatable, Sendable {
     var decisions: [Decision]? = nil
     /// What happens next, in a few lines, as the conductor sees it.
     var nextSteps: [String]? = nil
+    /// When the conductor's side received each note (its id), written within seconds of arrival, before any
+    /// answer: the "Received" step of the live panel's timeline.
+    var acks: [Ack]? = nil
+
+    struct Ack: Codable, Equatable, Sendable {
+        var note: String
+        var receivedAt: Date
+    }
+
     /// Contacts the conductor offers to add, such as another conductor's lane (the owner: "send me a message
     /// with an agent's key so I can onboard it from here; I accept it or not"). Nothing is added until you say so.
     var contactOffers: [ContactOffer]? = nil

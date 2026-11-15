@@ -5,7 +5,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | Status | Meaning | How many |
 |---|---|---|
 | Seen working | Built, and a run proved it: CI, a device or a server. | 27 |
-| Built, untried | In the app or the repository, but not yet proven by a run on a device. | 100 |
+| Built, untried | In the app or the repository, but not yet proven by a run on a device. | 101 |
 | In progress | Begun: part of it is built or a release has touched it. | 45 |
 | Proposed | Asked for or described; nothing of it is built. | 61 |
 | Parked | Waiting: on the owner, on Apple, or scheduled for later. | 6 |
@@ -71,6 +71,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | A send tries again, and says it went | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
 | Send a picture | Feature | VoiceDebrief | Library tab; Record tab |   | [reality file](../built/index.md) |
 | Claude's replies in the app | Feature | VoiceDebrief | Record tab; The repository: tools/conductor |   | [reality file](../built/index.md) |
+| Live with Claude | Feature | VoiceDebrief | Record tab |   | [reality file](../built/index.md) |
 | The Inbox | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
 | The workbench in the app | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
 | Vaults on the device | Feature | VoiceDebrief | Vaults tab; The repository: CI |   | [reality file](../built/index.md) |

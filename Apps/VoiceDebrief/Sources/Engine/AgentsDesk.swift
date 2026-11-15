@@ -14,6 +14,13 @@ final class AgentsDesk {
     private(set) var picture: Data?
     private(set) var problem: String?
     private(set) var loadedAt: Date?
+    /// When this device first saw each reply (its id): the "Shown here" step of the live panel's timeline.
+    private(set) var seenAt: [String: Date] = [:]
+    /// Pictures that came with replies, read from the vault once, by path.
+    private(set) var images: [String: Data] = [:]
+    /// When the vault was last read, and how long that took.
+    private(set) var lastCheck: (at: Date, seconds: Double)?
+
     /// Reading the vault for the first time this launch: the screen shows that, not the setup steps.
     private(set) var loading = false
     private(set) var sent: [SentToAgent] = []
@@ -36,6 +43,15 @@ final class AgentsDesk {
 
     /// Pulls the vault and reads the report and its picture.
     func refresh(book: VaultBook) async {
+        let started = Date()
+        let firstLook = seenAt.isEmpty
+        defer {
+            lastCheck = (Date(), Date().timeIntervalSince(started))
+            // Replies already there at the first look this launch are not timed as if they arrived now.
+            for message in report?.messages ?? [] where message.from != "you" && seenAt[message.id] == nil {
+                seenAt[message.id] = firstLook ? message.at : Date()
+            }
+        }
         loading = report == nil
         defer { loading = false }
         guard let vault = book.vaults.first(where: { $0.id == vaultId }) else { loadedAt = Date(); return }
@@ -43,6 +59,9 @@ final class AgentsDesk {
         do {
             report = try AgentsReport.decode(try await book.data(of: "agents/agents.json", in: book.current(vault)))
             picture = try? await book.data(of: "agents/overview.png", in: book.current(vault))
+            for path in Set((report?.messages ?? []).compactMap(\.image)) where images[path] == nil {
+                images[path] = try? await book.data(of: path, in: book.current(vault))
+            }
             problem = nil
         } catch {
             problem = report == nil ? "Nothing from the conductor in this vault yet." : "Could not refresh: \(VaultBook.describe(error))"
