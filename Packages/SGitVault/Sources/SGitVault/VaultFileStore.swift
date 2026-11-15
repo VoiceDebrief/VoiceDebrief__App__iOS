@@ -291,7 +291,15 @@ public enum VaultObjects {
                                         withIntermediateDirectories: true)
         }
         for item in plan {
-            try item.data.write(to: destination.appending(path: item.path), options: [.atomic, .withoutOverwriting])
+            // Whole or not at all, and never over a file that appeared meanwhile: write aside, then move
+            // (a move refuses an existing destination). Foundation does not allow .atomic with .withoutOverwriting.
+            let target = destination.appending(path: item.path)
+            let temporary = target.deletingLastPathComponent().appending(path: ".\(UUID().uuidString).tmp")
+            try item.data.write(to: temporary, options: .withoutOverwriting)
+            do { try manager.moveItem(at: temporary, to: target) } catch {
+                try? manager.removeItem(at: temporary)
+                throw error
+            }
         }
         return Union(added: plan.map(\.path), alreadyPresent: present, differing: differing)
     }
