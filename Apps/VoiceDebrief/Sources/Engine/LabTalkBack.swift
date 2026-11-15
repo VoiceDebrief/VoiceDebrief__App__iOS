@@ -10,6 +10,10 @@ final class LabSpeaker: NSObject, AVSpeechSynthesizerDelegate {
     private let host: LabActionHost
     private let synthesizer = AVSpeechSynthesizer()
     private var done: CheckedContinuation<Void, Never>?
+    /// This speaker's claim on the app's one turn to listen or speak (MicrophoneTurn).
+    private let turnId = UUID()
+    /// Why the last answer was not said aloud, if it was not.
+    private(set) var problem: String?
 
     init(host: LabActionHost? = nil) {
         self.host = host ?? LabActionHost.shared
@@ -20,7 +24,16 @@ final class LabSpeaker: NSObject, AVSpeechSynthesizerDelegate {
     /// Speaks the text and returns how long it took in milliseconds, or nil if it was not spoken.
     func speak(_ text: String, localeId: String) async -> Double? {
         let words = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !words.isEmpty, host.isRecording?() != true, done == nil else { return nil }
+        problem = nil
+        guard !words.isEmpty, done == nil else { return nil }
+        guard host.isRecording?() != true else {
+            problem = "Not said aloud: a note is being recorded."
+            return nil
+        }
+        guard MicrophoneTurn.shared.take(turnId) else {
+            problem = MicrophoneTurn.busy
+            return nil
+        }
         let session = AVAudioSession.sharedInstance()
         try? session.setCategory(.playback, mode: .spokenAudio)
         try? session.setActive(true)
@@ -42,7 +55,9 @@ final class LabSpeaker: NSObject, AVSpeechSynthesizerDelegate {
         finish()
     }
 
+    /// However speech ends, the turn goes back.
     private func finish() {
+        MicrophoneTurn.shared.giveBack(turnId)
         done?.resume()
         done = nil
     }
@@ -155,8 +170,12 @@ final class LabTalkBack {
         if wasListening { await listener.stop() }
         if let turn = await desk.ask(question, source: source), mine == epoch {
             state = .speaking
-            if speakAnswers, let ms = await speaker.speak(turn.spoken, localeId: localeId) {
-                desk.spoke(turn.number, ms: ms)
+            if speakAnswers {
+                if let ms = await speaker.speak(turn.spoken, localeId: localeId) {
+                    desk.spoke(turn.number, ms: ms)
+                } else if let why = speaker.problem {
+                    problem = why
+                }
             }
         }
         if running, mine == epoch {
