@@ -47,6 +47,26 @@ struct LabView: View {
                             .foregroundStyle(.secondary)
                     }
                 }
+                NavigationLink {
+                    LabTalkView(store: store)
+                } label: {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("L05: Talk back")
+                        Text("Ask about your own notes, tasks and messages by voice, and hear the answer.")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                NavigationLink {
+                    LabDiscoveryView(store: store)
+                } label: {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("L06: Task discovery")
+                        Text("A question is read for its kind, the app's data is walked, and the answer is built only from what the walk found.")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                    }
+                }
             } header: {
                 Text("Experiments")
             } footer: {
