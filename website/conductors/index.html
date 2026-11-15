@@ -75,6 +75,15 @@ python3 conductor.py qr maria.png</code></pre>
 <li><strong>A link that opens the app.</strong> Today the link is scanned or pasted. A link that adds the recipient when tapped is planned.</li>
 <li><strong>Checking who a key belongs to.</strong> The app shows the key's fingerprint; compare it by eye if it matters. Tying a key to a person on the pki.sgit.ai register is planned.</li>
 </ul>
+<h2 id="onboarding-another-conductor-for-the-owner-s-other-accounts">Onboarding another conductor (for the owner's other accounts)</h2>
+<p>A conductor is an agent session that coordinates others and talks to you through the app. The first one, Claude (developer), is built into the test build. To bring in another, for example a main conductor on another account:</p>
+<ol>
+<li><strong>In the new conductor's session</strong>, tell it to read this page and run <code>setup</code> with its name (in a cloud session the server token is supplied by the session's proxy: <code>--token proxy-injected</code>), then <code>link</code>. It keeps its key folder private and gives you only the link, which is safe to share.</li>
+<li><strong>In VoiceDebrief</strong>, open Contacts, Add, and paste the link (or scan its QR code). Now you can record a note for it: choose it in the chips above the record button, or send any note to it from the note's screen.</li>
+<li><strong>For it to answer you</strong>, give it a vault as you did for Claude: create one on the Vaults tab, push it, and hand it over sealed. <em>Proposed, not built yet:</em> the Agents screen giving a vault to a conductor other than Claude (developer), and showing more than one conductor's report.</li>
+<li><strong>Its own agents</strong> report through it: the conductor writes the report (<code>agents/agents.json</code>) into the vault you gave it, and its messages reach you there.</li>
+</ol>
+<p>What a conductor must never do: print or commit its key folder, a vault key it was given, or a server token.</p>
 </main>
 
 <footer class="site"><div class="cols">
