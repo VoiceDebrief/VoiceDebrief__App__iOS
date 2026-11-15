@@ -660,6 +660,9 @@ struct FileTile: View {
                 }
                 .background(.quaternary)
                 .clipShape(RoundedRectangle(cornerRadius: 8))
+                .overlay(alignment: .bottomTrailing) {
+                    WhereTheFileIs(shelf: shelf, vault: vault, file: file).padding(5)
+                }
             Text(VaultListing.name(of: file.path))
                 .font(.caption2)
                 .lineLimit(1)
@@ -697,6 +700,7 @@ struct FileRow: View {
                 Text(file.size.fileSizeText).font(.footnote).foregroundStyle(.secondary)
             }
             Spacer()
+            WhereTheFileIs(shelf: shelf, vault: vault, file: file)
         }
         .padding(.vertical, 2)
         .task(id: file.blobId) {
@@ -710,6 +714,41 @@ struct FileRow: View {
         case .video: return "film"
         case .audio: return "waveform"
         case .document: return "doc"
+        }
+    }
+}
+
+/// A small mark on a file: on this device already (opened, played or saved once, and kept decrypted in
+/// the cache), being fetched, or still only on the server. A vault that lives only on this device shows no
+/// mark: every file in it is here.
+struct WhereTheFileIs: View {
+    let shelf: VaultShelf
+    let vault: SavedVault
+    let file: VaultFile
+
+    var body: some View {
+        if !shelf.current(vault).onDevice {
+            let fetched = shelf.fetchedBytes[file.blobId]
+            Group {
+                if let fetched {
+                    ProgressView(value: Double(fetched), total: Double(max(file.size, 1)))
+                        .progressViewStyle(.circular)
+                        .controlSize(.mini)
+                        .accessibilityLabel("Being fetched")
+                } else if shelf.isCached(file, in: vault) {
+                    Image(systemName: "checkmark.circle.fill")
+                        .symbolRenderingMode(.palette)
+                        .foregroundStyle(.white, .green)
+                        .accessibilityLabel("On this device")
+                } else {
+                    Image(systemName: "icloud.and.arrow.down")
+                        .foregroundStyle(.white)
+                        .accessibilityLabel("On the server only: fetched when opened")
+                }
+            }
+            .font(.caption)
+            .padding(4)
+            .background(.black.opacity(0.45), in: Circle())
         }
     }
 }

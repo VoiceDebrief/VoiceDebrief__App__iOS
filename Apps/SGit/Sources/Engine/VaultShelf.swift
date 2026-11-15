@@ -140,6 +140,9 @@ final class VaultShelf {
     private(set) var checkedAt: [String: Date] = [:]
     /// Bytes received so far for a file being fetched, by blob id.
     private(set) var fetchedBytes: [String: Int] = [:]
+    /// Moves on whenever a file arrives in the cache or the cache is emptied, so that a screen showing
+    /// whether a file is on this device looks again.
+    private(set) var cacheVersion = 0
 
     private var keys: [String: VaultKey] = [:]
     private var opened: [String: SGitVault] = [:]
@@ -414,6 +417,7 @@ final class VaultShelf {
         opened[vault.id] = nil
         contents[vault.id] = nil
         try? FileManager.default.removeItem(at: filesFolder.appending(path: vault.id, directoryHint: .isDirectory))
+        cacheVersion += 1
         // A vault that lives only on this device goes with it: the screen says so before asking.
         try? FileManager.default.removeItem(at: localRoot.appending(path: vault.id, directoryHint: .isDirectory))
         // The key leaves iCloud Keychain too, so a device that has not opened this vault yet will not get it.
@@ -474,7 +478,8 @@ final class VaultShelf {
     }
 
     func isCached(_ file: VaultFile, in vault: SavedVault) -> Bool {
-        FileManager.default.fileExists(atPath: cachedURL(for: file, in: vault).path)
+        _ = cacheVersion
+        return FileManager.default.fileExists(atPath: cachedURL(for: file, in: vault).path)
     }
 
     /// The decrypted file on disk, fetched and checked if it is not there yet.
@@ -502,7 +507,9 @@ final class VaultShelf {
             fetching[running] = nil
             fetchedBytes[blobId] = nil
         }
-        return try await task.value
+        let url = try await task.value
+        cacheVersion += 1
+        return url
     }
 
     /// A file to drag out of the app, to the desktop or another app. It is fetched and decrypted when
@@ -754,6 +761,7 @@ final class VaultShelf {
             try? FileManager.default.removeItem(at: folder)
         }
         for handle in opened.values { await handle.clearCache() }
+        cacheVersion += 1
     }
 
     static func describe(_ error: Error) -> String {

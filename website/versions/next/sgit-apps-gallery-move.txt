@@ -8,6 +8,7 @@
 | * Photos: Show as a gallery, swipe from one to the next              |
 | * Add a gallery page, so the vault is a gallery on the web too       |
 | * Select files and folders, Move to: one change, nothing re-sent     |
+| * A mark on each file: on this device already, or still on the server|
 |                                                                      |
 |   [ ][ ][ ][ ]      stage/  --( 12 files )-->  photos/day-2/         |
 |   [ ][ ][ ][ ]      one commit: "Move 12 files to photos/day-2"      |
