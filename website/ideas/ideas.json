@@ -29,7 +29,7 @@
  ],
  "counts": {
   "seen-working": 27,
-  "built-untried": 101,
+  "built-untried": 102,
   "in-progress": 45,
   "proposed": 61,
   "parked": 6
@@ -2934,6 +2934,26 @@
    "places": [
     "Record tab",
     "The repository: tools/conductor"
+   ],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
+   "id": "feature.the.record.screen.s.side.tabs.and.divider",
+   "kind": "feature",
+   "app": "VoiceDebrief",
+   "title": "The record screen's side tabs and divider",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "UI/RecordSidePane.swift: on iPad and Mac the right column is tabs (Live, Updates, Agents, Notes) with a count of what is new per tab since it was last opened (vd.pane.seen), the tab remembered (vd.pane.tab); Updates are messages from Claude with no replyTo, filtered by their channel; Agents groups the report's agents by group. RecordWideLayout in UI/Design/WideLayout.swift: a draggable divider...",
+   "detail": [
+    "UI/RecordSidePane.swift: on iPad and Mac the right column is tabs (Live, Updates, Agents, Notes) with a count of what is new per tab since it was last opened (vd.pane.seen), the tab remembered (vd.pane.tab); Updates are messages from Claude with no replyTo, filtered by their channel; Agents groups the report's agents by group. RecordWideLayout in UI/Design/WideLayout.swift: a draggable divider, the split kept in vd.record.leftShare, double tap resets, adjustable with VoiceOver",
+    "Not run on a device"
+   ],
+   "places": [
+    "Record tab"
    ],
    "issues": [],
    "url": "https://ios.app.voicedebrief.ai/built/index.html",

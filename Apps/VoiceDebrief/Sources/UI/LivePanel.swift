@@ -6,11 +6,13 @@ import UIKit
 /// of how many seconds passed; a regular check on the lane; a sense of movement; a timeline of each step, like
 /// Chrome's"). Each memo sent to Claude is a card: its status, a clock running until the answer comes, the
 /// answer (and a picture if one came with it), and the steps with how long each took. Clear hides what is done.
-/// While it is on screen it reads the agents vault every ten seconds.
+/// `RecordSidePane` reads the agents vault every ten seconds while it is on screen.
 struct LivePanel: View {
     let session: DebriefSession
     let book: VaultBook
     @AppStorage("vd.live.clearedAt") private var clearedAt: Double = 0
+    /// Shown as its own tab, so the panel's own heading is left out.
+    var showsHeading = true
     @State private var expanded: Set<String> = []
     private var desk: AgentsDesk { AgentsDesk.shared }
 
@@ -35,8 +37,10 @@ struct LivePanel: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Label("Live with Claude", systemImage: "dot.radiowaves.left.and.right")
-                    .font(.headline)
+                if showsHeading {
+                    Label("Live with Claude", systemImage: "dot.radiowaves.left.and.right")
+                        .font(.headline)
+                }
                 Spacer()
                 if let check = desk.lastCheck {
                     TimelineView(.periodic(from: .now, by: 1)) { _ in
@@ -56,13 +60,6 @@ struct LivePanel: View {
                     .font(.callout).foregroundStyle(.secondary)
             }
             ForEach(threads) { note in card(note) }
-        }
-        .task {
-            // A regular check of the vault while this panel is on screen (the owner's "regular check on the lane").
-            while !Task.isCancelled {
-                if !desk.vaultId.isEmpty { await desk.refresh(book: book) }
-                try? await Task.sleep(for: .seconds(10))
-            }
         }
     }
 

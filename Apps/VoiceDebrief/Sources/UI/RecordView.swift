@@ -111,10 +111,11 @@ struct RecordView: View {
                             content
                             Color.clear.frame(height: 1).id(Self.bottomId)
                         } right: {
-                            // The live conversation first: each memo, its status and Claude's answer as it arrives.
-                            LivePanel(session: session, book: book)
-                            recent
-                            explore
+                            // Tabs: the live conversation, Claude's updates, the agents, and your notes.
+                            RecordSidePane(session: session, book: book) {
+                                recent
+                                explore
+                            }
                         }
                     } else {
                         ScrollView {
