@@ -1,0 +1,15 @@
++----------------------------------------------------------------------+
+| VOICEDEBRIEF                                             {{version}} |
+| {{date}}                                                             |
++----------------------------------------------------------------------+
+| THREE LAYERS: CODE, THE MODEL ON THE DEVICE, AGENTS                  |
+|                                                                      |
+| * A new article: what runs at each layer, and why                    |
+| * Code: exact, free, offline. Apple model: free, private, small      |
+| * Agents: capable, slow, paid per run, see only what is sent         |
+| * A voice note, end to end, through all three; with a drawing        |
+|                                                                      |
+| WHERE    Guide > Articles > Three layers (short version in the app)  |
+| TRY      Read it, then open Lab and try L02 and L04                  |
+| NOT YET  Routing a task between layers automatically                 |
++----------------------------------------------------------------------+

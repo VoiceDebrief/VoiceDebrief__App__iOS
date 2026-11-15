@@ -31,7 +31,7 @@
   "seen-working": 7,
   "built-untried": 26,
   "in-progress": 17,
-  "proposed": 39,
+  "proposed": 40,
   "parked": 1
  },
  "ideas": [
@@ -877,6 +877,28 @@
    "issues": [],
    "url": "https://ios.app.voicedebrief.ai/articles/the-vault-is-a-version-controlled-store/index.html",
    "source": "A position and a brief. From the owner's voice memo of 13 November 2026, written up by the agent."
+  },
+  {
+   "id": "article-three-layers",
+   "kind": "article",
+   "app": "Both",
+   "title": "Three layers: code, the model on the device, and agents",
+   "status": "proposed",
+   "why": "An article: a position or a brief. Nothing in it is built unless the reality file says so.",
+   "summary": "Three things in this project can do work. The code in the app is exact, instant and free, and can only do what somebody wrote. Apple's models on the device (speech recognition and the Foundation Models framework) understand language, cost nothing per use and never send anything away, but are small. Agents (Claude sessions running in a loop, with the conductor's tools, lanes and vaults) can read...",
+   "detail": [
+    "Kind: a position. From: the owner, 15 November 2026: \"three levels of intelligence, or of execution ... what we run at each layer is the superpower.\" Written up by the Sherpa session. Every example links to what is built, which is the only page that says what exists; most of it is in test and has not been run on a device.",
+    "Three things in this project can do work. The code in the app is exact, instant and free, and can only do what somebody wrote. Apple's models on the device (speech recognition and the Foundation Models framework) understand language, cost nothing per use and never send anything away, but are small. Agents (Claude sessions running in a loop, with the conductor's tools, lanes and vaults) can read, write, plan and build, but take minutes, cost money per run and see only what is sent to them. None is best. The skill is choosing, for each step of a job, the lowest layer that can do it well, and handing the result up only when it needs more.",
+    "What it is: the Swift in the app, and the scripts beside it. It holds the states, keeps the data and decides everything that has a rule.",
+    "What it does today:",
+    "- Never loses a recording. The note is written to disk the moment recording starts, as WAV that can be repaired if the app dies (capture without loss). - Owns every state. A note is recording, waiting its turn, being written up, finished, interrupted, waiting to send, sent; the code decides, and the screens say it (record while a note is written up, a send that is not lost). - Works out the briefing. \"2 new notes since you last looked\" is counted from the library, not written by a model, so it is always true (a briefing on opening). - Hears the end of a note. \"Send this now\" is matched against a fixed list of phrases at the very end of what was said, not interpreted (finish by voice). - Encrypts, signs and syncs. Vault keys, signed commits, sealed lane messages and push and pull are code, tested against sgit (the vault engine, PKI interop).",
+    "Why here: it must be exact, it must work offline and instantly, and it must be the same every time. Bad at: anything that needs understanding words.",
+    "What it is: SpeechAnalyzer for the transcript and the Foundation Models framework for everything that reads or writes language, both running on the iPhone, iPad or Mac."
+   ],
+   "places": [],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/articles/three-layers/index.html",
+   "source": "Kind: a position. From: the owner, 15 November 2026: \"three levels of intelligence, or of execution ... what we run at each layer is the superpower.\" Written up..."
   },
   {
    "id": "article-two-decision-engines",

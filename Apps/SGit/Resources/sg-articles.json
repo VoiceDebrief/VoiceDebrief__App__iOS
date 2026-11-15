@@ -65,6 +65,15 @@
    "url": "https://ios.app.voicedebrief.ai/articles/the-vault-is-a-version-controlled-store/index.html"
   },
   {
+   "id": "articles.three.layers",
+   "title": "Three layers: code, the model on the device, and agents",
+   "app": "Both",
+   "kind": "Article",
+   "summary": "Three things in this project can do work, and the skill is giving each step of a job to the lowest one that can do it well.",
+   "markdown": "**Kind:** a position, in short. From the owner, 15 November 2026: \"what we run at each layer is the superpower.\"\n\nThree things in this project can do work, and the skill is giving each step of a job to the lowest one that can do it well.\n\n## 1. The code\n\nThe Swift in the app. Exact, instant, free and offline, but it only does what somebody wrote.\n\n- Keeps every recording from the first second, and repairs one cut short.\n- Owns every state: recording, waiting, written up, sent.\n- Counts the briefing (\"2 new notes since you last looked\"), so it is always true.\n- Hears \"send this now\" at the end of a note from a fixed list of phrases.\n- Encrypts, signs and syncs vaults.\n\n## 2. Apple's model on the device\n\nSpeech recognition and the Foundation Models framework, on the iPhone, iPad or Mac. Free per use, private, about a second; but small, and lost on long or rambling notes.\n\n- Transcribes (6 minutes 44 seconds of speech in 5.4 seconds on an iPad).\n- Writes the debrief.\n- Labels a note while you speak: who it is for, topic, urgency (Lab L04).\n- Picks one action from a sentence, compared with fixed phrases (Lab L02).\n\n## 3. Agents in a loop\n\nClaude sessions and the conductor, working through lanes and vaults. They read, plan, build and act; but take minutes, cost per run, and see only what is sent to them.\n\n- Receive notes sent to Claude, sealed on the device.\n- Reply under the note, through a vault you gave them.\n- Report what they are doing in Agents, with decisions for you.\n- Build this app: a voice note becomes an issue, code, and a release card.\n\n## A note, end to end\n\nCode records and keeps it. The model on the device transcribes and labels it. Code seals and sends it. The conductor files it, acts on it and replies. Code shows the reply under the note.\n\nEach handover is a file, a sealed message or a commit you can see; nothing is left in a model's memory.\n\nThe full article, with a drawing and a table of where each thing belongs, is on the project's site.\n",
+   "url": "https://ios.app.voicedebrief.ai/articles/three-layers/index.html"
+  },
+  {
    "id": "articles.two.decision.engines",
    "title": "Two decision engines",
    "app": "Both",
