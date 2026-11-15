@@ -88,6 +88,8 @@ struct LabLabelKindTool: Tool {
 final class LabListener {
     private let host: LabActionHost
     private let live = LiveTranscriber()
+    /// This listener's claim on the app's one microphone turn (MicrophoneTurn).
+    private let turnId = UUID()
     private var wanted = false
     private(set) var listening = false
     /// Called with the settled words so far and the words that may still change.
@@ -107,13 +109,16 @@ final class LabListener {
         guard !listening, !wanted else { return nil }
         if host.isRecording?() == true { return "A note is being recorded. The Lab does not listen at the same time." }
         guard !localeId.isEmpty else { return "Choose the language spoken in Settings first." }
+        guard MicrophoneTurn.shared.take(turnId) else { return MicrophoneTurn.busy }
         wanted = true
         guard await AVAudioApplication.requestRecordPermission() else {
             wanted = false
+            MicrophoneTurn.shared.giveBack(turnId)
             return "The microphone is not allowed for this app."
         }
         guard wanted, host.isRecording?() != true else {
             wanted = false
+            MicrophoneTurn.shared.giveBack(turnId)
             return nil
         }
         do {
@@ -130,18 +135,21 @@ final class LabListener {
             if !wanted {
                 listening = false
                 await live.stop()
+                MicrophoneTurn.shared.giveBack(turnId)
             }
             return nil
         } catch {
             wanted = false
             listening = false
             await live.stop()
+            MicrophoneTurn.shared.giveBack(turnId)
             return "Listening could not start: \(error.localizedDescription)"
         }
     }
 
     func stop() async {
         wanted = false
+        MicrophoneTurn.shared.giveBack(turnId)
         guard listening else { return }
         listening = false
         // The tap and the engine stop before this first suspends; the audio session is left alone.

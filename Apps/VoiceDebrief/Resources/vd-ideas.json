@@ -3916,10 +3916,10 @@
    "title": "Voice in text fields",
    "status": "built-untried",
    "why": "The reality file, Built: unverified: written, not yet proven by a run.",
-   "summary": "UI/Design/VoiceInput.swift: .voiceInput($text) on a TextField adds a microphone button; FieldDictation is one shared listener built on the Lab's LabListener (one at a time, not while a note records, stops in the background); Model/DictationText.swift joins typed and spoken text. On the Lab's prompt and instructions, Your words, vault names, a contact's name and the key's name",
+   "summary": "UI/Design/VoiceInput.swift: .voiceInput($text) on a TextField adds a microphone button; FieldDictation is one shared listener built on the Lab's LabListener (one at a time, not while a note records, stops in the background); Model/DictationText.swift joins typed and spoken text. Engine/MicrophoneTurn.swift: one turn to listen for the whole app, taken and given back by LabListener (fields, L04) and...",
    "detail": [
-    "UI/Design/VoiceInput.swift: .voiceInput($text) on a TextField adds a microphone button; FieldDictation is one shared listener built on the Lab's LabListener (one at a time, not while a note records, stops in the background); Model/DictationText.swift joins typed and spoken text. On the Lab's prompt and instructions, Your words, vault names, a contact's name and the key's name",
-    "DictationTextTests. CI compiles it; not yet used on a device"
+    "UI/Design/VoiceInput.swift: .voiceInput($text) on a TextField adds a microphone button; FieldDictation is one shared listener built on the Lab's LabListener (one at a time, not while a note records, stops in the background); Model/DictationText.swift joins typed and spoken text. Engine/MicrophoneTurn.swift: one turn to listen for the whole app, taken and given back by LabListener (fields, L04) and the Lab's control centre (L02). On the Lab's prompt and instructions, Your words, vault names, a contact's name and the key's name",
+    "DictationTextTests, MicrophoneTurnTests. CI compiles it; not yet used on a device"
    ],
    "places": [
     "Settings: Experiments, the Lab",
