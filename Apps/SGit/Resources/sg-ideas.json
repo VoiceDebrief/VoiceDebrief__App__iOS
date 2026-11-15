@@ -29,7 +29,7 @@
  ],
  "counts": {
   "seen-working": 7,
-  "built-untried": 30,
+  "built-untried": 33,
   "in-progress": 18,
   "proposed": 39,
   "parked": 1
@@ -1747,6 +1747,68 @@
    ],
    "places": [
     "SGit Vaults: a vault"
+   ],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
+   "id": "sgit-feature.photos.and.videos.open.full.screen",
+   "kind": "feature",
+   "app": "SGit Vaults",
+   "title": "Photos and videos open full screen",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "PictureViewer and PicturePage in UI/PhotoGalleryView.swift, VaultView.fileButton: tapping a photo or video in a folder opens it full screen, with the folder's other photos and videos to swipe through; the small picture kept in the vault shows at once and the full photo replaces it when fetched; a video shows Play with its size, a ring with how much is fetched and decrypted, and plays when it is...",
+   "detail": [
+    "PictureViewer and PicturePage in UI/PhotoGalleryView.swift, VaultView.fileButton: tapping a photo or video in a folder opens it full screen, with the folder's other photos and videos to swipe through; the small picture kept in the vault shows at once and the full photo replaces it when fetched; a video shows Play with its size, a ring with how much is fetched and decrypted, and plays when it is all here (a video of 25 MB or less, or one already on this device, is made ready without asking); the photo before and after, up to 15 MB each, are fetched ahead; videos never are. The (i) and a long press (right click on a Mac) show the file's page in a sheet: details, Share, Save to Photos. Arrow keys and Escape on a keyboard. Other files open their page as before",
+    "Unit tests for which files open in the viewer; not yet compiled when written; gestures and keys never tried on a device"
+   ],
+   "places": [
+    "SGit Vaults: Gallery",
+    "SGit Vaults: a vault",
+    "SGit Vaults: Share"
+   ],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
+   "id": "sgit-feature.folders.above.on.a.wide.screen",
+   "kind": "feature",
+   "app": "SGit Vaults",
+   "title": "Folders above, on a wide screen",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "Breadcrumb and FolderTree in UI/VaultView.swift: on an iPad or a Mac the path above the files is a row of buttons (up one folder, the vault, each folder), and the tree on the left keeps open every folder above the one shown. Before, the tree stayed closed and a folder two levels down had no way up (the owner, 15 November 2026)",
+   "detail": [
+    "Breadcrumb and FolderTree in UI/VaultView.swift: on an iPad or a Mac the path above the files is a row of buttons (up one folder, the vault, each folder), and the tree on the left keeps open every folder above the one shown. Before, the tree stayed closed and a folder two levels down had no way up (the owner, 15 November 2026)",
+    "Unit test for the folders kept open; not yet compiled when written"
+   ],
+   "places": [
+    "SGit Vaults: a vault"
+   ],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
+   "id": "sgit-feature.the.vault.s.own.name",
+   "kind": "feature",
+   "app": "SGit Vaults",
+   "title": "The vault's own name",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "Model/VaultSettings.swift, VaultShelf.adoptOwnName: when a vault holds .vault-settings.json (the web Vault writes it), its vault_name replaces the name kept on this device each time the vault is read, so everybody sees the same name. The app does not yet write that file when a vault is created or renamed here",
+   "detail": [
+    "Model/VaultSettings.swift, VaultShelf.adoptOwnName: when a vault holds .vault-settings.json (the web Vault writes it), its vault_name replaces the name kept on this device each time the vault is read, so everybody sees the same name. The app does not yet write that file when a vault is created or renamed here",
+    "Unit test on the owner's file; not yet compiled when written"
+   ],
+   "places": [
+    "SGit Vaults: Settings"
    ],
    "issues": [],
    "url": "https://ios.app.voicedebrief.ai/sgit-app/built/index.html",

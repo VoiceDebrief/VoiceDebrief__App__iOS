@@ -41,6 +41,10 @@ struct VaultView: View {
     @State private var moving = false
     @State private var showingGallery = false
     @State private var confirmingGalleryPage = false
+    /// A photo or video opened full screen, with the folder's other pictures to swipe through.
+    @State private var viewing: ViewerStart?
+    /// A file whose details are shown in a sheet, from a tile's menu.
+    @State private var info: VaultFile?
     /// Vaults whose own app has been opened automatically since the app started: once each, so coming back
     /// to the files does not open it again.
     @MainActor static var appShown: Set<String> = []
@@ -57,12 +61,12 @@ struct VaultView: View {
     private var wide: Bool { sizeClass == .regular && folder.isEmpty }
     private var listing: VaultListing { VaultListing.of(VaultListing.visible(contents?.files ?? []), in: here) }
     private var jobs: [UploadJob] { outbox.jobs(for: vault) }
-    private var title: String { here.isEmpty || wide ? vault.name : VaultListing.name(of: here) }
+    private var title: String { here.isEmpty || wide ? shelf.current(vault).name : VaultListing.name(of: here) }
 
     var body: some View {
         HStack(spacing: 0) {
             if wide {
-                FolderTree(name: vault.name, nodes: VaultListing.tree(paths: VaultListing.visible(contents?.files ?? []).map(\.path)),
+                FolderTree(name: shelf.current(vault).name, nodes: VaultListing.tree(paths: VaultListing.visible(contents?.files ?? []).map(\.path)),
                            here: here) { chosen = $0 }
                     .frame(width: textSize.isAccessibilitySize ? 400 : 250)
                 Divider()
@@ -204,6 +208,18 @@ struct VaultView: View {
                 .background(.bar)
             }
         }
+        .fullScreenCover(item: $viewing) { start in
+            PictureViewer(shelf: shelf, vault: vault, pictures: start.pictures, start: start.index)
+                .tracked("viewer")
+        }
+        .sheet(item: $info) { file in
+            NavigationStack {
+                FileView(shelf: shelf, vault: vault, file: file)
+                    .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Done") { info = nil } } }
+            }
+            .presentationDetents([.medium, .large])
+            .tracked("file.info")
+        }
         .fullScreenCover(isPresented: $showingGallery) {
             PhotoGalleryView(shelf: shelf, vault: vault).tracked("photo-gallery")
         }
@@ -320,9 +336,7 @@ struct VaultView: View {
                         .padding(.horizontal)
                 }
                 if wide, !here.isEmpty {
-                    Text(here.replacingOccurrences(of: "/", with: " / "))
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
+                    Breadcrumb(name: shelf.current(vault).name, path: here) { chosen = $0 }
                         .padding(.horizontal)
                 }
                 if let problem { ProblemLabel(text: problem).padding(.horizontal) }
@@ -401,12 +415,10 @@ struct VaultView: View {
                             }
                             .buttonStyle(.plain)
                         } else {
-                            NavigationLink(value: FileRoute(vault: vault, file: file)) {
+                            fileButton(file) {
                                 FileRow(shelf: shelf, vault: vault, file: file)
                                     .padding(.horizontal)
                             }
-                            .buttonStyle(.plain)
-                            .onDrag { shelf.itemProvider(for: file, in: vault) }
                         }
                     }
                 } else {
@@ -425,11 +437,9 @@ struct VaultView: View {
                                 }
                                 .buttonStyle(.plain)
                             } else {
-                                NavigationLink(value: FileRoute(vault: vault, file: file)) {
+                                fileButton(file) {
                                     FileTile(shelf: shelf, vault: vault, file: file)
                                 }
-                                .buttonStyle(.plain)
-                                .onDrag { shelf.itemProvider(for: file, in: vault) }
                             }
                         }
                     }
@@ -457,6 +467,28 @@ struct VaultView: View {
                     .padding(6)
                     .allowsHitTesting(false)
             }
+        }
+    }
+
+    /// A file in the folder: a photo or video opens full screen, anything else opens its page. Either can be
+    /// dragged out, and a long press (a right click on a Mac) offers its details.
+    @ViewBuilder
+    private func fileButton<Label: View>(_ file: VaultFile, @ViewBuilder label: () -> Label) -> some View {
+        if PictureViewer.shows(file.path) {
+            Button {
+                UsageLog.shared.action("viewer.open")
+                let pictures = listing.files.filter { PictureViewer.shows($0.path) }
+                viewing = ViewerStart(pictures: pictures, index: pictures.firstIndex { $0.path == file.path } ?? 0)
+            } label: { label() }
+            .buttonStyle(.plain)
+            .onDrag { shelf.itemProvider(for: file, in: vault) }
+            .contextMenu {
+                Button("Info", systemImage: "info.circle") { info = file }
+            }
+        } else {
+            NavigationLink(value: FileRoute(vault: vault, file: file)) { label() }
+                .buttonStyle(.plain)
+                .onDrag { shelf.itemProvider(for: file, in: vault) }
         }
     }
 
@@ -542,21 +574,85 @@ struct FolderRow: View {
     }
 }
 
-/// The folders of a vault as a tree, down the left of a wide screen, as the web Vault has it.
+/// Where a folder sits, on a wide screen: the vault, then each folder down to this one, each a button, so
+/// that any level above is one click away.
+struct Breadcrumb: View {
+    let name: String
+    let path: String
+    let choose: (String) -> Void
+
+    var body: some View {
+        let parts = path.split(separator: "/").map(String.init)
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 4) {
+                Button { choose(VaultListing.parent(of: path)) } label: {
+                    Image(systemName: "chevron.up")
+                }
+                .accessibilityLabel("Up one folder")
+                .padding(.trailing, 6)
+                Button(name) { choose("") }
+                ForEach(parts.indices, id: \.self) { index in
+                    Image(systemName: "chevron.right").font(.caption2).foregroundStyle(.tertiary)
+                    let upTo = parts[...index].joined(separator: "/")
+                    if index == parts.count - 1 {
+                        Text(parts[index]).foregroundStyle(.secondary)
+                    } else {
+                        Button(parts[index]) { choose(upTo) }
+                    }
+                }
+            }
+            .font(.footnote)
+            .buttonStyle(.borderless)
+        }
+    }
+}
+
+/// The folders of a vault as a tree, down the left of a wide screen, as the web Vault has it. The folders
+/// above the one shown are kept open, so that it can always be seen in the tree.
 struct FolderTree: View {
     let name: String
     let nodes: [VaultListing.Node]
     let here: String
     let choose: (String) -> Void
+    @State private var expanded: Set<String> = []
 
     var body: some View {
         List {
             row(name: name, path: "", icon: "lock.rectangle.stack")
-            OutlineGroup(nodes, children: \.children) { node in
-                row(name: node.name, path: node.path, icon: "folder")
-            }
+            ForEach(nodes) { branch($0) }
         }
         .listStyle(.sidebar)
+        .onAppear { reveal(here) }
+        .onChange(of: here) { _, now in reveal(now) }
+    }
+
+    static func above(_ path: String) -> [String] {
+        var out: [String] = []
+        var folder = path
+        while !folder.isEmpty {
+            out.append(folder)
+            folder = VaultListing.parent(of: folder)
+        }
+        return out
+    }
+
+    private func reveal(_ path: String) {
+        expanded.formUnion(Self.above(path))
+    }
+
+    private func branch(_ node: VaultListing.Node) -> AnyView {
+        guard let children = node.children else { return AnyView(row(name: node.name, path: node.path, icon: "folder")) }
+        let open = Binding(
+            get: { expanded.contains(node.path) },
+            set: { if $0 { expanded.insert(node.path) } else { expanded.remove(node.path) } }
+        )
+        return AnyView(
+            DisclosureGroup(isExpanded: open) {
+                ForEach(children) { branch($0) }
+            } label: {
+                row(name: node.name, path: node.path, icon: "folder")
+            }
+        )
     }
 
     private func row(name: String, path: String, icon: String) -> some View {

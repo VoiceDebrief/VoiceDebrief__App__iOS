@@ -466,7 +466,20 @@ final class VaultShelf {
         let read = VaultContents(head: head, files: files, history: history, branches: branches)
         contents[vault.id] = read
         checkedAt[vault.id] = Date()
+        await adoptOwnName(of: vault, files: files, handle: handle)
         return read
+    }
+
+    /// When the vault carries its own name (`.vault-settings.json`, as the web Vault writes it), the name kept
+    /// on this device follows it, so that everybody sees the same name.
+    private func adoptOwnName(of vault: SavedVault, files: [VaultFile], handle: SGitVault) async {
+        guard files.contains(where: { $0.path == VaultSettings.path }),
+              let data = try? await handle.read(VaultSettings.path),
+              let name = VaultSettings.name(in: data),
+              let index = vaults.firstIndex(where: { $0.id == vault.id }),
+              vaults[index].name != name else { return }
+        vaults[index].name = name
+        persist()
     }
 
     /// Where a decrypted file is kept once fetched: in the cache folder, under its blob id, with its own
