@@ -152,14 +152,14 @@ struct VaultBookTests {
         #expect(book.addRemote(name: "", address: "http://plain.example") == nil)
         #expect(book.remotes.isEmpty)
 
-        let remote = try #require(book.addRemote(name: " Mine ", address: VaultRemote.suggestedAddress, token: "  abc  "))
+        let remote = try #require(book.addRemote(name: " Mine ", address: VaultRemote.suggestedAddress, token: "  qxz  "))
         #expect(book.problem == nil)
         #expect(remote.name == "Mine")
         #expect(remote.url.host() == "dev.send.sgraph.ai")
         #expect(book.hasToken(remote))
-        #expect(device.store.get(VaultBook.tokenName(remote.id)) == Data("abc".utf8))
-        // The token is not in the list of servers.
-        #expect(!String(decoding: try #require(device.store.get(VaultBook.serverPrefix + remote.id)), as: UTF8.self).contains("abc"))
+        #expect(device.store.get(VaultBook.tokenName(remote.id)) == Data("qxz".utf8))
+        // The token is not in the list of servers (letters a UUID never has, so the id cannot match by chance).
+        #expect(!String(decoding: try #require(device.store.get(VaultBook.serverPrefix + remote.id)), as: UTF8.self).contains("qxz"))
 
         let reopened = VaultBook(store: device.store, localRoot: book.localRoot, cacheRoot: book.cacheRoot)
         #expect(reopened.remotes == [remote])
