@@ -5,9 +5,9 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | Status | Meaning | How many |
 |---|---|---|
 | Seen working | Built, and a run proved it: CI, a device or a server. | 27 |
-| Built, untried | In the app or the repository, but not yet proven by a run on a device. | 93 |
-| In progress | Begun: part of it is built or a release has touched it. | 44 |
-| Proposed | Asked for or described; nothing of it is built. | 61 |
+| Built, untried | In the app or the repository, but not yet proven by a run on a device. | 96 |
+| In progress | Begun: part of it is built or a release has touched it. | 45 |
+| Proposed | Asked for or described; nothing of it is built. | 60 |
 | Parked | Waiting: on the owner, on Apple, or scheduled for later. | 6 |
 
 ## Seen working
@@ -129,6 +129,9 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | A small picture and the facts beside each file | Feature | SGit Vaults | SGit Vaults: a vault; SGit Vaults: Settings |   | [reality file](../sgit-app/built/index.md) |
 | Saving a folder out | Feature | SGit Vaults | SGit Vaults: a vault; SGit Vaults: Share |   | [reality file](../sgit-app/built/index.md) |
 | The web Vault inside the app | Feature | SGit Vaults | SGit Vaults: a vault |   | [reality file](../sgit-app/built/index.md) |
+| A vault's own app, first | Feature | SGit Vaults | SGit Vaults: a vault |   | [reality file](../sgit-app/built/index.md) |
+| Show as a gallery, and a gallery page | Feature | SGit Vaults | SGit Vaults: Gallery |   | [reality file](../sgit-app/built/index.md) |
+| Moving files | Feature | SGit Vaults | SGit Vaults: a vault |   | [reality file](../sgit-app/built/index.md) |
 | Your activity | Feature | SGit Vaults | SGit Vaults: Share; SGit Vaults: Settings |   | [reality file](../sgit-app/built/index.md) |
 | Ask this vault, an experiment | Feature | SGit Vaults | SGit Vaults: a vault; SGit Vaults: History |   | [reality file](../sgit-app/built/index.md) |
 | People | Feature | SGit Vaults | SGit Vaults: Share |   | [reality file](../sgit-app/built/index.md) |
@@ -181,6 +184,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | sgit app: getting a folder out, at full quality | Issue | SGit Vaults | SGit Vaults: a vault; SGit Vaults: Share | [v0.1.44](../versions/v0.1.44/index.md) | [114](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/114-sgit-app-getting-files-out.md) |
 | sgit app: the Create sheet, the four keys, and smaller things | Issue | SGit Vaults | SGit Vaults: the Create sheet; SGit Vaults: a vault; SGit Vaults: History | [v0.1.44](../versions/v0.1.44/index.md) | [115](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/115-sgit-app-the-create-sheet-and-the-words.md) |
 | sgit app: what the pictures could not show | Issue | SGit Vaults | SGit Vaults: the Create sheet; SGit Vaults: a vault; SGit Vaults: Share | [v0.1.44](../versions/v0.1.44/index.md) | [116](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/116-sgit-app-what-the-pictures-could-not-show.md) |
+| sgit app: questions for the owner, answered by typing or by voice | Issue | SGit Vaults | SGit Vaults: Settings |   | [120](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/120-sgit-app-questions-for-the-owner.md) |
 | sgit app: the same vaults on every device, without setting anything up | Issue | SGit Vaults | SGit Vaults: History |   | [122](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/122-sgit-app-sync-between-my-devices.md) |
 | sgit app: a shared vault for chosen people | Issue | SGit Vaults | SGit Vaults: Share |   | [124](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/124-sgit-app-shared-vaults-for-people.md) |
 | sgit app: AutoFill, passwords and passkeys in other apps and in Safari | Issue | SGit Vaults | SGit Vaults: Share |   | [125](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/125-sgit-app-autofill-passwords-and-passkeys.md) |
@@ -206,7 +210,6 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | sgit app: a record of every action, on every device | Issue | SGit Vaults | SGit Vaults: Share; SGit Vaults: Settings |   | [117](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/117-sgit-app-observability-across-devices.md) |
 | sgit app: the web Vault inside the app, and its features natively | Issue | SGit Vaults | SGit Vaults: a vault; SGit Vaults: Settings |   | [118](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/118-sgit-app-the-web-vault-inside-the-app.md) |
 | sgit app: Apple Intelligence, a first experiment | Issue | SGit Vaults | SGit Vaults: a vault; SGit Vaults: History |   | [119](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/119-sgit-app-apple-intelligence.md) |
-| sgit app: questions for the owner, answered by typing or by voice | Issue | SGit Vaults | SGit Vaults: Settings |   | [120](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/120-sgit-app-questions-for-the-owner.md) |
 | sgit app: secrets, kept as files in vaults | Issue | SGit Vaults | SGit Vaults: a vault; SGit Vaults: History |   | [121](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/121-sgit-app-secrets-in-vaults.md) |
 | sgit app: the trust map, from one person to a team | Issue | SGit Vaults | SGit Vaults: Share |   | [123](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/123-sgit-app-the-trust-map.md) |
 | A harness inside the app | Article | Both |   |   | [article](../articles/a-harness-inside-the-app/index.md) |

@@ -241,6 +241,13 @@ struct ScreenshotRoot: View {
             }
         case ("keys-and-access", _):
             if let hub = PeopleModel.sample(.full).hub { NavigationStack { KeysAndAccessView(hub: hub) } }
+        case ("photo-gallery", let vault?):
+            PhotoGalleryView(shelf: shelf, vault: vault)
+        case ("move", let vault?):
+            NavigationStack {
+                MoveSheet(shelf: shelf, vault: vault, files: files.filter { $0.path.hasPrefix("stage/") }.prefix(2).map { $0 },
+                          folders: []) {}
+            }
         case ("questions", _):
             NavigationStack { QuestionsView() }
         case ("share", let vault?):

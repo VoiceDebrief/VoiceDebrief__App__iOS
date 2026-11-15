@@ -29,9 +29,9 @@
  ],
  "counts": {
   "seen-working": 27,
-  "built-untried": 93,
-  "in-progress": 44,
-  "proposed": 61,
+  "built-untried": 96,
+  "in-progress": 45,
+  "proposed": 60,
   "parked": 6
  },
  "ideas": [
@@ -1678,8 +1678,8 @@
    "number": "120",
    "app": "SGit Vaults",
    "title": "sgit app: questions for the owner, answered by typing or by voice",
-   "status": "proposed",
-   "why": "Open, with nothing built yet: \"Status: open. Owner: the sgit app session (session_018yvwtQVQdrYtgUXUXD9cVB).\"",
+   "status": "in-progress",
+   "why": "Open, and the reality file lists for it: TestFlight upload.",
    "summary": "The owner, 14 November 2026: \"you need a way that you can start to ask questions from me throughout the app, so I can answer them even with voice\".",
    "detail": [
     "The owner, 14 November 2026: \"you need a way that you can start to ask questions from me throughout the app, so I can answer them even with voice\".",
@@ -1692,7 +1692,9 @@
     "SGit Vaults: Settings"
    ],
    "versions": [],
-   "features": [],
+   "features": [
+    "TestFlight upload"
+   ],
    "url": "https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/120-sgit-app-questions-for-the-owner.md",
    "source": "The owner"
   },
@@ -4480,7 +4482,9 @@
     "SGit Vaults: a vault",
     "SGit Vaults: Share"
    ],
-   "issues": [],
+   "issues": [
+    "120"
+   ],
    "url": "https://ios.app.voicedebrief.ai/sgit-app/built/index.html",
    "source": "The reality file",
    "versions": []
@@ -4761,6 +4765,66 @@
    "detail": [
     "UI/WebVaultView.swift: \"Open in the web Vault\" on a vault's three dots and on a file. The page dev.vault.sgraph.ai/en-gb/vault/?embed=1 is loaded in a web view that keeps nothing, announces itself, and is handed the vault key by a posted message (the web Vault's embed protocol); the key is not in the address. It opens looking only. \"Allow changes\" hands the page this device's access key for the visit, after a warning; it is not offered for a vault that holds large files, because the web Vault rewrites a folder without the mark that says a file is large",
     "The protocol was tried on 14 November 2026 against the live page in Chromium with a throwaway vault made by sgit: opened by message, HTML preview shown, a deep link to a file honoured, nothing of the key in the address or in storage, and the access-key event turned \"Read-only\" into \"Synced\". The production host vault.sgraph.ai did not answer the handshake. The Swift has unit tests for the words and the host rule; the web view itself has never run on a device or a simulator"
+   ],
+   "places": [
+    "SGit Vaults: a vault"
+   ],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
+   "id": "sgit-feature.a.vault.s.own.app.first",
+   "kind": "feature",
+   "app": "SGit Vaults",
+   "title": "A vault's own app, first",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "UI/WebVaultView.swift, UI/VaultView.swift: a vault on the server with an app.json (at the top or in .vault/) opens in its own app the first time it is opened in a session, full screen, with an App / Files switch at the top; \"This vault has its own app\" opens it again. A vault with only an index.html opens on that page in the file browser. Tried on the live page on 15 November 2026: the page loaded...",
+   "detail": [
+    "UI/WebVaultView.swift, UI/VaultView.swift: a vault on the server with an app.json (at the top or in .vault/) opens in its own app the first time it is opened in a session, full screen, with an App / Files switch at the top; \"This vault has its own app\" opens it again. A vault with only an index.html opens on that page in the file browser. Tried on the live page on 15 November 2026: the page loaded decides (/en-gb/app/?embed=1 runs the app, /en-gb/vault/?embed=1 is the file browser) and the message's mode is not used by either; the app page, given a vault with no app, goes to the sign-in page and loses the key, which the app notices and answers by switching to the file browser. Allow changes is offered on the files view only",
+    "Unit tests for where a vault starts and for noticing the sign-in page; tried in Chromium against two published vaults with apps and one without; not yet compiled when written"
+   ],
+   "places": [
+    "SGit Vaults: a vault"
+   ],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
+   "id": "sgit-feature.show.as.a.gallery.and.a.gallery.page",
+   "kind": "feature",
+   "app": "SGit Vaults",
+   "title": "Show as a gallery, and a gallery page",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "UI/PhotoGalleryView.swift, Model/GalleryPage.swift: a vault that is mostly photos and videos offers \"Show as a gallery\": a full-screen grid of the small pictures kept in .sgit/thumbs, and a viewer that swipes from one to the next, fetching a photo at full size when shown and playing a video when asked. \"Add a gallery page to this vault\" writes index.html, app.json and gallery.json in one commit...",
+   "detail": [
+    "UI/PhotoGalleryView.swift, Model/GalleryPage.swift: a vault that is mostly photos and videos offers \"Show as a gallery\": a full-screen grid of the small pictures kept in .sgit/thumbs, and a viewer that swipes from one to the next, fetching a photo at full size when shown and playing a video when asked. \"Add a gallery page to this vault\" writes index.html, app.json and gallery.json in one commit, so the vault opens as a gallery in the web Vault and here (the page reads with sg.vfs.read/readText, sets pictures from script, uses no network)",
+    "Unit tests for the page's contract; the page has not been opened in the web Vault yet; not yet compiled when written"
+   ],
+   "places": [
+    "SGit Vaults: Gallery"
+   ],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/sgit-app/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
+   "id": "sgit-feature.moving.files",
+   "kind": "feature",
+   "app": "SGit Vaults",
+   "title": "Moving files",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "Model/MovePlan.swift, UI/MoveSheet.swift, VaultShelf.move: \"Select files to move\" on a folder's three dots, choose files and folders, Move to a folder in the vault, the top, or a new one; the whole move is one signed commit (\"Move 12 files to photos/day-2\"), the same objects under new names, so nothing is uploaded again and the thumbnails and facts kept by content stay with them; a name already...",
+   "detail": [
+    "Model/MovePlan.swift, UI/MoveSheet.swift, VaultShelf.move: \"Select files to move\" on a folder's three dots, choose files and folders, Move to a folder in the vault, the top, or a new one; the whole move is one signed commit (\"Move 12 files to photos/day-2\"), the same objects under new names, so nothing is uploaded again and the thumbnails and facts kept by content stay with them; a name already taken there is refused unless the person chooses to give the moved ones the next free name",
+    "Unit tests for the plan (shape kept, clashes, a folder into itself); not yet compiled when written"
    ],
    "places": [
     "SGit Vaults: a vault"

@@ -1,0 +1,18 @@
++----------------------------------------------------------------------+
+| SGIT VAULTS                                              {{version}} |
+| {{date}}                                                             |
++----------------------------------------------------------------------+
+| VAULT APPS, PHOTO GALLERIES, MOVING FILES                            |
+|                                                                      |
+| * A vault with its own app opens in it, full screen: App | Files     |
+| * Photos: Show as a gallery, swipe from one to the next              |
+| * Add a gallery page, so the vault is a gallery on the web too       |
+| * Select files and folders, Move to: one change, nothing re-sent     |
+|                                                                      |
+|   [ ][ ][ ][ ]      stage/  --( 12 files )-->  photos/day-2/         |
+|   [ ][ ][ ][ ]      one commit: "Move 12 files to photos/day-2"      |
+|                                                                      |
+| WHERE    A vault > three dots > Show as a gallery / Select files     |
+| TRY      Open the Algarve vault in Gallery > Published by sgit.ai    |
+| NOT YET  Apps open for vaults on a server, not ones only on a device |
++----------------------------------------------------------------------+

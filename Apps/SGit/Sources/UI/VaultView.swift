@@ -35,6 +35,21 @@ struct VaultView: View {
     @State private var inWebVault = false
     @State private var askingModel = false
     @State private var members: VaultMembers?
+    @State private var selecting = false
+    @State private var selectedFiles: Set<String> = []
+    @State private var selectedFolders: Set<String> = []
+    @State private var moving = false
+    @State private var showingGallery = false
+    @State private var confirmingGalleryPage = false
+    /// Vaults whose own app has been opened automatically since the app started: once each, so coming back
+    /// to the files does not open it again.
+    @MainActor static var appShown: Set<String> = []
+
+    /// The vault has an app of its own (the web Vault's contract: `app.json` at the top or in `.vault/`).
+    private var hasOwnApp: Bool {
+        guard let paths = contents?.files.map(\.path) else { return false }
+        return paths.contains("app.json") || paths.contains(".vault/app.json")
+    }
 
     private var contents: VaultContents? { shelf.contents[vault.id] }
     private var onDevice: Bool { shelf.current(vault).onDevice }
@@ -60,6 +75,11 @@ struct VaultView: View {
         .task {
             if contents == nil { await load() }
             members = await shelf.members(of: vault)
+            // A vault with an app opens in it, as the web Vault does; the files are one tap away.
+            if hasOwnApp, here.isEmpty, !onDevice, !Self.appShown.contains(vault.id) {
+                Self.appShown.insert(vault.id)
+                inWebVault = true
+            }
         }
         .toolbar {
             ToolbarItemGroup(placement: .topBarTrailing) {
@@ -78,6 +98,27 @@ struct VaultView: View {
                     sharing = true
                 }
                 Menu("More", systemImage: "ellipsis.circle") {
+                    if PhotoGalleryView.isMostlyPictures(contents?.files ?? []) {
+                        Button("Show as a gallery", systemImage: "photo.on.rectangle.angled") {
+                            UsageLog.shared.action("gallery.show")
+                            showingGallery = true
+                        }
+                        let ownGallery = contents?.files.contains { $0.path == GalleryPage.listPath } ?? false
+                        if vault.canWrite, !hasOwnApp || ownGallery {
+                            Button(ownGallery ? "Bring the gallery page up to date" : "Add a gallery page to this vault",
+                                   systemImage: "rectangle.stack.badge.plus") {
+                                confirmingGalleryPage = true
+                            }
+                        }
+                    }
+                    if vault.canWrite, !(listing.files.isEmpty && listing.folders.isEmpty) {
+                        Button("Select files to move", systemImage: "checkmark.circle") {
+                            UsageLog.shared.action("files.select")
+                            selectedFiles = []
+                            selectedFolders = []
+                            selecting = true
+                        }
+                    }
                     if !onDevice {
                         Button("Open in the web Vault", systemImage: "globe") {
                             UsageLog.shared.action("web-vault.open")
@@ -148,6 +189,51 @@ struct VaultView: View {
         .fullScreenCover(isPresented: $inWebVault) {
             WebVaultScreen(shelf: shelf, vault: vault).tracked("web-vault")
         }
+        .safeAreaInset(edge: .bottom) {
+            if selecting {
+                HStack {
+                    Button("Cancel") { selecting = false }
+                    Spacer()
+                    Text("\(selectedFiles.count + selectedFolders.count) chosen").font(.footnote).foregroundStyle(.secondary)
+                    Spacer()
+                    Button("Move to…") { moving = true }
+                        .buttonStyle(.borderedProminent)
+                        .disabled(selectedFiles.isEmpty && selectedFolders.isEmpty)
+                }
+                .padding()
+                .background(.bar)
+            }
+        }
+        .fullScreenCover(isPresented: $showingGallery) {
+            PhotoGalleryView(shelf: shelf, vault: vault).tracked("photo-gallery")
+        }
+        .confirmationDialog("Add a gallery page to this vault?", isPresented: $confirmingGalleryPage, titleVisibility: .visible) {
+            Button("Add the page") {
+                Task {
+                    do {
+                        try await shelf.addGalleryPage(to: vault)
+                        problem = nil
+                    } catch {
+                        problem = "The gallery page was not added: \(VaultShelf.describe(error))"
+                    }
+                }
+            }
+            Button("Not now", role: .cancel) {}
+        } message: {
+            Text("Three small files at the top of the vault: index.html, app.json and gallery.json. Then the vault opens as a photo gallery in the web Vault and in this app, for everyone who has its key. Add photos later and add the page again to bring the list up to date.")
+        }
+        .sheet(isPresented: $moving) {
+            NavigationStack {
+                MoveSheet(shelf: shelf, vault: vault,
+                          files: (contents?.files ?? []).filter { selectedFiles.contains($0.path) },
+                          folders: Array(selectedFolders)) {
+                    selecting = false
+                    selectedFiles = []
+                    selectedFolders = []
+                }
+            }
+            .tracked("move")
+        }
         .sheet(item: $exporting) { export in
             FolderExporter(url: export.url).ignoresSafeArea()
         }
@@ -155,6 +241,14 @@ struct VaultView: View {
             NavigationStack { ShareVaultView(shelf: shelf, vault: vault, pending: !jobs.isEmpty) }
                 .tracked("share")
         }
+    }
+
+    private func toggle(file path: String) {
+        if selectedFiles.contains(path) { selectedFiles.remove(path) } else { selectedFiles.insert(path) }
+    }
+
+    private func toggle(folder path: String) {
+        if selectedFolders.contains(path) { selectedFolders.remove(path) } else { selectedFolders.insert(path) }
     }
 
     /// Fetches every file in the open folder and beneath it, lays them out as they are in the vault, and
@@ -208,6 +302,16 @@ struct VaultView: View {
                         .font(.footnote)
                         .foregroundStyle(jobs.contains { $0.problem != nil } ? Color.red : Color.secondary)
                         .padding(.horizontal)
+                }
+                if hasOwnApp, here.isEmpty, !onDevice {
+                    Button {
+                        UsageLog.shared.action("vault.open-app")
+                        inWebVault = true
+                    } label: {
+                        Label("This vault has its own app: open it", systemImage: "play.rectangle.on.rectangle")
+                            .font(.subheadline.weight(.semibold))
+                    }
+                    .padding(.horizontal)
                 }
                 if let members, here.isEmpty, members.members.count > 1 {
                     Label("Shared with " + members.members.map(\.name).joined(separator: ", "), systemImage: "person.3")
@@ -266,7 +370,17 @@ struct VaultView: View {
                     .padding()
                 }
                 ForEach(listing.folders) { entry in
-                    if wide {
+                    if selecting {
+                        Button { toggle(folder: entry.path) } label: {
+                            HStack {
+                                Image(systemName: selectedFolders.contains(entry.path) ? "checkmark.circle.fill" : "circle")
+                                    .foregroundStyle(.tint)
+                                    .padding(.leading)
+                                FolderRow(entry: entry)
+                            }
+                        }
+                        .buttonStyle(.plain)
+                    } else if wide {
                         Button { chosen = entry.path } label: { FolderRow(entry: entry) }
                             .buttonStyle(.plain)
                     } else {
@@ -276,21 +390,47 @@ struct VaultView: View {
                 }
                 if asList || textSize.isAccessibilitySize {
                     ForEach(listing.files) { file in
-                        NavigationLink(value: FileRoute(vault: vault, file: file)) {
-                            FileRow(shelf: shelf, vault: vault, file: file)
+                        if selecting {
+                            Button { toggle(file: file.path) } label: {
+                                HStack {
+                                    Image(systemName: selectedFiles.contains(file.path) ? "checkmark.circle.fill" : "circle")
+                                        .foregroundStyle(.tint)
+                                    FileRow(shelf: shelf, vault: vault, file: file)
+                                }
                                 .padding(.horizontal)
+                            }
+                            .buttonStyle(.plain)
+                        } else {
+                            NavigationLink(value: FileRoute(vault: vault, file: file)) {
+                                FileRow(shelf: shelf, vault: vault, file: file)
+                                    .padding(.horizontal)
+                            }
+                            .buttonStyle(.plain)
+                            .onDrag { shelf.itemProvider(for: file, in: vault) }
                         }
-                        .buttonStyle(.plain)
-                        .onDrag { shelf.itemProvider(for: file, in: vault) }
                     }
                 } else {
                     LazyVGrid(columns: [GridItem(.adaptive(minimum: 104, maximum: 180), spacing: 8)], alignment: .leading, spacing: 10) {
                         ForEach(listing.files) { file in
-                            NavigationLink(value: FileRoute(vault: vault, file: file)) {
-                                FileTile(shelf: shelf, vault: vault, file: file)
+                            if selecting {
+                                Button { toggle(file: file.path) } label: {
+                                    FileTile(shelf: shelf, vault: vault, file: file)
+                                        .overlay(alignment: .topTrailing) {
+                                            Image(systemName: selectedFiles.contains(file.path) ? "checkmark.circle.fill" : "circle")
+                                                .font(.title3)
+                                                .symbolRenderingMode(.palette)
+                                                .foregroundStyle(.white, Color.accentColor)
+                                                .padding(6)
+                                        }
+                                }
+                                .buttonStyle(.plain)
+                            } else {
+                                NavigationLink(value: FileRoute(vault: vault, file: file)) {
+                                    FileTile(shelf: shelf, vault: vault, file: file)
+                                }
+                                .buttonStyle(.plain)
+                                .onDrag { shelf.itemProvider(for: file, in: vault) }
                             }
-                            .buttonStyle(.plain)
-                            .onDrag { shelf.itemProvider(for: file, in: vault) }
                         }
                     }
                     .padding(.horizontal, 12)

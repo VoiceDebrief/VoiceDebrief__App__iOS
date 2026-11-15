@@ -54,6 +54,7 @@ enum VaultShelfError: LocalizedError {
     case nameTaken(String)
     case filesOnTheirWay
     case serverDiffers
+    case moveClash([String])
 
     var errorDescription: String? {
         switch self {
@@ -63,6 +64,9 @@ enum VaultShelfError: LocalizedError {
         case .nameTaken(let name): return "There is already a file called \(name) in this folder."
         case .filesOnTheirWay: return "Files are still on their way into this vault. Send it to the server when they are in."
         case .serverDiffers: return "The server already holds this vault with changes this device does not have, so nothing was sent."
+        case .moveClash(let names):
+            let shown = names.prefix(3).joined(separator: ", ") + (names.count > 3 ? " and \(names.count - 3) more" : "")
+            return "The folder already has files called \(shown). Nothing was moved."
         }
     }
 }
@@ -650,15 +654,23 @@ final class VaultShelf {
     /// Writes small bytes to one path as one signed commit: a new file, or a new version of one. The
     /// plain bytes touch the disk only while they are sealed, in a file removed straight after.
     func put(_ data: Data, at path: String, in vault: SavedVault, message: String) async throws {
+        try await putFiles([(path, data)], in: vault, message: message)
+    }
+
+    /// Several small files written as one signed commit.
+    func putFiles(_ files: [(path: String, data: Data)], in vault: SavedVault, message: String) async throws {
         let handle = try await open(vault)
         let stager = try await handle.stager()
-        let plain = scratchFolder.appending(path: "put-\(UUID().uuidString)")
         try FileManager.default.createDirectory(at: scratchFolder, withIntermediateDirectories: true)
-        try data.write(to: plain, options: [.atomic, .completeFileProtection])
-        defer { try? FileManager.default.removeItem(at: plain) }
-        let staged = try await stager.stage(file: plain, as: path, in: scratchFolder)
-        defer { try? FileManager.default.removeItem(at: staged.ciphertext) }
-        try await change(vault, staged: [staged], removing: [], message: message, uploaded: false)
+        var staged: [VaultStagedFile] = []
+        defer { for item in staged { try? FileManager.default.removeItem(at: item.ciphertext) } }
+        for file in files {
+            let plain = scratchFolder.appending(path: "put-\(UUID().uuidString)")
+            try file.data.write(to: plain, options: [.atomic, .completeFileProtection])
+            defer { try? FileManager.default.removeItem(at: plain) }
+            staged.append(try await stager.stage(file: plain, as: file.path, in: scratchFolder))
+        }
+        try await change(vault, staged: staged, removing: [], message: message, uploaded: false)
     }
 
     /// One commit that removes or renames, tried again when somebody else committed first.
@@ -700,6 +712,27 @@ final class VaultShelf {
                                    ciphertextBytes: 0, ciphertext: scratchFolder)
         try await change(vault, staged: [same], removing: [file.path],
                          message: VaultNaming.fit("Rename \(VaultListing.name(of: file.path)) to \(name)"))
+    }
+
+    /// Moves files and folders to another folder as one signed commit. The same objects under new names, so
+    /// nothing is uploaded again, and the thumbnails and facts, kept by content, go with them.
+    @discardableResult
+    func move(files: [VaultFile], folders: [String], to destination: String, in vault: SavedVault, renameClashes: Bool) async throws -> MovePlan {
+        let all = contents[vault.id]?.files ?? []
+        let plan = MovePlan.make(files: files.map(\.path), folders: folders, to: destination,
+                                 all: all.map(\.path), rename: renameClashes)
+        if !plan.clashes.isEmpty { throw VaultShelfError.moveClash(plan.clashes) }
+        guard !plan.steps.isEmpty else { return plan }
+        let byPath = Dictionary(all.map { ($0.path, $0) }, uniquingKeysWith: { first, _ in first })
+        let staged = plan.steps.compactMap { step -> VaultStagedFile? in
+            guard let file = byPath[step.from] else { return nil }
+            return VaultStagedFile(path: step.to, size: file.size, blobId: file.blobId, contentHash: file.contentHash ?? "",
+                                   contentType: file.contentType ?? VaultBlobStager.contentType(for: step.to), large: file.large,
+                                   ciphertextBytes: 0, ciphertext: scratchFolder)
+        }
+        try await change(vault, staged: staged, removing: plan.steps.map(\.from), message: plan.message)
+        UsageLog.shared.action("files.move")
+        return plan
     }
 
     // MARK: The cache

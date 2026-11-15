@@ -15,7 +15,7 @@ final class ScreensTests: XCTestCase {
                         "create-nokey", "vault.local", "vault.adding-adding", "share.key",
                         "vault.adding-refused", "vault-dark", "share.key-dark", "vault-large", "share-large",
                         "secrets", "secret", "questions", "guide",
-                        "people-empty", "people-home", "people-you", "people-contacts", "people-inbox", "keys-and-access", "trust-map", "share-with-people"]
+                        "people-empty", "people-home", "people-you", "people-contacts", "people-inbox", "keys-and-access", "trust-map", "share-with-people", "photo-gallery", "move"]
 
     @MainActor func test01_vaults() { shoot("vaults") }
     @MainActor func test02_vaults_empty() { shoot("vaults", set: "empty") }
@@ -55,9 +55,11 @@ final class ScreensTests: XCTestCase {
     @MainActor func test32_keys_and_access() { shoot("keys-and-access", wait: 6) }
     @MainActor func test33_trust_map() { shoot("trust-map", wait: 6) }
     @MainActor func test34_share_with_people() { shoot("share-with-people", wait: 6) }
+    @MainActor func test35_photo_gallery() { shoot("photo-gallery", wait: 8) }
+    @MainActor func test36_move() { shoot("move", wait: 6) }
 
     func testTheListMatchesTheTestMethods() {
-        XCTAssertEqual(Self.shots.count, 34)
+        XCTAssertEqual(Self.shots.count, 36)
         XCTAssertEqual(Set(Self.shots).count, Self.shots.count)
     }
 

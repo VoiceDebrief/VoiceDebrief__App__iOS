@@ -11,19 +11,50 @@ enum WebVault {
     static let address = URL(string: "https://dev.vault.sgraph.ai/en-gb/vault/?embed=1")!
     static let handler = "sgit"
 
+    /// Which page of the web Vault: the vault's own app, or the file browser. Tried on 15 November 2026:
+    /// the page decides, not the message's `mode` (the file browser ignores it, the app page runs the app
+    /// either way), and the app page, given a vault with no app, goes to the empty sign-in page and the key
+    /// is lost; the app notices that and switches to the file browser.
+    enum Surface: String, Equatable, Sendable {
+        case app, files
+
+        var address: URL {
+            URL(string: self == .app ? "https://dev.vault.sgraph.ai/en-gb/app/?embed=1" : "https://dev.vault.sgraph.ai/en-gb/vault/?embed=1")!
+        }
+        /// As the embed protocol names it ("auto" picks the app when there is one).
+        var mode: String { self == .app ? "auto" : "vault" }
+    }
+
+    /// The page the app page goes to when the vault has no app: the file browser's sign-in, outside embed mode.
+    static func leftEmbed(_ url: URL?) -> Bool {
+        guard let url, staysInside(url) else { return false }
+        return url.path().hasPrefix("/en-gb/vault") && !(url.query() ?? "").contains("embed=1")
+    }
+
+    /// Where a vault opens first: its own app when it has one (`app.json` at the top or in `.vault/`), a
+    /// page called index.html at the top shown in the file browser, or the file browser. A vault whose files
+    /// are not known here is tried in the app page first.
+    static func start(for paths: [String]?, path: String) -> (surface: Surface, path: String) {
+        guard path.isEmpty else { return (.files, path) }
+        guard let paths else { return (.app, "") }
+        if paths.contains("app.json") || paths.contains(".vault/app.json") { return (.app, "") }
+        if paths.contains("index.html") { return (.files, "index.html") }
+        return (.files, "")
+    }
+
     /// Runs in the page before anything else: passes the web Vault's own announcements to the app.
     static let listener = """
     window.addEventListener('message', function (e) {
       var d = e.data;
       if (!d || typeof d.sg !== 'string') return;
       if (d.sg === 'vault-embed-ready' || d.sg === 'vault-ready' || d.sg === 'vault-error') {
-        window.webkit.messageHandlers.sgit.postMessage({ sg: d.sg, name: String(d.vaultName || ''), files: Number(d.fileCount || 0), message: String(d.message || '') });
+        window.webkit.messageHandlers.sgit.postMessage({ sg: d.sg, name: String(d.vaultName || ''), files: Number(d.fileCount || 0), hasApp: !!d.hasApp, message: String(d.message || '') });
       }
     });
     """
 
     /// Hands the page the key. `key` and `path` arrive as arguments, never as text in the script.
-    static let open = "window.postMessage({ sg: 'vault-open', key: key, mode: 'vault', deepLink: path }, '*');"
+    static let open = "window.postMessage({ sg: 'vault-open', key: key, mode: mode, deepLink: path }, '*');"
 
     /// Gives the opened page the server's access key, which is what lets it save changes.
     static let allowChanges = """
@@ -60,12 +91,17 @@ final class WebVaultModel {
     }
     var standing: Standing = .loading
     var changesAllowed = false
+    /// What the page said when the vault opened: whether it has an app of its own.
+    var hasApp = false
 }
 
 /// The web Vault in a web view that keeps nothing: no cookies, no storage, after it is closed.
 struct WebVaultPage: UIViewRepresentable {
     let keyText: String
     let path: String
+    var surface: WebVault.Surface = .files
+    /// Called when the app page finds no app and leaves embed mode: the screen switches to the file browser.
+    var noApp: () -> Void = {}
     /// The server's access key, handed over only when the person has asked to make changes there.
     let accessKey: String?
     let model: WebVaultModel
@@ -81,7 +117,7 @@ struct WebVaultPage: UIViewRepresentable {
             WKUserScript(source: WebVault.listener, injectionTime: .atDocumentStart, forMainFrameOnly: true))
         let view = WKWebView(frame: .zero, configuration: configuration)
         view.navigationDelegate = context.coordinator
-        view.load(URLRequest(url: WebVault.address))
+        view.load(URLRequest(url: surface.address))
         return view
     }
 
@@ -108,6 +144,7 @@ struct WebVaultPage: UIViewRepresentable {
                                                    files: body["files"] as? Int ?? 0,
                                                    message: body["message"] as? String ?? "") else { return }
             page.model.standing = standing
+            if sg == "vault-ready", body["hasApp"] as? Bool == true { page.model.hasApp = true }
             guard let view = message.webView else { return }
             if standing == .waitingForKey { sendKey(to: view) }
             if case .open = standing { allowChangesIfAsked(in: view) }
@@ -133,6 +170,12 @@ struct WebVaultPage: UIViewRepresentable {
                      decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
             // Frames inside the page (a previewed HTML file) are the web Vault's own business.
             guard action.targetFrame?.isMainFrame ?? true else { return decisionHandler(.allow) }
+            if page.surface == .app, WebVault.leftEmbed(action.request.url) {
+                decisionHandler(.cancel)
+                let noApp = page.noApp
+                DispatchQueue.main.async { noApp() }
+                return
+            }
             if WebVault.staysInside(action.request.url) { return decisionHandler(.allow) }
             if let url = action.request.url, url.scheme == "https" { UIApplication.shared.open(url) }
             decisionHandler(.cancel)
@@ -141,13 +184,13 @@ struct WebVaultPage: UIViewRepresentable {
         private func sendKey(to view: WKWebView) {
             guard !keySent, WebVault.staysInside(view.url) else { return }
             keySent = true
-            view.callAsyncJavaScript(WebVault.open, arguments: ["key": page.keyText, "path": page.path],
+            view.callAsyncJavaScript(WebVault.open, arguments: ["key": page.keyText, "path": page.path, "mode": page.surface.mode],
                                      in: nil, in: .page) { _ in }
         }
 
         func allowChangesIfAsked(in view: WKWebView) {
             guard page.model.changesAllowed, !accessKeySent, let accessKey = page.accessKey,
-                  case .open = page.model.standing, WebVault.staysInside(view.url) else { return }
+                  page.surface == .files, case .open = page.model.standing, WebVault.staysInside(view.url) else { return }
             accessKeySent = true
             view.callAsyncJavaScript(WebVault.allowChanges, arguments: ["accessKey": accessKey], in: nil, in: .page) { _ in }
         }
@@ -162,16 +205,32 @@ struct WebVaultScreen: View {
     var path = ""
     @State private var model = WebVaultModel()
     @State private var asking = false
+    @State private var surface: WebVault.Surface?
+    @State private var shownPath = ""
+    @State private var vaultHasApp = false
     @Environment(\.dismiss) private var dismiss
 
     private var hasLargeFiles: Bool { shelf.contents[vault.id]?.files.contains { $0.large } ?? false }
-    private var canAllow: Bool { vault.canWrite && shelf.hasToken && !hasLargeFiles && !model.changesAllowed }
+    private var canAllow: Bool { vault.canWrite && shelf.hasToken && !hasLargeFiles && !model.changesAllowed && surface == .files }
+
+    private func show(_ next: WebVault.Surface, path: String) {
+        model = WebVaultModel()
+        shownPath = path
+        surface = next
+        UsageLog.shared.action(next == .app ? "web-vault.app" : "web-vault.files")
+    }
 
     var body: some View {
         NavigationStack {
             ZStack {
-                WebVaultPage(keyText: vault.keyText, path: path, accessKey: shelf.accessKeyForTheWebVault, model: model)
-                    .ignoresSafeArea(edges: .bottom)
+                if let surface {
+                    WebVaultPage(keyText: vault.keyText, path: shownPath, surface: surface, noApp: {
+                        vaultHasApp = false
+                        show(.files, path: "")
+                    }, accessKey: shelf.accessKeyForTheWebVault, model: model)
+                    .id(surface)
+                    .ignoresSafeArea(edges: [.bottom, .horizontal])
+                }
                 switch model.standing {
                 case .loading, .waitingForKey:
                     VStack(spacing: 12) {
@@ -193,10 +252,27 @@ struct WebVaultScreen: View {
                     EmptyView()
                 }
             }
-            .navigationTitle(model.changesAllowed ? "Web Vault: changes allowed" : "Web Vault: looking only")
+            .navigationTitle(surface == .app ? vault.name : (model.changesAllowed ? "Files: changes allowed" : "Files: looking only"))
             .navigationBarTitleDisplayMode(.inline)
+            .onAppear {
+                guard surface == nil else { return }
+                let start = WebVault.start(for: shelf.contents[vault.id].map { $0.files.map(\.path) }, path: path)
+                vaultHasApp = start.surface == .app
+                show(start.surface, path: start.path)
+            }
+            .onChange(of: model.hasApp) { _, has in if has { vaultHasApp = true } }
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) { Button("Done") { dismiss() } }
+                if vaultHasApp {
+                    ToolbarItem(placement: .principal) {
+                        Picker("Show", selection: Binding(get: { surface ?? .app }, set: { show($0, path: "") })) {
+                            Text("App").tag(WebVault.Surface.app)
+                            Text("Files").tag(WebVault.Surface.files)
+                        }
+                        .pickerStyle(.segmented)
+                        .frame(maxWidth: 200)
+                    }
+                }
                 ToolbarItem(placement: .primaryAction) {
                     if canAllow, case .open = model.standing {
                         Button("Allow changes") { asking = true }
