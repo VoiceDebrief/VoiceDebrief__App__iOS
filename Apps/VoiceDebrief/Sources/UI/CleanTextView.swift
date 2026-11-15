@@ -115,6 +115,7 @@ private struct QuestionRow: View {
             } else {
                 HStack {
                     TextField("What you said", text: $answer)
+                        .voiceInput($answer)
                         .textFieldStyle(.roundedBorder)
                         .autocorrectionDisabled()
                     Button("Keep") {
@@ -165,8 +166,10 @@ struct GlossaryView: View {
             SectionBannerRow(tab: .words)
             Section {
                 TextField("A word or name you use", text: $word)
+                    .voiceInput($word)
                     .autocorrectionDisabled()
                 TextField("Heard as (optional, separated by commas)", text: $heardAs)
+                    .voiceInput($heardAs)
                     .autocorrectionDisabled()
                     .textInputAutocapitalization(.never)
                 Button("Add") {

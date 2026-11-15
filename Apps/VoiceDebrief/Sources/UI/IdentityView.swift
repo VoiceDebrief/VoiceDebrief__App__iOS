@@ -71,6 +71,7 @@ struct IdentityView: View {
         } else {
             Section {
                 TextField("A name for the key (yours)", text: $label)
+                    .voiceInput($label)
                     .autocorrectionDisabled()
                 Button("Make my identity") { Task { await book.createUser(label: label) } }
                     .disabled(book.busy != nil)

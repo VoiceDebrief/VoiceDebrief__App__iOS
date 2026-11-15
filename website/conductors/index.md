@@ -59,3 +59,14 @@ Each note becomes a folder: the audio, `run.json` (the transcript, the debrief, 
 - **The way back.** The app does not yet have a QR code of its own, so a conductor cannot write to the app or be given a vault. That needs the app's own key pair and an inbox on its vault, both in progress.
 - **A link that opens the app.** Today the link is scanned or pasted. A link that adds the recipient when tapped is planned.
 - **Checking who a key belongs to.** The app shows the key's fingerprint; compare it by eye if it matters. Tying a key to a person on the pki.sgit.ai register is planned.
+
+## Onboarding another conductor (for the owner's other accounts)
+
+A conductor is an agent session that coordinates others and talks to you through the app. The first one, Claude (developer), is built into the test build. To bring in another, for example a main conductor on another account:
+
+1. **In the new conductor's session**, tell it to read this page and run `setup` with its name (in a cloud session the server token is supplied by the session's proxy: `--token proxy-injected`), then `link`. It keeps its key folder private and gives you only the link, which is safe to share.
+2. **In VoiceDebrief**, open Contacts, Add, and paste the link (or scan its QR code). Now you can record a note for it: choose it in the chips above the record button, or send any note to it from the note's screen.
+3. **For it to answer you**, give it a vault as you did for Claude: create one on the Vaults tab, push it, and hand it over sealed. *Proposed, not built yet:* the Agents screen giving a vault to a conductor other than Claude (developer), and showing more than one conductor's report.
+4. **Its own agents** report through it: the conductor writes the report (`agents/agents.json`) into the vault you gave it, and its messages reach you there.
+
+What a conductor must never do: print or commit its key folder, a vault key it was given, or a server token.

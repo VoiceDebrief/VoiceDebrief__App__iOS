@@ -36,6 +36,15 @@ struct AgentsView: View {
                             AgentRow(agent: agent).tag(agent.id)
                         }
                     }
+                } else if desk.loading || (!desk.vaultId.isEmpty && desk.loadedAt == nil) {
+                    // A vault was given before: read it, rather than show the setup again (the owner saw
+                    // "Give this vault to Claude" again after choosing his vault, 15 November 2026).
+                    Section {
+                        HStack(spacing: 10) {
+                            ProgressView()
+                            Text("Reading the report from \(vault?.name ?? "your vault")").font(.callout)
+                        }
+                    }
                 } else {
                     Section { setup }
                 }
@@ -62,7 +71,8 @@ struct AgentsView: View {
             }
         }
         .task { await desk.refresh(book: book) }
-        .sheet(item: $workbench) { v in WebVaultScreen(book: book, vault: v) }
+        // The whole screen, not a pop-up (the owner: "use as much of the screen as possible").
+        .fullScreenCover(item: $workbench) { v in WebVaultScreen(book: book, vault: v) }
         .task {
             // While you are here, look for news every two minutes.
             while !Task.isCancelled {
@@ -188,6 +198,7 @@ struct AgentsView: View {
             HStack {
                 TextField(agent.lane == nil ? "Message (passed on by the conductor)" : "Message", text: $draft, axis: .vertical)
                     .textFieldStyle(.roundedBorder)
+                    .voiceInput($draft)
                 Button {
                     let text = draft
                     draft = ""

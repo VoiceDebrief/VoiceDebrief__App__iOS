@@ -24,7 +24,9 @@ enum WebVault {
     """
 
     /// Hands the page the key. `key` and `path` arrive as arguments, never as text in the script.
-    static let open = "window.postMessage({ sg: 'vault-open', key: key, mode: 'vault', deepLink: path }, '*');"
+    /// `mode: 'auto'` opens the vault's own app (its app.json and index.html) when it has one, straight away,
+    /// and the file browser only when it has none (the owner, 15 November 2026: "open in the vault app directly").
+    static let open = "window.postMessage({ sg: 'vault-open', key: key, mode: 'auto', deepLink: path }, '*');"
 
     /// Gives the opened page the server's access key, which is what lets it save changes.
     static let allowChanges = """
@@ -172,7 +174,7 @@ struct WebVaultScreen: View {
         NavigationStack {
             ZStack {
                 WebVaultPage(keyText: vault.keyText, path: path, accessKey: accessKey, model: model)
-                    .ignoresSafeArea(edges: .bottom)
+                    .ignoresSafeArea(edges: [.bottom, .horizontal])
                 switch model.standing {
                 case .loading, .waitingForKey:
                     VStack(spacing: 12) {

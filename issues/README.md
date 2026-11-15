@@ -45,6 +45,10 @@ One file per piece of work: `open/NNN-slug.md`, moved to `done/` when it is done
 | 046 | Every empty screen says what to do next | each screen's session |
 | 047 | The lab: the control centre (L02) | the owner, on a device |
 | 048 | The lab: live labels (L04) | the owner, on a device |
+| 049 | The lab: talk back (L05) | the owner, on a device |
+| 050 | The lab: task discovery (L06) | the owner, on a device |
+| 051 | An exploration: YouTube in the app, Spotify, other accounts | the owner's three decisions |
+| 052 | The lab: edit with Apple Intelligence (L07) | the owner, on a device |
 | 100 | The sgit app, milestone one | a device and the live server |
 | 102 | Prove the sgit app's large files against the live server | 100 on a device |
 | 103 | The sgit app after milestone one | 100; 011 and 017 |

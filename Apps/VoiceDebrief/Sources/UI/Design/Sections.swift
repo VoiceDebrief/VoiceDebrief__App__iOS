@@ -4,7 +4,7 @@ import SwiftUI
 /// alike by the tab bar, the sidebar, the record screen's tiles and the section's own header.
 extension RootTab: CaseIterable, Identifiable {
     static var allCases: [RootTab] {
-        [.record, .library, .contacts, .vaults, .agents, .play, .guide, .identity, .credit, .activity, .lab, .words, .about, .settings]
+        [.record, .library, .contacts, .vaults, .inbox, .agents, .play, .guide, .identity, .credit, .activity, .lab, .words, .about, .settings]
     }
 
     var id: String { rawValue }
@@ -26,6 +26,7 @@ extension RootTab: CaseIterable, Identifiable {
         case .about: "What this build does"
         case .settings: "Settings"
         case .more: "More"
+        case .inbox: "Inbox"
         }
     }
 
@@ -46,6 +47,7 @@ extension RootTab: CaseIterable, Identifiable {
         case .about: "checklist"
         case .settings: "gearshape"
         case .more: "ellipsis.circle"
+        case .inbox: "tray.full"
         }
     }
 
@@ -67,6 +69,7 @@ extension RootTab: CaseIterable, Identifiable {
         case .about: "Built, in test, not built"
         case .settings: "Language, saving, diagnostics"
         case .more: "Every other part of the app"
+        case .inbox: "Your memos, what came of them, and what waits for you"
         }
     }
 
@@ -87,9 +90,16 @@ extension RootTab: CaseIterable, Identifiable {
         case .about: Color(dsHex: 0x12C08A)
         case .settings: Color(dsHex: 0x8A9BB0)
         case .more: Color(dsHex: 0x8A9BB0)
+        case .inbox: Color(dsHex: 0x2E9E8F)
         }
     }
 
     /// The section's drawing in the asset catalogue (drawn by tools/art).
-    var art: String { self == .more ? "VDArt-settings" : "VDArt-\(rawValue)" }
+    var art: String {
+        switch self {
+        case .more: "VDArt-settings"
+        case .inbox: "VDArt-agents"   // no drawing of its own yet
+        default: "VDArt-\(rawValue)"
+        }
+    }
 }

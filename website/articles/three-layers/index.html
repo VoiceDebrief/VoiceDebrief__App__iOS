@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Three layers: code, the model on the device, and agents</title>
+<meta name="description" content="A position: three things can do work in this project, the app's code, Apple's model on the device and agents in a loop; what each is good and bad at, examples from what exists, and how a voice note moves between them.">
+<link rel="canonical" href="https://ios.app.voicedebrief.ai/articles/three-layers/index.html">
+<meta property="og:url" content="https://ios.app.voicedebrief.ai/articles/three-layers/index.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="VoiceDebrief for iOS">
+<meta property="og:title" content="Three layers: code, the model on the device, and agents">
+<meta property="og:description" content="A position: three things can do work in this project, the app's code, Apple's model on the device and agents in a loop; what each is good and bad at, examples from what exists, and how a voice note moves between them.">
+<link rel="alternate" type="text/markdown" href="index.md" title="This page as markdown">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/vd-tokens.css">
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+
+<nav class="site"><div class="row">
+  <a class="brand" href="../../index.html">Voice<em>Debrief</em> <span>iOS</span></a>
+  <span class="beta" title="In development: there is nothing to install yet">IN DEVELOPMENT</span>
+  <a class="parent" href="https://voicedebrief.ai" title="A VoiceDebrief product">&#8599; part of <b>voicedebrief.ai</b></a>
+  <a class="ver" href="../../versions/index.html" title="Release history">dev</a>
+  <a class="nl" href="../../built/index.html">Built</a>
+  <a class="nl" href="../../architecture/index.html">How it works</a>
+  <a class="nl" href="../../design/index.html">Design</a>
+  <a class="nl" href="../../plan/index.html">Plan</a>
+  <a class="nl here" href="../../articles/index.html">Articles</a>
+  <a class="nl" href="../../develop/index.html">Build</a>
+  <a class="nl" href="../../ideas/index.html">Ideas</a>
+  <a class="nl" href="../../guides/index.html">Guides</a>
+  <a class="gh" href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">&#9733; GitHub</a>
+</div></nav>
+
+<main class="doc">
+<div class="crumb"><a href="../../index.html">VoiceDebrief iOS</a> / articles / three-layers</div>
+<h1 id="three-layers-code-the-model-on-the-device-and-agents">Three layers: code, the model on the device, and agents</h1>
+<p><strong>Kind:</strong> a position. <strong>From:</strong> the owner, 15 November 2026: &quot;three levels of intelligence, or of execution ... what we run at each layer is the superpower.&quot; Written up by the Sherpa session. Every example links to <a href="../../built/index.html">what is built</a>, which is the only page that says what exists; most of it is in test and has not been run on a device.</p>
+<p><a href="../../assets/diagrams/three-layers.svg"><img class="shot" src="../../assets/diagrams/three-layers.svg" alt="Three bands. Code on the device: records, keeps, decides states, counts. Apple's model on the device: transcribes, debriefs, labels, cleans, picks one action; free, private, small. Agents in a loop: the conductor drains lanes, files notes in vaults, replies, writes the app itself; capable, slow, costs per run. A voice note goes down through them: code records and keeps it, the local model transcribes and labels it, the conductor acts on it, and its reply comes back into the app." loading="lazy"></a></p>
+<h2 id="the-idea-in-one-paragraph">The idea in one paragraph</h2>
+<p>Three things in this project can do work. The <strong>code</strong> in the app is exact, instant and free, and can only do what somebody wrote. <strong>Apple's models on the device</strong> (speech recognition and the Foundation Models framework) understand language, cost nothing per use and never send anything away, but are small. <strong>Agents</strong> (Claude sessions running in a loop, with the conductor's tools, lanes and vaults) can read, write, plan and build, but take minutes, cost money per run and see only what is sent to them. None is best. The skill is choosing, for each step of a job, the lowest layer that can do it well, and handing the result up only when it needs more.</p>
+<h2 id="layer-one-the-code">Layer one: the code</h2>
+<p>What it is: the Swift in the app, and the scripts beside it. It holds the states, keeps the data and decides everything that has a rule.</p>
+<p>What it does today:</p>
+<ul>
+<li><strong>Never loses a recording.</strong> The note is written to disk the moment recording starts, as WAV that can be repaired if the app dies (<a href="../../built/index.html">capture without loss</a>).</li>
+<li><strong>Owns every state.</strong> A note is recording, waiting its turn, being written up, finished, interrupted, waiting to send, sent; the code decides, and the screens say it (<a href="../../built/index.html">record while a note is written up</a>, <a href="../../built/index.html">a send that is not lost</a>).</li>
+<li><strong>Works out the briefing.</strong> &quot;2 new notes since you last looked&quot; is counted from the library, not written by a model, so it is always true (<a href="../../built/index.html">a briefing on opening</a>).</li>
+<li><strong>Hears the end of a note.</strong> &quot;Send this now&quot; is matched against a fixed list of phrases at the very end of what was said, not interpreted (<a href="../../built/index.html">finish by voice</a>).</li>
+<li><strong>Encrypts, signs and syncs.</strong> Vault keys, signed commits, sealed lane messages and push and pull are code, tested against sgit (<a href="../../built/index.html">the vault engine</a>, <a href="../../built/index.html">PKI interop</a>).</li>
+</ul>
+<p>Why here: it must be exact, it must work offline and instantly, and it must be the same every time. Bad at: anything that needs understanding words.</p>
+<h2 id="layer-two-apple-s-model-on-the-device">Layer two: Apple's model on the device</h2>
+<p>What it is: <code>SpeechAnalyzer</code> for the transcript and the Foundation Models framework for everything that reads or writes language, both running on the iPhone, iPad or Mac.</p>
+<p>What it does today:</p>
+<ul>
+<li><strong>Transcribes.</strong> A 22.6-second note in 0.6 seconds on a Mac; 6 minutes 44 seconds in 5.4 seconds on an iPad (<a href="../../built/index.html">transcript on the device</a>).</li>
+<li><strong>Debriefs.</strong> A summary, key points and actions, a long note read in parts sized to the model's context (<a href="../../built/index.html">debrief on the device</a>).</li>
+<li><strong>Labels while you speak.</strong> Every few seconds, who the note is for, its topic, title and urgency, each filled in through one tool call (<a href="../../built/index.html">Lab L04</a>).</li>
+<li><strong>Picks one action.</strong> Given a sentence, which of eight actions it asks for, or none, beside a list of fixed phrases doing the same, so the two can be compared (<a href="../../built/index.html">Lab L02</a>).</li>
+<li><strong>Cleans a transcript, with questions.</strong> Full sentences, a passage at a time, and up to three phrases it could not follow (<a href="../../built/index.html">a clean text</a>).</li>
+</ul>
+<p>Why here: it is free per use, so it can run all the time (&quot;I don't feel like I'm using minutes&quot;); nothing leaves the device; it answers in about a second. Bad at: long contexts (4,096 tokens on an iPhone, 8,192 on an iPad), rambling notes (it once gave a task to &quot;[Claude]&quot; because the note addressed Claude by name), and anything that needs the world outside the device. So it is asked one small question at a time, with the code deciding what happens with the answer (the position of <a href="../two-decision-engines/index.html">two decision engines</a>).</p>
+<h2 id="layer-three-agents-in-a-loop">Layer three: agents in a loop</h2>
+<p>What it is: Claude sessions, and the conductor that receives what the app sends, working with lanes, vaults and the repository.</p>
+<p>What it does today:</p>
+<ul>
+<li><strong>Receives.</strong> A note sent to Claude (developer) is sealed on the device and dropped into an append lane; the conductor drains it, opens it and files it (<a href="../../built/index.html">a conductor's inbox</a>).</li>
+<li><strong>Answers.</strong> Replies come back through a vault the person gave to Claude, and appear under the note they answer (<a href="../../built/index.html">Claude's replies</a>, <a href="../../built/index.html">the Inbox</a>).</li>
+<li><strong>Shows what it is doing.</strong> The Agents section reads the agents' own report from that vault: who is working on what, and the decisions waiting for the owner (<a href="../../built/index.html">Agents</a>).</li>
+<li><strong>Builds the app.</strong> The sessions working on this repository are this layer too: a voice note from the owner becomes an issue, then code, then a release with a card, which comes back to the app in What is new.</li>
+</ul>
+<p>Why here: it can read everything sent to it, plan, write code, call any tool and keep going. Bad at: speed (minutes, not seconds), cost (every run is paid for), privacy (it sees what it is sent, so what goes up is chosen and sealed), and presence (it is not on the device when the network is not).</p>
+<h2 id="how-a-task-moves-between-the-layers">How a task moves between the layers</h2>
+<p>A voice note for someone, end to end:</p>
+<ol>
+<li><strong>Code.</strong> Tap to record; the note exists on disk at once; the level bars move; the end phrase is matched.</li>
+<li><strong>Local model.</strong> The transcript is made on the device; labels (who, topic, urgency) can be filled in while speaking; a debrief is written.</li>
+<li><strong>Code.</strong> The state moves to &quot;waiting to send&quot;; the note is sealed to the recipient's key; the send is retried until it goes, and the row says sent, with the time.</li>
+<li><strong>Agents.</strong> The conductor drains the lane, files the note in a vault, acts on it (an issue, a reply, a change to the app) and writes the answer back.</li>
+<li><strong>Code.</strong> The app pulls the vault and shows the reply under the note; the briefing counts it.</li>
+</ol>
+<p>Each step is done at the lowest layer that can do it, and each handover is a file, a sealed message or a commit that can be seen. Nothing is left in a model's memory.</p>
+<h2 id="where-each-thing-belongs">Where each thing belongs</h2>
+<div class="tablewrap"><table>
+<thead><tr><th></th><th>Code</th><th>Local model</th><th>Agents</th></tr></thead>
+<tbody>
+<tr><td>Cost per use</td><td>none</td><td>none</td><td>paid per run</td></tr>
+<tr><td>Privacy</td><td>on the device</td><td>on the device</td><td>sees what is sent</td></tr>
+<tr><td>Speed</td><td>instant</td><td>about a second</td><td>minutes</td></tr>
+<tr><td>Works offline</td><td>yes</td><td>yes</td><td>no</td></tr>
+<tr><td>Good at</td><td>rules, states, keeping, crypto</td><td>short language tasks, one question at a time</td><td>reading, planning, building, acting in the world</td></tr>
+<tr><td>Bad at</td><td>understanding words</td><td>long context, rambling, the outside world</td><td>speed, cost, being on the device</td></tr>
+<tr><td>In this project</td><td><code>NoteStore</code>, <code>Briefing</code>, <code>VaultBook</code>, <code>VoiceCommand</code></td><td><code>SpeechFileTranscriber</code>, <code>OnDeviceModel</code>, Lab L02 and L04</td><td><code>tools/conductor</code>, the agents vault, the sessions</td></tr>
+</tbody></table></div>
+<h2 id="what-follows-from-it">What follows from it</h2>
+<ul>
+<li><strong>Push work down.</strong> If a fixed phrase does it, do not ask a model; if the model on the device can do it, do not send it to an agent. Lab L02 exists to find where that line is.</li>
+<li><strong>Hand up only what is needed, sealed.</strong> An agent gets the note sent to it, not the library.</li>
+<li><strong>Make every handover a thing you can see.</strong> A note, a label, a sealed message, a commit, a report in a vault: the app can show it, and the <a href="../a-harness-inside-the-app/index.html">harness</a> idea draws it.</li>
+<li><strong>The superpower is the routing.</strong> Each layer is ordinary on its own. What is new is a phone that records without loss, understands for free, and has a team of agents a sealed message away.</li>
+</ul>
+</main>
+
+<footer class="site"><div class="cols">
+  <div>
+    <div class="brandline">Voice<em>Debrief</em> <span>iOS</span></div>
+    <p>The VoiceDebrief transcript and debrief as a native iPhone and iPad app, on Apple's own models, with the results in a vault you own. In development: there is nothing to install yet. Content CC BY 4.0; code Apache 2.0.</p>
+    <p class="partnote">This site is static and has no analytics.</p>
+    <p class="verline">site dev · <a href="index.md">this page as markdown</a> · <a href="../../llms.txt">llms.txt</a></p>
+  </div>
+  <div>
+    <h4>The app</h4>
+    <a href="../../built/index.html">What is built</a>
+    <a href="../../plan/index.html">The plan</a>
+    <a href="../../develop/index.html">Build and test</a>
+    <a href="../../versions/index.html">Release history</a>
+    <a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">GitHub</a>
+  </div>
+  <div>
+    <h4>VoiceDebrief</h4>
+    <a href="https://voicedebrief.ai">voicedebrief.ai</a>
+    <a href="https://meetscribe.chrome-extension.voicedebrief.ai">MeetScribe for Google Meet</a>
+  </div>
+  <div>
+    <h4>Built on</h4>
+    <a href="https://sgit.ai">sgit.ai</a>
+    <a href="https://pki.sgit.ai">pki.sgit.ai</a>
+    <a href="https://sgit.ai/security/index.html">The vault security model</a>
+  </div>
+</div></footer>
+</body>
+</html>

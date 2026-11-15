@@ -59,6 +59,13 @@ struct RootView: View {
             }
             .defaultVisibility(.hidden, for: .tabBar)
             TabSection("You") {
+                // Your memos, Claude's answers, decisions waiting for you (the owner, 15 November 2026:
+                // "how do I follow up this memo? I need an inbox workflow").
+                Tab(RootTab.inbox.title, systemImage: RootTab.inbox.symbol, value: RootTab.inbox) {
+                    NavigationStack { InboxView(session: session, book: book, go: { tab = $0 }) }.tracked("inbox")
+                }
+                .badge(AgentsDesk.shared.report?.decisions?.count ?? 0)
+                .defaultVisibility(.hidden, for: .tabBar)
                 Tab(RootTab.identity.title, systemImage: RootTab.identity.symbol, value: RootTab.identity) {
                     NavigationStack { IdentityView(vaults: book) }.tracked("identity")
                 }

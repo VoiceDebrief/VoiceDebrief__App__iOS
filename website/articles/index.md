@@ -7,6 +7,7 @@ Most of these come from the owner's voice memos, written up by the agent working
 | Article | Kind | In one line |
 |---|---|---|
 | [The lab](the-lab/index.md) | Brief | Use this app to find out what Apple's platform can do, before deciding what the product is |
+| [Three layers](three-layers/index.md) | Position | Code, Apple's model on the device, and agents: give each step to the lowest layer that can do it well |
 | [Two decision engines](two-decision-engines/index.md) | Position | An app now has two things that decide: the code, and a model. Keep the model on a short lead, one prompt at a time |
 | [A harness inside the app](a-harness-inside-the-app/index.md) | Brief | Give the model its network, files, keys and vaults through separate doors, and draw what passes through them |
 | [The vault is a version-controlled store](the-vault-is-a-version-controlled-store/index.md) | Position and brief | A vault needs no server to exist. A server is a remote you add |

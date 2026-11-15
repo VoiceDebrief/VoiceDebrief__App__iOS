@@ -449,3 +449,28 @@ struct GameHeardTests {
         #expect(game.hearingSettled.isEmpty && game.hearingVolatile.isEmpty)
     }
 }
+
+@Suite("L03: one microphone turn for the whole app", .serialized)
+struct GameMicrophoneTurnTests {
+    @MainActor
+    @Test func theVoicePlayerTakesTheGamesTurnAndGivesItBack() {
+        let game = GameController(kind: .boxes)
+        #expect(game.claimTurnForPlayer())
+        #expect(MicrophoneTurn.shared.holder != nil)
+        #expect(!MicrophoneTurn.shared.take(UUID()))
+        game.playerReleasedTurn()
+        #expect(MicrophoneTurn.shared.holder == nil)
+    }
+
+    @MainActor
+    @Test func theGameWaitsWhileSomethingElseHoldsTheTurn() async {
+        let other = UUID()
+        #expect(MicrophoneTurn.shared.take(other))
+        defer { MicrophoneTurn.shared.giveBack(other) }
+        let game = GameController(kind: .boxes)
+        #expect(!game.claimTurnForPlayer())
+        #expect(game.problem == MicrophoneTurn.busy)
+        await game.stopListening()
+        #expect(MicrophoneTurn.shared.holder == other)
+    }
+}

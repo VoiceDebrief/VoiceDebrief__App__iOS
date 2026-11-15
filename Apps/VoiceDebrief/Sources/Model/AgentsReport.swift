@@ -36,6 +36,32 @@ struct AgentsReport: Codable, Equatable, Sendable {
     var agents: [Agent]
     var links: [Link]
     var messages: [Message]
+    /// What the conductor needs the owner to decide, each with its choices (the owner: "what decisions do I
+    /// need to provide, what is next"). Answered from the Inbox; the answer goes to the conductor sealed.
+    var decisions: [Decision]? = nil
+    /// What happens next, in a few lines, as the conductor sees it.
+    var nextSteps: [String]? = nil
+    /// Contacts the conductor offers to add, such as another conductor's lane (the owner: "send me a message
+    /// with an agent's key so I can onboard it from here; I accept it or not"). Nothing is added until you say so.
+    var contactOffers: [ContactOffer]? = nil
+
+    struct ContactOffer: Codable, Equatable, Sendable, Identifiable {
+        var id: String
+        var name: String
+        var link: String            // an sgi1. lane link: where to send, never a secret
+        var why: String?
+        var from: String
+        var at: Date
+    }
+
+    struct Decision: Codable, Equatable, Sendable, Identifiable {
+        var id: String
+        var title: String
+        var detail: String?
+        var options: [String]
+        var from: String            // the agent's id
+        var at: Date
+    }
 
     var counts: (working: Int, waiting: Int, idle: Int) {
         (agents.filter { $0.status == "working" }.count,

@@ -4,6 +4,119 @@
  "nextArt": [],
  "versions": [
   {
+   "version": "v0.1.120",
+   "date": "15 November 2026",
+   "notes": [
+    "The workbench opens full screen, not as a pop-up, and straight into the vault's own app (its chat and pages) rather than its file list, at the owner's request."
+   ],
+   "hasPage": true,
+   "url": "https://ios.app.voicedebrief.ai/versions/v0.1.120/index.html",
+   "pictures": 0,
+   "art": [],
+   "issues": []
+  },
+  {
+   "version": "v0.1.119",
+   "date": "15 November 2026",
+   "notes": [
+    "A Lab experiment, L07, edit with Apple Intelligence, started small as the owner asked. Give it a text (typed, pasted, or a note's words as a copy) and a request in your own words: make it shorter, more formal, as bullet points, fix the names. Apple's model proposes the edited text, and the app shows the change itself, word by word: what goes is struck through and what comes in is underlined, with the before and the after a tap away. Accept or reject; an accepted change can be put back. It says so when nothing changed or when the result is suspiciously long or short. The note the words came from is never changed. In test: no edit has been asked of a model. Also written up, with no code: what it would take to play YouTube videos in the app, to connect Spotify or Apple Music, and which other accounts are worth connecting (issue 051)."
+   ],
+   "hasPage": true,
+   "url": "https://ios.app.voicedebrief.ai/versions/v0.1.119/index.html",
+   "pictures": 0,
+   "art": [],
+   "issues": [
+    "051"
+   ]
+  },
+  {
+   "version": "v0.1.118",
+   "date": "15 November 2026",
+   "notes": [
+    "The voice games take their place in the app's one microphone turn: Listen and the voice player hold it while they listen or speak and give it back however they stop, so a voice field, the Lab and a game never listen at once; if something else holds it, the game says so. The game's text field has the shared voice button."
+   ],
+   "hasPage": true,
+   "url": "https://ios.app.voicedebrief.ai/versions/v0.1.118/index.html",
+   "pictures": 0,
+   "art": [],
+   "issues": []
+  },
+  {
+   "version": "v0.1.117",
+   "date": "14 November 2026",
+   "notes": [
+    "A voice button on text fields, at the owner's request: a small microphone beside a field fills it by speech on this device, the words appearing as they are said after anything already typed; tap again to stop, and the text stays editable. One microphone for the whole app: a field, the Lab's control centre and its live labels take turns, and whichever asks second is told something else is listening or speaking; never while a note is being recorded, and it stops when the app leaves the foreground. On the Lab's prompt and instructions, Your words, a vault's name, a contact's name and the key's name; not on keys, tokens or links."
+   ],
+   "hasPage": true,
+   "url": "https://ios.app.voicedebrief.ai/versions/v0.1.117/index.html",
+   "pictures": 0,
+   "art": [],
+   "issues": []
+  },
+  {
+   "version": "v0.1.116",
+   "date": "15 November 2026",
+   "notes": [
+    "A new article at the owner's request, three layers: the app's code, Apple's model on the device and agents in a loop, what each is good and bad at (cost, privacy, speed), examples from what exists at each, and how a voice note moves between them, with a drawing. A short version is in the app under Guide, Articles; an article can now carry a short.md for the apps."
+   ],
+   "hasPage": true,
+   "url": "https://ios.app.voicedebrief.ai/versions/v0.1.116/index.html",
+   "pictures": 0,
+   "art": [
+    "+----------------------------------------------------------------------+\n| VOICEDEBRIEF                                             v0.1.116    |\n| 15 November 2026                                                     |\n+----------------------------------------------------------------------+\n| THREE LAYERS: CODE, THE MODEL ON THE DEVICE, AGENTS                  |\n|                                                                      |\n| * A new article: what runs at each layer, and why                    |\n| * Code: exact, free, offline. Apple model: free, private, small      |\n| * Agents: capable, slow, paid per run, see only what is sent         |\n| * A voice note, end to end, through all three; with a drawing        |\n|                                                                      |\n| WHERE    Guide > Articles > Three layers (short version in the app)  |\n| TRY      Read it, then open Lab and try L02 and L04                  |\n| NOT YET  Routing a task between layers automatically                 |\n+----------------------------------------------------------------------+"
+   ],
+   "issues": []
+  },
+  {
+   "version": "v0.1.115",
+   "date": "15 November 2026",
+   "notes": [
+    "Two more Lab experiments, from the owner's memo of the morning. L06, task discovery: ask about your own data (what are my tasks, what happened with the memo I sent yesterday, what is waiting for me) and see it answered in three steps. The question is read for what kind of thing it asks for, by the code's word lists and by Apple's model through one tool for each kind; the code walks a tree of the app's data and shows each branch it entered and each thing it kept or passed over, with the reason; and the answer is put together by the code from what the walk kept. The model is never shown your data and writes none of the answer. L05, talk back: the same, as a conversation by voice. It listens for one question, answers, says the answer aloud, and listens again. Both time every turn and keep a log that can be shared as JSON. In test: no question has been put to a model, and L05 has not been heard on a device."
+   ],
+   "hasPage": true,
+   "url": "https://ios.app.voicedebrief.ai/versions/v0.1.115/index.html",
+   "pictures": 0,
+   "art": [],
+   "issues": []
+  },
+  {
+   "version": "v0.1.114",
+   "date": "15 November 2026",
+   "notes": [
+    "A voice button on text fields, at the owner's request (\"a little voice button everywhere we have an input\"): tap the microphone beside a field and speak; the words appear live and stay editable. On the Lab, Your words, vault and contact names, the key name, an agent's message box and the picture sheet's line. Not on the lines added while recording, where the note itself has the microphone.",
+    "A voice button on text fields, at the owner's request: a small microphone beside a field fills it by speech on this device, the words appearing as they are said after anything already typed; tap again to stop, and the text stays editable. One listener for every field, never while a note is being recorded, and it stops when the app leaves the foreground. On the Lab's prompt and instructions, Your words, a vault's name, a contact's name and the key's name; not on keys, tokens or links."
+   ],
+   "hasPage": true,
+   "url": "https://ios.app.voicedebrief.ai/versions/v0.1.114/index.html",
+   "pictures": 0,
+   "art": [],
+   "issues": []
+  },
+  {
+   "version": "v0.1.113",
+   "date": "15 November 2026",
+   "notes": [
+    "From the owner's 11:54 memo: a Pause button beside Finish (the note carries on in the same file; the live words pick up where they stopped); a small counter while recording (time recorded and words heard); \"Tune this screen\" (the bars' sensitivity and height, the record button's colour, changed live, calmer bars by default); and contacts a conductor offers appear in the Inbox with \"Add to Contacts\", nothing added until you tap."
+   ],
+   "hasPage": true,
+   "url": "https://ios.app.voicedebrief.ai/versions/v0.1.113/index.html",
+   "pictures": 0,
+   "art": [],
+   "issues": []
+  },
+  {
+   "version": "v0.1.111",
+   "date": "15 November 2026",
+   "notes": [
+    "An Inbox, at the owner's request (\"how do I follow up this memo?\"): decisions waiting for you, each with its choices (one tap answers Claude, sealed), what happens next, and every memo you sent with what came of it, newest first. Agents: a vault given before is read straight away instead of showing the setup and the Give button again."
+   ],
+   "hasPage": true,
+   "url": "https://ios.app.voicedebrief.ai/versions/v0.1.111/index.html",
+   "pictures": 0,
+   "art": [],
+   "issues": []
+  },
+  {
    "version": "v0.1.110",
    "date": "14 November 2026",
    "notes": [
