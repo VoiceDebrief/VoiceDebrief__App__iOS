@@ -30,8 +30,8 @@
  "counts": {
   "seen-working": 27,
   "built-untried": 93,
-  "in-progress": 43,
-  "proposed": 62,
+  "in-progress": 44,
+  "proposed": 61,
   "parked": 6
  },
  "ideas": [
@@ -1166,8 +1166,8 @@
    "number": "051",
    "app": "VoiceDebrief",
    "title": "An exploration: YouTube in the app, Spotify, and which other accounts to connect",
-   "status": "proposed",
-   "why": "Open, with nothing built yet: \"Status: open, an exploration. No code. From the owner's note of 15 November 2026, 11:54, relayed by the parent session. Written by the Lab session from what it...\"",
+   "status": "in-progress",
+   "why": "Open, and named by the release notes of v0.1.119.",
    "summary": "The question behind it: a voice-first app that already hears \"open the library\" could as well hear \"play that talk about vaults\" or \"put some music on\". What would that take, within the project's rules (Apple SDK only; no backend of ours; nothing in the app may be a secret, since the build is public)?",
    "detail": [
     "The question behind it: a voice-first app that already hears \"open the library\" could as well hear \"play that talk about vaults\" or \"put some music on\". What would that take, within the project's rules (Apple SDK only; no backend of ours; nothing in the app may be a secret, since the build is public)?",
@@ -1185,7 +1185,9 @@
     "Library tab",
     "Settings: Recipients"
    ],
-   "versions": [],
+   "versions": [
+    "v0.1.119"
+   ],
    "features": [],
    "url": "https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/051-video-music-and-other-accounts.md",
    "source": "The owner"
