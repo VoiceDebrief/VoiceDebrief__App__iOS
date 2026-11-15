@@ -29,8 +29,8 @@
  ],
  "counts": {
   "seen-working": 27,
-  "built-untried": 89,
-  "in-progress": 40,
+  "built-untried": 91,
+  "in-progress": 42,
   "proposed": 60,
   "parked": 6
  },
@@ -1105,6 +1105,60 @@
    "features": [],
    "url": "https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/048-lab-live-labels.md",
    "source": "The owner's voice note"
+  },
+  {
+   "id": "issue-049",
+   "kind": "issue",
+   "number": "049",
+   "app": "VoiceDebrief",
+   "title": "The lab, fifth experiment (L05): talk back",
+   "status": "in-progress",
+   "why": "The issue says: \"Built in the Lab on top of L06 (issue 050): each spoken question is answered the way L06 answers it, and a short form of the answer is said with the system's...\"",
+   "summary": "A conversation with Apple's model by voice, with the answer spoken, about the app's own data: what are my tasks, what happened with the memo I sent yesterday. The code owns the state; the model is asked one question at a time through function calls.",
+   "detail": [
+    "A conversation with Apple's model by voice, with the answer spoken, about the app's own data: what are my tasks, what happened with the memo I sent yesterday. The code owns the state; the model is asked one question at a time through function calls.",
+    "Where it stands (15 November 2026)",
+    "Built in the Lab on top of L06 (issue 050): each spoken question is answered the way L06 answers it, and a short form of the answer is said with the system's voice. Four states: not listening, listening, working out the answer, saying it. Compiled and unit tested; never run on a device.",
+    "What it does not do yet, and why",
+    "- It is half a conversation: one question, one answer, no memory of the turn before, so \"and the one before that?\" means nothing to it. That follows from asking the model one question at a time with no history; a follow-up would need the code to carry the last question's limits forward. - It does not listen while it speaks, so it cannot be interrupted by voice. The Stop button interrupts. - It says nothing while a note is being recorded: speaking changes the shared audio session. - Each settled piece of speech is taken as a question. A long pause in the middle of a question cuts it in two. - English only: the word lists and the sentences of the answers.",
+    "What to find out on a device",
+    "Whether the voice is heard and listening resumes after it; the time from the end of the question to the first word of the answer; whether it mistakes its own echo or a cough for a question."
+   ],
+   "statusLine": "Status: open. From the owner's memo of 15 November 2026, 11:30, relayed by the parent session.",
+   "places": [
+    "Settings: Experiments, the Lab"
+   ],
+   "versions": [],
+   "features": [],
+   "url": "https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/049-lab-talk-back.md",
+   "source": "The owner"
+  },
+  {
+   "id": "issue-050",
+   "kind": "issue",
+   "number": "050",
+   "app": "VoiceDebrief",
+   "title": "The lab, sixth experiment (L06): task discovery",
+   "status": "in-progress",
+   "why": "The issue says: \"Built in the Lab. Five kinds: tasks, notes, what was sent, a person, decisions waiting. Two readers of the question, the code's word lists and the model (one...\"",
+   "summary": "The owner's pattern from earlier work: the model first works out what kind of thing is being asked (task, note, project, person, decision), then the code queries a tree of the app's data and the answer is built from what the query returned, never invented. Show the tree being walked. Timing and tokens on every turn.",
+   "detail": [
+    "The owner's pattern from earlier work: the model first works out what kind of thing is being asked (task, note, project, person, decision), then the code queries a tree of the app's data and the answer is built from what the query returned, never invented. Show the tree being walked. Timing and tokens on every turn.",
+    "Where it stands (15 November 2026)",
+    "Built in the Lab. Five kinds: tasks, notes, what was sent, a person, decisions waiting. Two readers of the question, the code's word lists and the model (one tool for each kind); the walk and the answer are the code's. Compiled and unit tested; no question has been put to a model.",
+    "What it does not do yet, and why",
+    "- No projects. Nothing in the app records a project. A question about one is read as notes about a subject. - No labels from L04. They are not kept on notes yet (issue 048), so the tree has no branch for them. - Replies are tied to a note only by quotation: a message from an agent that quotes the note's opening words. A reply that does not quote is found under the person, not under the note. - Decisions are what the agents report says agents are waiting on you for. A decision asked for in any other way is not seen. - The answer's sentences are fixed patterns. They are plain and repetitive. Letting the model reword an answer it is handed would read better and would let it invent; that is a later experiment, with the walk's lines shown beside it. - Tokens are estimated at four characters each, as in L04.",
+    "What to measure, from the log",
+    "How often the model's reading of the kind is right and how often the word lists' is; what the model adds on questions the word lists cannot read; its time per question; whether it fills in the subject and the time or leaves them out."
+   ],
+   "statusLine": "Status: open. From the owner's memo of 15 November 2026, 11:30, relayed by the parent session.",
+   "places": [
+    "Settings: Experiments, the Lab"
+   ],
+   "versions": [],
+   "features": [],
+   "url": "https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/050-lab-task-discovery.md",
+   "source": "The owner"
   },
   {
    "id": "issue-100",
@@ -3410,6 +3464,42 @@
     "Record tab",
     "The repository: CI"
    ],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
+   "id": "feature.the.lab.experiment.l06.task.discovery",
+   "kind": "feature",
+   "app": "VoiceDebrief",
+   "title": "The Lab, experiment L06: task discovery",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "UI/LabAskViews.swift (LabDiscoveryView), Engine/LabAskDesk.swift, Model/LabAsk.swift, reached from Lab: a question about your own data is answered in three steps that are each shown. First, what kind of thing it asks for (tasks, notes, what was sent, a person, decisions waiting), read twice: by the code's own word lists, and by Apple's on-device model, asked one question in a new session with one...",
+   "detail": [
+    "UI/LabAskViews.swift (LabDiscoveryView), Engine/LabAskDesk.swift, Model/LabAsk.swift, reached from Lab: a question about your own data is answered in three steps that are each shown. First, what kind of thing it asks for (tasks, notes, what was sent, a person, decisions waiting), read twice: by the code's own word lists, and by Apple's on-device model, asked one question in a new session with one tool for each kind; the model's reading is used when it called a tool, otherwise the word lists'. Second, the code walks a tree of the app's data, copied out beforehand: tasks (the Actions of every debrief), notes, what was sent and to whom with the reply that quotes it, messages from agents in the last agents report, and what agents are waiting on you for; a branch is entered or left closed, and each thing inside either fits every limit of the question or is passed over with the reason. Third...",
+    "Unit tests with a small world at fixed times: reading the Actions of a debrief, matching a reply to the note it quotes, the word lists on the seven questions kept ready, the walk for each kind with the reason each leaf was passed, the answers word for word, which engine's reading is used, the log's JSON. No question has been put to a model. There is no data for projects, and the labels of L04 are not kept on notes, so neither can be asked about. Replies are found only when a message quotes the opening words of the note"
+   ],
+   "places": [],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
+   "id": "feature.the.lab.experiment.l05.talk.back",
+   "kind": "feature",
+   "app": "VoiceDebrief",
+   "title": "The Lab, experiment L05: talk back",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "LabTalkView in UI/LabAskViews.swift, Engine/LabTalkBack.swift: a conversation by voice about the same data, answered the same way as L06. Four states the code owns: not listening, listening for a question, working out the answer, saying the answer. It takes one settled sentence as a question, stops listening, answers, says a short form of the answer with the system's voice (AVSpeechSynthesizer)...",
+   "detail": [
+    "LabTalkView in UI/LabAskViews.swift, Engine/LabTalkBack.swift: a conversation by voice about the same data, answered the same way as L06. Four states the code owns: not listening, listening for a question, working out the answer, saying the answer. It takes one settled sentence as a question, stops listening, answers, says a short form of the answer with the system's voice (AVSpeechSynthesizer), and listens again; it does not listen while it speaks. A question can also be typed, and speaking can be switched off. Nothing is said aloud while a note is being recorded, because speaking changes the audio session",
+    "Unit tests: a typed question answered and the conversation left idle, a conversation that does not start while a note is being recorded, the time an answer took to say noted on its turn. Never run on a device: whether the voice is heard, whether listening resumes cleanly after speaking, and how long a turn takes are unknown"
+   ],
+   "places": [],
    "issues": [],
    "url": "https://ios.app.voicedebrief.ai/built/index.html",
    "source": "The reality file",
