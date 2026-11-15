@@ -7,7 +7,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | Seen working | Built, and a run proved it: CI, a device or a server. | 27 |
 | Built, untried | In the app or the repository, but not yet proven by a run on a device. | 100 |
 | In progress | Begun: part of it is built or a release has touched it. | 45 |
-| Proposed | Asked for or described; nothing of it is built. | 60 |
+| Proposed | Asked for or described; nothing of it is built. | 61 |
 | Parked | Waiting: on the owner, on Apple, or scheduled for later. | 6 |
 
 ## Seen working
@@ -216,6 +216,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | sgit app: Apple Intelligence, a first experiment | Issue | SGit Vaults | SGit Vaults: a vault; SGit Vaults: History |   | [119](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/119-sgit-app-apple-intelligence.md) |
 | sgit app: secrets, kept as files in vaults | Issue | SGit Vaults | SGit Vaults: a vault; SGit Vaults: History |   | [121](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/121-sgit-app-secrets-in-vaults.md) |
 | sgit app: the trust map, from one person to a team | Issue | SGit Vaults | SGit Vaults: Share |   | [123](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/123-sgit-app-the-trust-map.md) |
+| sgit app: an analysis layer filed by content hash | Issue | SGit Vaults | SGit Vaults |   | [126](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/126-sgit-app-file-analysis.md) |
 | A harness inside the app | Article | Both |   |   | [article](../articles/a-harness-inside-the-app/index.md) |
 | A private voice note, and what it would take to use it in a clinic | Article | Both |   |   | [article](../articles/a-private-voice-note-and-a-clinic/index.md) |
 | Synthetic users | Article | Both |   |   | [article](../articles/synthetic-users/index.md) |

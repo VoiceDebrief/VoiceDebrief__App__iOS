@@ -76,6 +76,8 @@ const PAGES = [
     description: 'The design for the secrets manager in SGit Vaults: a secret is a file in a vault, a team is the people a vault key was sealed to; from one person to a team, the trust map, sync across devices, and the order it is built in. Intention, with ASCII drawings.' },
   { path: 'sgit-app/secrets/opportunity', nav: null, title: 'The secrets manager: the field and the opportunity',
     description: 'A research brief for the sgit app secrets manager: eleven managers and secret tools compared, the recurring pain points with sources, ten things this design could do better, the iOS facts that constrain it, and an onboarding storyboard.' },
+  { path: 'sgit-app/analysis', nav: null, title: 'What is in a file: an analysis layer for vaults',
+    description: 'Proposed: transcripts, labels, on-screen text and summaries for each file in a vault, filed by content hash so that moves keep them, made with Apple models on the device.' },
   { path: 'sgit-app/guide', nav: null, title: 'The sgit app: a guide in pictures',
     description: 'What the sgit app does today, screen by screen, with numbered callouts on each picture: vaults, creating one, browsing, adding, a refused upload, a file, sharing, history, and how it came to be.' },
   { path: 'sgit-app/built', nav: null, title: 'What is built in the sgit app',

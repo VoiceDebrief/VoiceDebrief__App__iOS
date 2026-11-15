@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>What is in a file: an analysis layer for vaults</title>
+<meta name="description" content="Proposed: transcripts, labels, on-screen text and summaries for each file in a vault, filed by content hash so that moves keep them, made with Apple models on the device.">
+<link rel="canonical" href="https://ios.app.voicedebrief.ai/sgit-app/analysis/index.html">
+<meta property="og:url" content="https://ios.app.voicedebrief.ai/sgit-app/analysis/index.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="VoiceDebrief for iOS">
+<meta property="og:title" content="What is in a file: an analysis layer for vaults">
+<meta property="og:description" content="Proposed: transcripts, labels, on-screen text and summaries for each file in a vault, filed by content hash so that moves keep them, made with Apple models on the device.">
+<link rel="alternate" type="text/markdown" href="index.md" title="This page as markdown">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/vd-tokens.css">
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+
+<nav class="site"><div class="row">
+  <a class="brand" href="../../index.html">Voice<em>Debrief</em> <span>iOS</span></a>
+  <span class="beta" title="In development: there is nothing to install yet">IN DEVELOPMENT</span>
+  <a class="parent" href="https://voicedebrief.ai" title="A VoiceDebrief product">&#8599; part of <b>voicedebrief.ai</b></a>
+  <a class="ver" href="../../versions/index.html" title="Release history">dev</a>
+  <a class="nl" href="../../built/index.html">Built</a>
+  <a class="nl" href="../../architecture/index.html">How it works</a>
+  <a class="nl" href="../../design/index.html">Design</a>
+  <a class="nl" href="../../plan/index.html">Plan</a>
+  <a class="nl" href="../../articles/index.html">Articles</a>
+  <a class="nl" href="../../develop/index.html">Build</a>
+  <a class="nl" href="../../ideas/index.html">Ideas</a>
+  <a class="nl" href="../../guides/index.html">Guides</a>
+  <a class="gh" href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">&#9733; GitHub</a>
+</div></nav>
+
+<main class="doc">
+<div class="crumb"><a href="../../index.html">VoiceDebrief iOS</a> / sgit-app / analysis</div>
+<h1 id="what-is-in-a-file-an-analysis-layer-for-vaults">What is in a file: an analysis layer for vaults</h1>
+<p>Proposed, 15 November 2026, at the owner's request. <strong>None of this is built.</strong> <a href="../built/index.html">What is built</a> is the reality file. This page maps how the sgit app could add facts, transcripts and descriptions to each file in a vault, using Apple's models on the device only.</p>
+<h2 id="the-rule-that-makes-it-survive-moves-everything-hangs-off-the-content-hash">The rule that makes it survive moves: everything hangs off the content hash</h2>
+<p>The app already keeps two things beside every photo and video it uploads, filed by the file's content hash, which depends only on its bytes:</p>
+<ul>
+<li><code>.sgit/thumbs/&lt;hash&gt;.jpg</code>: a small picture, so a folder shows without fetching the file;</li>
+<li><code>.sgit/meta/&lt;hash&gt;.json</code> (<code>sgit.ai/file-meta/v1</code>): size, dimensions, duration, codec, camera, the date taken.</li>
+</ul>
+<p>Analysis follows the same rule, one file per analyser:</p>
+<pre><code>.sgit/analysis/&lt;hash&gt;/transcript.json     what is said, with times
+.sgit/analysis/&lt;hash&gt;/transcript.vtt      the same as captions a player can show
+.sgit/analysis/&lt;hash&gt;/vision.json         labels, text on screen, faces counted, codes read
+.sgit/analysis/&lt;hash&gt;/summary.json        a title, a few sentences, tags</code></pre>
+<p>What follows from that:</p>
+<ul>
+<li><strong>A move or a rename changes nothing.</strong> The bytes are the same, so the hash is the same, so the analysis is still found. The same is true of a copy: two copies share one analysis.</li>
+<li><strong>An edit is a new file.</strong> Changed bytes have a new hash and get their own analysis; the old one stays with the old version in the history.</li>
+<li><strong>It is encrypted like everything else.</strong> The server sees ciphertext. Whoever holds the vault key can read the analysis, and nobody else.</li>
+<li><strong>It is versioned and signed.</strong> Adding an analysis is a commit, signed by the device that made it, so the history says what was analysed, when, and by which device.</li>
+</ul>
+<p>Each record says what made it, so that a better model later can redo it without guessing:</p>
+<pre data-lang="json"><code>{
+  &quot;format&quot;: &quot;sgit.ai/file-analysis/v1&quot;,
+  &quot;contentHash&quot;: &quot;…&quot;,
+  &quot;analyser&quot;: &quot;apple.speech.transcript&quot;,
+  &quot;analyserVersion&quot;: &quot;iOS 26.1&quot;,
+  &quot;locale&quot;: &quot;en-GB&quot;,
+  &quot;madeAt&quot;: &quot;2026-11-15T20:00:00Z&quot;,
+  &quot;result&quot;: { … }
+}</code></pre>
+<h2 id="what-apple-s-models-can-do-with-a-video-on-the-device">What Apple's models can do with a video, on the device</h2>
+<div class="tablewrap"><table>
+<thead><tr><th>Question</th><th>Apple framework</th><th>What comes out</th><th>Notes</th></tr></thead>
+<tbody>
+<tr><td>What is said?</td><td>Speech: <code>SpeechAnalyzer</code> with <code>SpeechTranscriber</code> (the VoiceDebrief app uses it today, in <code>SpeechFileTranscriber.swift</code>)</td><td>A transcript with a time for each phrase; captions</td><td>The video's sound is taken out first (<code>AVAssetExportSession</code> to <code>.m4a</code>) and handed to the same code as a voice note. Runs on the device, offline once the language model is downloaded</td></tr>
+<tr><td>What is in it?</td><td>Vision: image classification, on a frame every few seconds and at each cut</td><td>Labels with confidence (&quot;crowd&quot;, &quot;stage&quot;, &quot;car&quot;, &quot;food&quot;) and when they appear</td><td>Cheap: frames are decoded at low resolution</td></tr>
+<tr><td>What text is on screen?</td><td>Vision: text recognition</td><td>Slides, badges, signs (&quot;KNOW THE REACH&quot;, &quot;ATTENDEE Nikos&quot;)</td><td>Useful for search; the same works on photos</td></tr>
+<tr><td>Who is in it?</td><td>Vision: face detection</td><td>How many faces, and when</td><td><strong>Counting only.</strong> Recognising who a person is would be a separate, opt-in decision for the owner</td></tr>
+<tr><td>Any codes?</td><td>Vision: barcode detection</td><td>QR codes and barcodes read in the frame</td><td>The attendee badge in the vault has one</td></tr>
+<tr><td>Which frame is best?</td><td>Vision: aesthetics scores, saliency</td><td>A better thumbnail than the first frame</td><td>Also improves the gallery</td></tr>
+<tr><td>What is it about?</td><td>Foundation Models (the on-device language model)</td><td>A short title, two or three sentences, tags</td><td>It takes text, not pictures, in the version the app builds against: it works from the transcript, labels and on-screen text above. One question at a time, through a function call, as the project's standing position asks</td></tr>
+</tbody></table></div>
+<p><strong>On the server side: no.</strong> Apple's Private Cloud Compute is not something an app can call for its own work, and this project has no backend of its own by design. Everything above runs on the iPhone, iPad or Mac that has the file.</p>
+<h2 id="where-and-when-it-runs">Where and when it runs</h2>
+<ol>
+<li><strong>At upload, while the plain copy is still there.</strong> This is how thumbnails are made today. It costs no download. Transcribing a long video takes minutes and battery, so it would be queued and run while the device is charging.</li>
+<li><strong>Afterwards, on request, for files that came in another way</strong> (the web Vault, the <code>sgit</code> command, an older build). &quot;Analyse this folder&quot; fetches each file once, analyses it, keeps the results and lets the copy go. The screen says how much it will fetch first (&quot;5 videos, 2.1 GB&quot;).</li>
+<li><strong>Never twice.</strong> Before analysing, the app looks for <code>.sgit/analysis/&lt;hash&gt;/</code>. If another device or a teammate already did it, the work is done.</li>
+</ol>
+<p>The same job fixes something visible today: <strong>videos added without a stored thumbnail show a plain film icon</strong>, because making one means fetching the whole file. A first version of &quot;Analyse this folder&quot; that only makes the missing thumbnails and facts would fix the owner's <code>movies</code> folder.</p>
+<h2 id="what-a-person-sees">What a person sees</h2>
+<ul>
+<li><strong>In the viewer:</strong> captions on a video from <code>transcript.vtt</code>, and the transcript under it, each line a jump to that moment.</li>
+<li><strong>In the (i) page:</strong> the summary, the tags, the text found on screen, and which device made each and when.</li>
+<li><strong>In search</strong> (not built yet either): find &quot;KPMG&quot; or &quot;the talk about reach&quot; across photos and videos, from an index built on the device from the analysis files.</li>
+<li><strong>In Ask this vault:</strong> the model is handed the analysis, not the files.</li>
+</ul>
+<h2 id="build-order-proposed">Build order (proposed)</h2>
+<ol>
+<li><strong>Missing thumbnails and facts</strong>, made on request for files that have none. Small, and fixes the film icons.</li>
+<li><strong>Transcripts of videos</strong>, reusing the VoiceDebrief transcriber; captions in the viewer; the transcript in the (i) page.</li>
+<li><strong>Vision labels and on-screen text</strong> for photos and frames of videos.</li>
+<li><strong>A summary and tags</strong> from the on-device language model, working from 2 and 3.</li>
+<li><strong>Search</strong> across the vault, on the device.</li>
+</ol>
+<h2 id="questions-for-the-owner">Questions for the owner</h2>
+<ul>
+<li>Should analysis run at upload without asking, or only when asked? (Proposed: thumbnails and facts always; transcripts and labels when asked, per vault.)</li>
+<li>Is counting faces enough, or should recognising people be possible, opt-in, per vault?</li>
+<li>Which language should transcripts assume: the device's, or one set per vault?</li>
+</ul>
+</main>
+
+<footer class="site"><div class="cols">
+  <div>
+    <div class="brandline">Voice<em>Debrief</em> <span>iOS</span></div>
+    <p>The VoiceDebrief transcript and debrief as a native iPhone and iPad app, on Apple's own models, with the results in a vault you own. In development: there is nothing to install yet. Content CC BY 4.0; code Apache 2.0.</p>
+    <p class="partnote">This site is static and has no analytics.</p>
+    <p class="verline">site dev · <a href="index.md">this page as markdown</a> · <a href="../../llms.txt">llms.txt</a></p>
+  </div>
+  <div>
+    <h4>The app</h4>
+    <a href="../../built/index.html">What is built</a>
+    <a href="../../plan/index.html">The plan</a>
+    <a href="../../develop/index.html">Build and test</a>
+    <a href="../../versions/index.html">Release history</a>
+    <a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">GitHub</a>
+  </div>
+  <div>
+    <h4>VoiceDebrief</h4>
+    <a href="https://voicedebrief.ai">voicedebrief.ai</a>
+    <a href="https://meetscribe.chrome-extension.voicedebrief.ai">MeetScribe for Google Meet</a>
+  </div>
+  <div>
+    <h4>Built on</h4>
+    <a href="https://sgit.ai">sgit.ai</a>
+    <a href="https://pki.sgit.ai">pki.sgit.ai</a>
+    <a href="https://sgit.ai/security/index.html">The vault security model</a>
+  </div>
+</div></footer>
+</body>
+</html>

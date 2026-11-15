@@ -31,7 +31,7 @@
   "seen-working": 27,
   "built-untried": 100,
   "in-progress": 45,
-  "proposed": 60,
+  "proposed": 61,
   "parked": 6
  },
  "ideas": [
@@ -1818,6 +1818,30 @@
    ],
    "url": "https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/125-sgit-app-autofill-passwords-and-passkeys.md",
    "source": "The owner"
+  },
+  {
+   "id": "issue-126",
+   "kind": "issue",
+   "number": "126",
+   "app": "SGit Vaults",
+   "title": "sgit app: an analysis layer filed by content hash",
+   "status": "proposed",
+   "why": "Open, with nothing built yet: \"\"",
+   "summary": "Asked by the owner, 15 November 2026: map how to add metadata and details to each file, tied to the file's hash so that moves keep it; use Apple Intelligence to see what is in videos; transcribe videos with the VoiceDebrief transcriber.",
+   "detail": [
+    "Asked by the owner, 15 November 2026: map how to add metadata and details to each file, tied to the file's hash so that moves keep it; use Apple Intelligence to see what is in videos; transcribe videos with the VoiceDebrief transcriber.",
+    "The map is website/sgit-app/analysis/index.md (proposed, nothing built).",
+    "Next, in order: 1. Missing thumbnails and facts made on request (fixes the plain film icons on videos uploaded without them). 2. Video transcripts with SpeechAnalyzer, captions in the viewer. 3. Vision labels and on-screen text. 4. A summary and tags from the on-device language model. 5. Search on the device.",
+    "Waiting on the owner: the three questions at the end of the page."
+   ],
+   "statusLine": "",
+   "places": [
+    "SGit Vaults"
+   ],
+   "versions": [],
+   "features": [],
+   "url": "https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/126-sgit-app-file-analysis.md",
+   "source": "The project"
   },
   {
    "id": "issue-200",
