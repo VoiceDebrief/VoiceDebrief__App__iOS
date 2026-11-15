@@ -6,9 +6,11 @@ name: iOS vault round trip
 # noticed the week it lands), or by hand:
 #   swift-writes     macOS: the write, create and sync tests export the vaults Swift wrote (SGITVAULT_ROUNDTRIP_OUT):
 #                    one committed to, one created, and one created in a folder (as on a device) and then
-#                    pushed to another folder (as to a server) by VaultSync
+#                    pushed to another folder (as to a server) by VaultSync; and one written as a single
+#                    file (VaultArchive, SGit Secrets' one-file store)
 #   sgit-reads-swift Linux: sgit-ai 0.27 clones each, switches to the Swift branch,
-#                    verifies every signature and compares every file
+#                    verifies every signature and compares every file; the single file is first unpacked
+#                    with plain `unzip`, and also cloned with `sgit clone --transport local`
 #   reference-reader Linux: the fixtures, read by the Python reference reader
 
 on:
@@ -19,6 +21,8 @@ on:
       - 'Packages/SGitVault/Sources/SGitVault/VaultWrite.swift'
       - 'Packages/SGitVault/Sources/SGitVault/VaultCreate.swift'
       - 'Packages/SGitVault/Sources/SGitVault/VaultSync.swift'
+      - 'Packages/SGitVault/Sources/SGitVault/VaultFileStore.swift'
+      - 'Packages/SGitVault/Tests/SGitVaultTests/FileStoreTests.swift'
       - 'Packages/SGitVault/Tests/SGitVaultTests/SyncTests.swift'
       - 'Packages/SGitVault/Tests/SGitVaultTests/CreateTests.swift'
       - 'Packages/SGitVault/Sources/SGitVault/PythonJSON.swift'
@@ -51,7 +55,7 @@ jobs:
           SGITVAULT_ROUNDTRIP_OUT: ${{ runner.temp }}/roundtrip
         run: |
           set -o pipefail
-          swift test --filter 'WriteTests|CreateTests|SyncTests' 2>&1 | tee "$RUNNER_TEMP/write-tests.log" || {
+          swift test --filter 'WriteTests|CreateTests|SyncTests|FileStoreTests' 2>&1 | tee "$RUNNER_TEMP/write-tests.log" || {
             { echo "### ❌ Swift write tests failed"; echo '```'
               grep -E "error:|failed" "$RUNNER_TEMP/write-tests.log" | head -40; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
             exit 1; }
@@ -76,6 +80,19 @@ jobs:
         with:
           name: swift-written-vaults
           path: ${{ runner.temp }}/roundtrip
+      - name: The single vault file, unpacked with plain unzip and cloned with sgit's local transport
+        run: |
+          set -euo pipefail
+          found=0
+          for d in "$RUNNER_TEMP"/roundtrip/*/; do
+            [ -f "$d/vault.sgvault" ] || continue
+            found=1
+            unzip -q "$d/vault.sgvault" -d "$d/server"
+            key=$(python3 -I -c 'import json,sys; print(json.load(open(sys.argv[1]))["vault_key"])' "$d/expected.json")
+            sgit clone --transport local --base-url "$d/server" "$key" "$RUNNER_TEMP/local-clone-$(basename "$d")"
+            echo "$(basename "$d"): unzip and sgit clone --transport local: $(find "$RUNNER_TEMP/local-clone-$(basename "$d")" -type f -not -path '*/.sg_vault/*' | wc -l) files" | tee -a "$GITHUB_STEP_SUMMARY"
+          done
+          [ "$found" = 1 ] || { echo "no vault.sgvault was exported" | tee -a "$GITHUB_STEP_SUMMARY"; exit 1; }
       - name: sgit clones, switches branch, verifies signatures, compares files
         run: |
           set -o pipefail

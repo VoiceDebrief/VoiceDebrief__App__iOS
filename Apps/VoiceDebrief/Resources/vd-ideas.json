@@ -29,7 +29,7 @@
  ],
  "counts": {
   "seen-working": 27,
-  "built-untried": 101,
+  "built-untried": 102,
   "in-progress": 45,
   "proposed": 61,
   "parked": 6
@@ -3972,6 +3972,24 @@
    "detail": [
     "VaultDoor.door(fromSecret:site:): the derivation of door.js with the site constant as a parameter, and VaultDoor.pkiSite",
     "The vector published at newsroom.sgit.ai/passkey/vectors.json: passphrase, vault id, read key and write key"
+   ],
+   "places": [],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
+   "id": "feature.a.vault.as.one.file",
+   "kind": "feature",
+   "app": "VoiceDebrief",
+   "title": "A vault as one file",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "Packages/SGitVault/Sources/SGitVault/VaultFileStore.swift (SGit Secrets, step 1 of the secrets app plan): VaultArchive writes a vault folder as one stored zip, always the same bytes for the same folder, and reads it back, refusing any name that could leave the vault's four folders, symbolic links, compression, duplicates, bad checksums and objects that do not match their ids; VaultObjects.union...",
+   "detail": [
+    "Packages/SGitVault/Sources/SGitVault/VaultFileStore.swift (SGit Secrets, step 1 of the secrets app plan): VaultArchive writes a vault folder as one stored zip, always the same bytes for the same folder, and reads it back, refusing any name that could leave the vault's four folders, symbolic links, compression, duplicates, bad checksums and objects that do not match their ids; VaultObjects.union joins two copies' objects, checked before anything is copied, leaving refs alone; VaultFileStore replaces one file in a single step through a file coordinator and keeps five earlier copies in that file's own folder. On no screen; no iCloud yet; no merge of heads yet",
+    "Unit tests (FileStoreTests): the round trip read back by the engine, hostile names, symbolic links, a changed byte, an object that does not match its id, the union of two copies that changed apart, a tampered source changing nothing, five copies kept and nothing else touched. ios-vault.yml unpacks the Swift-written file with unzip and has sgit clone it, both by its usual check and with --transport local (not yet run)"
    ],
    "places": [],
    "issues": [],
