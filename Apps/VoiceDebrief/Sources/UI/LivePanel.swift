@@ -16,11 +16,15 @@ struct LivePanel: View {
     @State private var expanded: Set<String> = []
     private var desk: AgentsDesk { AgentsDesk.shared }
 
+    /// A contact that is Claude: the built-in developer lane, or a lane of the owner's own that a conductor
+    /// gave only to them ("Claude (your lane)"), so its messages are known to be theirs.
+    static func isClaude(_ name: String) -> Bool { name == RecipientStore.builtInName || name.hasPrefix("Claude") }
+
     /// Notes sent to Claude since the last Clear, newest first.
     private var threads: [Note] {
         session.store.notes
             .filter { note in
-                let toClaude = (note.sends ?? []).contains { $0.to == RecipientStore.builtInName } || note.pendingSend?.name == RecipientStore.builtInName
+                let toClaude = (note.sends ?? []).contains { Self.isClaude($0.to) } || note.pendingSend.map { Self.isClaude($0.name) } == true
                 return toClaude && note.createdAt.timeIntervalSince1970 > clearedAt
             }
             .sorted { $0.createdAt > $1.createdAt }
@@ -71,12 +75,12 @@ struct LivePanel: View {
         if !replies(to: note).isEmpty { return .answered }
         if ack(for: note) != nil { return .received }
         if note.sendProblem != nil { return .failed }
-        if (note.sends ?? []).contains(where: { $0.to == RecipientStore.builtInName }) { return .sent }
+        if (note.sends ?? []).contains(where: { Self.isClaude($0.to) }) { return .sent }
         return .sending
     }
 
     private func sentAt(_ note: Note) -> Date? {
-        note.sends?.last(where: { $0.to == RecipientStore.builtInName })?.at
+        note.sends?.last(where: { Self.isClaude($0.to) })?.at
     }
 
     @ViewBuilder private func card(_ note: Note) -> some View {
