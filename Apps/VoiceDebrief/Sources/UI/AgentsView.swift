@@ -71,7 +71,8 @@ struct AgentsView: View {
             }
         }
         .task { await desk.refresh(book: book) }
-        .sheet(item: $workbench) { v in WebVaultScreen(book: book, vault: v) }
+        // The whole screen, not a pop-up (the owner: "use as much of the screen as possible").
+        .fullScreenCover(item: $workbench) { v in WebVaultScreen(book: book, vault: v) }
         .task {
             // While you are here, look for news every two minutes.
             while !Task.isCancelled {
