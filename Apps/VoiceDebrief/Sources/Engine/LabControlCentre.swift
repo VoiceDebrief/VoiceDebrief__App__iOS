@@ -184,6 +184,8 @@ final class LabControlCentre {
     /// The library the find action reads. Set by the screen.
     var store: NoteStore?
     private let live = LiveTranscriber()
+    /// L02's claim on the app's one microphone turn (MicrophoneTurn).
+    private let turnId = UUID()
     private var consumed = 0
     private var waiting: [String] = []
     private var worker: Task<Void, Never>?
@@ -399,15 +401,21 @@ final class LabControlCentre {
             problem = "Choose the language spoken in Settings first."
             return
         }
+        guard MicrophoneTurn.shared.take(turnId) else {
+            problem = MicrophoneTurn.busy
+            return
+        }
         wantsToListen = true
         guard await AVAudioApplication.requestRecordPermission() else {
             wantsToListen = false
+            MicrophoneTurn.shared.giveBack(turnId)
             problem = "The microphone is not allowed for this app."
             return
         }
         // The screen was left, or a recording began, while the question was on the screen.
         guard wantsToListen, host.isRecording?() != true else {
             wantsToListen = false
+            MicrophoneTurn.shared.giveBack(turnId)
             return
         }
         do {
@@ -424,17 +432,20 @@ final class LabControlCentre {
             if !wantsToListen {
                 listening = false
                 await live.stop()
+                MicrophoneTurn.shared.giveBack(turnId)
             }
         } catch {
             wantsToListen = false
             listening = false
             await live.stop()
+            MicrophoneTurn.shared.giveBack(turnId)
             problem = "Listening could not start: \(error.localizedDescription)"
         }
     }
 
     func stopListening() async {
         wantsToListen = false
+        MicrophoneTurn.shared.giveBack(turnId)
         guard listening else { return }
         listening = false
         // The microphone tap and the engine stop before this first suspends. The audio session is
