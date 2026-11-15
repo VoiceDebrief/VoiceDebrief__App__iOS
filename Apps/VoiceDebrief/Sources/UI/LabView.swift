@@ -111,6 +111,7 @@ struct LabOnePromptView: View {
                     }
                 }
                 TextField("Prompt", text: $prompt, axis: .vertical)
+                    .voiceInput($prompt)
                     .lineLimit(2...6)
             } header: {
                 Text("Prompt")
@@ -125,6 +126,7 @@ struct LabOnePromptView: View {
 
             Section("Instructions") {
                 TextField("Instructions", text: $instructions, axis: .vertical)
+                    .voiceInput($instructions)
                     .lineLimit(2...8)
                     .font(.callout)
             }

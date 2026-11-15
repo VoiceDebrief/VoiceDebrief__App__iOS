@@ -41,6 +41,18 @@ struct AgentsReport: Codable, Equatable, Sendable {
     var decisions: [Decision]? = nil
     /// What happens next, in a few lines, as the conductor sees it.
     var nextSteps: [String]? = nil
+    /// Contacts the conductor offers to add, such as another conductor's lane (the owner: "send me a message
+    /// with an agent's key so I can onboard it from here; I accept it or not"). Nothing is added until you say so.
+    var contactOffers: [ContactOffer]? = nil
+
+    struct ContactOffer: Codable, Equatable, Sendable, Identifiable {
+        var id: String
+        var name: String
+        var link: String            // an sgi1. lane link: where to send, never a secret
+        var why: String?
+        var from: String
+        var at: Date
+    }
 
     struct Decision: Codable, Equatable, Sendable, Identifiable {
         var id: String

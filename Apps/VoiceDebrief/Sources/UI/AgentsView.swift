@@ -197,6 +197,7 @@ struct AgentsView: View {
             HStack {
                 TextField(agent.lane == nil ? "Message (passed on by the conductor)" : "Message", text: $draft, axis: .vertical)
                     .textFieldStyle(.roundedBorder)
+                    .voiceInput($draft)
                 Button {
                     let text = draft
                     draft = ""

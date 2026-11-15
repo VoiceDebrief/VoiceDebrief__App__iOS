@@ -29,7 +29,7 @@
  ],
  "counts": {
   "seen-working": 27,
-  "built-untried": 92,
+  "built-untried": 93,
   "in-progress": 43,
   "proposed": 61,
   "parked": 6
@@ -4085,6 +4085,28 @@
    "places": [
     "Record tab",
     "Settings: Identity",
+    "The repository: CI"
+   ],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
+   "id": "feature.voice.in.text.fields",
+   "kind": "feature",
+   "app": "VoiceDebrief",
+   "title": "Voice in text fields",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "UI/Design/VoiceInput.swift: .voiceInput($text) on a TextField adds a microphone button; FieldDictation is one shared listener built on the Lab's LabListener (one at a time, not while a note records, stops in the background); Model/DictationText.swift joins typed and spoken text. On the Lab's prompt and instructions, Your words, vault names, a contact's name and the key's name",
+   "detail": [
+    "UI/Design/VoiceInput.swift: .voiceInput($text) on a TextField adds a microphone button; FieldDictation is one shared listener built on the Lab's LabListener (one at a time, not while a note records, stops in the background); Model/DictationText.swift joins typed and spoken text. On the Lab's prompt and instructions, Your words, vault names, a contact's name and the key's name",
+    "DictationTextTests. CI compiles it; not yet used on a device"
+   ],
+   "places": [
+    "Settings: Experiments, the Lab",
+    "Settings: Experiments, Your words",
     "The repository: CI"
    ],
    "issues": [],

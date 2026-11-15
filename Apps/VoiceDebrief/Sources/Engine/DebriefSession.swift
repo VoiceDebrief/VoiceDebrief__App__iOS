@@ -163,12 +163,21 @@ final class DebriefSession {
                 self?.pushLevel()
             }
         }
-        // The live text is a preview. If it cannot start, the recording goes on without it.
+        liveCarry = ""
+        paused = false
+        pausedAt = nil
+        await startLive(localeId: localeId)
+    }
+
+    /// The live text is a preview. If it cannot start, the recording goes on without it. After a pause the
+    /// words heard before it are carried in front of the new ones.
+    private func startLive(localeId: String) async {
+        let carry = liveCarry
         do {
             try await live.start(localeId: localeId) { settled, volatile in
                 Task { @MainActor [weak self] in
                     guard let self else { return }
-                    self.liveSettled = settled
+                    self.liveSettled = carry.isEmpty ? settled : (settled.isEmpty ? carry : carry + " " + settled)
                     self.liveVolatile = volatile
                     // "Send this now" at the end of what was said finishes the recording.
                     self.heard(settled + " " + volatile)
@@ -177,6 +186,47 @@ final class DebriefSession {
         } catch {
             liveNote = "No live text: \(error.localizedDescription). The recording is still running."
         }
+    }
+
+    // MARK: Pause (the owner, 15 November 2026: "a pause button and the finish button: I might want to pause,
+    // change some settings, and carry on with the memo")
+
+    /// True while a recording is paused: nothing is written, the live words are off, the file stays open.
+    private(set) var paused = false
+    private var pausedAt: Date?
+    private var liveCarry = ""
+
+    /// The seconds actually recorded so far, not counting pauses.
+    var recordedSeconds: TimeInterval {
+        guard let since = recordingSince else { return 0 }
+        return (pausedAt ?? Date()).timeIntervalSince(since)
+    }
+
+    /// The words heard so far (the live preview), for the small counter.
+    var wordsHeard: Int {
+        (liveSettled + " " + liveVolatile).split(whereSeparator: { $0.isWhitespace }).count
+    }
+
+    func pauseRecording() async {
+        guard recordingSince != nil, !paused else { return }
+        recorder.pause()
+        paused = true
+        pausedAt = Date()
+        liveCarry = (liveSettled + " " + liveVolatile).trimmingCharacters(in: .whitespaces)
+        await live.stop()
+        UsageLog.shared.action("record.pause")
+    }
+
+    func resumeRecording() async {
+        guard let since = recordingSince, paused, let at = pausedAt else { return }
+        // The clock moves on by the length of the pause, so the timer shows recorded time only.
+        recordingSince = since.addingTimeInterval(Date().timeIntervalSince(at))
+        pausedAt = nil
+        paused = false
+        silentSince = nil
+        recorder.resume()
+        UsageLog.shared.action("record.resume")
+        await startLive(localeId: recordingLocaleId)
     }
 
     /// The level display, calmer (the owner, twice: too sensitive, "very noisy"): room noise below a small
@@ -197,7 +247,7 @@ final class DebriefSession {
     private var liveStoppedForSilence = false
 
     private func pushLevel() {
-        guard recordingSince != nil else { return }
+        guard recordingSince != nil, !paused else { return }
         let decibels = recorder.decibels()
         let raw = VoiceRecorder.level(decibels: decibels)
         if decibels > -120 { silentSince = nil; microphoneSilent = false }
@@ -228,6 +278,7 @@ final class DebriefSession {
         await live.stop()
         recorder.stop()
         recordingSince = nil
+        paused = false; pausedAt = nil; liveCarry = ""
         RemoteControl.end()
         guard let id = recordingNoteId else {
             failure = "Nothing was recorded."
@@ -250,6 +301,7 @@ final class DebriefSession {
         meter = nil
         await live.stop()
         recorder.stop()
+        paused = false; pausedAt = nil; liveCarry = ""
         if let id = recordingNoteId { store.delete(id) }
         recordingNoteId = nil
         recordingSince = nil

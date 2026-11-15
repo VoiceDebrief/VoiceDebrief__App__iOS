@@ -64,6 +64,11 @@ final class VoiceRecorder {
         return linear * linear
     }
 
+    /// Pauses writing; the file stays open and resume carries on in the same file.
+    func pause() { recorder?.pause() }
+    /// Carries on writing after a pause.
+    func resume() { _ = recorder?.record() }
+
     /// Stops and closes the file.
     func stop() {
         recorder?.stop()

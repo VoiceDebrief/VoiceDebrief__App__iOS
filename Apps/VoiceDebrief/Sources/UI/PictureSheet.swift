@@ -30,6 +30,7 @@ struct PictureSheet: View {
                 Section("With it") {
                     TextField("A line about it (optional)", text: $caption, axis: .vertical)
                         .lineLimit(1...5)
+                        .voiceInput($caption)
                 }
                 Section("For") {
                     Picker("Send to", selection: $recipient) {
