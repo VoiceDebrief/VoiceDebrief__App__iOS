@@ -318,3 +318,30 @@ struct LabAskDeskTests {
         #expect(talk.state == .idle)
     }
 }
+
+@Suite("Lab L05: speaking takes the app's one turn")
+@MainActor
+struct LabSpeakerTests {
+    @Test func nothingIsSaidWhileSomethingElseHoldsTheTurnOrANoteIsBeingRecorded() async {
+        let turn = MicrophoneTurn()
+        let other = UUID()
+        #expect(turn.take(other))
+        let mine = UUID()
+        #expect(!turn.take(mine))
+        turn.giveBack(mine)
+        #expect(turn.holder == other)
+        turn.giveBack(other)
+        #expect(turn.take(mine))
+        #expect(turn.take(mine))
+
+        let host = LabActionHost()
+        host.isRecording = { true }
+        let speaker = LabSpeaker(host: host)
+        let said = await speaker.speak("You have 3 tasks.", localeId: "en-GB")
+        #expect(said == nil)
+        #expect(speaker.problem == "Not said aloud: a note is being recorded.")
+        let nothing = await speaker.speak("   ", localeId: "en-GB")
+        #expect(nothing == nil)
+        #expect(speaker.problem == nil)
+    }
+}

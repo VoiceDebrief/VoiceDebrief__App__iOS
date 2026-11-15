@@ -7,7 +7,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | Seen working | Built, and a run proved it: CI, a device or a server. | 27 |
 | Built, untried | In the app or the repository, but not yet proven by a run on a device. | 93 |
 | In progress | Begun: part of it is built or a release has touched it. | 43 |
-| Proposed | Asked for or described; nothing of it is built. | 61 |
+| Proposed | Asked for or described; nothing of it is built. | 62 |
 | Parked | Waiting: on the owner, on Apple, or scheduled for later. | 6 |
 
 ## Seen working
@@ -214,6 +214,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | Synthetic users | Article | Both |   |   | [article](../articles/synthetic-users/index.md) |
 | The lab | Article | Both |   |   | [article](../articles/the-lab/index.md) |
 | The vault is a version-controlled store | Article | Both |   |   | [article](../articles/the-vault-is-a-version-controlled-store/index.md) |
+| Three layers: code, the model on the device, and agents | Article | Both |   |   | [article](../articles/three-layers/index.md) |
 | Two decision engines | Article | Both |   |   | [article](../articles/two-decision-engines/index.md) |
 | Voice everywhere | Article | Both |   |   | [article](../articles/voice-everywhere/index.md) |
 | Where each key lives | Article | Both |   |   | [article](../articles/where-each-key-lives/index.md) |

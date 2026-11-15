@@ -46,6 +46,8 @@ const PAGES = [
     description: 'Ideas, positions and briefs for the project: the lab, two decision engines, a harness inside the app, the vault as a version-controlled store, voice everywhere, synthetic users.' },
   { path: 'articles/the-lab', nav: null, title: 'The lab: finding out what the Apple platform can do',
     description: 'A brief: use the app as a laboratory for on-device models, tool calls, vaults and interfaces, before deciding what the product is. Ten experiments.' },
+  { path: 'articles/three-layers', nav: null, title: 'Three layers: code, the model on the device, and agents',
+    description: 'A position: three things can do work in this project, the app\'s code, Apple\'s model on the device and agents in a loop; what each is good and bad at, examples from what exists, and how a voice note moves between them.' },
   { path: 'articles/two-decision-engines', nav: null, title: 'Two decision engines: the code and the model',
     description: 'A position: the code owns the states and the model is asked one question at a time, through function calls, with no long history.' },
   { path: 'articles/a-harness-inside-the-app', nav: null, title: 'A harness inside the app',

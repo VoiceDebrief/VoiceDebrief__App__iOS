@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 800" width="1080" height="800" role="img" aria-labelledby="t d">
+<title id="t">Three layers: code, the model on the device, and agents</title>
+<desc id="d">Three bands. Code on the device records, keeps, decides states and counts: exact, instant, free. Apple's model on the device transcribes, debriefs, labels and picks one action: free, private, small. Agents in a loop receive, file, reply and build: capable, slow, paid per run. On the right, a voice note moves through them: code records and keeps it, the local model transcribes and labels it, code seals and sends it, the conductor acts and replies, code shows the reply.</desc>
+<style>
+  .bg{fill:#F8FAFC} .box{fill:#FFFFFF;stroke:#C9D5E0;stroke-width:1.2} .zone{fill:none;stroke:#9FB2C4;stroke-width:1.2;stroke-dasharray:2 4}
+  .live{stroke:#0E9E72;stroke-width:2} .test{stroke:#8A6A18;stroke-width:1.6} .plan{stroke:#6B7F94;stroke-width:1.4;stroke-dasharray:6 5}
+  .t{font:600 14px -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;fill:#0B1B2B}
+  .s{font:400 12px -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;fill:#45596E}
+  .z{font:600 12px -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;fill:#6B7F94;letter-spacing:.06em}
+  .h{font:700 17px -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;fill:#0B1B2B}
+  .l{font:400 11.5px -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;fill:#45596E}
+  .a{fill:none;stroke:#45596E;stroke-width:1.5} .a.live{stroke:#0E9E72;stroke-width:2} .a.plan{stroke:#6B7F94;stroke-dasharray:6 5}
+  .hd{fill:#45596E} .hd.live{fill:#0E9E72} .hd.plan{fill:#6B7F94} .n{fill:#0E9E72} .nt{font:700 12px -apple-system,Helvetica,Arial,sans-serif;fill:#FFFFFF}
+  .lb{fill:#F8FAFC}
+  @media (prefers-color-scheme: dark){
+    .bg{fill:#08131F} .box{fill:#0E1E2E;stroke:#2B3F53} .zone{stroke:#48607A} .live{stroke:#12C08A} .test{stroke:#F0B429} .plan{stroke:#8CA2B8}
+    .t,.h{fill:#F2F6FA} .s,.l{fill:#A8BBCE} .z{fill:#8CA2B8} .a{stroke:#A8BBCE} .a.live{stroke:#12C08A} .a.plan{stroke:#8CA2B8}
+    .hd{fill:#A8BBCE} .hd.live{fill:#12C08A} .hd.plan{fill:#8CA2B8} .n{fill:#12C08A} .nt{fill:#04231A} .lb{fill:#08131F}
+  }
+</style>
+<rect class="bg" width="1080" height="800" rx="14"/>
+<text class="h" x="24" y="36">Three layers: what runs where</text>
+<text class="s" x="24" y="58">Give each step of a job to the lowest layer that can do it well. Green: in the repository today, most of it in test.</text>
+<rect class="zone" x="20" y="78" width="700" height="210" rx="14"/>
+<text class="z" x="36" y="102">1  THE CODE, ON THE DEVICE</text>
+<text class="s" x="36" y="122">exact · instant · free · offline · only what somebody wrote</text>
+<rect class="box live" x="36" y="138" width="214" height="60" rx="10"/>
+<text class="t" x="48" y="163">Keeps every recording</text>
+<text class="l" x="48" y="183">kept from the first second</text>
+<rect class="box live" x="262" y="138" width="214" height="60" rx="10"/>
+<text class="t" x="274" y="163">Owns every state</text>
+<text class="l" x="274" y="183">recording, waiting, written up, sent</text>
+<rect class="box live" x="488" y="138" width="214" height="60" rx="10"/>
+<text class="t" x="500" y="163">Counts the briefing</text>
+<text class="l" x="500" y="183">so it is always true</text>
+<rect class="box live" x="36" y="210" width="214" height="60" rx="10"/>
+<text class="t" x="48" y="235">Hears “send this now”</text>
+<text class="l" x="48" y="255">a fixed list of phrases</text>
+<rect class="box live" x="262" y="210" width="214" height="60" rx="10"/>
+<text class="t" x="274" y="235">Encrypts, signs, syncs</text>
+<text class="l" x="274" y="255">vaults, lanes, commits</text>
+<rect class="zone" x="20" y="304" width="700" height="210" rx="14"/>
+<text class="z" x="36" y="328">2  APPLE’S MODEL, ON THE DEVICE</text>
+<text class="s" x="36" y="348">free per use · private · about a second · small context</text>
+<rect class="box live" x="36" y="364" width="214" height="60" rx="10"/>
+<text class="t" x="48" y="389">Transcribes</text>
+<text class="l" x="48" y="409">6 min 44 s in 5.4 s on an iPad</text>
+<rect class="box live" x="262" y="364" width="214" height="60" rx="10"/>
+<text class="t" x="274" y="389">Writes the debrief</text>
+<text class="l" x="274" y="409">summary, points, actions</text>
+<rect class="box live" x="488" y="364" width="214" height="60" rx="10"/>
+<text class="t" x="500" y="389">Labels while you speak</text>
+<text class="l" x="500" y="409">who, topic, urgency (Lab L04)</text>
+<rect class="box live" x="36" y="436" width="214" height="60" rx="10"/>
+<text class="t" x="48" y="461">Picks one action</text>
+<text class="l" x="48" y="481">beside fixed phrases (Lab L02)</text>
+<rect class="box live" x="262" y="436" width="214" height="60" rx="10"/>
+<text class="t" x="274" y="461">Cleans the text</text>
+<text class="l" x="274" y="481">and asks what it missed</text>
+<rect class="zone" x="20" y="530" width="700" height="210" rx="14"/>
+<text class="z" x="36" y="554">3  AGENTS, IN A LOOP</text>
+<text class="s" x="36" y="574">capable · minutes · paid per run · sees only what is sent</text>
+<rect class="box live" x="36" y="590" width="214" height="60" rx="10"/>
+<text class="t" x="48" y="615">Receives</text>
+<text class="l" x="48" y="635">the conductor drains the lane</text>
+<rect class="box live" x="262" y="590" width="214" height="60" rx="10"/>
+<text class="t" x="274" y="615">Files</text>
+<text class="l" x="274" y="635">notes into vaults</text>
+<rect class="box live" x="488" y="590" width="214" height="60" rx="10"/>
+<text class="t" x="500" y="615">Replies</text>
+<text class="l" x="500" y="635">under the note, via a vault</text>
+<rect class="box live" x="36" y="662" width="214" height="60" rx="10"/>
+<text class="t" x="48" y="687">Reports</text>
+<text class="l" x="48" y="707">Agents: work and decisions</text>
+<rect class="box live" x="262" y="662" width="214" height="60" rx="10"/>
+<text class="t" x="274" y="687">Builds the app</text>
+<text class="l" x="274" y="707">issue, code, release card</text>
+<rect class="zone" x="736" y="78" width="324" height="662" rx="14"/>
+<text class="z" x="752" y="102">A VOICE NOTE, END TO END</text>
+<circle class="n" cx="766" cy="142" r="13"/><text class="nt" x="766" y="146" text-anchor="middle">1</text>
+<text class="t" x="788" y="140">Code records and keeps it</text>
+<text class="l" x="788" y="159">on disk at once; the end phrase heard</text>
+<text class="l" x="788" y="178">layer 1</text>
+<path class="a live" d="M766 158 L766 240"/><path class="hd live" d="M761 232 L766 242 L771 232 Z"/>
+<circle class="n" cx="766" cy="266" r="13"/><text class="nt" x="766" y="270" text-anchor="middle">2</text>
+<text class="t" x="788" y="264">The model transcribes and labels</text>
+<text class="l" x="788" y="283">on the device, for nothing</text>
+<text class="l" x="788" y="302">layer 2</text>
+<path class="a live" d="M766 282 L766 364"/><path class="hd live" d="M761 356 L766 366 L771 356 Z"/>
+<circle class="n" cx="766" cy="390" r="13"/><text class="nt" x="766" y="394" text-anchor="middle">3</text>
+<text class="t" x="788" y="388">Code seals and sends it</text>
+<text class="l" x="788" y="407">to the recipient’s key; tries again</text>
+<text class="l" x="788" y="426">layer 1</text>
+<path class="a live" d="M766 406 L766 488"/><path class="hd live" d="M761 480 L766 490 L771 480 Z"/>
+<circle class="n" cx="766" cy="514" r="13"/><text class="nt" x="766" y="518" text-anchor="middle">4</text>
+<text class="t" x="788" y="512">The conductor acts</text>
+<text class="l" x="788" y="531">files it, makes an issue, replies</text>
+<text class="l" x="788" y="550">layer 3</text>
+<path class="a live" d="M766 530 L766 612"/><path class="hd live" d="M761 604 L766 614 L771 604 Z"/>
+<circle class="n" cx="766" cy="638" r="13"/><text class="nt" x="766" y="642" text-anchor="middle">5</text>
+<text class="t" x="788" y="636">Code shows the reply</text>
+<text class="l" x="788" y="655">under the note; the briefing counts it</text>
+<text class="l" x="788" y="674">layer 1</text>
+<text class="s" x="24" y="784">Each handover is a file, a sealed message or a commit that can be seen. From the owner, 15 November 2026: “what we run at each layer is the superpower.”</text>
+</svg>

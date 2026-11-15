@@ -323,7 +323,10 @@ function readArticleTexts() {
     ...ARTICLE_EXTRA.filter((p) => existsSync(join(SITE, p.path, 'index.md'))),
   ];
   return pages.map(({ path, app, kind }) => {
-    const md = readFileSync(join(SITE, path, 'index.md'), 'utf8').replace(/\r/g, '');
+    // an article may carry a short version for the apps (short.md beside index.md); the title stays the page's
+    const full = readFileSync(join(SITE, path, 'index.md'), 'utf8').replace(/\r/g, '');
+    const shortFile = join(SITE, path, 'short.md');
+    const md = existsSync(shortFile) ? `${full.match(/^# .*$/m)[0]}\n\n${readFileSync(shortFile, 'utf8').replace(/\r/g, '')}` : full;
     const title = plain((md.match(/^# (.*)$/m) || [, path])[1]);
     const toSite = (href) => {
       if (/^[a-z]+:/i.test(href) || href.startsWith('#')) return href;
