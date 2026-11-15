@@ -67,6 +67,16 @@ struct LabView: View {
                             .foregroundStyle(.secondary)
                     }
                 }
+                NavigationLink {
+                    LabEditView(store: store)
+                } label: {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("L07: Edit with Apple Intelligence")
+                        Text("Give a text and a request. The model proposes the edit, shown as what goes and what comes in, and you accept or reject it.")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                    }
+                }
             } header: {
                 Text("Experiments")
             } footer: {

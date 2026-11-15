@@ -29,9 +29,9 @@
  ],
  "counts": {
   "seen-working": 27,
-  "built-untried": 91,
-  "in-progress": 42,
-  "proposed": 60,
+  "built-untried": 92,
+  "in-progress": 43,
+  "proposed": 61,
   "parked": 6
  },
  "ideas": [
@@ -1158,6 +1158,63 @@
    "versions": [],
    "features": [],
    "url": "https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/050-lab-task-discovery.md",
+   "source": "The owner"
+  },
+  {
+   "id": "issue-051",
+   "kind": "issue",
+   "number": "051",
+   "app": "VoiceDebrief",
+   "title": "An exploration: YouTube in the app, Spotify, and which other accounts to connect",
+   "status": "proposed",
+   "why": "Open, with nothing built yet: \"Status: open, an exploration. No code. From the owner's note of 15 November 2026, 11:54, relayed by the parent session. Written by the Lab session from what it...\"",
+   "summary": "The question behind it: a voice-first app that already hears \"open the library\" could as well hear \"play that talk about vaults\" or \"put some music on\". What would that take, within the project's rules (Apple SDK only; no backend of ours; nothing in the app may be a secret, since the build is public)?",
+   "detail": [
+    "The question behind it: a voice-first app that already hears \"open the library\" could as well hear \"play that talk about vaults\" or \"put some music on\". What would that take, within the project's rules (Apple SDK only; no backend of ours; nothing in the app may be a secret, since the build is public)?",
+    "1. Playing YouTube videos inside the app",
+    "How it is done. A WKWebView that loads YouTube's embedded player (the IFrame player, at youtube.com/embed/<video id>), with inline playback allowed in the web view's configuration. WebKit is Apple's; the app already uses a WKWebView in WebVaultView. No YouTube SDK and no key are needed to play a video whose id is known.",
+    "The rules, as understood (to check against the YouTube API Services terms and the developer policies):",
+    "- The player must be YouTube's own, shown as it comes: its controls, branding and advertisements are not to be hidden, covered or altered. - No playing in the background or with the screen off, and no separating the sound from the picture. For a voice-first app this is the one that matters: \"play it while I drive with the phone locked\" is not allowed through the embed. That is what YouTube Premium and YouTube Music sell. - No downloading or keeping the video or its audio. - A video's owner can switch embedding off, and some videos (much music) will not play embedded at all. - The player must be at least a minimum size (remembered as 200 by 200 points; to check).",
+    "Finding a video by voice is the harder half. Playing needs an id. Getting from \"that talk about vaults\" to an id means search, which is the YouTube Data API: an API key with a daily quota. A key in a public build is not a secret, so it can be taken and its quota spent by anyone; restricting it to the app's bundle identifier helps and is not proof. Three ways that need no key: play only links that are already in the user's notes or pasted in; let the user paste or share a link to the app; or open YouTube's own search in the web view and let the user choose.",
+    "What Apple's review would look at (to check): an app that is mainly a wrapper around someone else's video service is refused; a player inside an app that does something else is common. Videos bring in content the app does not control, which bears on the age rating.",
+    "A first experiment that is clearly safe: a Lab screen that takes a YouTube link, from a note or pasted, and plays it in the embedded player, on screen, as YouTube provides it. Apple SDK only, no key, no account. What it would teach: whether the embed behaves in a WKWebView on the three devices, and what happens to the app's own listening while a video plays (the audio session again: see issue 047). Not built: the parent session's brief was no code unless clearly safe, and the audio session question deserves the microphone-turn work to land first."
+   ],
+   "statusLine": "Status: open, an exploration. No code. From the owner's note of 15 November 2026, 11:54, relayed by the parent session. Written by the Lab session from what it knows of these platforms; nothing here was checked against the providers' current terms or documentation on the day, and each point that a decision would rest on is marked \"to check\".",
+   "places": [
+    "A note: the player",
+    "Library tab",
+    "Settings: Recipients"
+   ],
+   "versions": [],
+   "features": [],
+   "url": "https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/051-video-music-and-other-accounts.md",
+   "source": "The owner"
+  },
+  {
+   "id": "issue-052",
+   "kind": "issue",
+   "number": "052",
+   "app": "VoiceDebrief",
+   "title": "The lab, seventh experiment (L07): edit with Apple Intelligence",
+   "status": "in-progress",
+   "why": "The issue says: \"Built in the Lab. The model is asked for the edited text only; the difference is worked out by the app, so what is shown is the change itself. Accept replaces...\"",
+   "summary": "Start small: pick or paste a paragraph (or a note's transcript), say or type an instruction (make it shorter, more formal, as bullet points, fix the names), the model proposes the change, shown as a before and after with the difference marked, accept or reject. Timed and logged like the others.",
+   "detail": [
+    "Start small: pick or paste a paragraph (or a note's transcript), say or type an instruction (make it shorter, more formal, as bullet points, fix the names), the model proposes the change, shown as a before and after with the difference marked, accept or reject. Timed and logged like the others.",
+    "Where it stands (15 November 2026)",
+    "Built in the Lab. The model is asked for the edited text only; the difference is worked out by the app, so what is shown is the change itself. Accept replaces the working copy and can be put back. Compiled and unit tested; no edit has been asked of a model.",
+    "What it does not do yet, and why",
+    "- It does not change a note. The text is a copy. Writing an accepted edit back into a note's transcript or debrief belongs to the session that owns notes, and wants a decision first: an edited transcript is no longer what was said. - The request is typed, or dictated with the voice button the design session has put on text fields. It has no listening of its own. - One text of up to 4,000 characters. A longer one is cut and the screen says so. Editing a long note in parts, as the debrief is made, is the next step if this proves useful. - All or nothing. A proposal is accepted or rejected whole; there is no accepting one change and not another. - Names are helped only by handing the model the names of the contacts.",
+    "What to measure, from the log",
+    "Whether the model keeps to the request and leaves the rest alone (the comparison shows it at a glance), how often it wraps or explains its reply, and the time for a paragraph on each device."
+   ],
+   "statusLine": "Status: open. From the owner's note of 15 November 2026, 11:54, relayed by the parent session.",
+   "places": [
+    "Settings: Experiments, the Lab"
+   ],
+   "versions": [],
+   "features": [],
+   "url": "https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/052-lab-edit.md",
    "source": "The owner"
   },
   {
@@ -3498,6 +3555,24 @@
    "detail": [
     "LabTalkView in UI/LabAskViews.swift, Engine/LabTalkBack.swift: a conversation by voice about the same data, answered the same way as L06. Four states the code owns: not listening, listening for a question, working out the answer, saying the answer. It takes one settled sentence as a question, stops listening, answers, says a short form of the answer with the system's voice (AVSpeechSynthesizer), and listens again; it does not listen while it speaks. A question can also be typed, and speaking can be switched off. Nothing is said aloud while a note is being recorded, because speaking changes the audio session",
     "Unit tests: a typed question answered and the conversation left idle, a conversation that does not start while a note is being recorded, the time an answer took to say noted on its turn. Never run on a device: whether the voice is heard, whether listening resumes cleanly after speaking, and how long a turn takes are unknown"
+   ],
+   "places": [],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
+   "id": "feature.the.lab.experiment.l07.edit.with.apple.intelligence",
+   "kind": "feature",
+   "app": "VoiceDebrief",
+   "title": "The Lab, experiment L07: edit with Apple Intelligence",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "UI/LabEditView.swift, Engine/LabEditDesk.swift, Model/LabEdit.swift, reached from Lab: a text (typed, pasted, or a note's words brought in as a copy), a request in your own words or one of five kept ready, and Apple's on-device model asked once, in a new session with no tools, for the edited text. The proposal is shown as the change it makes, worked out by the app word by word (what goes struck...",
+   "detail": [
+    "UI/LabEditView.swift, Engine/LabEditDesk.swift, Model/LabEdit.swift, reached from Lab: a text (typed, pasted, or a note's words brought in as a copy), a request in your own words or one of five kept ready, and Apple's on-device model asked once, in a new session with no tools, for the edited text. The proposal is shown as the change it makes, worked out by the app word by word (what goes struck through, what comes in underlined), with the text before and after beside it, and with cautions in plain words when nothing changed, when the result is more than twice or less than a quarter of the length, or when the text was too long to send whole. Accept replaces the working text and can be put back; Reject leaves it. The note the words came from is never changed. Each edit is timed and kept, and the log is exported as JSON",
+    "Unit tests: the word comparison (and that its pieces put back give each text), the prompt, taking a code fence or one pair of quotation marks off a reply and leaving quotation marks that belong to the text, a proposal accepted or rejected once, the cautions, the text changing only on Accept, a proposal made from a text that has since changed not being applied, the log's JSON. No edit has been asked of a model: whether it keeps to the request, and how long it takes, are unknown"
    ],
    "places": [],
    "issues": [],
