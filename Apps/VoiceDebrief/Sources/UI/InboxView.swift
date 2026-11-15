@@ -9,6 +9,8 @@ struct InboxView: View {
     let book: VaultBook
     var go: (RootTab) -> Void = { _ in }
     private var desk: AgentsDesk { AgentsDesk.shared }
+    /// The decision whose answer is being changed.
+    @State private var changing: String?
 
     private var replies: [AgentsReport.Message] { (desk.report?.messages ?? []).filter { $0.from != "you" } }
     private var decisions: [AgentsReport.Decision] { desk.report?.decisions ?? [] }
@@ -88,9 +90,14 @@ struct InboxView: View {
         VStack(alignment: .leading, spacing: 8) {
             Text(decision.title).font(.headline)
             if let detail = decision.detail { Text(detail).font(.callout).foregroundStyle(.secondary) }
-            if let chosen = desk.answered[decision.id] {
-                Label("You chose: \(chosen). Sent to Claude, sealed.", systemImage: "checkmark.circle.fill")
-                    .font(.footnote.weight(.semibold)).foregroundStyle(.green)
+            if let chosen = desk.answered[decision.id], changing != decision.id {
+                HStack {
+                    Label("You chose: \(chosen). Sent to Claude, sealed.", systemImage: "checkmark.circle.fill")
+                        .font(.footnote.weight(.semibold)).foregroundStyle(.green)
+                    Spacer()
+                    // A decision can be changed: the new choice goes to Claude too (the owner, 15 November 2026).
+                    Button("Change") { changing = decision.id }.font(.footnote)
+                }
             } else {
                 ViewThatFits(in: .horizontal) {
                     HStack { options(decision) }
@@ -105,7 +112,7 @@ struct InboxView: View {
 
     @ViewBuilder private func options(_ decision: AgentsReport.Decision) -> some View {
         ForEach(decision.options, id: \.self) { choice in
-            Button(choice) { Task { await desk.answer(decision, with: choice) } }
+            Button(choice) { Task { await desk.answer(decision, with: choice); changing = nil } }
                 .buttonStyle(.bordered)
                 .disabled(desk.sending)
         }

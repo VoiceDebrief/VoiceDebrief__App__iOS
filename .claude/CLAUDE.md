@@ -37,8 +37,8 @@ passkey. The plan is `website/plan/index.md`. Load-bearing decisions, not to be 
   in an app may be a secret. The one credential-shaped thing in VoiceDebrief is the developer lane's append token,
   which can only write to that inbox; treat it as public, and expect it to be replaced by the owner's own inbox.
   Secrets reach a device only as sealed messages to its key, into its secrets store.
-- **External TestFlight**: `testflight-external.yml` sends a dev build to each app's external group when its
-  commit message contains `[external]`, when its version's last number is a multiple of 10, or by hand.
+- **External TestFlight**: `testflight-external.yml` sends every green dev build to each app's external group
+  (unless its commit message contains `[internal]`), replacing one still waiting for review; or by hand.
 - **`Packages/SGitVault` is a copy** from `PrompTugal__App__iOS`. Record every change to it in
   `Packages/SGitVault/SOURCE.md`.
 - **The Xcode project is hand-written** with folder-synchronised groups: adding a Swift file needs
