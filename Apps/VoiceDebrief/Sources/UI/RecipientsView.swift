@@ -41,6 +41,7 @@ struct RecipientsView: View {
 
             Section {
                 TextField("Name (optional)", text: $name)
+                    .voiceInput($name)
                 if canScan {
                     Button {
                         scanning = true
