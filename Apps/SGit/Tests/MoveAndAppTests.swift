@@ -57,6 +57,7 @@ struct MoveAndAppTests {
     @Test func theGalleryPageFollowsTheVaultAppContract() throws {
         let html = String(decoding: GalleryPage.html(title: "Web <Summit>"), as: UTF8.self)
         #expect(html.contains("sg.vfs.readText('gallery.json')"))
+        #expect(html.contains("type: 'sg-app-ready'"))
         #expect(html.contains("sg.vfs.read(item.path)"))
         #expect(!html.contains("fetch("))
         #expect(!html.contains("<script src"))

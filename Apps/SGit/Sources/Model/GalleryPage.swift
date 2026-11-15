@@ -111,7 +111,8 @@ enum GalleryPage {
               cell.onclick = function () { show(i); };
               grid.appendChild(cell);
             });
-          }).catch(function (e) { document.getElementById('count').textContent = 'The list of pictures could not be read: ' + e; });
+          }).catch(function (e) { document.getElementById('count').textContent = 'The list of pictures could not be read: ' + e; })
+            .then(function () { try { window.parent.postMessage({ type: 'sg-app-ready' }, '*'); } catch (e) {} });
         })();
         </script>
         </body>
