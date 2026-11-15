@@ -209,6 +209,7 @@ struct LaunchedScreen: View {
         case .agents: return "Agents"
         case .play: return "Play"
         case .more: return "More"
+        case .inbox: return "Inbox"
         }
     }
 

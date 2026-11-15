@@ -14,6 +14,8 @@ final class AgentsDesk {
     private(set) var picture: Data?
     private(set) var problem: String?
     private(set) var loadedAt: Date?
+    /// Reading the vault for the first time this launch: the screen shows that, not the setup steps.
+    private(set) var loading = false
     private(set) var sent: [SentToAgent] = []
     private(set) var sending = false
     private let file = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0].appending(path: "agents-sent.json")
@@ -34,7 +36,9 @@ final class AgentsDesk {
 
     /// Pulls the vault and reads the report and its picture.
     func refresh(book: VaultBook) async {
-        guard let vault = book.vaults.first(where: { $0.id == vaultId }) else { return }
+        loading = report == nil
+        defer { loading = false }
+        guard let vault = book.vaults.first(where: { $0.id == vaultId }) else { loadedAt = Date(); return }
         if book.current(vault).remoteId != nil { await book.pull(vault) }
         do {
             report = try AgentsReport.decode(try await book.data(of: "agents/agents.json", in: book.current(vault)))
@@ -70,6 +74,23 @@ final class AgentsDesk {
             UsageLog.shared.action("agents.send")
         } catch {
             problem = "Not sent: \(error.localizedDescription)"
+        }
+    }
+
+    /// Decisions already answered on this device, so the Inbox shows them as done until the conductor's
+    /// next report takes them off.
+    private(set) var answered: [String: String] = (UserDefaults.standard.dictionary(forKey: "vd.answered") as? [String: String]) ?? [:]
+
+    /// Answers a decision: one sealed message to the conductor ("Decision <id>: <choice>").
+    func answer(_ decision: AgentsReport.Decision, with choice: String) async {
+        guard let report, let conductor = report.agents.first(where: { $0.id == report.conductor }) ?? report.agents.first else {
+            problem = "No conductor to answer."; return
+        }
+        await send("Decision \(decision.id) (\(decision.title)): \(choice)", to: conductor)
+        if problem == nil || !(problem ?? "").hasPrefix("Not sent") {
+            answered[decision.id] = choice
+            UserDefaults.standard.set(answered, forKey: "vd.answered")
+            UsageLog.shared.action("inbox.decision")
         }
     }
 

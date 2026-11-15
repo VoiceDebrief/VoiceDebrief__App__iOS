@@ -36,6 +36,20 @@ struct AgentsReport: Codable, Equatable, Sendable {
     var agents: [Agent]
     var links: [Link]
     var messages: [Message]
+    /// What the conductor needs the owner to decide, each with its choices (the owner: "what decisions do I
+    /// need to provide, what is next"). Answered from the Inbox; the answer goes to the conductor sealed.
+    var decisions: [Decision]? = nil
+    /// What happens next, in a few lines, as the conductor sees it.
+    var nextSteps: [String]? = nil
+
+    struct Decision: Codable, Equatable, Sendable, Identifiable {
+        var id: String
+        var title: String
+        var detail: String?
+        var options: [String]
+        var from: String            // the agent's id
+        var at: Date
+    }
 
     var counts: (working: Int, waiting: Int, idle: Int) {
         (agents.filter { $0.status == "working" }.count,

@@ -36,6 +36,15 @@ struct AgentsView: View {
                             AgentRow(agent: agent).tag(agent.id)
                         }
                     }
+                } else if desk.loading || (!desk.vaultId.isEmpty && desk.loadedAt == nil) {
+                    // A vault was given before: read it, rather than show the setup again (the owner saw
+                    // "Give this vault to Claude" again after choosing his vault, 15 November 2026).
+                    Section {
+                        HStack(spacing: 10) {
+                            ProgressView()
+                            Text("Reading the report from \(vault?.name ?? "your vault")").font(.callout)
+                        }
+                    }
                 } else {
                     Section { setup }
                 }
