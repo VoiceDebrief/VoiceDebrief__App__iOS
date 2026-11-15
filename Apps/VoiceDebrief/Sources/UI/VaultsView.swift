@@ -45,6 +45,7 @@ struct VaultsView: View {
 
                 Section {
                     TextField("Name, for this device only", text: $newName)
+                        .voiceInput($newName)
                     Button("Create a vault") {
                         let name = newName
                         newName = ""
@@ -107,6 +108,7 @@ struct VaultsView: View {
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled()
                     TextField("Name, for this device only", text: $pastedName)
+                        .voiceInput($pastedName)
                     if book.remotes.isEmpty {
                         Text("Add the server that holds the vault first.").font(.footnote).foregroundStyle(.secondary)
                     } else {

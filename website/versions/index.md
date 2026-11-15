@@ -4,6 +4,7 @@ Every release of this repository. Every push to `dev` is a release: CI works out
 
 | Version | Date | What changed |
 |---|---|---|
+| next | 14 November 2026 | A voice button on text fields, at the owner's request: a small microphone beside a field fills it by speech on this device, the words appearing as they are said after anything already typed; tap again to stop, and the text stays editable. One listener for every field, never while a note is being recorded, and it stops when the app leaves the foreground. On the Lab's prompt and instructions, Your words, a vault's name, a contact's name and the key's name; not on keys, tokens or links. |
 | v0.1.110 | 14 November 2026 | On iPhone, a part of the app reached through More no longer shows two back buttons: the tab bar is Record, Library, Contacts, Vaults and More, and More is now the app's own list of the other parts, grouped as the sidebar groups them, each opening with its own single navigation bar. The Guide leaves room at the bottom for the Talk button. |
 | v0.1.109 | 14 November 2026 | The Guide on iPad: a guide's numbered notes sit beside its picture only when they have room (260 points or more), otherwise under it; before, in a narrow column they were squeezed to a letter or two wide. |
 | v0.1.108 | 14 November 2026 | iPad and Mac record screen, from the screenshots: the recipient chips wrap onto a second line instead of being cut ("Maria (in"), and while recording the time sits above the button. |
