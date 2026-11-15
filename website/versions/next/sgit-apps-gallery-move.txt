@@ -5,10 +5,10 @@
 | VAULT APPS, PHOTO GALLERIES, MOVING FILES                            |
 |                                                                      |
 | * A vault with its own app opens in it, full screen: App | Files     |
-| * Photos: Show as a gallery, swipe from one to the next              |
-| * Add a gallery page, so the vault is a gallery on the web too       |
+| * Tap a photo or video: full screen, swipe on, (i) for details       |
+| * Photos: Show as a gallery; add a gallery page for the web          |
 | * Select files and folders, Move to: one change, nothing re-sent     |
-| * A mark on each file: on this device already, or still on the server|
+| * A mark on each file: on this device, or still on the server        |
 |                                                                      |
 |   [ ][ ][ ][ ]      stage/  --( 12 files )-->  photos/day-2/         |
 |   [ ][ ][ ][ ]      one commit: "Move 12 files to photos/day-2"      |
