@@ -28,8 +28,8 @@
   }
  ],
  "counts": {
-  "seen-working": 27,
-  "built-untried": 117,
+  "seen-working": 28,
+  "built-untried": 116,
   "in-progress": 46,
   "proposed": 61,
   "parked": 6
@@ -4124,12 +4124,12 @@
    "kind": "feature",
    "app": "VoiceDebrief",
    "title": "SGit CRM, the app shell",
-   "status": "built-untried",
-   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "status": "seen-working",
+   "why": "The reality file, Built: built: in the repository and proven by a run.",
    "summary": "Apps/CRM/ (CRM cell, step 1 of cells/crm-ios/brief.md): its own CRM.xcodeproj with folder-synchronised groups, bundle ai.sgit.crm.app, display name SGit CRM, iPhone and iPad, iOS 26.0, SGitVault, SGitPeople and SGitSecrets wired as SGit Vaults has them. A sidebar on an iPad and a list on an iPhone (NavigationSplitView) with Follow-ups, People, Organisations, Introductions, Drafts, Import and...",
    "detail": [
     "Apps/CRM/ (CRM cell, step 1 of cells/crm-ios/brief.md): its own CRM.xcodeproj with folder-synchronised groups, bundle ai.sgit.crm.app, display name SGit CRM, iPhone and iPad, iOS 26.0, SGitVault, SGitPeople and SGitSecrets wired as SGit Vaults has them. A sidebar on an iPad and a list on an iPhone (NavigationSplitView) with Follow-ups, People, Organisations, Introductions, Drafts, Import and About; every section but About says it is not built yet and which step builds it (Model/CRMSection.swift). .github/workflows/crm-app.yml: build for testing, Release build, unit tests on an iPhone and an iPad simulator, and a TestFlight step that stays off until CRM_APP_TESTFLIGHT is 1",
-    "Unit tests in Apps/CRM/Tests/ (Swift Testing), including that only About claims to be built, run by crm-app.yml. Not run on a device"
+    "Unit tests in Apps/CRM/Tests/ (Swift Testing), run by crm-app.yml. The owner installed it from TestFlight and it opened on a device, 16 November 2026 (build 0.1.142 (19) or 0.1.143 (20), uploaded that evening). The screens beyond opening have not yet been reported on"
    ],
    "places": [
     "The repository: CI"

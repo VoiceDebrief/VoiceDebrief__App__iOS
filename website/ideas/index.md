@@ -4,8 +4,8 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 
 | Status | Meaning | How many |
 |---|---|---|
-| Seen working | Built, and a run proved it: CI, a device or a server. | 27 |
-| Built, untried | In the app or the repository, but not yet proven by a run on a device. | 117 |
+| Seen working | Built, and a run proved it: CI, a device or a server. | 28 |
+| Built, untried | In the app or the repository, but not yet proven by a run on a device. | 116 |
 | In progress | Begun: part of it is built or a release has touched it. | 46 |
 | Proposed | Asked for or described; nothing of it is built. | 61 |
 | Parked | Waiting: on the owner, on Apple, or scheduled for later. | 6 |
@@ -27,6 +27,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | The About screen | Feature | VoiceDebrief | Settings: What this build does |   | [reality file](../built/index.md) |
 | The vault engine | Feature | VoiceDebrief | The repository: CI |   | [reality file](../built/index.md) |
 | A door on any site | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
+| SGit CRM, the app shell | Feature | VoiceDebrief | The repository: CI |   | [reality file](../built/index.md) |
 | The build pipeline | Feature | VoiceDebrief | The repository: CI |   | [reality file](../built/index.md) |
 | Pictures of every screen | Feature | VoiceDebrief | The repository: pictures of every screen; The repository: CI |   | [reality file](../built/index.md) |
 | Reviews from the pictures | Feature | VoiceDebrief | Record tab: the briefing card; The repository: pictures of every screen | [v0.1.29](../versions/v0.1.29/index.md) [v0.1.40](../versions/v0.1.40/index.md) | [reality file](../built/index.md) |
@@ -121,7 +122,6 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | The secret format, SGitSecrets | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
 | A vault as one file | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
 | Merging two heads of a vault | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
-| SGit CRM, the app shell | Feature | VoiceDebrief | The repository: CI |   | [reality file](../built/index.md) |
 | SGit CRM, the record format | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
 | SGit CRM, import from a vault | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
 | SGit CRM, lane entries for the email cell | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
