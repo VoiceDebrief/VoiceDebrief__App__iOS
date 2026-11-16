@@ -135,9 +135,13 @@ extension SGitVault {
     ///   (compare-and-swap on the index) and a new ref. This is the per-device branch.
     /// - The signer's public key is uploaded to `bare/keys/` when the server does not hold it yet.
     /// - A lost race returns `VaultError.pushConflict`; nothing is overwritten. Pull and try again.
+    /// - `extraParents` (a merge): further parents after the base head. `expectedBase`: refuse with
+    ///   `pushConflict` unless the base head is this commit, so changes worked out against it still apply.
+    ///   Both default to nothing, which is the ordinary commit.
     public func commit(_ changes: [String: Data?], message: String, branch: String, from: String = "current",
                        signer: any VaultCommitSigner, writeKey: SymmetricKey, accessToken: String?,
-                       writer: any VaultWriteTransport) async throws -> VaultPushResult {
+                       writer: any VaultWriteTransport, extraParents: [String] = [],
+                       expectedBase: String? = nil) async throws -> VaultPushResult {
         let start = ContinuousClock.now
         let writeKeyHex = writeKey.withUnsafeBytes { Data($0).hexString }
 
@@ -158,6 +162,7 @@ extension SGitVault {
         // 2. The base head and its files.
         switchBranch(baseBranch.name)
         let baseHead = try await pull()
+        if let expectedBase, baseHead.commitId != expectedBase { throw VaultError.pushConflict(branch: branch) }
         let baseFiles = try await files()
         let refPath = "bare/refs/\(baseBranch.head_ref_id)"
         var refRaw: Data?
@@ -167,7 +172,7 @@ extension SGitVault {
         let branchId = existing?.branch_id ?? VaultCommitBuilder.newBranchId()
         let builder = VaultCommitBuilder(readKey: readKey, idWidth: fmt.objectIdWidth,
                                          deflateBlobs: fmt.features.contains("blob-deflate"))
-        let output = try builder.build(base: baseFiles, changes: changes, parents: [baseHead.commitId],
+        let output = try builder.build(base: baseFiles, changes: changes, parents: [baseHead.commitId] + extraParents,
                                        message: message, branchId: branchId, signer: signer)
 
         // 4. Objects the server does not hold yet (trees already walked are there).

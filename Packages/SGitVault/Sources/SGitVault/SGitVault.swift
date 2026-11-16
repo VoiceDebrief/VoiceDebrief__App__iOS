@@ -408,7 +408,7 @@ public actor SGitVault {
 
     // MARK: Objects
 
-    private func commit(_ id: String) async throws -> VaultCommit {
+    func commit(_ id: String) async throws -> VaultCommit {
         if let memo = commitMemo[id] { return memo }
         let plain = try await object(id, what: "commit")
         let wire: WireCommit = try await decode(plain, path: "bare/data/\(id)", what: "commit", alreadyPlain: true)
@@ -475,7 +475,7 @@ public actor SGitVault {
     }
 
     /// Fetch (or load from cache), verify the content address, cache, decrypt.
-    private func object(_ id: String, what: String) async throws -> Data {
+    func object(_ id: String, what: String) async throws -> Data {
         let width = VaultCrypto.objectIdWidth(id)
         guard width > 0 else { throw VaultError.malformed(path: id, detail: "not an obj-cas-imm id") }
         let path = "bare/data/\(id)"

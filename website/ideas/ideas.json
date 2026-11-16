@@ -29,7 +29,7 @@
  ],
  "counts": {
   "seen-working": 27,
-  "built-untried": 103,
+  "built-untried": 105,
   "in-progress": 45,
   "proposed": 61,
   "parked": 6
@@ -2197,15 +2197,15 @@
    "title": "A secrets app that keeps one file where you already keep things",
    "status": "in-progress",
    "why": "An article; work it names has begun: issue 006.",
-   "summary": "The idea in one line: a cheap password and secrets manager that just works, where the vault is one small encrypted file in your own iCloud Drive, rewritten on every change, opened by a key that never reaches us, with our server only ever an extra copy.",
+   "summary": "Decided by the owner on 15 November 2026 (section 10): the name is SGit Secrets; pricing is option B (credit, with a £5 starter for the server copy); vaults shared between people go through our server only, with keys exchanged between them, never through a shared iCloud folder.",
    "detail": [
     "Kind: research, a storage design and a build plan. From: the owner's voice note of 14 November 2026, after trying the Secrets part of SGit Vaults: \"even just that is a crazy feature; we should just ship it\". Written up by the secrets-app research session the same day. Nothing on this page is built unless it says so. The only record of what exists is what is built (and, for SGit Vaults, its own reality file).",
+    "Decided by the owner on 15 November 2026 (section 10): the name is SGit Secrets; pricing is option B (credit, with a £5 starter for the server copy); vaults shared between people go through our server only, with keys exchanged between them, never through a shared iCloud folder.",
     "The idea in one line: a cheap password and secrets manager that just works, where the vault is one small encrypted file in your own iCloud Drive, rewritten on every change, opened by a key that never reaches us, with our server only ever an extra copy.",
     "His words where they matter:",
     "- Ship the Secrets screens as their own product: \"an easy, cheap password and secrets manager\" that \"just works\", on what exists: an encrypted, version-controlled vault, all cryptography on the device, a server that sees only ciphertext. - Do not depend on our server by default. \"Our services are not ready to provide that level of resilience; this becomes mission critical\", and a server connection \"breaks the whole model\". Keep the vault as one small encrypted file (a zip of the vault) in storage the person already has, above all iCloud Drive, rewritten on every change, with a few past versions kept, and refreshed when the app opens. - Several stores at once: iCloud Drive, a local file, a downloaded copy that the sgit command can open, and optionally SG/Send for online access. Never the server as the default. - Options for the key: today it is in iCloud Keychain; also a passkey wrapping...",
     "Read on 14 November 2026. Labels as in the reality files: built is tested in CI, unverified is written and compiled but not yet proven on a device, proposed does not exist.",
-    "| Part | Where | Status | |---|---|---| | Secrets screens: kinds login, device passcode, Wi-Fi, card, note, token, vault key, read key, access key, recovery codes; each secret one encrypted JSON file (sgit.ai/secret/v1) in a vault's secrets/ folder, each change one signed commit; values behind Face ID, copied for two minutes; a strong-password maker; \"My secrets\" made on first use | Apps/SGit/Sources/Secrets/ (SecretEntry.swift, SecretsView.swift, VaultShelf+Secrets.swift) | Unverified | | Vaults on the device with no server: the server's own layout (bare/data, refs, indexes, keys) in a folder under Application Support | VaultBook, VaultShelf, Packages/SGitVault | Unverified (CI tests with folders) | | Vault keys and access keys in iCloud Keychain, one synchronisable item each, a switch to keep them on one device | Engine/SecretStore.swift in both apps | Unverified; iCloud Keychain...",
-    "Two things were checked for this article with the real sgit command (sgit-ai 0.27.0, from PyPI, in this session):"
+    "| Part | Where | Status | |---|---|---| | Secrets screens: kinds login, device passcode, Wi-Fi, card, note, token, vault key, read key, access key, recovery codes; each secret one encrypted JSON file (sgit.ai/secret/v1) in a vault's secrets/ folder, each change one signed commit; values behind Face ID, copied for two minutes; a strong-password maker; \"My secrets\" made on first use | Apps/SGit/Sources/Secrets/ (SecretEntry.swift, SecretsView.swift, VaultShelf+Secrets.swift) | Unverified | | Vaults on the device with no server: the server's own layout (bare/data, refs, indexes, keys) in a folder under Application Support | VaultBook, VaultShelf, Packages/SGitVault | Unverified (CI tests with folders) | | Vault keys and access keys in iCloud Keychain, one synchronisable item each, a switch to keep them on one device | Engine/SecretStore.swift in both apps | Unverified; iCloud Keychain..."
    ],
    "places": [],
    "issues": [
@@ -4010,6 +4010,42 @@
    "detail": [
     "VaultDoor.door(fromSecret:site:): the derivation of door.js with the site constant as a parameter, and VaultDoor.pkiSite",
     "The vector published at newsroom.sgit.ai/passkey/vectors.json: passphrase, vault id, read key and write key"
+   ],
+   "places": [],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
+   "id": "feature.a.vault.as.one.file",
+   "kind": "feature",
+   "app": "VoiceDebrief",
+   "title": "A vault as one file",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "Packages/SGitVault/Sources/SGitVault/VaultFileStore.swift (SGit Secrets, step 1 of the secrets app plan): VaultArchive writes a vault folder as one stored zip, always the same bytes for the same folder, and reads it back, refusing any name that could leave the vault's four folders, symbolic links, compression, duplicates, bad checksums and objects that do not match their ids; VaultObjects.union...",
+   "detail": [
+    "Packages/SGitVault/Sources/SGitVault/VaultFileStore.swift (SGit Secrets, step 1 of the secrets app plan): VaultArchive writes a vault folder as one stored zip, always the same bytes for the same folder, and reads it back, refusing any name that could leave the vault's four folders, symbolic links, compression, duplicates, bad checksums and objects that do not match their ids; VaultObjects.union joins two copies' objects, checked before anything is copied, leaving refs alone; VaultFileStore replaces one file in a single step through a file coordinator and keeps five earlier copies in that file's own folder. On no screen; no iCloud yet; no merge of heads yet",
+    "Unit tests (FileStoreTests): the round trip read back by the engine, hostile names, symbolic links, a changed byte, an object that does not match its id, the union of two copies that changed apart, a tampered source changing nothing, five copies kept and nothing else touched. ios-vault.yml unpacks the Swift-written file with unzip and has sgit clone it, both by its usual check and with --transport local (not yet run)"
+   ],
+   "places": [],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
+   "id": "feature.merging.two.heads.of.a.vault",
+   "kind": "feature",
+   "app": "VoiceDebrief",
+   "title": "Merging two heads of a vault",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "Packages/SGitVault/Sources/SGitVault/VaultMerge.swift (SGit Secrets, step 2): after the other copy's objects are joined, merge(theirs:) finds the newest commit both histories share and compares each path's content against it: a change on one side is taken, a change beats a deletion, and a path both sides changed differently keeps the version whose latest change is newer, with the other kept beside...",
+   "detail": [
+    "Packages/SGitVault/Sources/SGitVault/VaultMerge.swift (SGit Secrets, step 2): after the other copy's objects are joined, merge(theirs:) finds the newest commit both histories share and compares each path's content against it: a change on one side is taken, a change beats a deletion, and a path both sides changed differently keeps the version whose latest change is newer, with the other kept beside it as <name>.conflict-<commit>.<ext>, so nothing is lost and both devices reach the same files. One signed commit with both heads as parents, moved with compare-and-swap; history is never rewritten. On no screen; not yet used with iCloud",
+    "Unit tests (MergeTests): different secrets on two devices, the same secret changed on both (the newer change stays, the older is kept beside it), the newer change winning on either side with both devices arriving at the same files, a change kept over a deletion, a deletion taken, a copy that was behind, a head already merged. ios-vault.yml has sgit check the merged vault's signatures and files"
    ],
    "places": [],
    "issues": [],
