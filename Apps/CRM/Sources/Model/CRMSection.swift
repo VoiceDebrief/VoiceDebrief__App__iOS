@@ -13,6 +13,7 @@ enum CRMSection: String, CaseIterable, Identifiable, Hashable, Sendable {
     case importing
     case workflows
     case labs
+    case keys
     case about
 
     var id: String { rawValue }
@@ -27,6 +28,7 @@ enum CRMSection: String, CaseIterable, Identifiable, Hashable, Sendable {
         case .importing: return "Import"
         case .workflows: return "Workflows"
         case .labs: return "Vault apps"
+        case .keys: return "Cards and keys"
         case .about: return "About"
         }
     }
@@ -41,6 +43,7 @@ enum CRMSection: String, CaseIterable, Identifiable, Hashable, Sendable {
         case .importing: return "tray.and.arrow.down"
         case .workflows: return "point.3.connected.trianglepath.dotted"
         case .labs: return "flask"
+        case .keys: return "qrcode"
         case .about: return "info.circle"
         }
     }
@@ -56,6 +59,7 @@ enum CRMSection: String, CaseIterable, Identifiable, Hashable, Sendable {
         case .importing: return "Bring contacts in from a vault, as proposals you review before anything is kept."
         case .workflows: return "What the CRM is made of: workflows, each made of cells, and which are built."
         case .labs: return "Vaults whose own apps run here: features to try before they are built in, switched on per section."
+        case .keys: return "Your contact card as a QR code, and the cards of people you met: their keys, checked face to face."
         case .about: return "What this build is and what it does."
         }
     }
@@ -63,12 +67,12 @@ enum CRMSection: String, CaseIterable, Identifiable, Hashable, Sendable {
     /// The step of the brief that builds this section, or nil when it is built.
     var step: Int? {
         switch self {
-        case .followUps, .introductions, .drafts, .people, .organisations, .importing, .workflows, .labs, .about: return nil
+        case .followUps, .introductions, .drafts, .people, .organisations, .importing, .workflows, .labs, .keys, .about: return nil
         }
     }
 
     var isBuilt: Bool { step == nil }
 
     /// The sections the sidebar lists, in order.
-    static let sidebar: [CRMSection] = [.followUps, .people, .organisations, .introductions, .drafts, .importing, .workflows, .labs]
+    static let sidebar: [CRMSection] = [.followUps, .people, .organisations, .introductions, .drafts, .importing, .keys, .workflows, .labs]
 }

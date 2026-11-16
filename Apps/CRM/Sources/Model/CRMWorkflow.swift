@@ -91,7 +91,7 @@ struct CRMWorkflow: Identifiable, Hashable, Sendable {
                     cells: [Cell(kind: .code, job: "Show my contact card (my public keys) as a QR code"),
                             Cell(kind: .code, job: "Scan theirs, check its signature"),
                             Cell(kind: .person, job: "Confirm it is them"),
-                            Cell(kind: .code, job: "Seal a vault key or a message to their key")],
-                    writes: "A person with their keys", waitsFor: "Confirming who they are", status: .proposed, section: nil),
+                            Cell(kind: .code, job: "Put their key on their record in the CRM (sealing to it comes next)")],
+                    writes: "A person with their key", waitsFor: "Confirming who they are", status: .built, section: .keys),
     ]
 }

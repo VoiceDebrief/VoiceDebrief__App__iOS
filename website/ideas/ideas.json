@@ -29,7 +29,7 @@
  ],
  "counts": {
   "seen-working": 27,
-  "built-untried": 115,
+  "built-untried": 116,
   "in-progress": 46,
   "proposed": 61,
   "parked": 6
@@ -4260,6 +4260,24 @@
    "detail": [
     "Apps/CRM/Sources/Model/SampleData.swift: \"Try with sample data\" (in About, and on an empty Follow-ups) opens a separate sample vault on the device, filled once with invented people from \"Web Summit 2026 (sample)\": eight people at seven organisations, a meeting each, follow-ups in every bucket (overdue to done), two introductions (one suggested, one made, with the email that made it) and a draft; a banner says it is sample data; switching it off returns to the real vault, untouched. Import has \"Try with sample files\": an invented vCard, connections export and team CRM contact, with one person in two files",
     "Unit tests (SampleDataTests): every record valid, every address and number invented, every reference resolves, every bucket filled, seeding only an empty vault, the sample files read as four proposals. Not tried on a device"
+   ],
+   "places": [],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
+   "id": "feature.sgit.crm.cards.and.keys.by.qr",
+   "kind": "feature",
+   "app": "VoiceDebrief",
+   "title": "SGit CRM, cards and keys by QR",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "Apps/CRM/Sources/Keys/ (workflow W12): Cards and keys makes the person's keys when they ask (SGitPeople, as SGit Vaults has them: an RSA 4096 encryption key and a P-256 signing key, in iCloud Keychain under the CRM's own service), shows their contact card as a QR code and a link, scans or takes a pasted card from someone else (checked: a changed card is refused), marks it checked face to face, and...",
+   "detail": [
+    "Apps/CRM/Sources/Keys/ (workflow W12): Cards and keys makes the person's keys when they ask (SGitPeople, as SGit Vaults has them: an RSA 4096 encryption key and a P-256 signing key, in iCloud Keychain under the CRM's own service), shows their contact card as a QR code and a link, scans or takes a pasted card from someone else (checked: a changed card is refused), marks it checked face to face, and puts that person's key on their record in the CRM as a sourced link (sgit:key:<fingerprint>), on the person of the same name when there is one. Sealing a vault key or a message to a card is not built",
+    "Unit tests (KeysTests): two devices in one process make keys, one scans the other's card, the key lands on a new or an existing person once; a changed card is refused. Not tried on a device"
    ],
    "places": [],
    "issues": [],

@@ -4,6 +4,7 @@ import SwiftUI
 struct RootView: View {
     let crm: CRMVault
     let apps: VaultApps
+    let keys: KeysModel
     var problem: String?
     @Binding var sample: Bool
     @State private var selection: CRMSection? = .followUps
@@ -41,7 +42,7 @@ struct RootView: View {
             }
         } detail: {
             NavigationStack {
-                SectionScreen(section: selection ?? .followUps, crm: crm, apps: apps, sample: $sample)
+                SectionScreen(section: selection ?? .followUps, crm: crm, apps: apps, keys: keys, sample: $sample)
             }
         }
     }
@@ -52,6 +53,7 @@ struct SectionScreen: View {
     let section: CRMSection
     let crm: CRMVault
     let apps: VaultApps
+    let keys: KeysModel
     @Binding var sample: Bool
 
     var body: some View {
@@ -86,6 +88,8 @@ struct SectionScreen: View {
                 WorkflowsView()
             case .labs:
                 LabsView(apps: apps)
+            case .keys:
+                KeysView(keys: keys, crm: crm)
             default:
                 ContentUnavailableView {
                     Label(section.title, systemImage: section.systemImage)
@@ -140,5 +144,6 @@ struct AboutView: View {
 #Preview {
     @Previewable @State var sample = false
     RootView(crm: CRMVault(store: MemoryStore(), root: FileManager.default.temporaryDirectory.appending(path: "crm-preview")),
-             apps: VaultApps(store: MemoryStore(), defaults: UserDefaults(suiteName: "crm-preview") ?? .standard), sample: $sample)
+             apps: VaultApps(store: MemoryStore(), defaults: UserDefaults(suiteName: "crm-preview") ?? .standard),
+             keys: KeysModel(peopleKeychain: MemoryKeychain(), secretsKeychain: MemoryKeychain(), folder: nil), sample: $sample)
 }
