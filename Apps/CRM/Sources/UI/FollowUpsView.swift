@@ -3,6 +3,7 @@ import SwiftUI
 /// Who needs what (W3): every follow-up by bucket, for one owner or everyone. Changing one is a signed commit.
 struct FollowUpsView: View {
     let crm: CRMVault
+    var trySample: (() -> Void)?
     @State private var owner: String?
     @State private var editing: FollowUp?
     @State private var problem: String?
@@ -12,8 +13,13 @@ struct FollowUpsView: View {
         let board = FollowUpBoard.items(crm.followUps, people: crm.people, organisations: crm.organisations, owner: owner, now: Date())
         List {
             if crm.followUps.isEmpty {
-                ContentUnavailableView("Nobody to follow up yet", systemImage: "checklist",
-                                       description: Text("Import contacts with a follow-up each, and they appear here by date."))
+                ContentUnavailableView {
+                    Label("Nobody to follow up yet", systemImage: "checklist")
+                } description: {
+                    Text("Import contacts with a follow-up each, and they appear here by date.")
+                } actions: {
+                    if let trySample { Button("Try with sample data", action: trySample) }
+                }
             }
             if let problem { Label(problem, systemImage: "exclamationmark.triangle").font(.footnote) }
             ForEach(FollowUpBoard.Bucket.allCases) { bucket in

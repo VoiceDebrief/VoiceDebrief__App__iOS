@@ -5,6 +5,7 @@ struct RootView: View {
     let crm: CRMVault
     let apps: VaultApps
     var problem: String?
+    @Binding var sample: Bool
     @State private var selection: CRMSection? = .followUps
 
     var body: some View {
@@ -24,6 +25,13 @@ struct RootView: View {
                 }
             }
             .navigationTitle("SGit CRM")
+            .safeAreaInset(edge: .top) {
+                if sample {
+                    Label("Sample data: invented people", systemImage: "theatermasks")
+                        .font(.footnote).padding(8).frame(maxWidth: .infinity, alignment: .leading)
+                        .background(.yellow.opacity(0.2))
+                }
+            }
             .safeAreaInset(edge: .bottom) {
                 if let problem {
                     Label(problem, systemImage: "exclamationmark.triangle")
@@ -33,7 +41,7 @@ struct RootView: View {
             }
         } detail: {
             NavigationStack {
-                SectionScreen(section: selection ?? .followUps, crm: crm, apps: apps)
+                SectionScreen(section: selection ?? .followUps, crm: crm, apps: apps, sample: $sample)
             }
         }
     }
@@ -44,6 +52,7 @@ struct SectionScreen: View {
     let section: CRMSection
     let crm: CRMVault
     let apps: VaultApps
+    @Binding var sample: Bool
 
     var body: some View {
         Group {
@@ -60,9 +69,9 @@ struct SectionScreen: View {
     private var native: some View {
             switch section {
             case .about:
-                AboutView(crm: crm)
+                AboutView(crm: crm, sample: $sample)
             case .followUps:
-                FollowUpsView(crm: crm)
+                FollowUpsView(crm: crm, trySample: sample ? nil : { sample = true })
             case .introductions:
                 IntroductionsView(crm: crm)
             case .drafts:
@@ -93,6 +102,7 @@ struct SectionScreen: View {
 
 struct AboutView: View {
     let crm: CRMVault
+    @Binding var sample: Bool
 
     var body: some View {
         List {
@@ -100,7 +110,12 @@ struct AboutView: View {
                 LabeledContent("Version", value: AppInfo.versionLine)
                 LabeledContent("Bundle", value: AppInfo.bundleID)
             }
-            Section("Your CRM vault") {
+            Section {
+                Toggle("Try with sample data", isOn: $sample)
+            } footer: {
+                Text("Invented people, organisations, follow-ups and introductions from \(SampleData.event), in a vault of their own. Your own records are not touched; switch it off to go back to them.")
+            }
+            Section(sample ? "The sample vault" : "Your CRM vault") {
                 LabeledContent("Kept", value: "On this device")
                 if let id = crm.vaultID { LabeledContent("Vault", value: id).font(.footnote.monospaced()) }
                 LabeledContent("People", value: "\(crm.people.count)")
@@ -123,6 +138,7 @@ struct AboutView: View {
 }
 
 #Preview {
+    @Previewable @State var sample = false
     RootView(crm: CRMVault(store: MemoryStore(), root: FileManager.default.temporaryDirectory.appending(path: "crm-preview")),
-             apps: VaultApps(store: MemoryStore(), defaults: UserDefaults(suiteName: "crm-preview") ?? .standard))
+             apps: VaultApps(store: MemoryStore(), defaults: UserDefaults(suiteName: "crm-preview") ?? .standard), sample: $sample)
 }

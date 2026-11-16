@@ -60,6 +60,13 @@ final class ImportSession {
         }
     }
 
+    /// The same as reading a vault, from invented sample files: to show the import before a real vault is to hand.
+    func readSample(into crm: CRMVault) async {
+        sourceVault = "sample"
+        let result = await collect(SampleData.importFiles, label: "sample files")
+        finish(result, looked: SampleData.importFiles.count, crm: crm)
+    }
+
     /// Reads each chosen vault of a vault of vaults, one after another, into one set of proposals.
     func readChosen(into crm: CRMVault) async {
         var all = ImportScanner.Result()

@@ -100,6 +100,10 @@ struct ImportView: View {
                     Task { await session.read(keyText: keyText, into: crm) }
                 }
                 .disabled(keyText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || crm.vaultID == nil)
+                Button("Try with sample files") {
+                    Task { await session.readSample(into: crm) }
+                }
+                .disabled(crm.vaultID == nil)
             }
         }
     }

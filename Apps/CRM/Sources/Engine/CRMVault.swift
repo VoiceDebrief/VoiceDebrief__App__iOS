@@ -170,6 +170,19 @@ final class CRMVault {
         return result.commit.commitId
     }
 
+    /// Fills an empty vault with the invented sample records, in one commit. Only for the sample vault.
+    func seedSampleIfEmpty(name: String) async throws {
+        guard people.isEmpty, organisations.isEmpty else { return }
+        try await commit(records: SampleData.records(now: Date(), by: actor(name: name.isEmpty ? "Me" : name)),
+                         message: "Sample data: invented people from \(SampleData.event)")
+    }
+
+    /// Where the sample vault lives, apart from the real one.
+    static var sampleRoot: URL {
+        FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+            .appending(path: "CRM-sample", directoryHint: .isDirectory)
+    }
+
     /// Who this device is when it changes a record: the person using it, named by its signing key.
     func actor(name: String) -> Actor {
         Actor.person(name.isEmpty ? "Me" : name, key: signerFingerprint)
