@@ -5,6 +5,7 @@ name: ios
 #
 #   1. SGitVault      swift test on the Mac itself (no simulator): the vault engine and its vectors
 #      SGitPeople     the same for the people layer: cards, contacts, messages, the inbox, secrets
+#      SGitSecrets    the same for the secret format and the password maker (SGit Vaults, SGit Secrets)
 #   2. build          build-for-testing for the generic iOS Simulator, unsigned, nothing booted
 #   3. test           the app's unit tests on one iPhone simulator, then one iPad simulator
 #   4. release build  Release for a generic iOS device, unsigned: what an archive would compile
@@ -85,6 +86,10 @@ jobs:
       - name: SGitPeople tests (on the Mac, no simulator)
         working-directory: Packages/SGitPeople
         run: ../../.github/scripts/run-and-summarize.sh "SGitPeople swift test" "$RUNNER_TEMP/logs/sgitpeople.log" -- swift test
+
+      - name: SGitSecrets tests (on the Mac, no simulator)
+        working-directory: Packages/SGitSecrets
+        run: ../../.github/scripts/run-and-summarize.sh "SGitSecrets swift test" "$RUNNER_TEMP/logs/sgitsecrets.log" -- swift test
 
       - name: Build for testing (Debug, iOS Simulator, unsigned)
         run: |
