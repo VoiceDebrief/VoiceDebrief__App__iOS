@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The SGit CRM demo vaults</title>
+<meta name="description" content="One shared set of invented data in three vaults (a vault of vaults, a mailbox twin, team sources), how to add it to SGit CRM by QR code, and the rule that data moves between people only as QR codes, copied text or screenshots.">
+<link rel="canonical" href="https://ios.app.voicedebrief.ai/crm/demo/index.html">
+<meta property="og:url" content="https://ios.app.voicedebrief.ai/crm/demo/index.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="VoiceDebrief for iOS">
+<meta property="og:title" content="The SGit CRM demo vaults">
+<meta property="og:description" content="One shared set of invented data in three vaults (a vault of vaults, a mailbox twin, team sources), how to add it to SGit CRM by QR code, and the rule that data moves between people only as QR codes, copied text or screenshots.">
+<link rel="alternate" type="text/markdown" href="index.md" title="This page as markdown">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/vd-tokens.css">
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+
+<nav class="site"><div class="row">
+  <a class="brand" href="../../index.html">Voice<em>Debrief</em> <span>iOS</span></a>
+  <span class="beta" title="In development: there is nothing to install yet">IN DEVELOPMENT</span>
+  <a class="parent" href="https://voicedebrief.ai" title="A VoiceDebrief product">&#8599; part of <b>voicedebrief.ai</b></a>
+  <a class="ver" href="../../versions/index.html" title="Release history">dev</a>
+  <a class="nl" href="../../built/index.html">Built</a>
+  <a class="nl" href="../../architecture/index.html">How it works</a>
+  <a class="nl" href="../../design/index.html">Design</a>
+  <a class="nl" href="../../plan/index.html">Plan</a>
+  <a class="nl" href="../../articles/index.html">Articles</a>
+  <a class="nl" href="../../develop/index.html">Build</a>
+  <a class="nl" href="../../ideas/index.html">Ideas</a>
+  <a class="nl" href="../../guides/index.html">Guides</a>
+  <a class="gh" href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">&#9733; GitHub</a>
+</div></nav>
+
+<main class="doc">
+<div class="crumb"><a href="../../index.html">VoiceDebrief iOS</a> / crm / demo</div>
+<h1 id="the-sgit-crm-demo-vaults">The SGit CRM demo vaults</h1>
+<p>One shared set of invented data, so that the CRM app, the email cell and anyone trying them work from the same thing, and real data is only ever connected on the owner's own device. Made 16 November 2026 by the CRM cell at the owner's request. Every person, company and address in it is made up (example.org, example.com, example.net).</p>
+<h2 id="what-is-in-it">What is in it</h2>
+<p>Three sgit vaults on dev.send.sgraph.ai:</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Vault</th><th>Id</th><th>What it holds</th></tr></thead>
+<tbody>
+<tr><td><strong>CRM demo sources</strong></td><td><code>c1ieplzb</code></td><td>a vault of vaults, as crm-sources is: <code>index.json</code> names the two below, <code>keys/</code> holds their keys</td></tr>
+<tr><td>CRM demo: a mailbox twin</td><td><code>y7p4cajh</code></td><td>the email cell's twin v1, headers only: five correspondents, five threads; one sender fails DMARC; two people wrote last and are owed a reply</td></tr>
+<tr><td>CRM demo: team sources</td><td><code>d2p7tclm</code></td><td>the team CRM's layout (two companies, two contacts, one follow-up action), a connections export (CSV) and a vCard</td></tr>
+</tbody></table></div>
+<p><strong>The keys are not on this page or anywhere in the repository.</strong> The key of <em>CRM demo sources</em> is handed over as a QR code (or copied text, or a screenshot of the QR code); the other two keys travel inside it.</p>
+<h2 id="how-to-add-it-on-a-phone-or-an-ipad">How to add it, on a phone or an iPad</h2>
+<ol>
+<li>Open SGit CRM, go to <strong>Import</strong>.</li>
+<li><strong>Scan a QR code</strong>, and point the camera at the demo's QR code (on another screen or a printout). Or <strong>Paste</strong>, if the key came as text.</li>
+<li><strong>Read the vault.</strong> It says it lists two vaults; keep both chosen and press <strong>Read 2 vaults</strong>.</li>
+<li>Review the proposals. Expect seven people: Ana Exemplo and Nora Example each appear in two places and are joined into one proposal; the prize sender is listed under <em>Looked at, nothing found</em>, because no mail from it passed DMARC.</li>
+<li><strong>Accept all</strong>, then <strong>Keep</strong>. Follow-ups now shows the replies owed (Ana, Nora) and Kai's next step; People and Organisations show everyone with where each detail came from.</li>
+</ol>
+<p>To try it again from empty, use <strong>About → Try with sample data</strong> to switch vaults, or remove and reinstall the app.</p>
+<h2 id="how-data-moves-between-us">How data moves between us</h2>
+<p>Anything a person passes to another (a vault key, a contact card, a lane link) goes as a <strong>QR code</strong>, as <strong>text to copy and paste</strong>, or as a <strong>screenshot of the QR code</strong>. Never in a repository, a page or a public channel. The app scans QR codes for vault keys (Import, Vault apps) and contact cards (Cards and keys), takes pasted text in the same places, and shows its own vaults and card as QR codes to share.</p>
+<h2 id="what-this-does-not-claim">What this does not claim</h2>
+<ul>
+<li>It has been written and read back with the sgit command (sgit-ai 0.27.0); it has not yet been imported on a device.</li>
+<li>It is shared with the email cell so that both work from the same set; the email cell may add to it.</li>
+</ul>
+</main>
+
+<footer class="site"><div class="cols">
+  <div>
+    <div class="brandline">Voice<em>Debrief</em> <span>iOS</span></div>
+    <p>The VoiceDebrief transcript and debrief as a native iPhone and iPad app, on Apple's own models, with the results in a vault you own. In development: there is nothing to install yet. Content CC BY 4.0; code Apache 2.0.</p>
+    <p class="partnote">This site is static and has no analytics.</p>
+    <p class="verline">site dev · <a href="index.md">this page as markdown</a> · <a href="../../llms.txt">llms.txt</a></p>
+  </div>
+  <div>
+    <h4>The app</h4>
+    <a href="../../built/index.html">What is built</a>
+    <a href="../../plan/index.html">The plan</a>
+    <a href="../../develop/index.html">Build and test</a>
+    <a href="../../versions/index.html">Release history</a>
+    <a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">GitHub</a>
+  </div>
+  <div>
+    <h4>VoiceDebrief</h4>
+    <a href="https://voicedebrief.ai">voicedebrief.ai</a>
+    <a href="https://meetscribe.chrome-extension.voicedebrief.ai">MeetScribe for Google Meet</a>
+  </div>
+  <div>
+    <h4>Built on</h4>
+    <a href="https://sgit.ai">sgit.ai</a>
+    <a href="https://pki.sgit.ai">pki.sgit.ai</a>
+    <a href="https://sgit.ai/security/index.html">The vault security model</a>
+  </div>
+</div></footer>
+</body>
+</html>
