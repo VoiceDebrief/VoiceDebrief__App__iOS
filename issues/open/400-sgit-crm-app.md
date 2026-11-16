@@ -14,3 +14,15 @@ App Store name SGit CRM, bundle id `ai.sgit.crm.app`, code in `Apps/CRM`. The br
 
 The app imports contacts from a vault as proposals, keeps them in the user's CRM vault, lists who needs a follow-up,
 and lets a person send a draft themselves, on a device, from TestFlight.
+
+## Progress (16 November 2026, evening)
+
+Green on `work/crm` and handed to the conductor to land: step 1 (the app shell, run 1), steps 2 and 3 (the record
+format; import from a vault, including the team CRM layout and crm-sources; run 7, landed in 0c88842), vault apps and a
+switch per section (run 9), step 4 (who needs what) and step 5 (drafts, never sends) (run 13 on e6a7964). Also: the
+workflows map ([website/crm/workflows/](../../website/crm/workflows/index.md)), the explorers page
+([website/crm/explorers/](../../website/crm/explorers/index.md)) and `lane.entry/1` for the email cell. Nothing has been
+tried on a device: TestFlight waits on the owner's decision d7. Sealed team records wait on d8.
+
+Next: a first CRM vault app (needs the CRM vault on the server), W11 (what the agents are doing), W12 (exchange keys by
+QR), step 6 (agents propose on a lane).
