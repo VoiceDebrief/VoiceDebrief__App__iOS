@@ -26,7 +26,7 @@ To try it again from empty, use **About → Try with sample data** to switch vau
 
 ## How data moves between us
 
-Anything a person passes to another (a vault key, a contact card, a lane link) goes as a **QR code**, as **text to copy and paste**, or as a **screenshot of the QR code**. Never in a repository, a page or a public channel. The app scans QR codes for vault keys (Import, Vault apps) and contact cards (Cards and keys), takes pasted text in the same places, and shows its own vaults and card as QR codes to share.
+Anything a person passes to another (a vault key, a contact card, a lane link) goes as a **QR code**, as **text to copy and paste**, or as a **screenshot of the QR code**. Never in a repository, a page or a public channel, and never as text in a message between agents' sessions (it lands in both transcripts): between agents a key goes sealed to the receiving agent's key (pki.sgit.ai's handover). On 16 November the CRM cell broke this once, sending the demo key as text to the email cell's session; it opens only invented data, and the demo vaults can be remade with new keys. The app scans QR codes for vault keys (Import, Vault apps) and contact cards (Cards and keys), takes pasted text in the same places, and shows its own vaults and card as QR codes to share.
 
 ## What this does not claim
 
