@@ -190,6 +190,7 @@ struct RecordView: View {
             .sheet(isPresented: $tuning) { tunePanel }
             .sheet(isPresented: $showingMessages) {
                 NavigationStack { MessagesToClaudeView(session: session, book: book) }
+                    .presentationSizing(.page)
             }
             .navigationDestination(for: String.self) { id in
                 NoteDetailView(noteId: id, session: session, book: book)
@@ -672,6 +673,7 @@ struct RecordView: View {
                     session.send(noteId: id, to: to)
                     let image = attached, line = attachedLine
                     if image != nil || !line.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                        if let image, let jpeg = PictureSender.jpeg(image) { session.store.keepPicture(jpeg, for: id) }
                         Task { await attachSender.send(image: image, caption: line, to: to, about: id) }
                     }
                     attached = nil; attachedLine = ""

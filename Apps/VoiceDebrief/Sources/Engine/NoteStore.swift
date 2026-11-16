@@ -109,6 +109,18 @@ final class NoteStore {
 
     func folderURL(for id: String) -> URL { folder(id) }
 
+    /// The picture that went with a note (a screenshot sent with it), kept beside the audio so the note's
+    /// details can show it again.
+    func keepPicture(_ jpeg: Data, for id: String) {
+        try? jpeg.write(to: folder(id).appending(path: "picture.jpg"), options: .atomic)
+    }
+
+    /// The kept picture's file, if this note has one.
+    func pictureURL(for id: String) -> URL? {
+        let url = folder(id).appending(path: "picture.jpg")
+        return FileManager.default.fileExists(atPath: url.path) ? url : nil
+    }
+
     func note(_ id: String) -> Note? { notes.first { $0.id == id } }
 
     /// Replaces a note's run and whether it is still being processed, and writes it.

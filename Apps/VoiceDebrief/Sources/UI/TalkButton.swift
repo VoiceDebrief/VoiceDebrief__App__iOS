@@ -60,6 +60,7 @@ struct TalkButton: View {
         }
         .sheet(isPresented: $showingMessages) {
             NavigationStack { MessagesToClaudeView(session: session, book: book) }
+                .presentationSizing(.page)
         }
     }
 
@@ -136,6 +137,7 @@ struct TalkButton: View {
             if let id = await session.stopRecording() {
                 session.send(noteId: id, to: claude)
                 if image != nil || !line.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                    if let image, let jpeg = PictureSender.jpeg(image) { session.store.keepPicture(jpeg, for: id) }
                     Task { await pictureSender.send(image: image, caption: line, to: claude, about: id) }
                 }
                 show("Sent to Claude when it is written up. Hold the button to see your messages.")
@@ -185,12 +187,9 @@ struct MessagesToClaudeView: View {
 
     var body: some View {
         List {
-            if !general.isEmpty {
-                Section("From Claude") {
-                    ForEach(general.prefix(10)) { reply($0) }
-                }
-            }
-            Section("Your messages") {
+            // Your memos and the answers to them first (the actions), then Claude's other messages (the chat),
+            // in two sections (the owner, 16 November 2026: "break it into two").
+            Section("Your messages and the answers") {
                 if notes.isEmpty {
                     Text("Nothing sent to Claude yet. Tap the button and speak.").foregroundStyle(.secondary)
                 }
@@ -203,6 +202,11 @@ struct MessagesToClaudeView: View {
                     }
                     .padding(.vertical, DS.Space.xxs)
                     .listRowSeparator(.hidden)
+                }
+            }
+            if !general.isEmpty {
+                Section("Other messages from Claude") {
+                    ForEach(general.prefix(30)) { reply($0) }
                 }
             }
             Section {
@@ -222,6 +226,10 @@ struct MessagesToClaudeView: View {
         ChatBubble(mine: false, from: AvatarSubject.recipient(named: RecipientStore.builtInName),
                    caption: "Claude, " + message.at.formatted(date: .abbreviated, time: .shortened)) {
             Text(message.text)
+            if let path = message.image, let data = desk.images[path], let image = UIImage(data: data) {
+                Image(uiImage: image).resizable().scaledToFit()
+                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+            }
         }
         .listRowSeparator(.hidden)
     }

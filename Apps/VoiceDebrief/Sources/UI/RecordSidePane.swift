@@ -72,6 +72,18 @@ struct RecordSidePane<Notes: View>: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: DS.Space.m) {
+            // A newer build waiting in TestFlight, said where the eyes are (the owner: "a button here that says
+            // update to the new version").
+            if let latest = desk.report?.latestBuild, AppInfo.isNewer(latest, than: AppInfo.version()) {
+                HStack(spacing: 10) {
+                    Image(systemName: "arrow.down.circle.fill").font(.title3).foregroundStyle(Color.accentColor)
+                    Text("v\(latest) is ready (you have v\(AppInfo.version()))").font(.subheadline.weight(.semibold))
+                    Spacer()
+                    Link("Update", destination: AppInfo.testFlight).buttonStyle(.borderedProminent)
+                }
+                .padding(10)
+                .background(Color.accentColor.opacity(0.1), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+            }
             tabBar
             switch tab {
             case .live: LivePanel(session: session, book: book, showsHeading: false)
@@ -191,54 +203,93 @@ private struct UpdatesTab: View {
     }
 }
 
-/// Who works for you, grouped by project: a count per status for each group, then each agent with what it is
-/// doing and when it last moved. Above them, the conductor's drawing of the whole team when it sent one.
+/// Who works for you, by topic (the owner, 16 November 2026: "put them on separate tabs... all the waiting for
+/// input in one place, so I can act on them... the drawing doesn't make sense, it should be alive"). A row of
+/// sub-tabs: Waiting for input first (every agent that waits, from every project), then one per project, each
+/// with its count. Tap an agent for its details and a box to write to it: the message goes to Claude, the
+/// conductor, which passes it on. The counts are live from the report; nothing is drawn ahead of time.
 private struct AgentsTab: View {
     private var desk: AgentsDesk { AgentsDesk.shared }
+    @AppStorage("vd.pane.agentsTopic") private var topic = AgentsTab.waiting
+    @State private var open: AgentsReport.Agent?
+    static let waiting = "Waiting for input"
+
+    private static func isWaiting(_ a: AgentsReport.Agent) -> Bool { a.status == "waiting" || a.status == "blocked" }
 
     var body: some View {
         let agents = desk.report?.agents ?? []
         let groups = Dictionary(grouping: agents) { $0.group ?? "VoiceDebrief" }
         let order = groups.keys.sorted { (groups[$0]?.count ?? 0) > (groups[$1]?.count ?? 0) }
+        let waitingAll = agents.filter(Self.isWaiting)
+        let shown: [AgentsReport.Agent] = topic == Self.waiting ? waitingAll : (groups[topic] ?? [])
         VStack(alignment: .leading, spacing: DS.Space.m) {
             if agents.isEmpty {
                 Text(desk.vaultId.isEmpty ? "Give Claude a vault on the Agents screen to see the agents working for you."
                                           : "No agents reported yet.")
                     .font(.callout).foregroundStyle(.secondary)
             } else {
-                Text(summary(agents)).font(.subheadline.weight(.semibold))
-            }
-            if let data = desk.picture, let image = UIImage(data: data) {
-                Image(uiImage: image).resizable().scaledToFit()
-                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-            }
-            ForEach(order, id: \.self) { name in
-                let members = (groups[name] ?? []).sorted { ($0.lastActive ?? .distantPast) > ($1.lastActive ?? .distantPast) }
-                VStack(alignment: .leading, spacing: 8) {
-                    HStack {
-                        Text(name).font(.headline)
-                        Spacer()
-                        Text(summary(members)).font(.caption).foregroundStyle(.secondary)
+                HStack(spacing: DS.Space.m) {
+                    stat(agents.filter { $0.status == "working" }.count, "working", .green)
+                    stat(waitingAll.count, "waiting", .orange)
+                    stat(agents.count, "in all", .secondary)
+                    Spacer()
+                    if let made = desk.report?.made {
+                        Text("as of \(made.formatted(.relative(presentation: .named)))")
+                            .font(.caption2).foregroundStyle(.secondary)
                     }
-                    ForEach(members) { agent in row(agent) }
+                }
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack {
+                        chip(Self.waiting, count: waitingAll.count, tint: .orange)
+                        ForEach(order, id: \.self) { name in chip(name, count: groups[name]?.count ?? 0, tint: .accentColor) }
+                    }
+                }
+                if shown.isEmpty {
+                    Text(topic == Self.waiting ? "Nobody is waiting for you." : "No agents here.")
+                        .font(.callout).foregroundStyle(.secondary)
+                }
+                VStack(alignment: .leading, spacing: 10) {
+                    ForEach(shown.sorted { ($0.lastActive ?? .distantPast) > ($1.lastActive ?? .distantPast) }) { agent in
+                        Button { open = agent } label: { row(agent, showGroup: topic == Self.waiting) }
+                            .buttonStyle(.plain)
+                    }
                 }
                 .padding(12)
                 .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
             }
         }
+        .sheet(item: $open) { agent in
+            NavigationStack { AgentDetail(agent: agent) }
+        }
     }
 
-    private func summary(_ agents: [AgentsReport.Agent]) -> String {
-        let working = agents.filter { $0.status == "working" }.count
-        let waiting = agents.filter { $0.status == "waiting" || $0.status == "blocked" }.count
-        var parts = ["\(agents.count) agent\(agents.count == 1 ? "" : "s")", "\(working) working"]
-        if waiting > 0 { parts.append("\(waiting) waiting") }
-        return parts.joined(separator: " · ")
+    private func stat(_ n: Int, _ label: String, _ tint: Color) -> some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Text("\(n)").font(.title2.weight(.bold).monospacedDigit()).foregroundStyle(tint)
+            Text(label).font(.caption).foregroundStyle(.secondary)
+        }
     }
 
-    private func row(_ agent: AgentsReport.Agent) -> some View {
+    private func chip(_ name: String, count: Int, tint: Color) -> some View {
+        let selected = topic == name
+        return Button { topic = name } label: {
+            HStack(spacing: 5) {
+                Text(name)
+                Text("\(count)").font(.caption2.weight(.bold).monospacedDigit())
+                    .padding(.horizontal, 6).padding(.vertical, 1)
+                    .background(tint.opacity(0.2), in: Capsule())
+            }
+            .font(.caption.weight(.semibold))
+            .padding(.horizontal, 10).padding(.vertical, 6)
+            .background(selected ? tint.opacity(0.18) : Color(.tertiarySystemFill), in: Capsule())
+            .foregroundStyle(selected ? tint : .primary)
+        }
+        .buttonStyle(.plain)
+    }
+
+    private func row(_ agent: AgentsReport.Agent, showGroup: Bool) -> some View {
         HStack(alignment: .top, spacing: 10) {
-            Circle().fill(colour(agent.status)).frame(width: 9, height: 9).padding(.top, 5)
+            Circle().fill(AgentDetail.colour(agent.status)).frame(width: 9, height: 9).padding(.top, 5)
             VStack(alignment: .leading, spacing: 2) {
                 HStack {
                     Text(agent.name).font(.subheadline.weight(.semibold))
@@ -246,21 +297,80 @@ private struct AgentsTab: View {
                     if let at = agent.lastActive {
                         Text(at.formatted(.relative(presentation: .named))).font(.caption2).foregroundStyle(.secondary)
                     }
+                    Image(systemName: "chevron.right").font(.caption2).foregroundStyle(.tertiary)
                 }
-                Text(agent.doing).font(.caption).foregroundStyle(.secondary)
-                if let waiting = agent.waitingFor {
-                    Text("Waits for: \(waiting)").font(.caption).foregroundStyle(.orange)
+                if showGroup, let group = agent.group {
+                    Text(group).font(.caption2.weight(.semibold)).foregroundStyle(Color.accentColor)
                 }
+                Text(agent.doing).font(.caption).foregroundStyle(.secondary).lineLimit(2)
             }
         }
+        .contentShape(Rectangle())
     }
+}
 
-    private func colour(_ status: String) -> Color {
+/// One agent: what it is, what it is doing, what it waits for, and a box to write to it. The message goes
+/// to Claude (the conductor) sealed, which passes it on to that agent.
+struct AgentDetail: View {
+    let agent: AgentsReport.Agent
+    @Environment(\.dismiss) private var dismiss
+    @State private var draft = ""
+    @State private var sentAt: Date?
+    private var desk: AgentsDesk { AgentsDesk.shared }
+
+    static func colour(_ status: String) -> Color {
         switch status {
         case "working": .green
         case "waiting", "blocked": .orange
         case "done": .blue
         default: .secondary
         }
+    }
+
+    var body: some View {
+        Form {
+            Section {
+                LabeledContent("Status") {
+                    Label(agent.status.capitalized, systemImage: "circle.fill").foregroundStyle(Self.colour(agent.status))
+                }
+                if let group = agent.group { LabeledContent("Project", value: group) }
+                if let at = agent.lastActive {
+                    LabeledContent("Last moved", value: at.formatted(date: .abbreviated, time: .shortened))
+                }
+            }
+            Section("What it does") { Text(agent.role) }
+            Section("Doing now") { Text(agent.doing) }
+            if let waiting = agent.waitingFor {
+                Section("Waiting for") { Text(waiting).foregroundStyle(.orange) }
+            }
+            Section {
+                TextField("Write to \(agent.name)", text: $draft, axis: .vertical)
+                    .lineLimit(3...8)
+                    .voiceInput($draft)
+                Button {
+                    let text = draft
+                    Task {
+                        await desk.send(text, to: agent)
+                        if desk.problem == nil { draft = ""; sentAt = Date() }
+                    }
+                } label: {
+                    Label(desk.sending ? "Sending" : "Send", systemImage: "paperplane.fill")
+                }
+                .disabled(draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || desk.sending)
+            } header: {
+                Text("Write to it")
+            } footer: {
+                if let sentAt {
+                    Text("Sent \(sentAt.formatted(date: .omitted, time: .shortened)) to Claude, who passes it on. The answer comes back in Updates.")
+                } else if let problem = desk.problem {
+                    Text(problem).foregroundStyle(.red)
+                } else {
+                    Text("Your message goes to Claude, sealed, and Claude passes it on to this agent.")
+                }
+            }
+        }
+        .navigationTitle(agent.name)
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } } }
     }
 }
