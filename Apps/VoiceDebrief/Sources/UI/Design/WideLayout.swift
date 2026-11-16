@@ -6,7 +6,10 @@ import SwiftUI
 /// The left holds what you do (who it is for, the control, the live words while recording); the right
 /// holds what came back. Use it only at regular width; compact keeps the single column. A ScrollViewReader
 /// placed around it still reaches ids inside either column, so the live words can still be followed.
-struct RecordWideLayout<Left: View, Right: View>: View {
+struct RecordWideLayout<Pinned: View, Left: View, Right: View>: View {
+    /// Stays at the top of the left column while the rest scrolls under it: the timer and the control while
+    /// recording (the owner, 16 November 2026: "I'm starting to lose the button... that bit shouldn't change").
+    @ViewBuilder var pinned: Pinned
     @ViewBuilder var left: Left
     @ViewBuilder var right: Right
     /// The left column's share of the width, kept between visits.
@@ -22,12 +25,19 @@ struct RecordWideLayout<Left: View, Right: View>: View {
             let low = min(Self.minColumn / max(total, 1), 0.5)
             let share = min(max(leftShare, low), 1 - low)
             HStack(alignment: .top, spacing: 0) {
-                ScrollView {
-                    VStack(spacing: DS.Space.l) { left }
+                VStack(spacing: 0) {
+                    VStack(spacing: DS.Space.s) { pinned }
                         .padding(.horizontal, DS.Space.l)
-                        .padding(.vertical, DS.Space.l)
+                        .padding(.top, DS.Space.s)
                         .frame(maxWidth: 620)
                         .frame(maxWidth: .infinity)
+                    ScrollView {
+                        VStack(spacing: DS.Space.l) { left }
+                            .padding(.horizontal, DS.Space.l)
+                            .padding(.vertical, DS.Space.l)
+                            .frame(maxWidth: 620)
+                            .frame(maxWidth: .infinity)
+                    }
                 }
                 .frame(width: total * share)
 
@@ -44,6 +54,10 @@ struct RecordWideLayout<Left: View, Right: View>: View {
                 .background(DS.Palette.ground)
             }
         }
+    }
+
+    init(@ViewBuilder pinned: () -> Pinned, @ViewBuilder left: () -> Left, @ViewBuilder right: () -> Right) {
+        self.pinned = pinned(); self.left = left(); self.right = right()
     }
 
     /// The line between the columns: a thin rule with a grip, a wide area to catch the finger or pointer.
@@ -78,6 +92,12 @@ struct RecordWideLayout<Left: View, Right: View>: View {
             @unknown default: break
             }
         }
+    }
+}
+
+extension RecordWideLayout where Pinned == EmptyView {
+    init(@ViewBuilder left: () -> Left, @ViewBuilder right: () -> Right) {
+        self.init(pinned: { EmptyView() }, left: left, right: right)
     }
 }
 

@@ -4,6 +4,7 @@ Every release of this repository. Every push to `dev` is a release: CI works out
 
 | Version | Date | What changed |
 |---|---|---|
+| next | 16 November 2026 | From the owner's memo on 0.1.133: on an iPad or a Mac the timer and the record or finish button stay pinned at the top of the left column while recording, and only the words scroll under them, so the button no longer scrolls away. Tapping the picture attached to a note opens it full screen (pinch or double tap to zoom, Done to close). |
 | v0.1.135 | 16 November 2026 | SGit Secrets: the vault engine now also reads a merge that the sgit command made itself, checked in the tests with a vault sgit merged after two copies changed apart. |
 | v0.1.134 | 16 November 2026 | The microphone check now reaches Claude: the transcription step started each note from a fresh record and dropped it (seen on a silent note from 0.1.131). It also shows on each memo's card in the Live panel. |
 | v0.1.133 | 16 November 2026 | SGit Secrets, second building block: when two devices changed a vault while apart, their changes are now joined. Different secrets merge on their own; a secret changed on both keeps the newer change and the older one beside it, so nothing is lost; a change is never undone by a deletion on the other device. Nothing on screen yet. |

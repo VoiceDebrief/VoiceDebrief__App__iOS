@@ -61,6 +61,8 @@ struct RecordView: View {
     private var wide: Bool { sizeClass == .regular }
     /// A picture added while recording (pasted or chosen) and a line, sent with the note when it goes.
     @State private var attached: UIImage?
+    /// The attached picture shown full size (the owner: "click on the little screenshot and see a preview").
+    @State private var previewingPicture = false
     @State private var attachedLine = ""
     @State private var attachSender = PictureSender()
     @State private var clipboardHasPicture = false
@@ -105,9 +107,11 @@ struct RecordView: View {
                         // "on the iPad or laptop we can do better"). The control stays in the left column.
                         RecordWideLayout {
                             // While recording, the time first and then the control ("Recording 1:30" sat
-                            // below the Finish button, seen in the screens session's pictures).
+                            // below the Finish button, seen in the screens session's pictures). Pinned, so
+                            // the growing words scroll under them and the button never leaves the screen.
                             recordingHeader
                             controls
+                        } left: {
                             content
                             Color.clear.frame(height: 1).id(Self.bottomId)
                         } right: {
@@ -360,8 +364,13 @@ struct RecordView: View {
             VStack(alignment: .leading, spacing: 10) {
                 if let attached {
                     HStack(spacing: 10) {
-                        Image(uiImage: attached).resizable().scaledToFill()
-                            .frame(width: 64, height: 64).clipShape(RoundedRectangle(cornerRadius: 10))
+                        Button { previewingPicture = true } label: {
+                            Image(uiImage: attached).resizable().scaledToFill()
+                                .frame(width: 64, height: 64).clipShape(RoundedRectangle(cornerRadius: 10))
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityLabel("Show the picture full size")
+                        .fullScreenCover(isPresented: $previewingPicture) { PicturePreview(image: attached) }
                         Text(addresseeRecipient.map { "Goes with the note to \($0.name)" } ?? "Kept with nothing: choose who the note is for to send it")
                             .font(.footnote).foregroundStyle(.secondary)
                         Spacer()

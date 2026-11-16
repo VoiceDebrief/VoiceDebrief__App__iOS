@@ -147,3 +147,46 @@ struct PhotoChooser: View {
         }
     }
 }
+
+/// A picture full screen: pinch or double tap to zoom, drag when zoomed, Done to close.
+struct PicturePreview: View {
+    let image: UIImage
+    @Environment(\.dismiss) private var dismiss
+    @State private var scale: CGFloat = 1
+    @State private var settled: CGFloat = 1
+    @State private var offset: CGSize = .zero
+    @State private var dragStart: CGSize = .zero
+
+    var body: some View {
+        ZStack(alignment: .topTrailing) {
+            Color.black.ignoresSafeArea()
+            Image(uiImage: image)
+                .resizable()
+                .scaledToFit()
+                .scaleEffect(scale)
+                .offset(offset)
+                .gesture(MagnifyGesture()
+                    .onChanged { scale = max(1, settled * $0.magnification) }
+                    .onEnded { _ in settled = scale; if scale == 1 { offset = .zero; dragStart = .zero } })
+                .simultaneousGesture(DragGesture()
+                    .onChanged { value in
+                        guard scale > 1 else { return }
+                        offset = CGSize(width: dragStart.width + value.translation.width,
+                                        height: dragStart.height + value.translation.height)
+                    }
+                    .onEnded { _ in dragStart = offset })
+                .onTapGesture(count: 2) {
+                    withAnimation(.snappy) {
+                        if scale > 1 { scale = 1; settled = 1; offset = .zero; dragStart = .zero }
+                        else { scale = 2.5; settled = 2.5 }
+                    }
+                }
+                .accessibilityLabel("The attached picture")
+            Button("Done") { dismiss() }
+                .font(.headline)
+                .padding(.horizontal, 16).padding(.vertical, 8)
+                .background(.ultraThinMaterial, in: Capsule())
+                .padding()
+        }
+    }
+}
