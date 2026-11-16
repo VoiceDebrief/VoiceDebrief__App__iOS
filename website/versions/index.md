@@ -4,6 +4,7 @@ Every release of this repository. Every push to `dev` is a release: CI works out
 
 | Version | Date | What changed |
 |---|---|---|
+| next | | SGit Secrets: the vault engine now also reads a merge that the sgit command made itself, checked in the tests with a vault sgit merged after two copies changed apart. |
 | next | | SGit Secrets, second building block: when two devices changed a vault while apart, their changes are now joined. Different secrets merge on their own; a secret changed on both keeps the newer change and the older one beside it, so nothing is lost; a change is never undone by a deletion on the other device. Nothing on screen yet. |
 | v0.1.132 | 16 November 2026 | SGit Secrets, first building block: a vault can now be written as one file and read back safely (anything that could escape the vault's folders is refused), two copies that changed apart can be joined, and a file is replaced in one step with five earlier copies kept. It is the store the secrets app will keep in iCloud Drive; nothing on screen yet. |
 | v0.1.132 | 16 November 2026 | The secrets app has a name and decisions: SGit Secrets; pay as you go with credit, a £5 starter switching on a server copy; vaults shared between people only through the server, with keys exchanged between them, never a shared iCloud folder. The plan now starts with the one-file store, and sharing comes with the server in a second version. [Read it](../articles/secrets-app/index.md). |

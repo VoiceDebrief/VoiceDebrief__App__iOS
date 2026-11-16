@@ -168,6 +168,37 @@ final class MergeTests: XCTestCase {
         XCTAssertEqual(again.head.commitId, first.head.commitId)
     }
 
+    /// The other direction: a merge that sgit itself wrote (Tests/Fixtures/merge, made by generate_fixtures.py
+    /// with sgit-ai 0.27.0) is read by Swift: the head has two parents, both sides' changes are there (an
+    /// addition on each side and a deletion on one), and every commit's signature verifies.
+    func testSwiftReadsAMergeThatSgitWrote() async throws {
+        struct Expected: Decodable {
+            let vault_key: String
+            let files: [String: Fixture.FileExpectation]
+            let messages_include: [String]
+        }
+        let dir = Fixture.root.appending(path: "merge", directoryHint: .isDirectory)
+        let expected = try JSONDecoder().decode(Expected.self, from: Data(contentsOf: dir.appending(path: "expected.json")))
+        let key = try await SGitVault.deriveKey(from: expected.vault_key, log: VaultTrafficLog())
+        let vault = SGitVault(address: VaultAddress(vaultId: key.vaultId), readKey: key.readKey, cache: temporaryCache(),
+                              log: VaultTrafficLog(), transport: FolderVaultTransport(root: dir.appending(path: "server")),
+                              branch: "current")
+        let head = try await vault.pull()
+        XCTAssertEqual(head.parents.count, 2, "sgit's merge commit has two parents")
+        XCTAssertTrue(head.signature.isVerified)
+        let files = try await vault.files()
+        XCTAssertEqual(Set(files.map(\.path)), Set(expected.files.keys))
+        for (path, want) in expected.files {
+            let data = try await vault.read(path)
+            XCTAssertEqual(data.count, want.size, path)
+            XCTAssertEqual(sha256Hex(data), want.sha256, path)
+        }
+        let history = try await vault.history(limit: 20)
+        let messages = history.map(\.message)
+        for message in expected.messages_include { XCTAssertTrue(messages.contains(message), message) }
+        XCTAssertTrue(history.allSatisfy { $0.signature.isVerified || $0.parents.isEmpty }, "every commit verifies (the first may be unsigned)")
+    }
+
     func testConflictNamesKeepTheExtension() {
         XCTAssertEqual(SGitVault.conflictPath(for: "secrets/abc.json", commitId: "obj-cas-imm-0123456789ab"),
                        "secrets/abc.conflict-456789ab.json")

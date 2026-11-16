@@ -162,15 +162,62 @@ def make_account(out_root: Path):
     print('account', d['vault_id'], 'fixtmaster1', 'fixtreader1')
 
 
+def make_merge(out_root: Path):
+    """Two clones of one vault change it apart; the second push makes sgit write its own merge commit
+    (two parents). Swift must read it: the files of both sides, both histories, every signature."""
+    name, vault_id = 'merge', 'fixtmerge1'
+    out = out_root / name
+    shutil.rmtree(out, ignore_errors=True)
+    out.mkdir(parents=True)
+    vault_key = f'throwaway-fixture-merge:{vault_id}'
+    api = Vault__API__In_Memory().setup()
+    sync = Vault__Sync(crypto=Vault__Crypto(), api=api)
+    with tempfile.TemporaryDirectory() as tmp:
+        iphone, ipad = Path(tmp) / 'iphone', Path(tmp) / 'ipad'
+        sync.init(str(iphone), vault_key=vault_key)
+        write(iphone, 'secrets/wifi.json', '{"name":"Office Wi-Fi","password":"throwaway"}\n')
+        write(iphone, 'secrets/old.json', '{"name":"Old router"}\n')
+        sync.commit(str(iphone), message='Add Wi-Fi and the old router')
+        sync.push(str(iphone))
+        sync.clone(f'{vault_key}', str(ipad))
+        # Apart: the iPhone adds the bank; the iPad adds the router and deletes the old one.
+        write(iphone, 'secrets/bank.json', '{"name":"Bank"}\n')
+        sync.commit(str(iphone), message='Add bank (iPhone)')
+        write(ipad, 'secrets/router.json', '{"name":"Router"}\n')
+        (ipad / 'secrets/old.json').unlink()
+        sync.commit(str(ipad), message='Add router, remove the old one (iPad)', allow_deletions=True)
+        sync.push(str(iphone))
+        pushed = sync.push(str(ipad))                 # behind: sgit pulls, merges, then pushes the merge
+        assert pushed.get('status') == 'pushed', pushed
+        sync.pull(str(iphone))
+        expected_files = files_of(ipad)
+        assert files_of(iphone) == expected_files
+        n = dump_server(api, vault_id, out)
+    expected = {
+        'WARNING': 'THROWAWAY test keys for test fixtures only. This vault exists on no server.',
+        'generator': 'generate_fixtures.py with sgit-ai 0.27.0 (merge)',
+        'vault_id': vault_id,
+        'vault_key': f'sgit_private_vault_{vault_key}',
+        'objects_on_server': n,
+        'files': expected_files,
+        'messages_include': ['Add bank (iPhone)', 'Add router, remove the old one (iPad)',
+                             'Add Wi-Fi and the old router'],
+    }
+    (out / 'expected.json').write_text(json.dumps(expected, indent=1, ensure_ascii=False) + '\n')
+    print(name, vault_id, n, 'server files')
+
+
 def main():
     out_root = Path(sys.argv[1])
-    only = sys.argv[2:] or ['plain', 'deflate', 'account']
+    only = sys.argv[2:] or ['plain', 'deflate', 'account', 'merge']
     if 'plain' in only:
         make('plain', 'throwaway-fixture-plain', 'fixtplain1', out_root, deflate=False)
     if 'deflate' in only:
         make('deflate', 'throwaway-fixture-deflate', 'fixtdefl1', out_root, deflate=True)
     if 'account' in only:
         make_account(out_root)
+    if 'merge' in only:
+        make_merge(out_root)
 
 
 if __name__ == '__main__':

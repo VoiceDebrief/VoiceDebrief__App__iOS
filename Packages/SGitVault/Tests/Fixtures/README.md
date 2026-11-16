@@ -7,6 +7,7 @@ tests only. The vaults exist on no server and hold nothing but the test text.
 | --- | --- | --- | --- |
 | `plain/` | `fixtplain1` | 1 (12-hex object ids) | tree walk, nested folders, a unicode file name, two named branches (`current`, `device-ipad`), signed commits |
 | `deflate/` | `fixtdefl1` | 2 (`ids-128`, `blob-deflate`) | 32-hex object ids beside 12-hex ones, one `\0sgz1` deflated blob (`docs/big.txt`) |
+| `merge/` | `fixtmerge1` | 1 | a merge commit written by sgit itself: two clones changed the vault apart (an addition on each side, a deletion on one), and the second push merged. Read by `MergeTests.testSwiftReadsAMergeThatSgitWrote` |
 
 `<fixture>/server/bare/…` is exactly what `https://dev.send.sgraph.ai/api/vault/read/<vault id>/<path>`
 would return: it is written by sgit-ai 0.27.0 itself, pushing to its in-memory server.

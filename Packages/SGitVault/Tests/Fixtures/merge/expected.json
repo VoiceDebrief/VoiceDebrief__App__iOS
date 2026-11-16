@@ -1,0 +1,29 @@
+{
+ "WARNING": "THROWAWAY test keys for test fixtures only. This vault exists on no server.",
+ "generator": "generate_fixtures.py with sgit-ai 0.27.0 (merge)",
+ "vault_id": "fixtmerge1",
+ "vault_key": "sgit_private_vault_throwaway-fixture-merge:fixtmerge1",
+ "objects_on_server": 25,
+ "files": {
+  "secrets/bank.json": {
+   "size": 16,
+   "sha256": "941fd339119f1880de1eb34a20a32386d58f00668875c4a9d657a1e9f9f5edac",
+   "text": "{\"name\":\"Bank\"}\n"
+  },
+  "secrets/router.json": {
+   "size": 18,
+   "sha256": "099e9790a01beb66ddd715d8b6c52b8923fb55a8633bf1911ed84233e92b37fc",
+   "text": "{\"name\":\"Router\"}\n"
+  },
+  "secrets/wifi.json": {
+   "size": 47,
+   "sha256": "2fddb2cbfd30549c5c14a3b376e270ca9a730cc742a065459bc5737f24f8d9de",
+   "text": "{\"name\":\"Office Wi-Fi\",\"password\":\"throwaway\"}\n"
+  }
+ },
+ "messages_include": [
+  "Add bank (iPhone)",
+  "Add router, remove the old one (iPad)",
+  "Add Wi-Fi and the old router"
+ ]
+}
