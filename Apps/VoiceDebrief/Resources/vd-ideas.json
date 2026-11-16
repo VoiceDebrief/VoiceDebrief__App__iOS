@@ -29,7 +29,7 @@
  ],
  "counts": {
   "seen-working": 27,
-  "built-untried": 104,
+  "built-untried": 105,
   "in-progress": 45,
   "proposed": 61,
   "parked": 6
@@ -4028,6 +4028,24 @@
    "detail": [
     "Packages/SGitVault/Sources/SGitVault/VaultFileStore.swift (SGit Secrets, step 1 of the secrets app plan): VaultArchive writes a vault folder as one stored zip, always the same bytes for the same folder, and reads it back, refusing any name that could leave the vault's four folders, symbolic links, compression, duplicates, bad checksums and objects that do not match their ids; VaultObjects.union joins two copies' objects, checked before anything is copied, leaving refs alone; VaultFileStore replaces one file in a single step through a file coordinator and keeps five earlier copies in that file's own folder. On no screen; no iCloud yet; no merge of heads yet",
     "Unit tests (FileStoreTests): the round trip read back by the engine, hostile names, symbolic links, a changed byte, an object that does not match its id, the union of two copies that changed apart, a tampered source changing nothing, five copies kept and nothing else touched. ios-vault.yml unpacks the Swift-written file with unzip and has sgit clone it, both by its usual check and with --transport local (not yet run)"
+   ],
+   "places": [],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
+   "id": "feature.merging.two.heads.of.a.vault",
+   "kind": "feature",
+   "app": "VoiceDebrief",
+   "title": "Merging two heads of a vault",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "Packages/SGitVault/Sources/SGitVault/VaultMerge.swift (SGit Secrets, step 2): after the other copy's objects are joined, merge(theirs:) finds the newest commit both histories share and compares each path's content against it: a change on one side is taken, a change beats a deletion, and a path both sides changed differently keeps the version whose latest change is newer, with the other kept beside...",
+   "detail": [
+    "Packages/SGitVault/Sources/SGitVault/VaultMerge.swift (SGit Secrets, step 2): after the other copy's objects are joined, merge(theirs:) finds the newest commit both histories share and compares each path's content against it: a change on one side is taken, a change beats a deletion, and a path both sides changed differently keeps the version whose latest change is newer, with the other kept beside it as <name>.conflict-<commit>.<ext>, so nothing is lost and both devices reach the same files. One signed commit with both heads as parents, moved with compare-and-swap; history is never rewritten. On no screen; not yet used with iCloud",
+    "Unit tests (MergeTests): different secrets on two devices, the same secret changed on both (the newer change stays, the older is kept beside it), the newer change winning on either side with both devices arriving at the same files, a change kept over a deletion, a deletion taken, a copy that was behind, a head already merged. ios-vault.yml has sgit check the merged vault's signatures and files"
    ],
    "places": [],
    "issues": [],
