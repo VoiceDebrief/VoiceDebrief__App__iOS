@@ -140,6 +140,8 @@ final class DebriefSession {
         }
         do {
             try await recorder.start(writingTo: audio)
+            let inputs = AVAudioSession.sharedInstance().currentRoute.inputs.map { "\($0.portType.rawValue) \($0.portName)" }
+            inputRoute = inputs.isEmpty ? "none" : inputs.joined(separator: ", ")
             recordingNoteId = note.id
             recordingLocaleId = localeId
             liveSettled = ""
@@ -250,6 +252,8 @@ final class DebriefSession {
     private var liveStoppedForSilence = false
     /// The loudest the recorder's meter read during this take: below -100 dB it wrote nothing but zeros.
     private var loudestDecibels: Double = -160
+    /// The microphone the recording started on, as the audio session named it.
+    private var inputRoute = ""
     /// The live engine has heard sound in this take (its backup has more than a very quiet room).
     private var engineHearsSound: Bool { live.backup.peak > 0.001 }
 
@@ -303,16 +307,27 @@ final class DebriefSession {
         }
         recordingNoteId = nil
         // The recorder wrote only zeros but the live engine heard sound: make the note from what it heard.
-        if let backup, let audio = store.audioURL(for: id) {
-            if loudestDecibels < -100, backup.peak > 0.001 {
+        var check = String(format: "recorder loudest %.0f dB", loudestDecibels)
+        if let backup {
+            check += String(format: "; live engine peak %.4f", backup.peak)
+            if let audio = store.audioURL(for: id), loudestDecibels < -100, backup.peak > 0.001 {
                 do {
                     try TapBackup.replace(audio, with: backup.url)
+                    check += "; rescued from the live audio"
                     UsageLog.shared.action("record.rescued-from-engine")
                 } catch {
+                    check += "; rescue failed: \(error.localizedDescription)"
                     UsageLog.shared.action("record.rescue-failed")
                 }
             }
             try? FileManager.default.removeItem(at: backup.url)
+        } else {
+            check += "; no live engine audio" + (liveNote.isEmpty ? "" : " (\(liveNote))")
+        }
+        check += "; input " + inputRoute
+        if var run = store.note(id)?.run, let note = store.note(id) {
+            run.microphoneCheck = check
+            store.update(id, run: run, processing: note.processing)
         }
         guard store.audioURL(for: id) != nil else {
             store.delete(id)

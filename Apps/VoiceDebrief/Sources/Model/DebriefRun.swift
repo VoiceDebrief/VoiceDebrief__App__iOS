@@ -26,6 +26,10 @@ struct DebriefRun: Codable, Equatable, Sendable {
     var debriefHasAllSections: Bool
     var steps: [StepRecord]
     var modelContextSize: Int?
+    /// What the microphone gave, measured while recording: the recorder's loudest reading, the live engine's
+    /// loudest sample, and whether the note was rescued from the live audio. Sent with the note, so a silent
+    /// recording can be diagnosed from the receiving end (four silent notes from the owner, 15 to 16 November).
+    var microphoneCheck: String? = nil
 
     init(source: String, localeId: String) {
         self.source = source
