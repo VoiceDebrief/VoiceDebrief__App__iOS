@@ -31,7 +31,7 @@
   "seen-working": 7,
   "built-untried": 33,
   "in-progress": 18,
-  "proposed": 40,
+  "proposed": 41,
   "parked": 1
  },
  "ideas": [
@@ -722,6 +722,32 @@
     "The Lab, experiment L03: a game played by voice"
    ],
    "url": "https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/300-the-voice-game.md",
+   "source": "The project"
+  },
+  {
+   "id": "issue-400",
+   "kind": "issue",
+   "number": "400",
+   "app": "SGit Vaults",
+   "title": "SGit CRM, a third app for iPhone and iPad",
+   "status": "proposed",
+   "why": "Open, with nothing built yet: \"\"",
+   "summary": "Opened 16 November 2026, at the owner's request. Status: open, being built by the cell in cells/crm-ios/.",
+   "detail": [
+    "Opened 16 November 2026, at the owner's request. Status: open, being built by the cell in cells/crm-ios/.",
+    "A CRM of our own, on vaults, first used to follow up every contact and action from Web Summit 2026 (design: A CRM for us and for our agents). App Store name SGit CRM, bundle id ai.sgit.crm.app, code in Apps/CRM. The brief is cells/crm-ios/brief.md.",
+    "Needs from the owner",
+    "- Register the bundle id ai.sgit.crm.app and create the SGit CRM app in App Store Connect, so CI can upload to TestFlight.",
+    "Done when",
+    "The app imports contacts from a vault as proposals, keeps them in the user's CRM vault, lists who needs a follow-up, and lets a person send a draft themselves, on a device, from TestFlight."
+   ],
+   "statusLine": "",
+   "places": [
+    "SGit Vaults"
+   ],
+   "versions": [],
+   "features": [],
+   "url": "https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/400-sgit-crm-app.md",
    "source": "The project"
   },
   {
