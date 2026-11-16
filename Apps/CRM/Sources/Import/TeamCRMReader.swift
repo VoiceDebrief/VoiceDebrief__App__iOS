@@ -17,7 +17,7 @@ enum TeamCRMReader {
         if parts.count >= 3, parts[parts.count - 3] == "companies", name == "company.json" { return .company }
         if parts.count >= 3, parts[parts.count - 3] == "contacts", name == "contact.json" { return .contact }
         if parts.count >= 2, parts[parts.count - 2] == "actions" { return .action }
-        if parts.count >= 4, parts[parts.count - 4] == "comms", name == "thread.json" { return .thread }
+        if parts.count >= 4, parts[parts.count - 3] == "comms", name == "thread.json" { return .thread }
         return nil
     }
 
