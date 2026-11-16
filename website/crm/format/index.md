@@ -69,6 +69,16 @@ Keys sorted, pretty-printed, slashes not escaped, a newline at the end, dates in
 
 This example is read by a test (`theDocumentedExampleReads`), so the page and the code cannot drift apart silently. It is shown on one line per field for reading; the app writes it fully pretty-printed.
 
+## Reading it from a vault app
+
+Everything the native screens show can be rebuilt from the files alone, so a vault app (HTML and JavaScript in a vault, the explorer layer of [explorers and villagers](../explorers/index.md)) can show the same thing. The Swift readers are kept apart from the screens for this reason: `Records/` (the format), `Model/FollowUpBoard.swift` (who needs what), `Agents/AgentsBoard.swift` (the agents).
+
+- **Records**: list the vault's files; a record is `<folder>/<lowercase uuid>.json` in one of the seven folders; parse it as JSON; refuse one whose `id` is not its file name, or whose `format` is not `sgit.ai/crm/v1`. Keep files that do not read, and say so; never drop them silently.
+- **Names**: a follow-up, an interaction or an introduction names people by id; look them up in `people/`, and a person's organisation in `organisations/`. A value's source is its own `source`, or else its record's.
+- **Who needs what** (W3): each follow-up goes in one bucket. `done` and `dropped` are *done or dropped*; `waiting` is *waiting on someone else*; an `open` one with no `due` is *no date*; otherwise compare its due day with today, in the reader's own time zone: before today *overdue*, today *due today*, within the next seven days *in the next seven days*, later *later*. Within a bucket, by due date, then by the person's name. A filter by `owner` is the only other choice.
+- **What the agents are doing** (W11): read `agents/agents.json` from the agents vault (the conductor's report: `agents`, `links`, `messages`, `decisions`, `nextSteps`). Group agents by `group` (else "Other"); within a group `blocked`, `waiting`, `working`, `idle`, `done`, then by name; groups with someone waiting first. Read it again every 30 seconds while it is on screen.
+- **Writing** is one commit per batch of changed records, each with its `changed` stamp; only a person marks a draft sent. A vault app that cannot sign commits proposes instead, on a lane, and the app shows its proposals for a person to accept.
+
 ## How records arrive
 
 An import (step 3) reads another vault and offers each contact it finds as a proposal; a proposal is not a record. Only what a person accepts is written, as one signed commit per batch: new people, values added to people who matched (each with the import as its source), the organisations they name, and, if asked, a note interaction and a follow-up for each new person. Proposals from agents on an append lane come with step 6. The sync to Twenty is later.
