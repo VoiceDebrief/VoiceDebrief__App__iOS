@@ -20,21 +20,7 @@ enum ImportPlanner {
         var newOrganisations = 0
 
         /// The files for the commit: path to bytes. Throws if any record has problems.
-        func files() throws -> [String: Data] {
-            var out: [String: Data] = [:]
-            for r in records {
-                switch r {
-                case .person(let x): out[x.path] = try RecordFiles.encode(x)
-                case .organisation(let x): out[x.path] = try RecordFiles.encode(x)
-                case .interaction(let x): out[x.path] = try RecordFiles.encode(x)
-                case .introduction(let x): out[x.path] = try RecordFiles.encode(x)
-                case .followUp(let x): out[x.path] = try RecordFiles.encode(x)
-                case .draft(let x): out[x.path] = try RecordFiles.encode(x)
-                case .play(let x): out[x.path] = try RecordFiles.encode(x)
-                }
-            }
-            return out
-        }
+        func files() throws -> [String: Data] { try RecordFiles.files(records) }
 
         var summary: String {
             var parts = ["\(newPeople) new \(newPeople == 1 ? "person" : "people")"]

@@ -63,9 +63,8 @@ enum CRMSection: String, CaseIterable, Identifiable, Hashable, Sendable {
     /// The step of the brief that builds this section, or nil when it is built.
     var step: Int? {
         switch self {
-        case .followUps, .introductions: return 4
         case .drafts: return 5
-        case .people, .organisations, .importing, .workflows, .labs, .about: return nil
+        case .followUps, .introductions, .people, .organisations, .importing, .workflows, .labs, .about: return nil
         }
     }
 

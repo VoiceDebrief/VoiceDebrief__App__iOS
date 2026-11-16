@@ -61,6 +61,10 @@ struct SectionScreen: View {
             switch section {
             case .about:
                 AboutView(crm: crm)
+            case .followUps:
+                FollowUpsView(crm: crm)
+            case .introductions:
+                IntroductionsView(crm: crm)
             case .people:
                 PeopleList(crm: crm)
             case .organisations:

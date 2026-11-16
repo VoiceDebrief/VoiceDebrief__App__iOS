@@ -76,3 +76,23 @@ struct CRMVaultTests {
         #expect(crm.followUps.first?.nextStep == "Follow up after Web Summit")
     }
 }
+
+@MainActor
+struct CRMVaultChangeTests {
+    @Test func aChangedFollowUpIsOneMoreCommit() async throws {
+        let root = FileManager.default.temporaryDirectory.appending(path: "crm-change-\(UUID().uuidString)", directoryHint: .isDirectory)
+        let crm = CRMVault(store: MemoryStore(), root: root, remote: FolderVaultTransport(root: root.appending(path: "unused")))
+        try await crm.open()
+        var proposals = ProposalMaker.make([ContactCandidate(name: "Ana Exemplo", emails: ["ana@example.org"], source: Invented.source)], people: [])
+        proposals[0].decision = .accept
+        let plan = ImportPlanner.plan(proposals, people: [], organisations: [],
+                                      options: ImportOptions(followUp: "Say hello", owner: "Owner"), by: crm.actor(name: "Owner"), at: Date())
+        try await crm.commit(plan, message: "Import")
+        let f = try #require(crm.followUps.first)
+        let done = FollowUpBoard.changed(f, status: .done, nextStep: "Said hello", due: nil, waitingOn: nil, by: crm.actor(name: "Owner"), at: Date())
+        try await crm.commit(records: [.followUp(done)], message: "Follow-up done")
+        #expect(crm.followUps.count == 1)
+        #expect(crm.followUps.first?.status == .done)
+        #expect(crm.commits == 3)
+    }
+}

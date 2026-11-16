@@ -67,6 +67,23 @@ enum RecordFiles {
         return data
     }
 
+    /// The files for a commit: path to bytes. Throws if any record has problems.
+    static func files(_ records: [AnyRecord]) throws -> [String: Data] {
+        var out: [String: Data] = [:]
+        for r in records {
+            switch r {
+            case .person(let x): out[x.path] = try encode(x)
+            case .organisation(let x): out[x.path] = try encode(x)
+            case .interaction(let x): out[x.path] = try encode(x)
+            case .introduction(let x): out[x.path] = try encode(x)
+            case .followUp(let x): out[x.path] = try encode(x)
+            case .draft(let x): out[x.path] = try encode(x)
+            case .play(let x): out[x.path] = try encode(x)
+            }
+        }
+        return out
+    }
+
     /// The kind and id a path names: `people/<id>.json`.
     static func parse(path: String) -> (RecordKind, String)? {
         let parts = path.split(separator: "/").map(String.init)

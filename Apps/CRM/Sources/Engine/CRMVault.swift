@@ -154,9 +154,15 @@ final class CRMVault {
     /// Writes a plan's records as one signed commit, then reads the vault again.
     @discardableResult
     func commit(_ plan: ImportPlanner.Plan, message: String) async throws -> String {
+        try await commit(records: plan.records, message: message)
+    }
+
+    /// Writes records as one signed commit, then reads the vault again.
+    @discardableResult
+    func commit(records: [AnyRecord], message: String) async throws -> String {
         guard let handle, let key else { throw Problem.noVault }
         guard let writeKey = key.writeKey else { throw Problem.readOnly }
-        let files = try plan.files()
+        let files = try RecordFiles.files(records)
         let changes: [String: Data?] = files.mapValues { Optional($0) }
         let result = try await handle.commit(changes, message: message, branch: "current", signer: try commitSigner(),
                                              writeKey: writeKey, accessToken: nil, writer: local)
