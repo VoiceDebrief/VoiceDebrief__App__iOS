@@ -48,10 +48,12 @@ enum ImportScanner {
     /// Reads the files given (path and bytes). `vault` names the vault in each source.
     static func scan(_ files: [(path: String, data: Data)], vault: String, at: Date) -> Result {
         var result = Result()
-        let team = TeamCRMReader.read(files, file: vault, at: at)
-        result.candidates = team.candidates
-        result.skipped = team.skipped
-        for (path, data) in files where !team.taken.contains(path) {
+        let twin = TwinReader.read(files, file: vault, at: at)
+        let rest = files.filter { !twin.taken.contains($0.path) }
+        let team = TeamCRMReader.read(rest, file: vault, at: at)
+        result.candidates = twin.candidates + team.candidates
+        result.skipped = twin.skipped + team.skipped
+        for (path, data) in rest where !team.taken.contains(path) {
             guard let fileKind = kind(of: path) else { continue }
             let file = "\(vault)/\(path)"
             let text = String(decoding: data, as: UTF8.self)

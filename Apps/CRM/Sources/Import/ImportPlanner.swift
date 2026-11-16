@@ -40,6 +40,7 @@ enum ImportPlanner {
         var touched: [String] = []
         var created: [String] = []
         var steps: [String: ContactCandidate] = [:]   // person id to the candidate that named a next step
+        var happened: [(person: String, events: [CandidateEvent], source: Source)] = []
 
         func organisationID(_ name: String?, source: Source) -> String? {
             guard let name, !name.trimmingCharacters(in: .whitespaces).isEmpty else { return nil }
@@ -57,6 +58,7 @@ enum ImportPlanner {
             let src = c.source
             let orgID = organisationID(c.organisation, source: src)
             if let match = proposal.match, var person = peopleByID[match.personID] {
+                if !c.events.isEmpty { happened.append((person.id, c.events, src)) }
                 let before = person
                 let emails = Set(person.emails.map { ContactKeys.email($0.value) })
                 person.emails += c.emails.filter { !emails.contains(ContactKeys.email($0)) }.map { Sourced($0, source: src) }
@@ -82,6 +84,7 @@ enum ImportPlanner {
                 peopleByID[person.id] = person
                 created.append(person.id)
                 if c.nextStep != nil || c.stage != nil { steps[person.id] = c }
+                if !c.events.isEmpty { happened.append((person.id, c.events, src)) }
             }
         }
 
@@ -103,6 +106,12 @@ enum ImportPlanner {
             } else if let step = options.followUp, !step.isEmpty {
                 plan.records.append(.followUp(FollowUp(id: RecordID.make(), created: stamp, changed: stamp, source: person.source,
                                                        person: id, owner: options.owner, nextStep: step, status: .open)))
+            }
+        }
+        for (personID, events, source) in happened {
+            for e in events {
+                plan.records.append(.interaction(Interaction(id: RecordID.make(), created: stamp, changed: stamp, source: source,
+                                                             at: e.at.toTheSecond, channel: e.channel, people: [personID], summary: e.summary)))
             }
         }
         for id in touched {

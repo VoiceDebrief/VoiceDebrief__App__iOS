@@ -4,6 +4,7 @@ Every release of this repository. Every push to `dev` is a release: CI works out
 
 | Version | Date | What changed |
 |---|---|---|
+| next | 16 November 2026 | SGit CRM reads your mailbox's twin: open the vault the email cell fills, and everyone you correspond with is proposed, each email thread kept as an interaction, and a follow-up where someone wrote last and is waiting for your reply. Only verified senders count. Try it now with an invented mailbox (Import, Try with a sample mailbox); your real one is connected on your own device. |
 | next | 16 November 2026 | SGit CRM is in TestFlight: builds 0.1.142 (19) and 0.1.143 (20) were uploaded on the evening of 16 November, and the owner confirmed the app opens on a device. |
 | v0.1.143 | 16 November 2026 | SGit CRM: what the agents are doing. Choose the vault your conductor writes its report into, and Agents shows who is working, who is waiting or stuck and on what, what waits on you, who talks to whom, and the latest messages, read again every 30 seconds. Read only for now. |
 | v0.1.143 | 16 November 2026 | SGit CRM: cards and keys. Make your keys, show your contact card as a QR code, scan someone else's at a stand, check it is really them, and add their key to their record. A card holds only public keys; a changed one is refused. |

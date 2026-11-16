@@ -104,6 +104,10 @@ struct ImportView: View {
                     Task { await session.readSample(into: crm) }
                 }
                 .disabled(crm.vaultID == nil)
+                Button("Try with a sample mailbox") {
+                    Task { await session.readSampleMailbox(into: crm) }
+                }
+                .disabled(crm.vaultID == nil)
             }
         }
     }

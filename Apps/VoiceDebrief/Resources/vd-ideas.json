@@ -29,7 +29,7 @@
  ],
  "counts": {
   "seen-working": 28,
-  "built-untried": 116,
+  "built-untried": 117,
   "in-progress": 46,
   "proposed": 61,
   "parked": 6
@@ -4296,6 +4296,24 @@
    "detail": [
     "Apps/CRM/Sources/Agents/ (workflow W11): Agents reads agents/agents.json, the report a conductor writes (its format copied from VoiceDebrief's AgentsReport), from a vault chosen among the vault apps, every 30 seconds while the screen is open and on pull to refresh: counts working, waiting and quiet; what waits on you (the conductor's decisions); agents by project, the blocked and waiting first, each with what it is doing, what it waits for and when it was last active; who talks to whom; the latest messages; what happens next. Read only: answering goes through a lane, not built",
     "Unit tests (AgentsBoardTests) on an invented report: grouping and order, names on links, newest messages first, counts, time in words. Not tried on a device or against a real agents vault"
+   ],
+   "places": [],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
+   "id": "feature.sgit.crm.reading.the.mailbox.twin",
+   "kind": "feature",
+   "app": "VoiceDebrief",
+   "title": "SGit CRM, reading the mailbox twin",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "Apps/CRM/Sources/Import/TwinReader.swift (workflow W5, the side that comes back): a vault in the email cell's twin format (mailbox.json, threads/, raw/messages/ or clean/messages/, index/correspondents.json) opened in Import is read as a mailbox: each correspondent becomes a proposal with their name, each email thread as an interaction, and a follow-up \"Reply: …\" when they wrote last and nobody...",
+   "detail": [
+    "Apps/CRM/Sources/Import/TwinReader.swift (workflow W5, the side that comes back): a vault in the email cell's twin format (mailbox.json, threads/, raw/messages/ or clean/messages/, index/correspondents.json) opened in Import is read as a mailbox: each correspondent becomes a proposal with their name, each email thread as an interaction, and a follow-up \"Reply: …\" when they wrote last and nobody answered. Only verified correspondence counts, as the email cell's policy says (a message that passed DMARC, or someone you wrote to); others are listed and left out; your own address is never a proposal. \"Try with a sample mailbox\" runs it on an invented twin. Nothing is written to the twin",
+    "Unit tests (TwinReaderTests) on the invented twin: three correspondents, the unverified sender left out, a reply owed only where they wrote last, threads kept as email interactions, the reply as the one follow-up. Not tried on a device or on a real twin (none exists yet: the person creates it through pki.sgit.ai and the email cell fills it in their browser)"
    ],
    "places": [],
    "issues": [],

@@ -67,6 +67,14 @@ final class ImportSession {
         finish(result, looked: SampleData.importFiles.count, crm: crm)
     }
 
+    /// The same, from an invented mailbox twin: the email workflow on synthetic data.
+    func readSampleMailbox(into crm: CRMVault) async {
+        sourceVault = "sample mailbox"
+        let files = SampleData.twinFiles
+        let result = await collect(files, label: "sample mailbox")
+        finish(result, looked: files.count, crm: crm)
+    }
+
     /// Reads each chosen vault of a vault of vaults, one after another, into one set of proposals.
     func readChosen(into crm: CRMVault) async {
         var all = ImportScanner.Result()

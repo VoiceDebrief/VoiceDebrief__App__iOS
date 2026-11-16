@@ -116,3 +116,58 @@ extension SampleData {
                 ("contacts/kai-sample/contact.json", Data(contact.utf8))]
     }
 }
+
+extension SampleData {
+    /// An invented mailbox in the email cell's twin format: four correspondents, one of whom is owed a
+    /// reply, one who only receives, and a sender whose mail never passed DMARC (left out by policy).
+    static var twinFiles: [(path: String, data: Data)] {
+        func json(_ o: Any) -> Data { (try? JSONSerialization.data(withJSONObject: o, options: [.sortedKeys])) ?? Data() }
+        func person(_ name: String, _ address: String) -> [String: Any] { ["name": name, "address": address] }
+        let me = person("Owner (sample)", "owner@example.org")
+        let ana = person("Ana Exemplo", "ana@example.org")
+        let tom = person("Tom Sample", "tom@example.com")
+        let rita = person("Rita Demo", "rita@example.org")
+        let spam = person("Prize Desk", "prizes@example.net")
+        func message(_ id: String, _ thread: String, _ from: [String: Any], _ to: [[String: Any]], _ date: String, _ inbound: Bool, _ subject: String) -> (String, Data) {
+            var o: [String: Any] = ["schema": "twin.message/1", "id": id, "thread": thread, "from": from, "to": to, "cc": [], "bcc": [],
+                                    "date": date, "direction": inbound ? "inbound" : "outbound", "subject": subject, "labels": [],
+                                    "headers": ["message_id": "<\(id)@example.org>", "in_reply_to": NSNull(), "references": []],
+                                    "body": ["text": "(sample)", "html": NSNull()], "attachments": [], "language": "en"]
+            if inbound { o["auth"] = ["spf": "pass", "dkim": "pass", "dmarc": from["address"] as? String == "prizes@example.net" ? "fail" : "pass"] }
+            return ("raw/messages/2026/11/\(id).json", json(o))
+        }
+        let msgs = [
+            message("m-1", "t-1", me, [ana], "2026-11-12T09:00:00Z", false, "Good to meet you at the summit"),
+            message("m-2", "t-1", ana, [me], "2026-11-14T16:20:00Z", true, "Re: Good to meet you at the summit"),
+            message("m-3", "t-2", tom, [me], "2026-11-13T11:00:00Z", true, "Seed round timing"),
+            message("m-4", "t-2", me, [tom], "2026-11-13T15:30:00Z", false, "Re: Seed round timing"),
+            message("m-5", "t-3", me, [rita], "2026-11-15T10:00:00Z", false, "The security review template"),
+            message("m-6", "t-4", spam, [me], "2026-11-15T08:00:00Z", true, "You have won"),
+        ]
+        func thread(_ id: String, _ subject: String, _ ids: [String], _ parts: [String], _ last: String) -> (String, Data) {
+            ("threads/\(id).json", json(["schema": "twin.thread/1", "id": id, "subject": subject, "messages": ids,
+                                         "participants": parts, "labels": [], "last_date": last]))
+        }
+        let threads = [
+            thread("t-1", "Good to meet you at the summit", ["m-1", "m-2"], ["owner@example.org", "ana@example.org"], "2026-11-14T16:20:00Z"),
+            thread("t-2", "Seed round timing", ["m-3", "m-4"], ["tom@example.com", "owner@example.org"], "2026-11-13T15:30:00Z"),
+            thread("t-3", "The security review template", ["m-5"], ["owner@example.org", "rita@example.org"], "2026-11-15T10:00:00Z"),
+            thread("t-4", "You have won", ["m-6"], ["prizes@example.net", "owner@example.org"], "2026-11-15T08:00:00Z"),
+        ]
+        let correspondents: [String: Any] = [
+            "ana@example.org": ["inbound": 1, "outbound": 1, "inbound_verified": 1, "first_seen": "2026-11-12T09:00:00Z"],
+            "tom@example.com": ["inbound": 1, "outbound": 1, "inbound_verified": 1, "first_seen": "2026-11-13T11:00:00Z"],
+            "rita@example.org": ["inbound": 0, "outbound": 1, "inbound_verified": 0, "first_seen": "2026-11-15T10:00:00Z"],
+            "prizes@example.net": ["inbound": 1, "outbound": 0, "inbound_verified": 0, "first_seen": "2026-11-15T08:00:00Z"],
+        ]
+        var files: [(path: String, data: Data)] = [
+            ("mailbox.json", json(["schema": "twin.mailbox/1", "address": "owner@example.org", "name": "Owner (sample)", "simulated": true,
+                                   "sync": ["cursor": "1", "synced_at": "2026-11-16T12:00:00Z"]])),
+            ("labels.json", json(["schema": "twin.labels/1", "labels": []])),
+            ("index/correspondents.json", json(correspondents)),
+        ]
+        files += msgs.map { (path: $0.0, data: $0.1) }
+        files += threads.map { (path: $0.0, data: $0.1) }
+        return files
+    }
+}

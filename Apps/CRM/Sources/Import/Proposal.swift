@@ -74,6 +74,7 @@ enum ProposalMaker {
         m.due = a.due ?? b.due
         m.stage = a.stage ?? b.stage
         m.owner = a.owner ?? b.owner
+        m.events = Array(Set(a.events + b.events)).sorted { $0.at < $1.at }
         if a.source.from != b.source.from { m.source.note = [a.source.note, "also in \(b.source.from)"].compactMap { $0 }.joined(separator: "; ") }
         return m
     }

@@ -17,6 +17,8 @@ struct ContactCandidate: Hashable, Sendable {
     var stage: String?
     /// Who on the team owns this contact, as the source names them.
     var owner: String?
+    /// Contacts the source records (an email thread, a meeting), kept as interactions when accepted.
+    var events: [CandidateEvent] = []
     /// Where it came from: the file and the place in it.
     var source: Source
 
@@ -34,6 +36,13 @@ struct ContactCandidate: Hashable, Sendable {
                 .joined(separator: " ")
         }
     }
+}
+
+/// Something that happened with a candidate, as the source records it.
+struct CandidateEvent: Hashable, Sendable {
+    var at: Date
+    var channel: Interaction.Channel
+    var summary: String
 }
 
 /// Small normalisations used to match people across sources.
