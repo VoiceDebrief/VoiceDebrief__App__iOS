@@ -78,7 +78,9 @@ enum TwinReader {
             threads.append(Thread(id: id, subject: (o["subject"] as? String) ?? "(no subject)", messages: ids, participants: parts, last: last))
         }
 
-        // Correspondents: a map of address to counts, or a list of entries with an address.
+        // Correspondents: {"schema": "twin.correspondents/1", "mailbox": …, "correspondents": {address: counts}}, as the
+        // real sync writes it; a bare map or a list of entries is also read. Your own address is always left out
+        // by mailbox.json's "address", never by trusting a thread's participants.
         var counts: [String: [String: Any]] = [:]
         if let index = files.first(where: { $0.path == "index/correspondents.json" }), let root = object(index.data) {
             let body = (root["correspondents"] as? [String: Any]) ?? root

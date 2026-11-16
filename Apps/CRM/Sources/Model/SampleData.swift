@@ -118,7 +118,8 @@ extension SampleData {
 }
 
 extension SampleData {
-    /// An invented mailbox in the email cell's twin format: four correspondents, one of whom is owed a
+    /// An invented mailbox in the email cell's twin format (as the email cell confirmed it, 16 November 2026:
+    /// a `schema` field on every file, the correspondents under a `correspondents` key): four correspondents, one of whom is owed a
     /// reply, one who only receives, and a sender whose mail never passed DMARC (left out by policy).
     static var twinFiles: [(path: String, data: Data)] {
         func json(_ o: Any) -> Data { (try? JSONSerialization.data(withJSONObject: o, options: [.sortedKeys])) ?? Data() }
@@ -164,7 +165,7 @@ extension SampleData {
             ("mailbox.json", json(["schema": "twin.mailbox/1", "address": "owner@example.org", "name": "Owner (sample)", "simulated": true,
                                    "sync": ["cursor": "1", "synced_at": "2026-11-16T12:00:00Z"]])),
             ("labels.json", json(["schema": "twin.labels/1", "labels": []])),
-            ("index/correspondents.json", json(correspondents)),
+            ("index/correspondents.json", json(["schema": "twin.correspondents/1", "mailbox": "owner@example.org", "correspondents": correspondents])),
         ]
         files += msgs.map { (path: $0.0, data: $0.1) }
         files += threads.map { (path: $0.0, data: $0.1) }
