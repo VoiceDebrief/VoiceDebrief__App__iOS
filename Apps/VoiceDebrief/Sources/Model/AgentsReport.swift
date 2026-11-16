@@ -14,6 +14,8 @@ struct AgentsReport: Codable, Equatable, Sendable {
         var parent: String?
         var lastActive: Date?
         var lane: String?           // an sgi1 link if it can be written to directly; else through the conductor
+        /// Which project or team it belongs to ("VoiceDebrief", "PrompTugal newsroom"), so the Agents tab can group them.
+        var group: String? = nil
     }
     struct Link: Codable, Equatable, Sendable { var from: String; var to: String; var label: String }
     struct Message: Codable, Equatable, Sendable, Identifiable {
@@ -27,6 +29,9 @@ struct AgentsReport: Codable, Equatable, Sendable {
         var quote: String? = nil
         /// A picture that goes with it (an infographic), as a path in the same vault, e.g. "agents/images/x.png".
         var image: String? = nil
+        /// Which stream it belongs to on the record screen's right column ("updates", "builds", "newsroom");
+        /// none is an ordinary message. A reply to a note (replyTo) shows under that note whatever its channel.
+        var channel: String? = nil
     }
 
     var v: Int

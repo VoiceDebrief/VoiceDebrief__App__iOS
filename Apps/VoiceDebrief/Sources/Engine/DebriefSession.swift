@@ -140,6 +140,8 @@ final class DebriefSession {
         }
         do {
             try await recorder.start(writingTo: audio)
+            let inputs = AVAudioSession.sharedInstance().currentRoute.inputs.map { "\($0.portType.rawValue) \($0.portName)" }
+            inputRoute = inputs.isEmpty ? "none" : inputs.joined(separator: ", ")
             recordingNoteId = note.id
             recordingLocaleId = localeId
             liveSettled = ""
@@ -149,6 +151,7 @@ final class DebriefSession {
             silentSince = nil
             microphoneSilent = false
             liveStoppedForSilence = false
+            loudestDecibels = -160
             failure = nil
             recordingSince = Date()
             RemoteControl.begin(title: "Recording a voice note") { [weak self] in self?.finishRequests += 1 }
@@ -174,7 +177,9 @@ final class DebriefSession {
     private func startLive(localeId: String) async {
         let carry = liveCarry
         do {
-            try await live.start(localeId: localeId) { settled, volatile in
+            let backupURL = recordingNoteId.flatMap { store.audioURL(for: $0) }?
+                .deletingLastPathComponent().appending(path: "engine-backup.caf")
+            try await live.start(localeId: localeId, backupTo: backupURL) { settled, volatile in
                 Task { @MainActor [weak self] in
                     guard let self else { return }
                     self.liveSettled = carry.isEmpty ? settled : (settled.isEmpty ? carry : carry + " " + settled)
@@ -245,13 +250,28 @@ final class DebriefSession {
     /// FaceTime, Siri, a car) may hold it. Three notes of pure silence came from build 0.1.72, unnoticed.
     private(set) var microphoneSilent = false
     private var liveStoppedForSilence = false
+    /// The loudest the recorder's meter read during this take: below -100 dB it wrote nothing but zeros.
+    private var loudestDecibels: Double = -160
+    /// The microphone the recording started on, as the audio session named it.
+    private var inputRoute = ""
+    /// The live engine has heard sound in this take (its backup has more than a very quiet room).
+    private var engineHearsSound: Bool { live.backup.peak > 0.001 }
 
     private func pushLevel() {
         guard recordingSince != nil, !paused else { return }
         let decibels = recorder.decibels()
+        loudestDecibels = max(loudestDecibels, decibels)
         let raw = VoiceRecorder.level(decibels: decibels)
         if decibels > -120 { silentSince = nil; microphoneSilent = false }
         else if silentSince == nil { silentSince = Date() }
+        else if engineHearsSound {
+            // The recorder is silent but the live engine hears: its backup is the recording now, so the
+            // engine keeps running and the note is made from the backup when it stops.
+            if !liveStoppedForSilence && liveNote.isEmpty {
+                liveNote = "The recording is being kept from the live audio."
+                UsageLog.shared.action("record.recorder-silent-engine-hears")
+            }
+        }
         else if let since = silentSince, Date().timeIntervalSince(since) > 3, !microphoneSilent {
             microphoneSilent = true
             UsageLog.shared.action("record.silent-microphone")
@@ -277,6 +297,7 @@ final class DebriefSession {
         meter = nil
         await live.stop()
         recorder.stop()
+        let backup = live.backup.finish()
         recordingSince = nil
         paused = false; pausedAt = nil; liveCarry = ""
         RemoteControl.end()
@@ -285,6 +306,29 @@ final class DebriefSession {
             return nil
         }
         recordingNoteId = nil
+        // The recorder wrote only zeros but the live engine heard sound: make the note from what it heard.
+        var check = String(format: "recorder loudest %.0f dB", loudestDecibels)
+        if let backup {
+            check += String(format: "; live engine peak %.4f", backup.peak)
+            if let audio = store.audioURL(for: id), loudestDecibels < -100, backup.peak > 0.001 {
+                do {
+                    try TapBackup.replace(audio, with: backup.url)
+                    check += "; rescued from the live audio"
+                    UsageLog.shared.action("record.rescued-from-engine")
+                } catch {
+                    check += "; rescue failed: \(error.localizedDescription)"
+                    UsageLog.shared.action("record.rescue-failed")
+                }
+            }
+            try? FileManager.default.removeItem(at: backup.url)
+        } else {
+            check += "; no live engine audio" + (liveNote.isEmpty ? "" : " (\(liveNote))")
+        }
+        check += "; input " + inputRoute
+        if var run = store.note(id)?.run, let note = store.note(id) {
+            run.microphoneCheck = check
+            store.update(id, run: run, processing: note.processing)
+        }
         guard store.audioURL(for: id) != nil else {
             store.delete(id)
             failure = "Nothing was recorded."
@@ -301,6 +345,7 @@ final class DebriefSession {
         meter = nil
         await live.stop()
         recorder.stop()
+        _ = live.backup.finish()
         paused = false; pausedAt = nil; liveCarry = ""
         if let id = recordingNoteId { store.delete(id) }
         recordingNoteId = nil

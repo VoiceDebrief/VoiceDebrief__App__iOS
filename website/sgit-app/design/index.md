@@ -35,7 +35,7 @@ Both source repositories were read on 14 November 2026, once the owner asked for
 | Where a file goes | Into the folder that is open, under its own name. A name already taken gets a number |
 | Reading | A file is fetched and decrypted when it is opened. The decrypted copy is in the app's cache folder only, which the system may empty, and which Settings can empty |
 | Where a vault lives | A vault you create is made and kept on this device: no account, no token, no network, and it takes files at once. It goes to a server when you choose to share it, which is the first time an access token is asked for, with the reason. From then on the server is where it lives and this device reads and writes it there, as it does a vault added by its key. One server (`dev.send.sgraph.ai`) for now |
-| Keys | Vault keys, the access token and the device's commit-signing key are in this app's Keychain, on this device only. This app does not share a Keychain with VoiceDebrief |
+| Keys | Vault keys and the access token are in this app's Keychain, kept in iCloud Keychain by default, with a switch in Settings to keep them on this device only (the owner's decision d5, 15 November 2026: "iCloud design is pretty solid"). iCloud Keychain is end to end encrypted and reaches only the owner's own devices; the items are this app's alone. The device's commit-signing key stays on this device. This app does not share a Keychain with VoiceDebrief. When the passkey door is built, vault keys also live in the door vault, whose key is derived from the passkey; iCloud Keychain stays the way they reach a new device |
 | Honesty | No screen says a file is in the vault before the commit that names it has been pushed and read back |
 
 ## The words

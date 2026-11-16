@@ -6,19 +6,25 @@ import UIKit
 /// of how many seconds passed; a regular check on the lane; a sense of movement; a timeline of each step, like
 /// Chrome's"). Each memo sent to Claude is a card: its status, a clock running until the answer comes, the
 /// answer (and a picture if one came with it), and the steps with how long each took. Clear hides what is done.
-/// While it is on screen it reads the agents vault every ten seconds.
+/// `RecordSidePane` reads the agents vault every ten seconds while it is on screen.
 struct LivePanel: View {
     let session: DebriefSession
     let book: VaultBook
     @AppStorage("vd.live.clearedAt") private var clearedAt: Double = 0
+    /// Shown as its own tab, so the panel's own heading is left out.
+    var showsHeading = true
     @State private var expanded: Set<String> = []
     private var desk: AgentsDesk { AgentsDesk.shared }
+
+    /// A contact that is Claude: the built-in developer lane, or a lane of the owner's own that a conductor
+    /// gave only to them ("Claude (your lane)"), so its messages are known to be theirs.
+    static func isClaude(_ name: String) -> Bool { name == RecipientStore.builtInName || name.hasPrefix("Claude") }
 
     /// Notes sent to Claude since the last Clear, newest first.
     private var threads: [Note] {
         session.store.notes
             .filter { note in
-                let toClaude = (note.sends ?? []).contains { $0.to == RecipientStore.builtInName } || note.pendingSend?.name == RecipientStore.builtInName
+                let toClaude = (note.sends ?? []).contains { Self.isClaude($0.to) } || note.pendingSend.map { Self.isClaude($0.name) } == true
                 return toClaude && note.createdAt.timeIntervalSince1970 > clearedAt
             }
             .sorted { $0.createdAt > $1.createdAt }
@@ -35,8 +41,10 @@ struct LivePanel: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Label("Live with Claude", systemImage: "dot.radiowaves.left.and.right")
-                    .font(.headline)
+                if showsHeading {
+                    Label("Live with Claude", systemImage: "dot.radiowaves.left.and.right")
+                        .font(.headline)
+                }
                 Spacer()
                 if let check = desk.lastCheck {
                     TimelineView(.periodic(from: .now, by: 1)) { _ in
@@ -57,13 +65,6 @@ struct LivePanel: View {
             }
             ForEach(threads) { note in card(note) }
         }
-        .task {
-            // A regular check of the vault while this panel is on screen (the owner's "regular check on the lane").
-            while !Task.isCancelled {
-                if !desk.vaultId.isEmpty { await desk.refresh(book: book) }
-                try? await Task.sleep(for: .seconds(10))
-            }
-        }
     }
 
     // MARK: One memo
@@ -74,12 +75,12 @@ struct LivePanel: View {
         if !replies(to: note).isEmpty { return .answered }
         if ack(for: note) != nil { return .received }
         if note.sendProblem != nil { return .failed }
-        if (note.sends ?? []).contains(where: { $0.to == RecipientStore.builtInName }) { return .sent }
+        if (note.sends ?? []).contains(where: { Self.isClaude($0.to) }) { return .sent }
         return .sending
     }
 
     private func sentAt(_ note: Note) -> Date? {
-        note.sends?.last(where: { $0.to == RecipientStore.builtInName })?.at
+        note.sends?.last(where: { Self.isClaude($0.to) })?.at
     }
 
     @ViewBuilder private func card(_ note: Note) -> some View {
