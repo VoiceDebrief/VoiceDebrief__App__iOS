@@ -1,0 +1,418 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		54C52434983EBDE08AEDD64D /* SGitVault in Frameworks */ = {isa = PBXBuildFile; productRef = 315FC38290301FAF4E9EF720 /* SGitVault */; };
+		C8CDB2C48B604A8E13557551 /* SGitPeople in Frameworks */ = {isa = PBXBuildFile; productRef = 366F35924C911DBE9A524B42 /* SGitPeople */; };
+		7C1D5301205980146C34671C /* SGitSecrets in Frameworks */ = {isa = PBXBuildFile; productRef = BD60A07FA2DF5F70D8474981 /* SGitSecrets */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		CC685A198536752FF8B92FDA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5DA31AA61BC89157F866BFF3 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2F9CA899DD68215E8EC9126D;
+			remoteInfo = CRM;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		8430218B33492C163C3C32DE /* CRM.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CRM.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C2F14B92B8C3CB41E4E6C08B /* CRMTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CRMTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		9BF85D1D9DF6472FD13BBD31 /* CRM.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = CRM.xcconfig; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		EFAFA9FA248EA6ED15A516E1 /* Sources */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		21C4836E6A12BFF03102F40B /* Resources */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		7CF10C0B1DDFE4C1E4E69288 /* Tests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Tests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		97F310B70F21D6394A140B87 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				54C52434983EBDE08AEDD64D /* SGitVault in Frameworks */,
+				C8CDB2C48B604A8E13557551 /* SGitPeople in Frameworks */,
+				7C1D5301205980146C34671C /* SGitSecrets in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D6F2D4F7371CA1668FEC3144 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		EBD5E55E3383974D35922577 = {
+			isa = PBXGroup;
+			children = (
+				9BF85D1D9DF6472FD13BBD31 /* CRM.xcconfig */,
+				EFAFA9FA248EA6ED15A516E1 /* Sources */,
+				21C4836E6A12BFF03102F40B /* Resources */,
+				7CF10C0B1DDFE4C1E4E69288 /* Tests */,
+				0C9C3380D76A4BB3528DB72F /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		0C9C3380D76A4BB3528DB72F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8430218B33492C163C3C32DE /* CRM.app */,
+				C2F14B92B8C3CB41E4E6C08B /* CRMTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		2F9CA899DD68215E8EC9126D /* CRM */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 184C61F725CFBF95D6ED4930 /* Build configuration list for PBXNativeTarget "CRM" */;
+			buildPhases = (
+				321516031DBACF6A410C1C71 /* Sources */,
+				97F310B70F21D6394A140B87 /* Frameworks */,
+				AC3AD84CF03EBDE6EAD8CB11 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				EFAFA9FA248EA6ED15A516E1 /* Sources */,
+				21C4836E6A12BFF03102F40B /* Resources */,
+			);
+			name = CRM;
+			packageProductDependencies = (
+				315FC38290301FAF4E9EF720 /* SGitVault */,
+				366F35924C911DBE9A524B42 /* SGitPeople */,
+				BD60A07FA2DF5F70D8474981 /* SGitSecrets */,
+			);
+			productName = CRM;
+			productReference = 8430218B33492C163C3C32DE;
+			productType = "com.apple.product-type.application";
+		};
+		15E348BE2D71467E16322236 /* CRMTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3111926ACA4F9A73A9DBAF80 /* Build configuration list for PBXNativeTarget "CRMTests" */;
+			buildPhases = (
+				255F2E0B0E1A618B29236B95 /* Sources */,
+				D6F2D4F7371CA1668FEC3144 /* Frameworks */,
+				59906EA14C1661C7B6AD2F5E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E054F5B3CB48049C8965AE6F /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				7CF10C0B1DDFE4C1E4E69288 /* Tests */,
+			);
+			name = CRMTests;
+			packageProductDependencies = (
+			);
+			productName = CRMTests;
+			productReference = C2F14B92B8C3CB41E4E6C08B;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		5DA31AA61BC89157F866BFF3 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastSwiftUpdateCheck = 2600;
+				LastUpgradeCheck = 2600;
+				TargetAttributes = {
+					2F9CA899DD68215E8EC9126D = {
+						CreatedOnToolsVersion = 26.0;
+					};
+					15E348BE2D71467E16322236 = {
+						CreatedOnToolsVersion = 26.0;
+						TestTargetID = 2F9CA899DD68215E8EC9126D;
+					};
+				};
+			};
+			buildConfigurationList = AE20F22CE912BBFFD470695E /* Build configuration list for PBXProject "CRM" */;
+			developmentRegion = "en-GB";
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				"en-GB",
+				en,
+				Base,
+			);
+			mainGroup = EBD5E55E3383974D35922577;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				FFB5AD34FE8F29C22900ADE2 /* XCLocalSwiftPackageReference "../../Packages/SGitVault" */,
+				1CD6A5BF8871EA402AB22FB1 /* XCLocalSwiftPackageReference "../../Packages/SGitPeople" */,
+				FFB488312F8C6A5846F9AA63 /* XCLocalSwiftPackageReference "../../Packages/SGitSecrets" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 0C9C3380D76A4BB3528DB72F /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				2F9CA899DD68215E8EC9126D /* CRM */,
+				15E348BE2D71467E16322236 /* CRMTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		AC3AD84CF03EBDE6EAD8CB11 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		59906EA14C1661C7B6AD2F5E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		321516031DBACF6A410C1C71 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		255F2E0B0E1A618B29236B95 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		E054F5B3CB48049C8965AE6F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2F9CA899DD68215E8EC9126D /* CRM */;
+			targetProxy = CC685A198536752FF8B92FDA /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		9BDC26BE9B739AC319DB3A6B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 0.1.0;
+				SDKROOT = iphoneos;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 5.0;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_TESTABILITY = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		67F3DB1F6D546FB470E5B908 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 0.1.0;
+				SDKROOT = iphoneos;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 5.0;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		F18056ECAC51731025F7BC02 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9BF85D1D9DF6472FD13BBD31 /* CRM.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = CRM.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "SGit CRM";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.business";
+				INFOPLIST_KEY_NSCameraUsageDescription = "SGit CRM uses the camera to scan the QR code of a vault key.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = ai.sgit.crm.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		01C4D75C37CD35C28D4939B8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9BF85D1D9DF6472FD13BBD31 /* CRM.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = CRM.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "SGit CRM";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.business";
+				INFOPLIST_KEY_NSCameraUsageDescription = "SGit CRM uses the camera to scan the QR code of a vault key.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = ai.sgit.crm.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		FF5205CF8792BEB87721F679 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9BF85D1D9DF6472FD13BBD31 /* CRM.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = ai.sgit.crm.app.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CRM.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CRM";
+			};
+			name = Debug;
+		};
+		6D8173459BA86E8F6897270E /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9BF85D1D9DF6472FD13BBD31 /* CRM.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = ai.sgit.crm.app.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CRM.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CRM";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		AE20F22CE912BBFFD470695E /* Build configuration list for PBXProject "CRM" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9BDC26BE9B739AC319DB3A6B /* Debug */,
+				67F3DB1F6D546FB470E5B908 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		184C61F725CFBF95D6ED4930 /* Build configuration list for PBXNativeTarget "CRM" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F18056ECAC51731025F7BC02 /* Debug */,
+				01C4D75C37CD35C28D4939B8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3111926ACA4F9A73A9DBAF80 /* Build configuration list for PBXNativeTarget "CRMTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FF5205CF8792BEB87721F679 /* Debug */,
+				6D8173459BA86E8F6897270E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		FFB5AD34FE8F29C22900ADE2 /* XCLocalSwiftPackageReference "../../Packages/SGitVault" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../Packages/SGitVault;
+		};
+		1CD6A5BF8871EA402AB22FB1 /* XCLocalSwiftPackageReference "../../Packages/SGitPeople" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../Packages/SGitPeople;
+		};
+		FFB488312F8C6A5846F9AA63 /* XCLocalSwiftPackageReference "../../Packages/SGitSecrets" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../Packages/SGitSecrets;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		315FC38290301FAF4E9EF720 /* SGitVault */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FFB5AD34FE8F29C22900ADE2 /* XCLocalSwiftPackageReference "../../Packages/SGitVault" */;
+			productName = SGitVault;
+		};
+		366F35924C911DBE9A524B42 /* SGitPeople */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1CD6A5BF8871EA402AB22FB1 /* XCLocalSwiftPackageReference "../../Packages/SGitPeople" */;
+			productName = SGitPeople;
+		};
+		BD60A07FA2DF5F70D8474981 /* SGitSecrets */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FFB488312F8C6A5846F9AA63 /* XCLocalSwiftPackageReference "../../Packages/SGitSecrets" */;
+			productName = SGitSecrets;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 5DA31AA61BC89157F866BFF3 /* Project object */;
+}

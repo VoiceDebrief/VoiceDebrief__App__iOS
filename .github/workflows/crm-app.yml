@@ -1,0 +1,147 @@
+name: crm app
+
+# SGit CRM (Apps/CRM) has its own project and this workflow, so that it does not contend with the
+# other apps'. Built by the CRM cell (cells/crm-ios/).
+#
+#   mac   one Mac: build for testing; Release build; unit tests on an iPhone and an iPad simulator;
+#         TestFlight on a green push to dev, once switched on
+#
+# ios.yml runs the shared packages' own tests on any push that touches them.
+on:
+  push:
+    branches: [dev, 'work/crm*']
+    paths:
+      - 'Apps/CRM/**'
+      - 'Packages/SGitVault/**'
+      - 'Packages/SGitPeople/**'
+      - 'Packages/SGitSecrets/**'
+      - '.github/workflows/crm-app.yml'
+      - '.github/scripts/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: crm-app-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  PROJECT: Apps/CRM/CRM.xcodeproj
+  SCHEME: CRM
+
+jobs:
+  mac:
+    name: Build and test (one Mac)
+    runs-on: macos-26
+    timeout-minutes: 60
+    env:
+      # The switch may have been added as a repository variable or as a secret: either is read.
+      CRM_APP_TESTFLIGHT: ${{ vars.CRM_APP_TESTFLIGHT || secrets.CRM_APP_TESTFLIGHT }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Select Xcode
+        run: .github/scripts/select-xcode.sh
+
+      - name: Version, which CI owns (on dev, the tag this push was given)
+        run: |
+          # One repository, one version: the same step as ios.yml and sgit-app.yml.
+          v=$(tr -d ' \n' < version)
+          if [ "$GITHUB_REF" = "refs/heads/dev" ]; then
+            git fetch --quiet --tags --depth=200 origin dev || true
+            tag=$(git tag --contains "$GITHUB_SHA" 2>/dev/null | sort -V | head -1)
+            if [ -z "$tag" ]; then
+              latest=$(git tag --list 'v[0-9]*' | sort -V | tail -1)
+              IFS=. read -r a b c <<< "${latest#v}"
+              tag="v$a.$b.$((c + 1))"
+            fi
+            v=$tag
+          fi
+          v=${v#v}
+          echo "MARKETING_VERSION=$v" >> "$GITHUB_ENV"
+          echo "BUILD_NUMBER=$GITHUB_RUN_NUMBER" >> "$GITHUB_ENV"
+          echo "**SGit CRM version:** \`$v ($GITHUB_RUN_NUMBER)\`" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Build for testing (Debug, iOS Simulator, unsigned)
+        run: |
+          .github/scripts/run-and-summarize.sh "Build for testing" "$RUNNER_TEMP/logs/build-for-testing.log" -- \
+            xcodebuild build-for-testing -project "$PROJECT" -scheme "$SCHEME" -configuration Debug \
+              -destination 'generic/platform=iOS Simulator' -derivedDataPath "$RUNNER_TEMP/dd" \
+              MARKETING_VERSION="$MARKETING_VERSION" CURRENT_PROJECT_VERSION="$BUILD_NUMBER" \
+              CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
+
+      - name: Release build (iOS device, unsigned)
+        run: |
+          .github/scripts/run-and-summarize.sh "Release build" "$RUNNER_TEMP/logs/release.log" -- \
+            xcodebuild build -project "$PROJECT" -scheme "$SCHEME" -configuration Release \
+              -destination 'generic/platform=iOS' -derivedDataPath "$RUNNER_TEMP/dd-release" \
+              MARKETING_VERSION="$MARKETING_VERSION" CURRENT_PROJECT_VERSION="$BUILD_NUMBER" \
+              CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
+
+      - name: Unit tests on the iPhone simulator
+        timeout-minutes: 20
+        run: |
+          u=$(.github/scripts/pick-simulator.py iPhone)
+          echo "simulator $u"
+          .github/scripts/boot-simulator.sh "$u"
+          .github/scripts/run-and-summarize.sh "Unit tests (iPhone)" "$RUNNER_TEMP/logs/test-iphone.log" -- \
+            xcodebuild test-without-building -project "$PROJECT" -scheme "$SCHEME" -configuration Debug \
+              -derivedDataPath "$RUNNER_TEMP/dd" -destination "id=$u" \
+              -parallel-testing-enabled NO -test-timeouts-enabled YES \
+              -default-test-execution-time-allowance 60 -maximum-test-execution-time-allowance 180 \
+              CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO && status=0 || status=$?
+          xcrun simctl shutdown "$u" 2>/dev/null || true
+          exit $status
+
+      - name: Unit tests on the iPad simulator
+        timeout-minutes: 20
+        run: |
+          u=$(.github/scripts/pick-simulator.py iPad)
+          echo "simulator $u"
+          .github/scripts/boot-simulator.sh "$u"
+          .github/scripts/run-and-summarize.sh "Unit tests (iPad)" "$RUNNER_TEMP/logs/test-ipad.log" -- \
+            xcodebuild test-without-building -project "$PROJECT" -scheme "$SCHEME" -configuration Debug \
+              -derivedDataPath "$RUNNER_TEMP/dd" -destination "id=$u" \
+              -parallel-testing-enabled NO -test-timeouts-enabled YES \
+              -default-test-execution-time-allowance 60 -maximum-test-execution-time-allowance 180 \
+              CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO && status=0 || status=$?
+          xcrun simctl shutdown "$u" 2>/dev/null || true
+          exit $status
+
+      # TestFlight: only for a green push to dev, and only once the owner has registered ai.sgit.crm.app,
+      # made the SGit CRM record in App Store Connect and set CRM_APP_TESTFLIGHT to 1 (a repository
+      # variable or a secret). The signing secrets are the ones ios.yml uses.
+      - name: TestFlight (archive, sign, upload)
+        if: github.ref == 'refs/heads/dev' && env.CRM_APP_TESTFLIGHT == '1'
+        timeout-minutes: 30
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_P8_BASE64: ${{ secrets.ASC_KEY_P8_BASE64 }}
+          APPLE_TEAM_ID: ${{ vars.APPLE_TEAM_ID || secrets.APPLE_TEAM_ID }}
+          EXPECTED_BUNDLE: ai.sgit.crm.app
+          ENTITLEMENTS: Apps/CRM/CRM.entitlements
+        run: |
+          missing=()
+          for s in ASC_KEY_ID ASC_ISSUER_ID ASC_KEY_P8_BASE64 APPLE_TEAM_ID; do [ -n "${!s:-}" ] || missing+=("$s"); done
+          if [ ${#missing[@]} -gt 0 ]; then
+            echo "### TestFlight skipped: not set: ${missing[*]}" | tee -a "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          scripts/release/testflight.sh
+
+      - name: TestFlight is switched off
+        if: github.ref == 'refs/heads/dev' && env.CRM_APP_TESTFLIGHT != '1'
+        run: |
+          echo "### TestFlight skipped. CRM_APP_TESTFLIGHT is not 1 (it needs an App Store Connect record for ai.sgit.crm.app first)" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Keep the logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: crm-app-logs
+          path: ${{ runner.temp }}/logs/
+          if-no-files-found: ignore
