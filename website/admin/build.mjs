@@ -82,6 +82,8 @@ const PAGES = [
     description: 'What the sgit app does today, screen by screen, with numbered callouts on each picture: vaults, creating one, browsing, adding, a refused upload, a file, sharing, history, and how it came to be.' },
   { path: 'sgit-app/built', nav: null, title: 'What is built in the sgit app',
     description: 'The reality file for the sgit app: what exists, how it is tested, and what does not exist yet.' },
+  { path: 'crm/format', nav: null, title: 'The SGit CRM record format',
+    description: 'How SGit CRM keeps its records in a vault: one JSON file per record (people, organisations, interactions, introductions, follow-ups, drafts, plays), a source on every value, an agent always names its key, and only a person marks a draft sent.' },
   { path: 'reviews', nav: null, title: 'Reviews of the VoiceDebrief iOS screens',
     description: 'Rounds of reading pictures of every screen: what is plainly wrong, what synthetic users expected and found, and the status of each finding.' },
   { path: 'reviews/round-1', nav: null, title: 'Review, round 1: the first sight of every screen',

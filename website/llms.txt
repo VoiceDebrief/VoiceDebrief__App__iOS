@@ -87,6 +87,12 @@ Every page has a markdown twin: replace index.html with index.md.
 - https://ios.app.voicedebrief.ai/sgit-app/built/index.html : its reality file. If it is not listed
   there as built, it does not exist.
 
+## SGit CRM (a third app in this repository, built by the CRM cell)
+
+- https://ios.app.voicedebrief.ai/crm/format/index.html : the record format, sgit.ai/crm/v1: one JSON
+  file per record in a vault (people, organisations, interactions, introductions, follow-ups, drafts,
+  plays), a source on every value, an agent always names its key, only a person marks a draft sent.
+
 ## Articles (ideas, positions and briefs; intention, not fact)
 
 - https://ios.app.voicedebrief.ai/articles/index.html : the list.
