@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>What changed in VoiceDebrief for iOS v0.1.141</title>
+<meta name="description" content="The release notes for v0.1.141: what changed in the app and the repository.">
+<link rel="canonical" href="https://ios.app.voicedebrief.ai/versions/v0.1.141/index.html">
+<meta property="og:url" content="https://ios.app.voicedebrief.ai/versions/v0.1.141/index.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="VoiceDebrief for iOS">
+<meta property="og:title" content="What changed in VoiceDebrief for iOS v0.1.141">
+<meta property="og:description" content="The release notes for v0.1.141: what changed in the app and the repository.">
+<link rel="alternate" type="text/markdown" href="index.md" title="This page as markdown">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/vd-tokens.css">
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+
+<nav class="site"><div class="row">
+  <a class="brand" href="../../index.html">Voice<em>Debrief</em> <span>iOS</span></a>
+  <span class="beta" title="In development: there is nothing to install yet">IN DEVELOPMENT</span>
+  <a class="parent" href="https://voicedebrief.ai" title="A VoiceDebrief product">&#8599; part of <b>voicedebrief.ai</b></a>
+  <a class="ver" href="../../versions/index.html" title="Release history">dev</a>
+  <a class="nl" href="../../built/index.html">Built</a>
+  <a class="nl" href="../../architecture/index.html">How it works</a>
+  <a class="nl" href="../../design/index.html">Design</a>
+  <a class="nl" href="../../plan/index.html">Plan</a>
+  <a class="nl" href="../../articles/index.html">Articles</a>
+  <a class="nl" href="../../develop/index.html">Build</a>
+  <a class="nl" href="../../ideas/index.html">Ideas</a>
+  <a class="nl" href="../../guides/index.html">Guides</a>
+  <a class="gh" href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">&#9733; GitHub</a>
+</div></nav>
+
+<main class="doc">
+<div class="crumb"><a href="../../index.html">VoiceDebrief iOS</a> / versions / v0.1.141</div>
+<h1 id="what-changed-in-v0-1-141">What changed in v0.1.141</h1>
+<p>Released 16 November 2026. Every push to the repository's <code>dev</code> branch is a release; this page was written by CI from the notes that came with it. <a href="../index.html">Every version</a> · <a href="../../built/index.html">What is built</a></p>
+<p>SGit CRM, first step: the app shell in <code>Apps/CRM</code>, with its own project and workflow (<code>crm-app.yml</code>), bundle <code>ai.sgit.crm.app</code>, for iPhone and iPad. A sidebar of the places the CRM will have (follow-ups, people, organisations, introductions, drafts, import), each saying it is not built yet and which step builds it. No TestFlight until the App Store Connect record exists.</p>
+<p>SGit CRM, second step: the record format, <code>sgit.ai/crm/v1</code>. One small JSON file per record in a vault (people, organisations, interactions, introductions, follow-ups, drafts, plays), each value with where it came from, every change saying who made it and an agent always naming its key. Introductions and drafts are records of their own, and only a person can mark a draft sent. <a href="../../crm/format/index.html">The format</a>. Nothing on screen yet.</p>
+<p>SGit CRM, third step: import from a vault. The app keeps your CRM in a vault on the device. Import opens another vault by its key or a QR code, finds what looks like contacts (vCards, spreadsheets saved as CSV, JSON lists, CRM records, and photos of business cards and badges, read on the device), and shows each as a proposal, marked when it looks like someone you already have. Accept, change or drop them, one by one or all at once; what you accept is kept in one signed commit, with a note of where you met and a follow-up for each new person if you want them. People and Organisations show what is kept, each detail with where it came from. It also reads the Web Summit team CRM's own layout (contacts, their companies, stages, owners and next steps) and a vault that lists other vaults, such as crm-sources, asking which of them to read; records sealed to the team's keys are listed as not readable yet. Not yet tried on a device.</p>
+<p>SGit CRM, how it is put together, at the owner's request: <a href="../../crm/workflows/index.html">workflows made of cells</a>. A cell is one unit of work (code, a call to Apple's models on the device, a call to Claude behind a lane, an agent, or a person's decision); cells make workflows, workflows make plays, plays make the CRM, and workflows are what we sell. Ten workflows for the Web Summit follow-up, after the ten mapped for Algarve Evolution; the first, import from a vault, is built.</p>
+<p>SGit CRM: agreed with the email AgenticCell how the CRM will work with its copy of the mailbox (people joined by email address, a small change file per sync, a reference to the CRM's draft carried through to the send result), and the signed lane entries the CRM will propose replies with, checked against the email cell's own test vector. Nothing sends.</p>
+<p>Pictures of the screens are added to this page when the screens workflow has taken them for this version.</p>
+</main>
+
+<footer class="site"><div class="cols">
+  <div>
+    <div class="brandline">Voice<em>Debrief</em> <span>iOS</span></div>
+    <p>The VoiceDebrief transcript and debrief as a native iPhone and iPad app, on Apple's own models, with the results in a vault you own. In development: there is nothing to install yet. Content CC BY 4.0; code Apache 2.0.</p>
+    <p class="partnote">This site is static and has no analytics.</p>
+    <p class="verline">site dev · <a href="index.md">this page as markdown</a> · <a href="../../llms.txt">llms.txt</a></p>
+  </div>
+  <div>
+    <h4>The app</h4>
+    <a href="../../built/index.html">What is built</a>
+    <a href="../../plan/index.html">The plan</a>
+    <a href="../../develop/index.html">Build and test</a>
+    <a href="../../versions/index.html">Release history</a>
+    <a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">GitHub</a>
+  </div>
+  <div>
+    <h4>VoiceDebrief</h4>
+    <a href="https://voicedebrief.ai">voicedebrief.ai</a>
+    <a href="https://meetscribe.chrome-extension.voicedebrief.ai">MeetScribe for Google Meet</a>
+  </div>
+  <div>
+    <h4>Built on</h4>
+    <a href="https://sgit.ai">sgit.ai</a>
+    <a href="https://pki.sgit.ai">pki.sgit.ai</a>
+    <a href="https://sgit.ai/security/index.html">The vault security model</a>
+  </div>
+</div></footer>
+</body>
+</html>
