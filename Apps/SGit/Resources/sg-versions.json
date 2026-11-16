@@ -10,6 +10,18 @@
  "nextArt": [],
  "versions": [
   {
+   "version": "v0.1.140",
+   "date": "16 November 2026",
+   "notes": [
+    "CI for SGit CRM: a push that only changes Apps/CRM no longer starts the VoiceDebrief Mac job (the CRM has its own workflow), and external TestFlight knows the CRM (ai.sgit.crm.app), off until the owner has created its App Store Connect app and set CRM_APP_TESTFLIGHT=1."
+   ],
+   "hasPage": true,
+   "url": "https://ios.app.voicedebrief.ai/versions/v0.1.140/index.html",
+   "pictures": 0,
+   "art": [],
+   "issues": []
+  },
+  {
    "version": "v0.1.139",
    "date": "16 November 2026",
    "notes": [
