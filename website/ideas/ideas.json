@@ -30,8 +30,8 @@
  "counts": {
   "seen-working": 27,
   "built-untried": 107,
-  "in-progress": 45,
-  "proposed": 62,
+  "in-progress": 46,
+  "proposed": 61,
   "parked": 6
  },
  "ideas": [
@@ -1914,8 +1914,8 @@
    "number": "400",
    "app": "SGit Vaults",
    "title": "SGit CRM, a third app for iPhone and iPad",
-   "status": "proposed",
-   "why": "Open, with nothing built yet: \"\"",
+   "status": "in-progress",
+   "why": "Open, and named by the release notes of v0.1.139.",
    "summary": "Opened 16 November 2026, at the owner's request. Status: open, being built by the cell in cells/crm-ios/.",
    "detail": [
     "Opened 16 November 2026, at the owner's request. Status: open, being built by the cell in cells/crm-ios/.",
@@ -1929,7 +1929,9 @@
    "places": [
     "SGit Vaults"
    ],
-   "versions": [],
+   "versions": [
+    "v0.1.139"
+   ],
    "features": [],
    "url": "https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/400-sgit-crm-app.md",
    "source": "The project"
