@@ -29,7 +29,7 @@
  ],
  "counts": {
   "seen-working": 27,
-  "built-untried": 109,
+  "built-untried": 110,
   "in-progress": 46,
   "proposed": 61,
   "parked": 6
@@ -4148,6 +4148,24 @@
    "detail": [
     "Apps/CRM/Sources/Records/ (CRM cell, step 2): sgit.ai/crm/v1, one JSON file per record in people/, organisations/, interactions/, introductions/, follow-ups/, drafts/, plays/; a source on every value (Sourced), a creator and a last changer on every record, an agent always naming its key; introductions and drafts first-class; only a person marks a draft sent. RecordFiles writes stable bytes and refuses a record with problems, or a file in the wrong place. The format",
     "Unit tests with invented people (RecordFormatTests), including the page's own example. Nothing reads or writes a vault with it yet"
+   ],
+   "places": [],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
+   "id": "feature.sgit.crm.import.from.a.vault",
+   "kind": "feature",
+   "app": "VoiceDebrief",
+   "title": "SGit CRM, import from a vault",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "Apps/CRM/Sources/Import/, Engine/CRMVault.swift, UI/ImportView.swift, UI/PeopleViews.swift (CRM cell, step 3): the user's CRM vault is made on the device on first launch (no server, no token; its key and the commit-signing key in the Keychain, this device only for now); Import opens another vault by its key (typed, pasted or scanned as a QR code), reads what looks like contacts (vCards, CSV files...",
+   "detail": [
+    "Apps/CRM/Sources/Import/, Engine/CRMVault.swift, UI/ImportView.swift, UI/PeopleViews.swift (CRM cell, step 3): the user's CRM vault is made on the device on first launch (no server, no token; its key and the commit-signing key in the Keychain, this device only for now); Import opens another vault by its key (typed, pasted or scanned as a QR code), reads what looks like contacts (vCards, CSV files with loosely named columns, JSON lists, people in the CRM format, and the text on photos of business cards and badges, read by Vision on the device and turned into a contact by plain rules), joins duplicates within the import by email or phone, and shows each as a proposal, marked when it matches someone already in the CRM (the same email or phone, or only the same name). Accept, change or drop one by one or all at once; a proposal is shown beside the record it would add to on an iPad. What was...",
+    "Unit tests: each reader on invented files, the card-text rules, joining and matching, the plan from accepted proposals, and two end-to-end tests with vaults in folders (the CRM vault made, an import kept and read back after a restart; another vault read by its key, proposed and kept). Not run on a device; Vision has not read a real card; no vault on the real server has been imported from"
    ],
    "places": [],
    "issues": [],

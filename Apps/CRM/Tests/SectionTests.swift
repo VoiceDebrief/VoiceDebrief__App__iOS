@@ -17,16 +17,16 @@ struct SectionTests {
         }
     }
 
-    /// Nothing but About is built in the app shell (step 1). When a step lands, its section moves here.
+    /// People and organisations (step 2) and import (step 3) are built. When a step lands, its section moves here.
     @Test func onlyWhatIsBuiltSaysBuilt() {
         let built = CRMSection.allCases.filter(\.isBuilt)
-        #expect(built == [.about])
+        #expect(built == [.people, .organisations, .importing, .about])
     }
 
     @Test func unbuiltSectionsNameTheirStep() throws {
         for section in CRMSection.allCases where !section.isBuilt {
             let step = try #require(section.step)
-            #expect((2...7).contains(step))
+            #expect((4...7).contains(step))
         }
     }
 

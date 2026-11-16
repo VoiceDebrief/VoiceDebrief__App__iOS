@@ -1,6 +1,6 @@
 # The SGit CRM record format, version 1
 
-How SGit CRM keeps its records in an sgit vault the user owns: `sgit.ai/crm/v1`. Written 16 November 2026 by the CRM cell (`cells/crm-ios/`, step 2 of its brief). The Swift types are `Apps/CRM/Sources/Records/`; their tests use invented people only. Status: [[unverified]] until `crm-app.yml` is green on the commit that carries it; nothing reads or writes a vault with it yet (that is step 3, import).
+How SGit CRM keeps its records in an sgit vault the user owns: `sgit.ai/crm/v1`. Written 16 November 2026 by the CRM cell (`cells/crm-ios/`, step 2 of its brief). The Swift types are `Apps/CRM/Sources/Records/`; their tests use invented people only. Status: [[unverified]] until `crm-app.yml` is green on the commit that carries it, and until it has been used on a device. The import (step 3) writes it.
 
 ## One file per record
 
@@ -69,6 +69,6 @@ Keys sorted, pretty-printed, slashes not escaped, a newline at the end, dates in
 
 This example is read by a test (`theDocumentedExampleReads`), so the page and the code cannot drift apart silently. It is shown on one line per field for reading; the app writes it fully pretty-printed.
 
-## Not in version 1
+## How records arrive
 
-Proposals (a record an agent or an import offers, for a person to accept) are step 3 and step 6: they will carry a record in this format plus who proposed it, and are not records in the vault until accepted. Signed commits per accepted batch come with step 3. The sync to Twenty is later.
+An import (step 3) reads another vault and offers each contact it finds as a proposal; a proposal is not a record. Only what a person accepts is written, as one signed commit per batch: new people, values added to people who matched (each with the import as its source), the organisations they name, and, if asked, a note interaction and a follow-up for each new person. Proposals from agents on an append lane come with step 6. The sync to Twenty is later.

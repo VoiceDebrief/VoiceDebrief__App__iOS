@@ -56,10 +56,8 @@ enum CRMSection: String, CaseIterable, Identifiable, Hashable, Sendable {
     var step: Int? {
         switch self {
         case .followUps, .introductions: return 4
-        case .people, .organisations: return 2
         case .drafts: return 5
-        case .importing: return 3
-        case .about: return nil
+        case .people, .organisations, .importing, .about: return nil
         }
     }
 

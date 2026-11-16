@@ -4,9 +4,15 @@ import SwiftUI
 /// The first use is following up the contacts and actions from Web Summit 2026.
 @main
 struct CRMApp: App {
+    @State private var crm = CRMVault()
+    @State private var problem: String?
+
     var body: some Scene {
         WindowGroup {
-            RootView()
+            RootView(crm: crm, problem: problem)
+                .task {
+                    do { try await crm.open() } catch { problem = error.localizedDescription }
+                }
         }
     }
 }

@@ -37,7 +37,7 @@
 <main class="doc">
 <div class="crumb"><a href="../../index.html">VoiceDebrief iOS</a> / crm / format</div>
 <h1 id="the-sgit-crm-record-format-version-1">The SGit CRM record format, version 1</h1>
-<p>How SGit CRM keeps its records in an sgit vault the user owns: <code>sgit.ai/crm/v1</code>. Written 16 November 2026 by the CRM cell (<code>cells/crm-ios/</code>, step 2 of its brief). The Swift types are <code>Apps/CRM/Sources/Records/</code>; their tests use invented people only. Status: <span class="chip chip-unverified">unverified</span> until <code>crm-app.yml</code> is green on the commit that carries it; nothing reads or writes a vault with it yet (that is step 3, import).</p>
+<p>How SGit CRM keeps its records in an sgit vault the user owns: <code>sgit.ai/crm/v1</code>. Written 16 November 2026 by the CRM cell (<code>cells/crm-ios/</code>, step 2 of its brief). The Swift types are <code>Apps/CRM/Sources/Records/</code>; their tests use invented people only. Status: <span class="chip chip-unverified">unverified</span> until <code>crm-app.yml</code> is green on the commit that carries it, and until it has been used on a device. The import (step 3) writes it.</p>
 <h2 id="one-file-per-record">One file per record</h2>
 <p>Each record is one JSON file, named by its id (a lowercase UUID), in a folder named for its kind. Two devices changing different records never touch the same file, so a merge of two copies of the vault rarely meets a clash.</p>
 <div class="tablewrap"><table>
@@ -93,8 +93,8 @@
   &quot;tags&quot; : [ &quot;example-summit&quot; ]
 }</code></pre>
 <p>This example is read by a test (<code>theDocumentedExampleReads</code>), so the page and the code cannot drift apart silently. It is shown on one line per field for reading; the app writes it fully pretty-printed.</p>
-<h2 id="not-in-version-1">Not in version 1</h2>
-<p>Proposals (a record an agent or an import offers, for a person to accept) are step 3 and step 6: they will carry a record in this format plus who proposed it, and are not records in the vault until accepted. Signed commits per accepted batch come with step 3. The sync to Twenty is later.</p>
+<h2 id="how-records-arrive">How records arrive</h2>
+<p>An import (step 3) reads another vault and offers each contact it finds as a proposal; a proposal is not a record. Only what a person accepts is written, as one signed commit per batch: new people, values added to people who matched (each with the import as its source), the organisations they name, and, if asked, a note interaction and a follow-up for each new person. Proposals from agents on an append lane come with step 6. The sync to Twenty is later.</p>
 </main>
 
 <footer class="site"><div class="cols">
