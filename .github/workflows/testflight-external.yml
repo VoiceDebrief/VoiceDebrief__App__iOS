@@ -1,18 +1,19 @@
 name: testflight external
 
-# Puts a build in front of external testers (the public TestFlight links), for both apps.
+# Puts a build in front of external testers (the public TestFlight links), for each app: VoiceDebrief,
+# SGit Vaults and SGit CRM (the CRM only once its App Store Connect record exists: CRM_APP_TESTFLIGHT=1).
 # When: every dev build of an app that has uploaded to TestFlight (the owner's decision, 15 November 2026),
 # unless its commit message says [internal]; or by hand. A newer build replaces one still waiting for
 # Beta App Review (testflight_external.py).
 on:
   workflow_run:
-    workflows: ["ios", "sgit app"]
+    workflows: ["ios", "sgit app", "crm app"]
     types: [completed]
     branches: [dev]
   workflow_dispatch:
     inputs:
       app:
-        description: "voicedebrief or sgit"
+        description: "voicedebrief, sgit or crm"
         required: true
         default: voicedebrief
       build:
@@ -43,20 +44,23 @@ jobs:
           MSG: ${{ github.event.workflow_run.head_commit.message }}
           IN_APP: ${{ github.event.inputs.app }}
           IN_BUILD: ${{ github.event.inputs.build }}
+          CRM_ON: ${{ vars.CRM_APP_TESTFLIGHT }}
         run: |
           set -euo pipefail
           git fetch --quiet --tags
           if [ "$EVENT" = "workflow_dispatch" ]; then app="$IN_APP"; build="$IN_BUILD"; go=yes; tag=$(git tag --list 'v*' | sort -V | tail -1)
           else
-            [ "$WF" = "sgit app" ] && app=sgit || app=voicedebrief
+            case "$WF" in "sgit app") app=sgit ;; "crm app") app=crm ;; *) app=voicedebrief ;; esac
             build="$RUN"
             tag=$(git tag --contains "$SHA" 2>/dev/null | sort -V | head -1); [ -n "$tag" ] || tag=$(git tag --list 'v*' | sort -V | tail -1)
             # Every green build goes to external testers (the owner's decision, 15 November 2026); the script
             # replaces any build still waiting for review. [internal] in the commit message keeps one back.
             go=yes
             if printf '%s' "$MSG" | grep -qi '\[internal\]'; then go=no; fi
+            # SGit CRM uploads nothing until the owner has created its App Store Connect app.
+            if [ "$app" = crm ] && [ "${CRM_ON:-}" != "1" ]; then go=no; fi
           fi
-          [ "$app" = sgit ] && bundle=ai.sgit.vaults.app || bundle=ai.voicedebrief.app
+          case "$app" in sgit) bundle=ai.sgit.vaults.app ;; crm) bundle=ai.sgit.crm.app ;; *) bundle=ai.voicedebrief.app ;; esac
           echo "app=$app bundle=$bundle build=$build tag=$tag go=$go" | tee -a "$GITHUB_STEP_SUMMARY"
           { echo "go=$go"; echo "bundle=$bundle"; echo "build=$build"; echo "tag=$tag"; } >> "$GITHUB_OUTPUT"
       - name: Send to external testers

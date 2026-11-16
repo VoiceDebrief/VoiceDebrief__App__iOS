@@ -21,6 +21,8 @@ on:
     branches: [dev, 'work/**']
     paths:
       - 'Apps/**'
+      # SGit CRM has its own workflow (crm-app.yml); its pushes do not need the VoiceDebrief Mac job.
+      - '!Apps/CRM/**'
       - 'Packages/**'
       - 'scripts/release/**'
       - '.github/workflows/ios.yml'
@@ -28,6 +30,7 @@ on:
   pull_request:
     paths:
       - 'Apps/**'
+      - '!Apps/CRM/**'
       - 'Packages/**'
       - '.github/workflows/ios.yml'
       - '.github/scripts/**'
