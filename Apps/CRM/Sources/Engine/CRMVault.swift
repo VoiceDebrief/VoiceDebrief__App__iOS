@@ -188,6 +188,15 @@ final class CRMVault {
         Actor.person(name.isEmpty ? "Me" : name, key: signerFingerprint)
     }
 
+    /// One file of another vault, read by its key: the agents' report, for example.
+    func read(path: String, keyText: String) async throws -> Data {
+        let key = try await SGitVault.deriveKey(from: keyText.trimmingCharacters(in: .whitespacesAndNewlines), log: log)
+        let vault = SGitVault(address: VaultAddress(vaultId: key.vaultId), readKey: key.readKey, cache: cacheRoot, log: log,
+                              transport: remote, branch: "current")
+        _ = try await vault.pull()
+        return try await vault.read(path)
+    }
+
     // MARK: Other vaults, to import from
 
     /// The files of another vault that the import can read, by its key (a vault key or a read key).

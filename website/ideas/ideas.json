@@ -29,7 +29,7 @@
  ],
  "counts": {
   "seen-working": 27,
-  "built-untried": 116,
+  "built-untried": 117,
   "in-progress": 46,
   "proposed": 61,
   "parked": 6
@@ -4278,6 +4278,24 @@
    "detail": [
     "Apps/CRM/Sources/Keys/ (workflow W12): Cards and keys makes the person's keys when they ask (SGitPeople, as SGit Vaults has them: an RSA 4096 encryption key and a P-256 signing key, in iCloud Keychain under the CRM's own service), shows their contact card as a QR code and a link, scans or takes a pasted card from someone else (checked: a changed card is refused), marks it checked face to face, and puts that person's key on their record in the CRM as a sourced link (sgit:key:<fingerprint>), on the person of the same name when there is one. Sealing a vault key or a message to a card is not built",
     "Unit tests (KeysTests): two devices in one process make keys, one scans the other's card, the key lands on a new or an existing person once; a changed card is refused. Not tried on a device"
+   ],
+   "places": [],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
+   "id": "feature.sgit.crm.what.the.agents.are.doing",
+   "kind": "feature",
+   "app": "VoiceDebrief",
+   "title": "SGit CRM, what the agents are doing",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "Apps/CRM/Sources/Agents/ (workflow W11): Agents reads agents/agents.json, the report a conductor writes (its format copied from VoiceDebrief's AgentsReport), from a vault chosen among the vault apps, every 30 seconds while the screen is open and on pull to refresh: counts working, waiting and quiet; what waits on you (the conductor's decisions); agents by project, the blocked and waiting first...",
+   "detail": [
+    "Apps/CRM/Sources/Agents/ (workflow W11): Agents reads agents/agents.json, the report a conductor writes (its format copied from VoiceDebrief's AgentsReport), from a vault chosen among the vault apps, every 30 seconds while the screen is open and on pull to refresh: counts working, waiting and quiet; what waits on you (the conductor's decisions); agents by project, the blocked and waiting first, each with what it is doing, what it waits for and when it was last active; who talks to whom; the latest messages; what happens next. Read only: answering goes through a lane, not built",
+    "Unit tests (AgentsBoardTests) on an invented report: grouping and order, names on links, newest messages first, counts, time in words. Not tried on a device or against a real agents vault"
    ],
    "places": [],
    "issues": [],

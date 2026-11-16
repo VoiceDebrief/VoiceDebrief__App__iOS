@@ -90,6 +90,8 @@ struct SectionScreen: View {
                 LabsView(apps: apps)
             case .keys:
                 KeysView(keys: keys, crm: crm)
+            case .agents:
+                AgentsView(crm: crm, apps: apps)
             default:
                 ContentUnavailableView {
                     Label(section.title, systemImage: section.systemImage)

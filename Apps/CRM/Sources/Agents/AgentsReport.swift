@@ -1,0 +1,97 @@
+import Foundation
+
+// Copied from Apps/VoiceDebrief/Sources/Model/AgentsReport.swift (16 November 2026): the report the conductor
+// writes into the agents vault. Read only here; the CRM draws it and never makes it up.
+
+/// What the agents working for you are doing, written by the conductor agent into a vault of yours
+/// (`agents/agents.json`), which only you and it can open. The app draws it; it never makes it up.
+struct AgentsReport: Codable, Equatable, Sendable {
+    struct Agent: Codable, Equatable, Sendable, Identifiable {
+        var id: String
+        var name: String
+        var kind: String            // "conductor", "session", "subagent"
+        var role: String
+        var status: String          // "working", "waiting", "idle", "blocked", "done"
+        var doing: String
+        var waitingFor: String?
+        var parent: String?
+        var lastActive: Date?
+        var lane: String?           // an sgi1 link if it can be written to directly; else through the conductor
+        /// Which project or team it belongs to ("VoiceDebrief", "PrompTugal newsroom"), so the Agents tab can group them.
+        var group: String? = nil
+    }
+    struct Link: Codable, Equatable, Sendable { var from: String; var to: String; var label: String }
+    struct Message: Codable, Equatable, Sendable, Identifiable {
+        var id: String
+        var agent: String           // which agent the conversation is with
+        var from: String            // "you" or the agent's id
+        var at: Date
+        var text: String
+        var replyTo: String?
+        /// What it answers, in your words (the start of your note's transcript), so the reply makes sense on its own.
+        var quote: String? = nil
+        /// A picture that goes with it (an infographic), as a path in the same vault, e.g. "agents/images/x.png".
+        var image: String? = nil
+        /// Which stream it belongs to on the record screen's right column ("updates", "builds", "newsroom");
+        /// none is an ordinary message. A reply to a note (replyTo) shows under that note whatever its channel.
+        var channel: String? = nil
+    }
+
+    var v: Int
+    var made: Date
+    /// The newest build in TestFlight, as the conductor last saw it ("0.1.90"), so the app can say an update
+    /// is waiting (the owner: "is there a way to know from here if there are new updates?").
+    var latestBuild: String? = nil
+    var conductor: String           // the id of the agent that wrote this
+    var agents: [Agent]
+    var links: [Link]
+    var messages: [Message]
+    /// What the conductor needs the owner to decide, each with its choices (the owner: "what decisions do I
+    /// need to provide, what is next"). Answered from the Inbox; the answer goes to the conductor sealed.
+    var decisions: [Decision]? = nil
+    /// What happens next, in a few lines, as the conductor sees it.
+    var nextSteps: [String]? = nil
+    /// When the conductor's side received each note (its id), written within seconds of arrival, before any
+    /// answer: the "Received" step of the live panel's timeline.
+    var acks: [Ack]? = nil
+
+    struct Ack: Codable, Equatable, Sendable {
+        var note: String
+        var receivedAt: Date
+    }
+
+    /// Contacts the conductor offers to add, such as another conductor's lane (the owner: "send me a message
+    /// with an agent's key so I can onboard it from here; I accept it or not"). Nothing is added until you say so.
+    var contactOffers: [ContactOffer]? = nil
+
+    struct ContactOffer: Codable, Equatable, Sendable, Identifiable {
+        var id: String
+        var name: String
+        var link: String            // an sgi1. lane link: where to send, never a secret
+        var why: String?
+        var from: String
+        var at: Date
+    }
+
+    struct Decision: Codable, Equatable, Sendable, Identifiable {
+        var id: String
+        var title: String
+        var detail: String?
+        var options: [String]
+        var from: String            // the agent's id
+        var at: Date
+    }
+
+    var counts: (working: Int, waiting: Int, idle: Int) {
+        (agents.filter { $0.status == "working" }.count,
+         agents.filter { $0.status == "waiting" || $0.status == "blocked" }.count,
+         agents.filter { $0.status == "idle" || $0.status == "done" }.count)
+    }
+
+    static func decode(_ data: Data) throws -> AgentsReport {
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        return try decoder.decode(AgentsReport.self, from: data)
+    }
+}
+

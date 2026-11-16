@@ -9,7 +9,7 @@ struct WorkflowTests {
 
     @Test func onlyImportAndTheListAreBuiltAndHaveAPlace() {
         let built = CRMWorkflow.all.filter(\.isBuilt)
-        #expect(built.map(\.id) == ["W1", "W3", "W5", "W12"])
+        #expect(built.map(\.id) == ["W1", "W3", "W5", "W11", "W12"])
         for w in built { #expect(w.section?.isBuilt == true) }
     }
 
