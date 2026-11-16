@@ -29,7 +29,7 @@
  ],
  "counts": {
   "seen-working": 27,
-  "built-untried": 113,
+  "built-untried": 114,
   "in-progress": 46,
   "proposed": 61,
   "parked": 6
@@ -4222,6 +4222,26 @@
     "Unit tests (FollowUpBoardTests): every bucket on a fixed day, names and the owner filter, a change stamped and checked; and a changed follow-up kept as one more commit in the vault. Not tried on a device"
    ],
    "places": [],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
+   "id": "feature.sgit.crm.drafts.never.sends",
+   "kind": "feature",
+   "app": "VoiceDebrief",
+   "title": "SGit CRM, drafts, never sends",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "Apps/CRM/Sources/Model/DraftLog.swift, UI/DraftsView.swift (CRM cell, step 5; workflows W4 in part and W5): from a follow-up, Draft an email or Draft a message makes a draft from a plain template (a greeting, the next step, a sign-off); Drafts lists them by status with who wrote each; the person edits it and opens the system's own Mail or Messages sheet, filled in. Nothing is sent unless they...",
+   "detail": [
+    "Apps/CRM/Sources/Model/DraftLog.swift, UI/DraftsView.swift (CRM cell, step 5; workflows W4 in part and W5): from a follow-up, Draft an email or Draft a message makes a draft from a plain template (a greeting, the next step, a sign-off); Drafts lists them by status with who wrote each; the person edits it and opens the system's own Mail or Messages sheet, filled in. Nothing is sent unless they press Send there; then the draft is marked sent by that person and the message is logged as an interaction, in one signed commit. Keep and Drop also commit. No code path sends on its own",
+    "Unit tests (DraftLogTests): the template draft is a valid record with the right recipients; a sent draft is logged as an interaction naming it; sending twice and an agent marking a draft sent are refused. The sheets have not been tried on a device"
+   ],
+   "places": [
+    "Settings: Recipients"
+   ],
    "issues": [],
    "url": "https://ios.app.voicedebrief.ai/built/index.html",
    "source": "The reality file",

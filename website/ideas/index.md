@@ -5,7 +5,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | Status | Meaning | How many |
 |---|---|---|
 | Seen working | Built, and a run proved it: CI, a device or a server. | 27 |
-| Built, untried | In the app or the repository, but not yet proven by a run on a device. | 113 |
+| Built, untried | In the app or the repository, but not yet proven by a run on a device. | 114 |
 | In progress | Begun: part of it is built or a release has touched it. | 46 |
 | Proposed | Asked for or described; nothing of it is built. | 61 |
 | Parked | Waiting: on the owner, on Apple, or scheduled for later. | 6 |
@@ -127,6 +127,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | SGit CRM, lane entries for the email cell | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
 | SGit CRM, vault apps and a switch per section | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
 | SGit CRM, who needs what | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
+| SGit CRM, drafts, never sends | Feature | VoiceDebrief | Settings: Recipients |   | [reality file](../built/index.md) |
 | The visual identity | Feature | VoiceDebrief | Record tab; Settings: Identity; The repository: CI |   | [reality file](../built/index.md) |
 | Voice in text fields | Feature | VoiceDebrief | Settings: Experiments, the Lab; Settings: Experiments, Your words; The repository: CI |   | [reality file](../built/index.md) |
 | Recording with the screen locked or the app in the background: the audio background mode is declared | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |

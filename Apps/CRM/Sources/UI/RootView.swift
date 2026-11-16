@@ -65,6 +65,8 @@ struct SectionScreen: View {
                 FollowUpsView(crm: crm)
             case .introductions:
                 IntroductionsView(crm: crm)
+            case .drafts:
+                DraftsView(crm: crm)
             case .people:
                 PeopleList(crm: crm)
             case .organisations:

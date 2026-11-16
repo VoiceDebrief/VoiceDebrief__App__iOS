@@ -50,7 +50,15 @@ struct FollowUpsView: View {
                             problem = nil
                         } catch { problem = error.localizedDescription }
                     }
-                } actorName: { myName } actor: { crm.actor(name: myName) }
+                } actorName: { myName } actor: { crm.actor(name: myName) } draftIt: { channel in
+                    editing = nil
+                    guard let person = crm.people.first(where: { $0.id == f.person }) else { problem = "This follow-up's person is not in the CRM."; return }
+                    let draft = DraftLog.draft(for: f, person: person, channel: channel, by: crm.actor(name: myName), at: Date())
+                    Task {
+                        do { try await crm.commit(records: [.draft(draft)], message: "Draft for \(person.name.value)"); problem = nil }
+                        catch { problem = error.localizedDescription }
+                    }
+                }
             }
         }
     }
@@ -88,6 +96,7 @@ struct FollowUpEditor: View {
     let save: (FollowUp) -> Void
     let actorName: () -> String
     let actor: () -> Actor
+    var draftIt: ((Draft.Channel) -> Void)?
     @State private var status: FollowUp.Status
     @State private var nextStep: String
     @State private var hasDue: Bool
@@ -96,7 +105,8 @@ struct FollowUpEditor: View {
     @Environment(\.dismiss) private var dismiss
 
     init(followUp: FollowUp, personName: String, save: @escaping (FollowUp) -> Void,
-         actorName: @escaping () -> String, actor: @escaping () -> Actor) {
+         actorName: @escaping () -> String, actor: @escaping () -> Actor, draftIt: ((Draft.Channel) -> Void)? = nil) {
+        self.draftIt = draftIt
         self.followUp = followUp
         self.personName = personName
         self.save = save
@@ -128,6 +138,14 @@ struct FollowUpEditor: View {
                 Toggle("A date", isOn: $hasDue)
                 if hasDue { DatePicker("Due", selection: $due, displayedComponents: .date) }
                 if status == .waiting { TextField("Waiting on", text: $waitingOn) }
+            }
+            if let draftIt {
+                Section {
+                    Button("Draft an email") { draftIt(.email) }
+                    Button("Draft a message") { draftIt(.message) }
+                } footer: {
+                    Text("A draft to read and change. You send it yourself.")
+                }
             }
             Section("Where it came from") {
                 Text("\(followUp.source.saidBy), \(followUp.source.from)").font(.footnote)
