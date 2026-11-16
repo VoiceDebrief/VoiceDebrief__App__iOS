@@ -4,6 +4,7 @@ Every release of this repository. Every push to `dev` is a release: CI works out
 
 | Version | Date | What changed |
 |---|---|---|
+| next | 16 November 2026 | The microphone check now reaches Claude: the transcription step started each note from a fresh record and dropped it (seen on a silent note from 0.1.131). It also shows on each memo's card in the Live panel. |
 | next | 16 November 2026 | Each recorded note now carries a short microphone check, sent with it: the recorder's loudest reading, the live engine's loudest sample, which microphone it used, and whether the note was rescued from the live audio. A fifth silent note came in on 0.1.126; this says which part went deaf. |
 | v0.1.130 | 15 November 2026 | Decided (d5): vault keys are kept in iCloud Keychain by default in both apps, with a switch to keep them on one device, as both apps already do; the passkey door comes on top. The sgit app's design page said "this device only" and now says what the app does. |
 | v0.1.128 | 15 November 2026 | The Live panel also follows memos sent to the owner's own lane to Claude (a contact whose name starts with Claude), not only the built-in developer lane. |

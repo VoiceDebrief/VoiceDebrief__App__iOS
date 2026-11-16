@@ -387,6 +387,7 @@ final class DebriefSession {
     func reprocess(_ noteId: String, localeId: String) {
         guard noteId != recordingNoteId, !isBusyWith(noteId), var run = store.note(noteId)?.run else { return }
         run = DebriefRun(source: run.source, localeId: localeId)
+        run.microphoneCheck = store.note(noteId)?.run.microphoneCheck
         store.update(noteId, run: run, processing: true)
         enqueue(noteId)
     }
@@ -421,6 +422,7 @@ final class DebriefSession {
         }
         let localeId = note.run.localeId
         var current = DebriefRun(source: note.run.source, localeId: localeId)
+        current.microphoneCheck = note.run.microphoneCheck   // measured while recording; the pipeline keeps it
         current.audioSeconds = SpeechFileTranscriber.audioSeconds(url: url)
         /// Writes the run to the library; `finished` ends the note's processing and frees the recorder.
         func publish(finished: Bool = false) {

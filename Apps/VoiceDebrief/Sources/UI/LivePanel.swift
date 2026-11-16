@@ -101,6 +101,12 @@ struct LivePanel: View {
                         .foregroundStyle(state == .answered ? .green : .secondary)
                 }
             }
+            // What the microphone gave while recording, so a silent note explains itself here too.
+            if let check = note.run.microphoneCheck {
+                Label(check, systemImage: "mic")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
             ForEach(answers) { reply in
                 VStack(alignment: .leading, spacing: 6) {
                     Text(reply.text).font(.callout)
