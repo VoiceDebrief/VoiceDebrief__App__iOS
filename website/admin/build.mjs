@@ -86,6 +86,8 @@ const PAGES = [
     description: 'How SGit CRM keeps its records in a vault: one JSON file per record (people, organisations, interactions, introductions, follow-ups, drafts, plays), a source on every value, an agent always names its key, and only a person marks a draft sent.' },
   { path: 'crm/workflows', nav: null, title: 'SGit CRM as workflows made of cells',
     description: 'What SGit CRM sells: cells (code, on-device model, cloud model, agent, person) combined into workflows, workflows into plays, plays into the CRM; ten workflows for the Web Summit follow-up, after the Algarve Evolution map.' },
+  { path: 'crm/explorers', nav: null, title: 'SGit CRM: vaults are the explorers, the app is the villagers',
+    description: 'How the CRM grows without app builds: vault apps run inside the CRM for experiments and data inputs, the native app holds what has settled, and a switch per section chooses which one runs.' },
   { path: 'reviews', nav: null, title: 'Reviews of the VoiceDebrief iOS screens',
     description: 'Rounds of reading pictures of every screen: what is plainly wrong, what synthetic users expected and found, and the status of each finding.' },
   { path: 'reviews/round-1', nav: null, title: 'Review, round 1: the first sight of every screen',

@@ -80,5 +80,16 @@ struct CRMWorkflow: Identifiable, Hashable, Sendable {
                     cells: [Cell(kind: .code, job: "An agent as a person, a team as an organisation, a lane message as an interaction"),
                             Cell(kind: .person, job: "Add an agent the team has not seen")],
                     writes: "People, interactions, introductions", waitsFor: "A new agent", status: .proposed, section: nil),
+        CRMWorkflow(id: "W11", title: "What the agents are doing", trigger: "Lanes and the agents vault, while the screen is open",
+                    cells: [Cell(kind: .code, job: "Read each agent's status, its messages and what it waits on"),
+                            Cell(kind: .code, job: "Draw cells, workflows and who talks to whom"),
+                            Cell(kind: .person, job: "Answer a decision an agent waits on")],
+                    writes: "Interactions; decisions on a lane", waitsFor: "Every decision", status: .proposed, section: nil),
+        CRMWorkflow(id: "W12", title: "Exchange keys by QR", trigger: "Two people, two phones",
+                    cells: [Cell(kind: .code, job: "Show my contact card (my public keys) as a QR code"),
+                            Cell(kind: .code, job: "Scan theirs, check its signature"),
+                            Cell(kind: .person, job: "Confirm it is them"),
+                            Cell(kind: .code, job: "Seal a vault key or a message to their key")],
+                    writes: "A person with their keys", waitsFor: "Confirming who they are", status: .proposed, section: nil),
     ]
 }

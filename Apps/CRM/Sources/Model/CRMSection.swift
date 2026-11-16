@@ -12,6 +12,7 @@ enum CRMSection: String, CaseIterable, Identifiable, Hashable, Sendable {
     case drafts
     case importing
     case workflows
+    case labs
     case about
 
     var id: String { rawValue }
@@ -25,6 +26,7 @@ enum CRMSection: String, CaseIterable, Identifiable, Hashable, Sendable {
         case .drafts: return "Drafts"
         case .importing: return "Import"
         case .workflows: return "Workflows"
+        case .labs: return "Vault apps"
         case .about: return "About"
         }
     }
@@ -38,6 +40,7 @@ enum CRMSection: String, CaseIterable, Identifiable, Hashable, Sendable {
         case .drafts: return "square.and.pencil"
         case .importing: return "tray.and.arrow.down"
         case .workflows: return "point.3.connected.trianglepath.dotted"
+        case .labs: return "flask"
         case .about: return "info.circle"
         }
     }
@@ -52,6 +55,7 @@ enum CRMSection: String, CaseIterable, Identifiable, Hashable, Sendable {
         case .drafts: return "Messages drafted for you. You edit them and send them yourself; the app never sends."
         case .importing: return "Bring contacts in from a vault, as proposals you review before anything is kept."
         case .workflows: return "What the CRM is made of: workflows, each made of cells, and which are built."
+        case .labs: return "Vaults whose own apps run here: features to try before they are built in, switched on per section."
         case .about: return "What this build is and what it does."
         }
     }
@@ -61,12 +65,12 @@ enum CRMSection: String, CaseIterable, Identifiable, Hashable, Sendable {
         switch self {
         case .followUps, .introductions: return 4
         case .drafts: return 5
-        case .people, .organisations, .importing, .workflows, .about: return nil
+        case .people, .organisations, .importing, .workflows, .labs, .about: return nil
         }
     }
 
     var isBuilt: Bool { step == nil }
 
     /// The sections the sidebar lists, in order.
-    static let sidebar: [CRMSection] = [.followUps, .people, .organisations, .introductions, .drafts, .importing, .workflows]
+    static let sidebar: [CRMSection] = [.followUps, .people, .organisations, .introductions, .drafts, .importing, .workflows, .labs]
 }

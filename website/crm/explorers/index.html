@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SGit CRM: vaults are the explorers, the app is the villagers</title>
+<meta name="description" content="How the CRM grows without app builds: vault apps run inside the CRM for experiments and data inputs, the native app holds what has settled, and a switch per section chooses which one runs.">
+<link rel="canonical" href="https://ios.app.voicedebrief.ai/crm/explorers/index.html">
+<meta property="og:url" content="https://ios.app.voicedebrief.ai/crm/explorers/index.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="VoiceDebrief for iOS">
+<meta property="og:title" content="SGit CRM: vaults are the explorers, the app is the villagers">
+<meta property="og:description" content="How the CRM grows without app builds: vault apps run inside the CRM for experiments and data inputs, the native app holds what has settled, and a switch per section chooses which one runs.">
+<link rel="alternate" type="text/markdown" href="index.md" title="This page as markdown">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/vd-tokens.css">
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+
+<nav class="site"><div class="row">
+  <a class="brand" href="../../index.html">Voice<em>Debrief</em> <span>iOS</span></a>
+  <span class="beta" title="In development: there is nothing to install yet">IN DEVELOPMENT</span>
+  <a class="parent" href="https://voicedebrief.ai" title="A VoiceDebrief product">&#8599; part of <b>voicedebrief.ai</b></a>
+  <a class="ver" href="../../versions/index.html" title="Release history">dev</a>
+  <a class="nl" href="../../built/index.html">Built</a>
+  <a class="nl" href="../../architecture/index.html">How it works</a>
+  <a class="nl" href="../../design/index.html">Design</a>
+  <a class="nl" href="../../plan/index.html">Plan</a>
+  <a class="nl" href="../../articles/index.html">Articles</a>
+  <a class="nl" href="../../develop/index.html">Build</a>
+  <a class="nl" href="../../ideas/index.html">Ideas</a>
+  <a class="nl" href="../../guides/index.html">Guides</a>
+  <a class="gh" href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">&#9733; GitHub</a>
+</div></nav>
+
+<main class="doc">
+<div class="crumb"><a href="../../index.html">VoiceDebrief iOS</a> / crm / explorers</div>
+<h1 id="vaults-are-the-explorers-the-app-is-the-villagers">Vaults are the explorers, the app is the villagers</h1>
+<p>How SGit CRM grows without waiting for app builds. Written 16 November 2026 by the CRM cell at the owner's request. Status: the first part (vault apps inside the CRM, and a switch per section) is <span class="chip chip-unverified">unverified</span>: built, CI is the test, not yet tried on a device. Everything after it is <span class="chip chip-proposed">proposed</span>.</p>
+<h2 id="why">Why</h2>
+<p>A change to the native app takes half an hour or more to reach a phone (build, test, TestFlight). That is right for what is stable, and too slow for what we are still learning. And the CRM must also work without the app: on a website, opened directly, inside other apps, fed by feeds and append lanes.</p>
+<p>So the CRM has two layers, in the explorers, villagers and town planners sense:</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Layer</th><th>Where it runs</th><th>What it holds</th><th>How it changes</th></tr></thead>
+<tbody>
+<tr><td><strong>Explorers</strong></td><td>a vault's own app (HTML and JavaScript in the vault), opened inside the CRM in the web Vault, or on its own anywhere</td><td>experiments, labs, new workflows, data inputs, feeds, views we are still designing</td><td>a commit to the vault: live in seconds, no app build</td></tr>
+<tr><td><strong>Villagers</strong></td><td>the native iOS app</td><td>what has settled: import, the record format, people, the review screen, signing</td><td>an app build, TestFlight</td></tr>
+<tr><td><strong>Town planners</strong></td><td>shared packages and formats (<code>sgit.ai/crm/v1</code>, <code>lane.entry/1</code>, SGitVault)</td><td>what everything else stands on</td><td>rarely, with versions</td></tr>
+</tbody></table></div>
+<p>A feature starts as an explorer and moves into the app when it has earned it. <strong>A switch per section</strong> chooses which one you use, so both can live side by side while the native one catches up, and an experiment can replace a native screen for a day without a release.</p>
+<h2 id="what-is-built">What is built</h2>
+<ul>
+<li><strong>Vault apps</strong> (<code>Apps/CRM/Sources/Vault/</code>): add a vault by its key, pasted or scanned as a QR code; its key goes to the Keychain, its name and id to settings. Open it full screen inside the CRM: its own app, or its files (the web Vault's embed protocol, copied from SGit Vaults: the key is posted to the page, never put in the address, and the page keeps nothing).</li>
+<li><strong>The switch</strong> (<code>VaultApps</code>, &quot;Where each section runs&quot;): Follow-ups, People, Organisations, Introductions, Drafts and Import can each run natively or from a chosen vault app.</li>
+<li><strong>A vault as a QR code</strong>: its read key by default (whoever scans it can open it, not change it); the full key only when asked, with that said on the screen.</li>
+<li>Unit tests: adding, switching, reading back after a restart, removing (the key leaves the Keychain), the QR's read key, refusals. Not tried on a device; no vault app for the CRM has been written yet.</li>
+</ul>
+<h2 id="what-comes-next-in-order">What comes next, in order</h2>
+<ol>
+<li><strong>A first CRM vault app</strong>: the follow-up list (W3) as HTML in a vault, reading the CRM's own record format, so W3 is an explorer first and native later. Needs the CRM vault on the server (it is on the device only today), or a copy of its records in a vault there.</li>
+<li><strong>What the agents are doing</strong> (W11): who is working, waiting or stuck, what they say to each other, what waits on you, drawn as cells and workflows. It starts as a vault app reading the agents vault and the lanes (the same data VoiceDebrief's Agents and Live panels use), then moves into the app.</li>
+<li><strong>Keys and QR codes between people</strong> (W12): my contact card (my public keys, from SGitPeople, as SGit Vaults has it) as a QR code; scan theirs, check its signature, confirm it is them; then seal a vault key or a message to their key. This is how a CRM vault, or a single record, is shared, and how the sealed team records could be opened (Inbox decision d8).</li>
+<li><strong>The bridge</strong>: a vault app may ask the native app for a few things through the embed protocol (the person's name, a contact to open, a proposal to review), each one named and shown, never the keys.</li>
+</ol>
+<h2 id="what-this-does-not-claim">What this does not claim</h2>
+<ul>
+<li>The web Vault reads vaults on the server. The CRM's own vault is on the device only, so it cannot be opened as a vault app yet.</li>
+<li>A vault app runs whatever its vault holds: add only vaults you trust, as you would install an app.</li>
+<li>Switching a section to a vault app hides the native screen for that section; the records are the same.</li>
+</ul>
+</main>
+
+<footer class="site"><div class="cols">
+  <div>
+    <div class="brandline">Voice<em>Debrief</em> <span>iOS</span></div>
+    <p>The VoiceDebrief transcript and debrief as a native iPhone and iPad app, on Apple's own models, with the results in a vault you own. In development: there is nothing to install yet. Content CC BY 4.0; code Apache 2.0.</p>
+    <p class="partnote">This site is static and has no analytics.</p>
+    <p class="verline">site dev · <a href="index.md">this page as markdown</a> · <a href="../../llms.txt">llms.txt</a></p>
+  </div>
+  <div>
+    <h4>The app</h4>
+    <a href="../../built/index.html">What is built</a>
+    <a href="../../plan/index.html">The plan</a>
+    <a href="../../develop/index.html">Build and test</a>
+    <a href="../../versions/index.html">Release history</a>
+    <a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">GitHub</a>
+  </div>
+  <div>
+    <h4>VoiceDebrief</h4>
+    <a href="https://voicedebrief.ai">voicedebrief.ai</a>
+    <a href="https://meetscribe.chrome-extension.voicedebrief.ai">MeetScribe for Google Meet</a>
+  </div>
+  <div>
+    <h4>Built on</h4>
+    <a href="https://sgit.ai">sgit.ai</a>
+    <a href="https://pki.sgit.ai">pki.sgit.ai</a>
+    <a href="https://sgit.ai/security/index.html">The vault security model</a>
+  </div>
+</div></footer>
+</body>
+</html>

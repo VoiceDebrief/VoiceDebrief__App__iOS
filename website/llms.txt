@@ -94,7 +94,9 @@ Every page has a markdown twin: replace index.html with index.md.
   plays), a source on every value, an agent always names its key, only a person marks a draft sent.
 - https://ios.app.voicedebrief.ai/crm/workflows/index.html : what the CRM is made of and what it sells:
   cells by altitude (code, on-device model, cloud model behind a lane, agent, person) joined into
-  workflows, workflows into plays, plays into the CRM; ten workflows, W1 (import) built, the rest proposed.
+  workflows, workflows into plays, plays into the CRM; twelve workflows, W1 (import) built, the rest proposed.
+- https://ios.app.voicedebrief.ai/crm/explorers/index.html : vault apps as the explorer layer: a vault's own app
+  runs inside the CRM (no app build to change it), the native app holds what has settled, a switch per section.
 
 ## Articles (ideas, positions and briefs; intention, not fact)
 

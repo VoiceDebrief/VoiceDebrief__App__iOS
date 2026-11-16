@@ -3,6 +3,7 @@ import SwiftUI
 /// A sidebar on an iPad, a list that pushes on an iPhone: NavigationSplitView collapses on its own.
 struct RootView: View {
     let crm: CRMVault
+    let apps: VaultApps
     var problem: String?
     @State private var selection: CRMSection? = .followUps
 
@@ -32,7 +33,7 @@ struct RootView: View {
             }
         } detail: {
             NavigationStack {
-                SectionScreen(section: selection ?? .followUps, crm: crm)
+                SectionScreen(section: selection ?? .followUps, crm: crm, apps: apps)
             }
         }
     }
@@ -42,9 +43,21 @@ struct RootView: View {
 struct SectionScreen: View {
     let section: CRMSection
     let crm: CRMVault
+    let apps: VaultApps
 
     var body: some View {
         Group {
+            if let app = apps.app(for: section), let key = apps.keyText(for: app) {
+                VaultAppSection(section: section, app: app, keyText: key)
+            } else {
+                native
+            }
+        }
+        .navigationTitle(section.title)
+    }
+
+    @ViewBuilder
+    private var native: some View {
             switch section {
             case .about:
                 AboutView(crm: crm)
@@ -56,6 +69,8 @@ struct SectionScreen: View {
                 ImportView(crm: crm)
             case .workflows:
                 WorkflowsView()
+            case .labs:
+                LabsView(apps: apps)
             default:
                 ContentUnavailableView {
                     Label(section.title, systemImage: section.systemImage)
@@ -67,8 +82,6 @@ struct SectionScreen: View {
                     }
                 }
             }
-        }
-        .navigationTitle(section.title)
     }
 }
 
@@ -104,5 +117,6 @@ struct AboutView: View {
 }
 
 #Preview {
-    RootView(crm: CRMVault(store: MemoryStore(), root: FileManager.default.temporaryDirectory.appending(path: "crm-preview")))
+    RootView(crm: CRMVault(store: MemoryStore(), root: FileManager.default.temporaryDirectory.appending(path: "crm-preview")),
+             apps: VaultApps(store: MemoryStore(), defaults: UserDefaults(suiteName: "crm-preview") ?? .standard))
 }

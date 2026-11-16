@@ -5,11 +5,12 @@ import SwiftUI
 @main
 struct CRMApp: App {
     @State private var crm = CRMVault()
+    @State private var apps = VaultApps()
     @State private var problem: String?
 
     var body: some Scene {
         WindowGroup {
-            RootView(crm: crm, problem: problem)
+            RootView(crm: crm, apps: apps, problem: problem)
                 .task {
                     do { try await crm.open() } catch { problem = error.localizedDescription }
                 }

@@ -31,7 +31,7 @@ Cells move down the altitudes as we learn. A job is first done by an agent, beca
 
 As in the Algarve Evolution map: a **trigger** (a vault, a photo, a voice note, a date, a reply); **cells** that read, match and draft; a **policy check**; a **person** who approves anything that leaves or changes a record; a **record** of what changed and which key changed it (one signed commit per batch, in the user's CRM vault). No workflow sends a message: the CRM drafts, a person sends.
 
-## Ten workflows for the CRM
+## Twelve workflows for the CRM
 
 The first use is the Web Summit 2026 follow-up, so the first workflows are the ones that turn the summit into follow-ups. Times are illustrative estimates for discussion, not measurements.
 
@@ -47,6 +47,8 @@ The first use is the Web Summit 2026 follow-up, so the first workflows are the o
 | W8 | **Merge duplicates and add sources** | a new batch; weekly | A2 agent proposes merges; A2 a separate agent enriches from public pages, each value with its source; P | changes to people and organisations | every merge; every new value | 3 hours a week → 20 min | a few sessions (two roles, one lane) | [[proposed]] (step 6) |
 | W9 | **The team's weekly pipeline** | Monday morning | A0 counts by stage and owner; A1 a short summary; P | none in the CRM; a digest draft | sending the digest | 2 hours → 15 min | one agent, woken by a schedule | [[proposed]] |
 | W10 | **Our own fleet as records** | messages on our lanes | A0 lane reader: an agent is a person record, a team an organisation, a lane message an interaction, a hand-over an introduction | people, interactions, introductions | adding an agent the team has not seen | not done today | one agent | [[proposed]] (step 7) |
+| W11 | **What the agents are doing** | lanes and the agents vault, while the screen is open | A0 status and messages; A0 the drawing of cells, workflows and who talks to whom; P answers what waits on them | interactions; decisions on a lane | every decision | not done today | starts as a vault app, then native | [[proposed]] |
+| W12 | **Exchange keys by QR** | two people, two phones | A0 my contact card as a QR code; A0 scan and check theirs; P confirm it is them; A0 seal a vault key or a message to their key | a person with their keys | confirming who they are | 10 min → 30 s | in the app | [[proposed]] |
 
 Later: the sync to Twenty (an A0 cell, for a classic CRM screen), and the email agentic cell feeding W5.
 
@@ -58,7 +60,11 @@ Later: the sync to Twenty (an A0 cell, for a classic CRM screen), and the email 
 
 ## What the app does today
 
-W1 is built: the cells are `Sources/Import/` (readers, the team CRM layout, vaults of vaults, the matcher, the planner), `CardPhotoReader` (Vision), `Engine/CRMVault.swift` (the signed commit), and the review screen (the person cell). Each cell has its own unit tests on invented people. What the next steps of the brief build fall into W3 (step 4), W4 and W5 (step 5), W8 and W10 (steps 6 and 7). The app's Workflows section lists the ten with their cells and whether each is built (`Model/CRMWorkflow.swift`), and a test holds it to this page and the [reality file](../../built/index.md): only W1 is built, every workflow that changes records has a person cell, and no cloud model or agent cell runs in the app.
+W1 is built: the cells are `Sources/Import/` (readers, the team CRM layout, vaults of vaults, the matcher, the planner), `CardPhotoReader` (Vision), `Engine/CRMVault.swift` (the signed commit), and the review screen (the person cell). Each cell has its own unit tests on invented people. What the next steps of the brief build fall into W3 (step 4), W4 and W5 (step 5), W8 and W10 (steps 6 and 7). The app's Workflows section lists the twelve with their cells and whether each is built (`Model/CRMWorkflow.swift`), and a test holds it to this page and the [reality file](../../built/index.md): only W1 is built, every workflow that changes records has a person cell, and no cloud model or agent cell runs in the app.
+
+## Explorers and villagers
+
+A workflow can run as a vault app inside the CRM before it is built into the app, and a switch per section chooses which one runs: see [vaults are the explorers, the app is the villagers](../explorers/index.md).
 
 ## What this does not claim
 

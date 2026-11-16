@@ -29,7 +29,7 @@
  ],
  "counts": {
   "seen-working": 27,
-  "built-untried": 111,
+  "built-untried": 112,
   "in-progress": 46,
   "proposed": 61,
   "parked": 6
@@ -4184,6 +4184,24 @@
    "detail": [
     "Apps/CRM/Sources/Lanes/LaneEntry.swift: lane.entry/1 as agreed with the email AgenticCell on 16 November 2026 (canonical JSON as JavaScript's JSON.stringify writes it, keys sorted, non-ASCII raw; the key id from the Ed25519 SPKI DER; Ed25519 signatures in base64url; seq and prev as a hash chain per author and lane). The CRM will propose replies and sends on the email cell's actions lane with a client_ref naming its draft. Nothing in the app sends, and nothing uses this yet",
     "Unit tests against the email cell's test vector (signed bytes, key id, entry hash, signature; also checked in Python before it was committed), a tampered entry, and entries made, verified and chained here"
+   ],
+   "places": [],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
+   "id": "feature.sgit.crm.vault.apps.and.a.switch.per.section",
+   "kind": "feature",
+   "app": "VoiceDebrief",
+   "title": "SGit CRM, vault apps and a switch per section",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "Apps/CRM/Sources/Vault/ (at the owner's request, 16 November 2026; explorers and villagers): add a vault by its key or a QR code (key in the Keychain, name and id in settings), open its own app or its files full screen in the web Vault (embed protocol copied from SGit Vaults), share it as a QR code (the read key unless the full key is asked for), and run Follow-ups, People, Organisations...",
+   "detail": [
+    "Apps/CRM/Sources/Vault/ (at the owner's request, 16 November 2026; explorers and villagers): add a vault by its key or a QR code (key in the Keychain, name and id in settings), open its own app or its files full screen in the web Vault (embed protocol copied from SGit Vaults), share it as a QR code (the read key unless the full key is asked for), and run Follow-ups, People, Organisations, Introductions, Drafts or Import from a chosen vault app instead of natively. The Workflows section adds W11 (what the agents are doing) and W12 (exchange keys by QR), both proposed",
+    "Unit tests (VaultAppsTests): add, switch, read back after a restart, remove, the QR's read key, refusals. Not tried on a device; no CRM vault app exists yet"
    ],
    "places": [],
    "issues": [],

@@ -3,8 +3,8 @@ import Testing
 
 /// The workflows the app lists must match website/crm/workflows/ and the reality file.
 struct WorkflowTests {
-    @Test func tenWorkflowsInOrder() {
-        #expect(CRMWorkflow.all.map(\.id) == (1...10).map { "W\($0)" })
+    @Test func workflowsInOrder() {
+        #expect(CRMWorkflow.all.map(\.id) == (1...12).map { "W\($0)" })
     }
 
     @Test func onlyImportIsBuiltAndItHasAPlace() {
