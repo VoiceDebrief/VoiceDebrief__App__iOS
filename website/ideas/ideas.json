@@ -29,7 +29,7 @@
  ],
  "counts": {
   "seen-working": 27,
-  "built-untried": 105,
+  "built-untried": 106,
   "in-progress": 45,
   "proposed": 61,
   "parked": 6
@@ -4018,6 +4018,24 @@
    "versions": []
   },
   {
+   "id": "feature.the.secret.format.sgitsecrets",
+   "kind": "feature",
+   "app": "VoiceDebrief",
+   "title": "The secret format, SGitSecrets",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "Packages/SGitSecrets/ (SGit Secrets, step 3): SecretEntry (one secret, one encrypted JSON file sgit.ai/secret/v1 in a vault's secrets/ folder), its kinds and their fields, and PasswordMaker, moved out of SGit Vaults unchanged so that SGit Secrets can share them. SGit Vaults uses it through its project; VoiceDebrief does not",
+   "detail": [
+    "Packages/SGitSecrets/ (SGit Secrets, step 3): SecretEntry (one secret, one encrypted JSON file sgit.ai/secret/v1 in a vault's secrets/ folder), its kinds and their fields, and PasswordMaker, moved out of SGit Vaults unchanged so that SGit Secrets can share them. SGit Vaults uses it through its project; VoiceDebrief does not",
+    "Its own XCTests in ios.yml, including a file written before the move; SGit Vaults' own secrets tests run unchanged in sgit-app.yml"
+   ],
+   "places": [],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
    "id": "feature.a.vault.as.one.file",
    "kind": "feature",
    "app": "VoiceDebrief",
@@ -5123,13 +5141,14 @@
    "title": "Secrets",
    "status": "built-untried",
    "why": "The reality file, Built: unverified: written, not yet proven by a run.",
-   "summary": "Sources/Secrets/: a Secrets row on the home list; every vault with a secrets/ folder, grouped, searchable; kinds login, device passcode, Wi-Fi, card, note, token, vault key, read key, access key, recovery codes; add, change and delete, each one signed commit of one encrypted JSON file (sgit.ai/secret/v1), read into memory, never into the file cache; hidden values behind Face ID or the passcode...",
+   "summary": "Sources/Secrets/, with the secret format and the password maker in the shared package Packages/SGitSecrets (moved there unchanged, 16 November 2026): a Secrets row on the home list; every vault with a secrets/ folder, grouped, searchable; kinds login, device passcode, Wi-Fi, card, note, token, vault key, read key, access key, recovery codes; add, change and delete, each one signed commit of one...",
    "detail": [
-    "Sources/Secrets/: a Secrets row on the home list; every vault with a secrets/ folder, grouped, searchable; kinds login, device passcode, Wi-Fi, card, note, token, vault key, read key, access key, recovery codes; add, change and delete, each one signed commit of one encrypted JSON file (sgit.ai/secret/v1), read into memory, never into the file cache; hidden values behind Face ID or the passcode, copied for two minutes; \"Make a strong password\"; \"My secrets\" made on this device with the first secret; the app covered when not in front (the home stack; a sheet open at the time is not yet covered)",
+    "Sources/Secrets/, with the secret format and the password maker in the shared package Packages/SGitSecrets (moved there unchanged, 16 November 2026): a Secrets row on the home list; every vault with a secrets/ folder, grouped, searchable; kinds login, device passcode, Wi-Fi, card, note, token, vault key, read key, access key, recovery codes; add, change and delete, each one signed commit of one encrypted JSON file (sgit.ai/secret/v1), read into memory, never into the file cache; hidden values behind Face ID or the passcode, copied for two minutes; \"Make a strong password\"; \"My secrets\" made on this device with the first secret; the app covered when not in front (the home stack; a sheet open at the time is not yet covered)",
     "Unit tests for the format, the paths, the kinds and the password maker; compiles and the tests pass (6b13fcb). Nobody has used it on a device. Sync between devices (issue 122), sharing with people (124) and AutoFill (125) are not built"
    ],
    "places": [
-    "SGit Vaults: a vault"
+    "SGit Vaults: a vault",
+    "SGit Vaults: Share"
    ],
    "issues": [
     "122",

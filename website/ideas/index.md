@@ -5,7 +5,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | Status | Meaning | How many |
 |---|---|---|
 | Seen working | Built, and a run proved it: CI, a device or a server. | 27 |
-| Built, untried | In the app or the repository, but not yet proven by a run on a device. | 105 |
+| Built, untried | In the app or the repository, but not yet proven by a run on a device. | 106 |
 | In progress | Begun: part of it is built or a release has touched it. | 45 |
 | Proposed | Asked for or described; nothing of it is built. | 61 |
 | Parked | Waiting: on the owner, on Apple, or scheduled for later. | 6 |
@@ -117,6 +117,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | Vouching for a device | Feature | VoiceDebrief | Settings: Identity |   | [reality file](../built/index.md) |
 | A person in the register, optionally | Feature | VoiceDebrief | Settings: Identity |   | [reality file](../built/index.md) |
 | Diagnostics | Feature | VoiceDebrief | Settings: Diagnostics |   | [reality file](../built/index.md) |
+| The secret format, SGitSecrets | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
 | A vault as one file | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
 | Merging two heads of a vault | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
 | The visual identity | Feature | VoiceDebrief | Record tab; Settings: Identity; The repository: CI |   | [reality file](../built/index.md) |
@@ -145,7 +146,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | Ask this vault, an experiment | Feature | SGit Vaults | SGit Vaults: a vault; SGit Vaults: History |   | [reality file](../sgit-app/built/index.md) |
 | People | Feature | SGit Vaults | SGit Vaults: Share |   | [reality file](../sgit-app/built/index.md) |
 | Who you trust, and shared vaults for people | Feature | SGit Vaults | SGit Vaults: Share |   | [reality file](../sgit-app/built/index.md) |
-| Secrets | Feature | SGit Vaults | SGit Vaults: a vault |   | [reality file](../sgit-app/built/index.md) |
+| Secrets | Feature | SGit Vaults | SGit Vaults: a vault; SGit Vaults: Share |   | [reality file](../sgit-app/built/index.md) |
 | Questions for you | Feature | SGit Vaults | SGit Vaults: Settings |   | [reality file](../sgit-app/built/index.md) |
 | Guide and what is new | Feature | SGit Vaults | SGit Vaults |   | [reality file](../sgit-app/built/index.md) |
 | The same vaults on every device | Feature | SGit Vaults | SGit Vaults: Settings |   | [reality file](../sgit-app/built/index.md) |

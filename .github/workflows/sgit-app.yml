@@ -17,6 +17,7 @@ on:
       - 'Apps/SGit/**'
       - 'Packages/SGitVault/**'
       - 'Packages/SGitPeople/**'
+      - 'Packages/SGitSecrets/**'
       - '.github/workflows/sgit-app.yml'
       - '.github/scripts/**'
   workflow_dispatch:
