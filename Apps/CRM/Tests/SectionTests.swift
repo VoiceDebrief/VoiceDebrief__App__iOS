@@ -20,7 +20,7 @@ struct SectionTests {
     /// People and organisations (step 2) and import (step 3) are built. When a step lands, its section moves here.
     @Test func onlyWhatIsBuiltSaysBuilt() {
         let built = CRMSection.allCases.filter(\.isBuilt)
-        #expect(built == [.people, .organisations, .importing, .about])
+        #expect(built == [.people, .organisations, .importing, .workflows, .about])
     }
 
     @Test func unbuiltSectionsNameTheirStep() throws {

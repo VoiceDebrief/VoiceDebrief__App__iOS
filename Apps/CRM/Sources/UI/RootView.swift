@@ -54,6 +54,8 @@ struct SectionScreen: View {
                 OrganisationsList(crm: crm)
             case .importing:
                 ImportView(crm: crm)
+            case .workflows:
+                WorkflowsView()
             default:
                 ContentUnavailableView {
                     Label(section.title, systemImage: section.systemImage)

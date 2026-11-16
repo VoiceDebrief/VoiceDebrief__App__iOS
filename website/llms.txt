@@ -92,6 +92,9 @@ Every page has a markdown twin: replace index.html with index.md.
 - https://ios.app.voicedebrief.ai/crm/format/index.html : the record format, sgit.ai/crm/v1: one JSON
   file per record in a vault (people, organisations, interactions, introductions, follow-ups, drafts,
   plays), a source on every value, an agent always names its key, only a person marks a draft sent.
+- https://ios.app.voicedebrief.ai/crm/workflows/index.html : what the CRM is made of and what it sells:
+  cells by altitude (code, on-device model, cloud model behind a lane, agent, person) joined into
+  workflows, workflows into plays, plays into the CRM; ten workflows, W1 (import) built, the rest proposed.
 
 ## Articles (ideas, positions and briefs; intention, not fact)
 

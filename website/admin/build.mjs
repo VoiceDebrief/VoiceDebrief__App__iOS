@@ -84,6 +84,8 @@ const PAGES = [
     description: 'The reality file for the sgit app: what exists, how it is tested, and what does not exist yet.' },
   { path: 'crm/format', nav: null, title: 'The SGit CRM record format',
     description: 'How SGit CRM keeps its records in a vault: one JSON file per record (people, organisations, interactions, introductions, follow-ups, drafts, plays), a source on every value, an agent always names its key, and only a person marks a draft sent.' },
+  { path: 'crm/workflows', nav: null, title: 'SGit CRM as workflows made of cells',
+    description: 'What SGit CRM sells: cells (code, on-device model, cloud model, agent, person) combined into workflows, workflows into plays, plays into the CRM; ten workflows for the Web Summit follow-up, after the Algarve Evolution map.' },
   { path: 'reviews', nav: null, title: 'Reviews of the VoiceDebrief iOS screens',
     description: 'Rounds of reading pictures of every screen: what is plainly wrong, what synthetic users expected and found, and the status of each finding.' },
   { path: 'reviews/round-1', nav: null, title: 'Review, round 1: the first sight of every screen',

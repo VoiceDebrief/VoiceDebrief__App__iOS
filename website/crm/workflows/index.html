@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SGit CRM as workflows made of cells</title>
+<meta name="description" content="What SGit CRM sells: cells (code, on-device model, cloud model, agent, person) combined into workflows, workflows into plays, plays into the CRM; ten workflows for the Web Summit follow-up, after the Algarve Evolution map.">
+<link rel="canonical" href="https://ios.app.voicedebrief.ai/crm/workflows/index.html">
+<meta property="og:url" content="https://ios.app.voicedebrief.ai/crm/workflows/index.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="VoiceDebrief for iOS">
+<meta property="og:title" content="SGit CRM as workflows made of cells">
+<meta property="og:description" content="What SGit CRM sells: cells (code, on-device model, cloud model, agent, person) combined into workflows, workflows into plays, plays into the CRM; ten workflows for the Web Summit follow-up, after the Algarve Evolution map.">
+<link rel="alternate" type="text/markdown" href="index.md" title="This page as markdown">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/vd-tokens.css">
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+
+<nav class="site"><div class="row">
+  <a class="brand" href="../../index.html">Voice<em>Debrief</em> <span>iOS</span></a>
+  <span class="beta" title="In development: there is nothing to install yet">IN DEVELOPMENT</span>
+  <a class="parent" href="https://voicedebrief.ai" title="A VoiceDebrief product">&#8599; part of <b>voicedebrief.ai</b></a>
+  <a class="ver" href="../../versions/index.html" title="Release history">dev</a>
+  <a class="nl" href="../../built/index.html">Built</a>
+  <a class="nl" href="../../architecture/index.html">How it works</a>
+  <a class="nl" href="../../design/index.html">Design</a>
+  <a class="nl" href="../../plan/index.html">Plan</a>
+  <a class="nl" href="../../articles/index.html">Articles</a>
+  <a class="nl" href="../../develop/index.html">Build</a>
+  <a class="nl" href="../../ideas/index.html">Ideas</a>
+  <a class="nl" href="../../guides/index.html">Guides</a>
+  <a class="gh" href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">&#9733; GitHub</a>
+</div></nav>
+
+<main class="doc">
+<div class="crumb"><a href="../../index.html">VoiceDebrief iOS</a> / crm / workflows</div>
+<h1 id="sgit-crm-as-workflows-made-of-cells">SGit CRM as workflows made of cells</h1>
+<p>How SGit CRM is put together, and what it sells: cells, combined into workflows, combined into plays, which together are the CRM. Written 16 November 2026 by the CRM cell (<code>cells/crm-ios/</code>) at the owner's request, after the ten workflows mapped for Algarve Evolution (<a href="https://algarve-evolution.agenticcells.site/workflows/">Ten agentic cells for the death by a thousand cuts</a>, a prototype not yet approved by Algarve Evolution). Status: one workflow is built and the rest are <span class="chip chip-proposed">proposed</span>; each says which.</p>
+<h2 id="the-idea-in-four-layers">The idea in four layers</h2>
+<div class="tablewrap"><table>
+<thead><tr><th>Layer</th><th>What it is</th><th>What a buyer gets</th><th>In the app</th></tr></thead>
+<tbody>
+<tr><td><strong>Cell</strong></td><td>One unit of work, with its own reach: a piece of code, one model call, an agent's loop, or a person's decision</td><td>A part that can be tested alone and reused in other workflows</td><td>A Swift type or a lane, with a test</td></tr>
+<tr><td><strong>Workflow</strong></td><td>Cells joined end to end, from a trigger to a record, with a policy and a person's approval before anything leaves</td><td>One job done the way a person would do it, only faster: &quot;import the summit contacts&quot;, &quot;draft a follow-up&quot;</td><td>A screen that runs it, and a commit at the end</td></tr>
+<tr><td><strong>Play</strong></td><td>A named sequence of workflows the team repeats (&quot;after a conference&quot;, &quot;an investor round&quot;)</td><td>A way of working</td><td>A <code>plays/</code> record in the vault (the format has them)</td></tr>
+<tr><td><strong>The CRM</strong></td><td>The plays, the workflows they use, and the records they leave in the user's vault</td><td>The product on the App Store</td><td>SGit CRM</td></tr>
+</tbody></table></div>
+<p>So we do not sell &quot;a CRM&quot; first. We sell workflows, each made of cells we have tested, and the CRM is what you have once you run several of them. A customer can start with one workflow; the AgentiCCells ladder (one agent, a few sessions, a team, a network) says how far it grows.</p>
+<h2 id="kinds-of-cell-by-altitude">Kinds of cell, by altitude</h2>
+<p>The altitudes of a run (from the Swarm demo of 12 November, in <a href="https://newsroom.sgit.ai/articles/six-setups-of-an-agentic-system.html">six setups of an agentic system</a>) are the kinds of cell. Each kind has a cost, a reach and a place it may run.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>Altitude</th><th>Cell</th><th>Example in the CRM</th><th>Cost</th><th>Where it runs</th></tr></thead>
+<tbody>
+<tr><td>A0</td><td><strong>Code cell</strong>: plain code, deterministic, tested</td><td>the vCard reader, the matcher, the commit</td><td>nothing per run</td><td>in the app</td></tr>
+<tr><td>A1</td><td><strong>On-device model cell</strong>: one call to Apple's models (Vision, the Foundation Models framework)</td><td>reading the text on a badge photo</td><td>nothing per run; nothing leaves the device</td><td>in the app</td></tr>
+<tr><td>A1</td><td><strong>Cloud model cell</strong>: one call to Claude, or through OpenRouter</td><td>drafting a follow-up in our voice</td><td>per call</td><td>outside the app, behind a lane: the app holds no API key</td></tr>
+<tr><td>A2, A3</td><td><strong>Agent cell</strong>: a loop with tools and a key of its own</td><td>merging duplicates, enriching with sources</td><td>per run</td><td>a Claude session, writing proposals to an append lane</td></tr>
+<tr><td>P</td><td><strong>Person cell</strong>: a decision only a person may take</td><td>accepting a proposal, sending a message</td><td>a person's time</td><td>in the app</td></tr>
+</tbody></table></div>
+<p>Cells move down the altitudes as we learn. A job is first done by an agent, because nobody knows its shape yet; once its shape is known, an agent writes it as code, and the code cell replaces the agent cell: fewer moving parts, no cost per run, nothing to reach. The card-text reader is already one: plain rules where a model might have been, tested on invented cards. Every cell keeps the same promise wherever it sits: the policy says what it can reach (the grant), what it was asked to do (the mandate), the difference (the gap) and what stops it (the barriers).</p>
+<h2 id="what-every-workflow-has">What every workflow has</h2>
+<p>As in the Algarve Evolution map: a <strong>trigger</strong> (a vault, a photo, a voice note, a date, a reply); <strong>cells</strong> that read, match and draft; a <strong>policy check</strong>; a <strong>person</strong> who approves anything that leaves or changes a record; a <strong>record</strong> of what changed and which key changed it (one signed commit per batch, in the user's CRM vault). No workflow sends a message: the CRM drafts, a person sends.</p>
+<h2 id="ten-workflows-for-the-crm">Ten workflows for the CRM</h2>
+<p>The first use is the Web Summit 2026 follow-up, so the first workflows are the ones that turn the summit into follow-ups. Times are illustrative estimates for discussion, not measurements.</p>
+<div class="tablewrap"><table>
+<thead><tr><th>#</th><th>Workflow</th><th>Trigger</th><th>Cells</th><th>Writes (proposals)</th><th>Waits for a person</th><th>Time, illustrative</th><th>Ladder</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td>W1</td><td><strong>Import contacts from a vault</strong></td><td>a vault key or QR code; a vault of vaults such as crm-sources</td><td>A0 vault reader, format readers (vCard, CSV, JSON, team CRM layout), matcher, planner, commit; A1 Vision on badge photos; P review</td><td>people, organisations, interactions, follow-ups</td><td>every proposal, one by one or all at once</td><td>4 hours a list → 20 min</td><td>one agent's worth, all in the app</td><td><span class="chip chip-unverified">unverified</span>: built, CI is the test, not tried on a device</td></tr>
+<tr><td>W2</td><td><strong>Capture at a stand</strong></td><td>a photo of a badge or card, or ten seconds of voice</td><td>A1 Vision; A1 Foundation Models (one question: who, where, what next); A0 matcher; P</td><td>a person, an interaction, a follow-up</td><td>the proposal</td><td>5 min → 30 s</td><td>in the app</td><td><span class="chip chip-proposed">proposed</span></td></tr>
+<tr><td>W3</td><td><strong>Who needs what today</strong></td><td>opening the app; a date</td><td>A0 the list: due, overdue, waiting on someone, by owner</td><td>none</td><td>none: it only shows</td><td>30 min a day → glance</td><td>in the app</td><td><span class="chip chip-proposed">proposed</span> (step 4)</td></tr>
+<tr><td>W4</td><td><strong>Draft a follow-up in our voice</strong></td><td>a follow-up that is due</td><td>A1 cloud model behind a lane, or A1 on-device for a short note; A0 template; P edits and sends from the Mail or Messages sheet</td><td>a draft; then an interaction once sent</td><td>sending, always</td><td>20 min → 3 min a message</td><td>one agent</td><td><span class="chip chip-proposed">proposed</span> (step 5)</td></tr>
+<tr><td>W5</td><td><strong>Log what was sent and what came back</strong></td><td>the compose sheet closing; a reply shared to the app</td><td>A0 logger; later the email cell's twin of the mailbox</td><td>an interaction; the follow-up's status</td><td>changing a status the person did not set</td><td>5 min → 0</td><td>in the app</td><td><span class="chip chip-proposed">proposed</span></td></tr>
+<tr><td>W6</td><td><strong>Make an introduction</strong></td><td>&quot;you should talk to this person&quot;, typed or said</td><td>A1 extraction; A0 double opt-in; A1 drafts to each side; P</td><td>an introduction; two drafts</td><td>asking each side first; every email</td><td>30 min → 5 min</td><td>one agent</td><td><span class="chip chip-proposed">proposed</span></td></tr>
+<tr><td>W7</td><td><strong>Debrief a meeting by voice</strong></td><td>a VoiceDebrief note, or a recording in the app</td><td>A1 SpeechAnalyzer transcript; A1 Foundation Models, one question at a time; A0 matcher</td><td>an interaction, follow-ups, introductions</td><td>every proposal</td><td>20 min → 3 min</td><td>in the app</td><td><span class="chip chip-proposed">proposed</span></td></tr>
+<tr><td>W8</td><td><strong>Merge duplicates and add sources</strong></td><td>a new batch; weekly</td><td>A2 agent proposes merges; A2 a separate agent enriches from public pages, each value with its source; P</td><td>changes to people and organisations</td><td>every merge; every new value</td><td>3 hours a week → 20 min</td><td>a few sessions (two roles, one lane)</td><td><span class="chip chip-proposed">proposed</span> (step 6)</td></tr>
+<tr><td>W9</td><td><strong>The team's weekly pipeline</strong></td><td>Monday morning</td><td>A0 counts by stage and owner; A1 a short summary; P</td><td>none in the CRM; a digest draft</td><td>sending the digest</td><td>2 hours → 15 min</td><td>one agent, woken by a schedule</td><td><span class="chip chip-proposed">proposed</span></td></tr>
+<tr><td>W10</td><td><strong>Our own fleet as records</strong></td><td>messages on our lanes</td><td>A0 lane reader: an agent is a person record, a team an organisation, a lane message an interaction, a hand-over an introduction</td><td>people, interactions, introductions</td><td>adding an agent the team has not seen</td><td>not done today</td><td>one agent</td><td><span class="chip chip-proposed">proposed</span> (step 7)</td></tr>
+</tbody></table></div>
+<p>Later: the sync to Twenty (an A0 cell, for a classic CRM screen), and the email agentic cell feeding W5.</p>
+<h2 id="plays-that-use-them">Plays that use them</h2>
+<ul>
+<li><strong>After a conference</strong> (the Web Summit play): W1 import every team source, W8 merge, W3 the list, W4 a draft for each, W5 log, W9 the weekly view, until every follow-up is done or parked.</li>
+<li><strong>At a stand</strong>: W2 for each person met, W6 for each &quot;you should talk to&quot;, W7 at the end of the day.</li>
+<li><strong>Our own team</strong>: W10 every hour, W3 for what each agent is waiting on.</li>
+</ul>
+<h2 id="what-the-app-does-today">What the app does today</h2>
+<p>W1 is built: the cells are <code>Sources/Import/</code> (readers, the team CRM layout, vaults of vaults, the matcher, the planner), <code>CardPhotoReader</code> (Vision), <code>Engine/CRMVault.swift</code> (the signed commit), and the review screen (the person cell). Each cell has its own unit tests on invented people. What the next steps of the brief build fall into W3 (step 4), W4 and W5 (step 5), W8 and W10 (steps 6 and 7). The app's Workflows section lists the ten with their cells and whether each is built (<code>Model/CRMWorkflow.swift</code>), and a test holds it to this page and the <a href="../../built/index.html">reality file</a>: only W1 is built, every workflow that changes records has a person cell, and no cloud model or agent cell runs in the app.</p>
+<h2 id="what-this-does-not-claim">What this does not claim</h2>
+<ul>
+<li>Only W1 exists, and it has not been run on a device.</li>
+<li>The times are illustrative, for the team to correct, as on the Algarve Evolution page.</li>
+<li>Cloud model and agent cells never run inside the app: the app holds no API key; they write proposals to a lane sealed to the user's key, and the app shows them for a person to accept.</li>
+<li>The layer names (cell, workflow, play) are a proposal for AgentiCCells to take or change.</li>
+</ul>
+</main>
+
+<footer class="site"><div class="cols">
+  <div>
+    <div class="brandline">Voice<em>Debrief</em> <span>iOS</span></div>
+    <p>The VoiceDebrief transcript and debrief as a native iPhone and iPad app, on Apple's own models, with the results in a vault you own. In development: there is nothing to install yet. Content CC BY 4.0; code Apache 2.0.</p>
+    <p class="partnote">This site is static and has no analytics.</p>
+    <p class="verline">site dev · <a href="index.md">this page as markdown</a> · <a href="../../llms.txt">llms.txt</a></p>
+  </div>
+  <div>
+    <h4>The app</h4>
+    <a href="../../built/index.html">What is built</a>
+    <a href="../../plan/index.html">The plan</a>
+    <a href="../../develop/index.html">Build and test</a>
+    <a href="../../versions/index.html">Release history</a>
+    <a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">GitHub</a>
+  </div>
+  <div>
+    <h4>VoiceDebrief</h4>
+    <a href="https://voicedebrief.ai">voicedebrief.ai</a>
+    <a href="https://meetscribe.chrome-extension.voicedebrief.ai">MeetScribe for Google Meet</a>
+  </div>
+  <div>
+    <h4>Built on</h4>
+    <a href="https://sgit.ai">sgit.ai</a>
+    <a href="https://pki.sgit.ai">pki.sgit.ai</a>
+    <a href="https://sgit.ai/security/index.html">The vault security model</a>
+  </div>
+</div></footer>
+</body>
+</html>
