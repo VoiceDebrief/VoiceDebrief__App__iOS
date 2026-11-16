@@ -1,3 +1,4 @@
+import SGitPeople
 import SwiftUI
 
 /// A sidebar on an iPad, a list that pushes on an iPhone: NavigationSplitView collapses on its own.

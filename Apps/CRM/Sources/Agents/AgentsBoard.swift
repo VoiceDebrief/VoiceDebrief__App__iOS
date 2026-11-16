@@ -3,7 +3,7 @@ import Foundation
 /// What the agents are doing (W11): the conductor's report, arranged for a person. Groups by project,
 /// the ones waiting or blocked first, who talks to whom, and what waits on you. Plain code; nothing is written.
 enum AgentsBoard {
-    struct Group: Identifiable, Hashable, Sendable {
+    struct Group: Identifiable, Equatable, Sendable {
         var name: String
         var agents: [AgentsReport.Agent]
         var id: String { name }
