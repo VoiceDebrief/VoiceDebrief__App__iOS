@@ -39,7 +39,7 @@ The facts about a person or an organisation (a name, an email, a role) are each 
 - **organisation**: `name`, `website`, `notes` (sourced), `tags`.
 - **interaction**: `at`, `channel` (`meeting`, `email`, `message`, `call`, `note`, `lane`), `people` (ids, at least one), `summary`, `place`, and `draft` when it logs a sent draft.
 - **introduction**: `suggested_by` (sourced: a person's id or a name), `between` (two different people's ids), `why` (sourced), `status` (`suggested`, `accepted`, `made`, `happened`, `declined`), and `made_in`, the interaction in which it was made, required once it is `made` or `happened`.
-- **follow-up**: `person`, `owner`, `next_step`, `due`, `status` (`open`, `waiting`, `done`, `dropped`), and `waiting_on`, required while `waiting`.
+- **follow-up**: `person`, `owner`, `next_step`, `due`, `status` (`open`, `waiting`, `done`, `dropped`), `waiting_on`, required while `waiting`, and `stage`, the pipeline stage as its source wrote it (the team's stages are free text: to contact, to follow up, in conversation, call booked, proposal, won, parked; won reads as done, parked as dropped, the rest as open).
 - **draft**: `to` (ids), `channel` (`email` or `message`), `subject`, `body`, `status` (`draft`, `ready`, `sent`, `dropped`), and `sent_as`, the interaction that logs it. **Only a person marks a draft sent**, and only with the interaction that logs it: the app never sends a message itself; a person sends it from the system's Mail or Messages sheet.
 - **play**: `name`, `purpose`, `steps`.
 

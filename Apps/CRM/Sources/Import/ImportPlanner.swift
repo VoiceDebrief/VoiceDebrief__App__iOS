@@ -53,6 +53,7 @@ enum ImportPlanner {
         var peopleByID = Dictionary(uniqueKeysWithValues: people.map { ($0.id, $0) })
         var touched: [String] = []
         var created: [String] = []
+        var steps: [String: ContactCandidate] = [:]   // person id to the candidate that named a next step
 
         func organisationID(_ name: String?, source: Source) -> String? {
             guard let name, !name.trimmingCharacters(in: .whitespaces).isEmpty else { return nil }
@@ -94,6 +95,7 @@ enum ImportPlanner {
                                     links: c.links.map { Sourced($0) }, notes: c.notes.map { Sourced($0) })
                 peopleByID[person.id] = person
                 created.append(person.id)
+                if c.nextStep != nil || c.stage != nil { steps[person.id] = c }
             }
         }
 
@@ -106,7 +108,13 @@ enum ImportPlanner {
                                                              at: person.source.at, channel: .note, people: [id],
                                                              summary: "Met at \(event)")))
             }
-            if let step = options.followUp, !step.isEmpty {
+            if let c = steps[id] {
+                // The source's own next step and stage win over the batch's.
+                plan.records.append(.followUp(FollowUp(id: RecordID.make(), created: stamp, changed: stamp, source: person.source,
+                                                       person: id, owner: c.owner ?? options.owner,
+                                                       nextStep: c.nextStep ?? options.followUp ?? "Follow up",
+                                                       due: c.due, status: PipelineStage.status(for: c.stage), stage: c.stage)))
+            } else if let step = options.followUp, !step.isEmpty {
                 plan.records.append(.followUp(FollowUp(id: RecordID.make(), created: stamp, changed: stamp, source: person.source,
                                                        person: id, owner: options.owner, nextStep: step, status: .open)))
             }

@@ -123,9 +123,12 @@ struct FollowUp: CRMRecord {
     var status: Status
     /// Who it is waiting on, when it is waiting.
     var waitingOn: String?
+    /// The pipeline stage as text (the team's stages: to contact, to follow up, in conversation, call booked,
+    /// proposal, won, parked), kept as the source wrote it.
+    var stage: String?
 
     enum CodingKeys: String, CodingKey {
-        case format, id, created, changed, source, person, owner, due, status
+        case format, id, created, changed, source, person, owner, due, status, stage
         case nextStep = "next_step", waitingOn = "waiting_on"
     }
 

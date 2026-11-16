@@ -5,6 +5,8 @@ import Foundation
 enum TableReader {
     enum Field: Hashable {
         case name, first, last, email, phone, organisation, role, link, note
+        /// A column kept as a labelled note: "Industry: Fintech".
+        case extra(String)
     }
 
     /// Which field a column heading means, or nil.
@@ -20,6 +22,10 @@ enum TableReader {
         case "title", "jobtitle", "role", "position", "job": return .role
         case "linkedin", "linkedinurl", "url", "website", "web", "profile", "profileurl", "twitter", "x": return .link
         case "notes", "note", "comment", "comments", "remarks", "context", "met", "metat": return .note
+        case "industry", "sector": return .extra("Industry")
+        case "location", "locationcountry", "country", "city": return .extra("Location")
+        case "connectedat", "connectedon", "connected", "date": return .extra("Connected")
+        case "requestmessage", "message": return .extra("Their message")
         default: return nil
         }
     }
@@ -128,6 +134,7 @@ enum TableReader {
             case .role: c.role = v
             case .link: c.links.append(v)
             case .note: c.notes.append(v)
+            case .extra(let label): c.notes.append("\(label): \(v)")
             }
         }
         if c.name.isEmpty { c.name = [first, last].filter { !$0.isEmpty }.joined(separator: " ") }

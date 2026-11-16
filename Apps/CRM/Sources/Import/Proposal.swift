@@ -70,6 +70,10 @@ enum ProposalMaker {
         m.role = a.role ?? b.role
         m.links = unique(a.links + b.links, by: { $0.lowercased() })
         m.notes = unique(a.notes + b.notes, by: { $0 })
+        m.nextStep = a.nextStep ?? b.nextStep
+        m.due = a.due ?? b.due
+        m.stage = a.stage ?? b.stage
+        m.owner = a.owner ?? b.owner
         if a.source.from != b.source.from { m.source.note = [a.source.note, "also in \(b.source.from)"].compactMap { $0 }.joined(separator: "; ") }
         return m
     }

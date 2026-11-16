@@ -10,6 +10,13 @@ struct ContactCandidate: Hashable, Sendable {
     var role: String?
     var links: [String] = []
     var notes: [String] = []
+    /// What the source says should happen next, and by when, when it says.
+    var nextStep: String?
+    var due: Date?
+    /// The pipeline stage as the source wrote it (the team's stages are free text).
+    var stage: String?
+    /// Who on the team owns this contact, as the source names them.
+    var owner: String?
     /// Where it came from: the file and the place in it.
     var source: Source
 

@@ -18,6 +18,29 @@ struct ImportView: View {
                 startSection
             case .reading(let what):
                 Section { HStack { ProgressView(); Text(what) } }
+            case .chooseSources:
+                Section {
+                    ForEach(session.children) { child in
+                        Toggle(isOn: Binding(get: { session.chosen.contains(child.name) },
+                                             set: { on in if on { session.chosen.insert(child.name) } else { session.chosen.remove(child.name) } })) {
+                            VStack(alignment: .leading) {
+                                Text(child.label)
+                                Text(child.vaultID).font(.caption.monospaced()).foregroundStyle(.secondary)
+                            }
+                        }
+                    }
+                } header: {
+                    Text("This vault lists \(session.children.count) vaults")
+                } footer: {
+                    Text("Each is read with the key this vault holds for it, for this import only. Files sealed to the team's keys cannot be read yet and are listed after.")
+                }
+                Section {
+                    Button("Read \(session.chosen.count) \(session.chosen.count == 1 ? "vault" : "vaults")") {
+                        Task { await session.readChosen(into: crm) }
+                    }
+                    .disabled(session.chosen.isEmpty)
+                    Button("Start again", role: .cancel) { session.reset() }
+                }
             case .review:
                 reviewSections
             case .kept(let message):

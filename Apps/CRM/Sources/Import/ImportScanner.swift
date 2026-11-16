@@ -25,6 +25,7 @@ enum ImportScanner {
 
     /// What a path might hold, from its name alone; nil for files the import ignores.
     static func kind(of path: String) -> FileKind? {
+        if isPlumbing(path) { return nil }
         if RecordFiles.parse(path: path)?.0 == .person { return .crmRecord }
         let ext = (path as NSString).pathExtension.lowercased()
         switch ext {
@@ -35,15 +36,27 @@ enum ImportScanner {
         }
     }
 
+    /// A vault's own workings, never contacts: its schemas, derived graphs, key files, links to other
+    /// vaults, its app and its index.
+    static func isPlumbing(_ path: String) -> Bool {
+        let first = path.split(separator: "/").first.map(String.init) ?? ""
+        let name = (path as NSString).lastPathComponent
+        return ["schemas", "graph", "keys", ".vault", "assets"].contains(first)
+            || ["app.json", "index.json", "package.json"].contains(name) || name.hasSuffix(".link.json") || name.hasSuffix(".schema.json")
+    }
+
     /// Reads the files given (path and bytes). `vault` names the vault in each source.
     static func scan(_ files: [(path: String, data: Data)], vault: String, at: Date) -> Result {
         var result = Result()
-        for (path, data) in files {
-            guard let kind = kind(of: path) else { continue }
+        let team = TeamCRMReader.read(files, file: vault, at: at)
+        result.candidates = team.candidates
+        result.skipped = team.skipped
+        for (path, data) in files where !team.taken.contains(path) {
+            guard let fileKind = kind(of: path) else { continue }
             let file = "\(vault)/\(path)"
             let text = String(decoding: data, as: UTF8.self)
             let found: [ContactCandidate]
-            switch kind {
+            switch fileKind {
             case .photo:
                 result.photos.append(path)
                 continue
@@ -58,7 +71,7 @@ enum ImportScanner {
             case .json: found = TableReader.readJSON(data, file: file, at: at)
             }
             if found.isEmpty {
-                result.skipped.append(Skipped(path: path, reason: kind == .json || kind == .csv ? "no column or key that names a person" : "nothing that reads as a contact"))
+                result.skipped.append(Skipped(path: path, reason: fileKind == .json || fileKind == .csv ? "no column or key that names a person" : "nothing that reads as a contact"))
             }
             result.candidates += found
         }
