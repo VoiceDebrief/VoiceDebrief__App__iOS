@@ -31,6 +31,11 @@ and the last packet can be 80 ms. Apple's converter refuses a 120 ms packet (`AV
 run 422), so each packet is split into single 20 ms frames first (`OggOpus.frames`, the repacketiser of RFC 6716
 section 3.2: codes 1, 2 and 3, constant and variable sizes, padding), and the decoder only ever sees one frame size.
 
+With that, both real files decode (run 425), each 432 samples (9 ms) shorter than the granule position says. The tones
+(SILK and CELT, 20 ms packets) come out to the sample, so it is something of Apple's decoder on hybrid frames, a
+latency it does not flush, or a start it trims. Harmless for a transcript; the tests allow one frame. To look into if
+a note's last word is ever clipped.
+
 ## Left
 
 - Twenty real WhatsApp voice notes, on a device (the owner's own; only the two already public are in the repository).
