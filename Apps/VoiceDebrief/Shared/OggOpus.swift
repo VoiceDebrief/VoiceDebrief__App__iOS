@@ -240,6 +240,75 @@ enum OggOpus {
 
     // MARK: Packets
 
+    /// One Opus packet split into packets of a single frame each (RFC 6716, section 3.2), each with the same
+    /// configuration and frame-count code 0. WhatsApp packs six 20 ms frames into one 120 ms packet, which
+    /// Apple's decoder refuses; one frame at a time it decodes them. Nil for a packet that is not valid.
+    static func frames(inPacket packet: Data) -> [Data]? {
+        let b = [UInt8](packet)
+        guard let toc = b.first else { return nil }
+        let single = toc & 0xFC
+        func frame(_ range: Range<Int>) -> Data { Data([single] + b[range]) }
+        /// A frame length as coded in a packet: one byte below 252, otherwise two.
+        func length(at i: Int) -> (value: Int, size: Int)? {
+            guard i < b.count else { return nil }
+            if b[i] < 252 { return (Int(b[i]), 1) }
+            guard i + 1 < b.count else { return nil }
+            return (Int(b[i]) + 4 * Int(b[i + 1]), 2)
+        }
+        switch toc & 0x03 {
+        case 0:
+            return [packet]
+        case 1:
+            let rest = b.count - 1
+            guard rest % 2 == 0 else { return nil }
+            return [frame(1 ..< 1 + rest / 2), frame(1 + rest / 2 ..< b.count)]
+        case 2:
+            guard let first = length(at: 1) else { return nil }
+            let start = 1 + first.size
+            guard start + first.value <= b.count else { return nil }
+            return [frame(start ..< start + first.value), frame(start + first.value ..< b.count)]
+        default:
+            guard b.count >= 2 else { return nil }
+            let vbr = b[1] & 0x80 != 0
+            let padded = b[1] & 0x40 != 0
+            let count = Int(b[1] & 0x3F)
+            guard count > 0 else { return nil }
+            var at = 2
+            var padding = 0
+            if padded {
+                while true {
+                    guard at < b.count else { return nil }
+                    let p = Int(b[at])
+                    at += 1
+                    padding += p == 255 ? 254 : p
+                    if p != 255 { break }
+                }
+            }
+            var lengths: [Int] = []
+            if vbr {
+                for _ in 0 ..< count - 1 {
+                    guard let l = length(at: at) else { return nil }
+                    at += l.size
+                    lengths.append(l.value)
+                }
+                let last = b.count - padding - at - lengths.reduce(0, +)
+                guard last >= 0 else { return nil }
+                lengths.append(last)
+            } else {
+                let data = b.count - padding - at
+                guard data >= 0, data % count == 0 else { return nil }
+                lengths = Array(repeating: data / count, count: count)
+            }
+            var frames: [Data] = []
+            for l in lengths {
+                guard at + l <= b.count - padding else { return nil }
+                frames.append(frame(at ..< at + l))
+                at += l
+            }
+            return frames
+        }
+    }
+
     /// The number of 48 kHz samples one Opus packet decodes to, from its table-of-contents byte
     /// (RFC 6716, section 3.1). Nil for a packet that is empty or not valid.
     static func samples(inPacket packet: Data) -> Int? {

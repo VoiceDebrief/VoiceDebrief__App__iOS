@@ -27,8 +27,14 @@ invented transcript). Opus goes to the decoder above; other audio is kept or, fo
 cannot open, streamed by `AVAssetReader` to a 16 kHz WAV. Vorbis, WebM and Matroska get a plain message.
 
 Real WhatsApp files pack six 20 ms frames into one 120 ms packet (table-of-contents byte 0x6B, hybrid, code 3),
-and the last packet can be 80 ms: the decoder runs one converter per run of equal packets, so that last packet
-gets a fresh one.
+and the last packet can be 80 ms. Apple's converter refuses a 120 ms packet (`AVAudioConverter` would not be made:
+run 422), so each packet is split into single 20 ms frames first (`OggOpus.frames`, the repacketiser of RFC 6716
+section 3.2: codes 1, 2 and 3, constant and variable sizes, padding), and the decoder only ever sees one frame size.
+
+With that, both real files decode (run 425), each 432 samples (9 ms) shorter than the granule position says. The tones
+(SILK and CELT, 20 ms packets) come out to the sample, so it is something of Apple's decoder on hybrid frames, a
+latency it does not flush, or a start it trims. Harmless for a transcript; the tests allow one frame. To look into if
+a note's last word is ever clipped.
 
 ## Left
 

@@ -157,6 +157,29 @@ struct OggOpusParserTests {
         #expect(OggOpus.samples(inPacket: Data()) == nil)
     }
 
+    @Test func multiFramePacketsAreSplitIntoSingleFrames() throws {
+        // Code 0: as it is.
+        #expect(OggOpus.frames(inPacket: Data([0x08, 1, 2])) == [Data([0x08, 1, 2])])
+        // Code 1: two frames of equal size.
+        #expect(OggOpus.frames(inPacket: Data([0x09, 1, 2, 3, 4])) == [Data([0x08, 1, 2]), Data([0x08, 3, 4])])
+        #expect(OggOpus.frames(inPacket: Data([0x09, 1, 2, 3])) == nil)
+        // Code 2: the first frame's length, then both.
+        #expect(OggOpus.frames(inPacket: Data([0x0A, 1, 7, 8, 9])) == [Data([0x08, 7]), Data([0x08, 8, 9])])
+        // Code 3, constant bit rate: three frames of two bytes.
+        #expect(OggOpus.frames(inPacket: Data([0x0B, 0x03, 1, 2, 3, 4, 5, 6]))
+            == [Data([0x08, 1, 2]), Data([0x08, 3, 4]), Data([0x08, 5, 6])])
+        // Code 3, variable, with two bytes of padding: lengths 1 and 2 coded, the last takes the rest.
+        #expect(OggOpus.frames(inPacket: Data([0x0B, 0xC3, 2, 1, 2, 9, 8, 7, 6, 5, 0, 0]))
+            == [Data([0x08, 9]), Data([0x08, 8, 7]), Data([0x08, 6, 5])])
+        // Every packet of a real WhatsApp note splits into 20 ms frames that add up to the packet.
+        let stream = try OggOpus.parse(try IntakeFixtureFiles.data("intake-whatsapp-voice-note-2.opus"))
+        for packet in stream.packets {
+            let frames = try #require(OggOpus.frames(inPacket: packet))
+            #expect(frames.allSatisfy { OggOpus.samples(inPacket: $0) == 960 })
+            #expect(frames.count * 960 == OggOpus.samples(inPacket: packet))
+        }
+    }
+
     @Test func theChecksumIsOggs() {
         // The standard check string under Ogg's CRC (polynomial 0x04C11DB7, not reflected, start and end 0).
         let bytes = Array("123456789".utf8)
