@@ -367,7 +367,8 @@ final class DebriefSession {
             failure = "That file could not be opened."
             return nil
         }
-        let id = begin(audioAt: copy, source: picked.lastPathComponent, localeId: localeId)
+        let source = AudioSniffer.sourceLine(name: picked.lastPathComponent, container: AudioSniffer.sniff(fileAt: copy))
+        let id = begin(audioAt: copy, source: source, localeId: localeId)
         if id != nil { CreditLedger.shared.charge(.importFile, noteId: id) }
         return id
     }
@@ -424,25 +425,38 @@ final class DebriefSession {
         var current = DebriefRun(source: note.run.source, localeId: localeId)
         current.microphoneCheck = note.run.microphoneCheck   // measured while recording; the pipeline keeps it
 
-        // 0. WhatsApp's Ogg Opus: decoded on the device into a WAV in the note's folder, which then takes the
-        // Ogg file's place (and is compressed to .m4a once the note is finished, like a recording). The Ogg
-        // file is removed only after the WAV is written in full; if decoding fails it stays, and says why.
-        if OggOpus.looksLikeOgg(fileAt: url) {
-            working = "Reading the Opus voice note"
+        // 0. Reading the file (AudioIntake): what it is, from its bytes. WhatsApp's Ogg Opus is decoded on the
+        // device, and a video's soundtrack (or anything else AVFoundation reads but the pipeline cannot) is
+        // taken out, into `audio.wav` in the note's folder, which then takes the original's place (and is
+        // compressed to .m4a once the note is finished, like a recording). The original is removed only after
+        // the WAV is written in full; if reading fails it stays, and the note says why. A recording made here
+        // is a WAV already and passes straight through.
+        if url.pathExtension.lowercased() != "wav" || AudioSniffer.sniff(fileAt: url) != .wave {
+            working = "Reading the file"
             let started = Date()
-            let wav = store.folderURL(for: noteId).appending(path: "audio.wav")
-            let ogg = url
-            let result = await Task.detached(priority: .userInitiated) { () -> Result<Double, Error> in
-                Result { try OggOpusDecoder.transcode(ogg: ogg, toWAV: wav) }
+            // Never write over the original (a file named .wav that is not WAV inside).
+            let wavName = url.lastPathComponent == "audio.wav" ? "audio-read.wav" : "audio.wav"
+            let wav = store.folderURL(for: noteId).appending(path: wavName)
+            let source = url
+            let result = await Task.detached(priority: .userInitiated) { () -> Result<AudioIntake.Prepared, Error> in
+                do {
+                    return .success(try await AudioIntake.prepare(source, wav: wav) { done in
+                        Task { @MainActor [weak self] in self?.setWorking("Taking the sound out: \(Int(done * 100))%") }
+                    })
+                } catch {
+                    return .failure(error)
+                }
             }.value
             switch result {
-            case .success(let seconds):
-                store.replaceAudio(noteId, with: "audio.wav")
-                url = wav
-                current.steps.append(StepRecord(name: "Opus", outcome: .done, seconds: Date().timeIntervalSince(started),
-                                                note: String(format: "Decoded %.1f s of Ogg Opus", seconds)))
+            case .success(let prepared):
+                if let made = prepared.wav {
+                    store.replaceAudio(noteId, with: made.lastPathComponent)
+                    url = made
+                }
+                current.steps.append(StepRecord(name: "File", outcome: .done, seconds: Date().timeIntervalSince(started),
+                                                note: prepared.summary))
             case .failure(let error):
-                current.steps.append(StepRecord(name: "Opus", outcome: .failed, seconds: Date().timeIntervalSince(started),
+                current.steps.append(StepRecord(name: "File", outcome: .failed, seconds: Date().timeIntervalSince(started),
                                                 note: error.localizedDescription))
                 store.update(noteId, run: current, processing: false)
                 doneProcessing()

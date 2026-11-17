@@ -16,10 +16,22 @@
 - `DebriefSession`: a note whose audio starts with `OggS` is decoded first into `audio.wav` in its folder; the Ogg
   file is removed only once the WAV is complete. A failure is a step named Opus with a plain message, and the
   file stays in the note.
-- Tests: `OggOpusTests`, on tones made with ffmpeg and libopus (`Apps/VoiceDebrief/Tests/OggFixtures/`).
+- Tests: `OggOpusTests`, on tones made with ffmpeg and libopus (`Apps/VoiceDebrief/Tests/OggFixtures/`), and
+  `AudioIntakeTests` on two genuine WhatsApp voice notes (the owner's own, from the Website repository).
+
+## 17 November 2026, later: one way in for every format (the owner: "as compatible and as wide as we can")
+
+`Engine/AudioIntake.swift` and `Model/AudioSniffer.swift`: the format is decided from the bytes (OggS and OpusHead),
+never from the name or MIME type, after the web app's lesson (its issue 025: a mislabelled Ogg file produced an
+invented transcript). Opus goes to the decoder above; other audio is kept or, for video and anything `AVAudioFile`
+cannot open, streamed by `AVAssetReader` to a 16 kHz WAV. Vorbis, WebM and Matroska get a plain message.
+
+Real WhatsApp files pack six 20 ms frames into one 120 ms packet (table-of-contents byte 0x6B, hybrid, code 3),
+and the last packet can be 80 ms: the decoder runs one converter per run of equal packets, so that last packet
+gets a fresh one.
 
 ## Left
 
-- Twenty real WhatsApp voice notes, on a device (the owner's own; none go in the repository).
+- Twenty real WhatsApp voice notes, on a device (the owner's own; only the two already public are in the repository).
 - A zero-length packet (a lost frame, allowed by RFC 7845) is refused as not valid; WhatsApp is not known to write one.
 - Channel mapping family 1 (more than two channels) is refused plainly; a voice note never has it.
