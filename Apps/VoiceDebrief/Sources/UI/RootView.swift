@@ -5,6 +5,7 @@ struct RootView: View {
     @State private var session: DebriefSession
     @State private var book: VaultBook
     @State private var tab: RootTab
+    @Environment(\.scenePhase) private var scenePhase
 
     init() {
         #if DEBUG
@@ -119,7 +120,13 @@ struct RootView: View {
         #if DEBUG
         .overlay(alignment: .topLeading) { LaunchMarker() }
         #endif
+        .onChange(of: scenePhase) { _, phase in
+            // Voice notes shared from another app (WhatsApp) while VoiceDebrief was in the background.
+            if phase == .active, !isSampleLaunch { ShareIntake.shared.takeWaiting() }
+        }
         .task {
+            // Voice notes left in the share inbox by the share extension become notes (never in a sample launch).
+            if !isSampleLaunch { ShareIntake.shared.start(session: session) }
             // A Talk to Claude recording cannot survive a relaunch; do not let its flag outlive it.
             UserDefaults.standard.set(false, forKey: "vd.talking")
             // Finishing a note saves it to the chosen vault, unless that is switched off (issue 022).
@@ -160,6 +167,15 @@ struct RootView: View {
                 return (true, "Recording, for \(recipient.name) (sent when you finish).")
             }
         }
+    }
+
+    /// Whether this is a screenshots launch with invented notes (issue 016), which must not take real ones in.
+    private var isSampleLaunch: Bool {
+        #if DEBUG
+        return SampleWorld.launched != nil
+        #else
+        return false
+        #endif
     }
 
     /// Screenshots only (issue 016): the item a sample launch opens the Guide on. Nil otherwise.

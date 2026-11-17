@@ -372,6 +372,44 @@ final class DebriefSession {
         return id
     }
 
+    // MARK: From the share sheet
+
+    /// Takes every voice note waiting in the share inbox (put there by the share extension) into the library,
+    /// one note each, and puts them in line for the pipeline: transcript, debrief, then saving or sending as
+    /// the settings say (`onNoteReady`). A parcel leaves the inbox only once its note is written, so a file is
+    /// never lost; if the app stops in between, the next opening may make the note twice, never zero times.
+    @discardableResult
+    func takeShared(from inbox: ShareInbox, localeId: String) -> [String] {
+        var made: [String] = []
+        for (parcel, file) in inbox.waiting() {
+            var ext = file.pathExtension.lowercased()
+            if ext.isEmpty { ext = OggOpus.looksLikeOgg(fileAt: file) ? "opus" : "m4a" }
+            let copy = FileManager.default.temporaryDirectory.appending(path: "shared-\(parcel.id).\(ext)")
+            try? FileManager.default.removeItem(at: copy)
+            do {
+                try FileManager.default.copyItem(at: file, to: copy)
+            } catch {
+                failure = "A shared voice note (\(parcel.originalName)) could not be read. It is kept and will be tried again."
+                continue
+            }
+            guard let note = store.create(audioAt: copy, source: "Shared: \(parcel.originalName)", localeId: localeId) else {
+                try? FileManager.default.removeItem(at: copy)
+                failure = store.problem ?? "A shared voice note could not be kept. It will be tried again."
+                continue
+            }
+            inbox.remove(parcel.id)
+            CreditLedger.shared.charge(.importFile, noteId: note.id)
+            enqueue(note.id)
+            made.append(note.id)
+        }
+        if !made.isEmpty {
+            notice = made.count == 1
+                ? "A voice note shared from another app is in the library and is being debriefed."
+                : "\(made.count) voice notes shared from other apps are in the library and are being debriefed."
+        }
+        return made
+    }
+
     /// Keeps the audio as a new note, then processes it without making the caller wait.
     private func begin(audioAt url: URL, source: String, localeId: String) -> String? {
         guard let note = store.create(audioAt: url, source: source, localeId: localeId) else {
