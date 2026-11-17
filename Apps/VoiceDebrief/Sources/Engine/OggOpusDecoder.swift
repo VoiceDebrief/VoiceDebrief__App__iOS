@@ -41,13 +41,20 @@ enum OggOpusDecoder {
             try sink(piece)
         }
 
-        // Runs of packets with the same length.
+        // One frame per packet: Apple's decoder refuses WhatsApp's 120 ms packets of six frames.
+        var single: [Data] = []
+        single.reserveCapacity(stream.packets.count * 6)
+        for (index, packet) in stream.packets.enumerated() {
+            guard let frames = OggOpus.frames(inPacket: packet) else { throw OggOpusError.badPacket(index: index + 1) }
+            single.append(contentsOf: frames)
+        }
+        // Runs of frames with the same length (a stream rarely changes it).
         var runStart = 0
-        while runStart < stream.packets.count, toKeep > 0 {
-            let frames = OggOpus.samples(inPacket: stream.packets[runStart]) ?? 960
+        while runStart < single.count, toKeep > 0 {
+            let frames = OggOpus.samples(inPacket: single[runStart]) ?? 960
             var runEnd = runStart + 1
-            while runEnd < stream.packets.count, OggOpus.samples(inPacket: stream.packets[runEnd]) == frames { runEnd += 1 }
-            try decodeRun(stream.packets[runStart ..< runEnd], framesPerPacket: frames, channels: channels,
+            while runEnd < single.count, OggOpus.samples(inPacket: single[runEnd]) == frames { runEnd += 1 }
+            try decodeRun(single[runStart ..< runEnd], framesPerPacket: frames, channels: channels,
                           output: output, firstIndex: runStart, sink: take)
             runStart = runEnd
         }

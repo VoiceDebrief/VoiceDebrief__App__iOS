@@ -28,6 +28,8 @@ enum IntakeFixtureFiles {
         return target
     }
 
+    static func data(_ name: String) throws -> Data { try Data(contentsOf: url(name)) }
+
     static func temporaryWAV() -> URL {
         FileManager.default.temporaryDirectory.appending(path: "intake-\(UUID().uuidString).wav")
     }
