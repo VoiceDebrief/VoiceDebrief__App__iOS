@@ -10,7 +10,7 @@ One file per piece of work: `open/NNN-slug.md`, moved to `done/` when it is done
 | 006 | What SGitVault still lacks | |
 | 007 | One shared SGitVault | scheduling |
 | 008 | Credit and top-up (first version in test, simulated payment) | the owner: prices, products in App Store Connect |
-| 009 | Read WhatsApp's Ogg Opus | |
+| 009 | Read WhatsApp's Ogg Opus (built; twenty real files to try) | the owner, on a device |
 | 010 | Judge Apple's models on real notes | the owner, on a device |
 | 012 | The lab: one prompt, tools on and off | |
 | 013 | Doors: a harness inside the app | |
@@ -49,6 +49,7 @@ One file per piece of work: `open/NNN-slug.md`, moved to `done/` when it is done
 | 050 | The lab: task discovery (L06) | the owner, on a device |
 | 051 | An exploration: YouTube in the app, Spotify, other accounts | the owner's three decisions |
 | 052 | The lab: edit with Apple Intelligence (L07) | the owner, on a device |
+| 053 | Receive a voice note from the share sheet (WhatsApp) | the owner: two identifiers and the App Group in the developer portal; a device |
 | 100 | The sgit app, milestone one | a device and the live server |
 | 102 | Prove the sgit app's large files against the live server | 100 on a device |
 | 103 | The sgit app after milestone one | 100; 011 and 017 |

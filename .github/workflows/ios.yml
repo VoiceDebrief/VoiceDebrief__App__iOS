@@ -140,11 +140,40 @@ jobs:
           APPLE_TEAM_ID: ${{ vars.APPLE_TEAM_ID || secrets.APPLE_TEAM_ID }}
           EXPECTED_BUNDLE: ai.voicedebrief.app
           ENTITLEMENTS: Apps/VoiceDebrief/VoiceDebrief.entitlements
+          # The share extension (ai.voicedebrief.app.share) and the App Group (group.ai.voicedebrief). Until the
+          # owner has registered them in the developer portal, the build is uploaded without them (issue 053).
+          EXT_ENTITLEMENTS: Apps/VoiceDebrief/ShareExtension.entitlements
+          FALLBACK_WITHOUT_EXTENSIONS: '1'
         run: |
           missing=()
           for s in ASC_KEY_ID ASC_ISSUER_ID ASC_KEY_P8_BASE64 APPLE_TEAM_ID; do [ -n "${!s:-}" ] || missing+=("$s"); done
           if [ ${#missing[@]} -gt 0 ]; then
             echo "### TestFlight skipped: not set: ${missing[*]}" | tee -a "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          scripts/release/testflight.sh
+
+      # The share sheet branch only: sign the app with its extension and App Group for App Store Connect,
+      # exporting to a folder and uploading nothing, to see whether the portal is ready (issue 053). Its
+      # result is in the summary; it does not fail the run.
+      - name: Signing dry run with the share extension (work/share only, nothing uploaded)
+        if: github.ref == 'refs/heads/work/share'
+        continue-on-error: true
+        timeout-minutes: 30
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_P8_BASE64: ${{ secrets.ASC_KEY_P8_BASE64 }}
+          APPLE_TEAM_ID: ${{ vars.APPLE_TEAM_ID || secrets.APPLE_TEAM_ID }}
+          EXPECTED_BUNDLE: ai.voicedebrief.app
+          ENTITLEMENTS: Apps/VoiceDebrief/VoiceDebrief.entitlements
+          EXT_ENTITLEMENTS: Apps/VoiceDebrief/ShareExtension.entitlements
+          DRY_RUN: '1'
+        run: |
+          missing=()
+          for s in ASC_KEY_ID ASC_ISSUER_ID ASC_KEY_P8_BASE64 APPLE_TEAM_ID; do [ -n "${!s:-}" ] || missing+=("$s"); done
+          if [ ${#missing[@]} -gt 0 ]; then
+            echo "### Signing dry run skipped: not set: ${missing[*]}" | tee -a "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
           scripts/release/testflight.sh

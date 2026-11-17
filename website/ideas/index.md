@@ -5,9 +5,9 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | Status | Meaning | How many |
 |---|---|---|
 | Seen working | Built, and a run proved it: CI, a device or a server. | 28 |
-| Built, untried | In the app or the repository, but not yet proven by a run on a device. | 118 |
-| In progress | Begun: part of it is built or a release has touched it. | 46 |
-| Proposed | Asked for or described; nothing of it is built. | 60 |
+| Built, untried | In the app or the repository, but not yet proven by a run on a device. | 119 |
+| In progress | Begun: part of it is built or a release has touched it. | 47 |
+| Proposed | Asked for or described; nothing of it is built. | 59 |
 | Parked | Waiting: on the owner, on Apple, or scheduled for later. | 6 |
 
 ## Seen working
@@ -135,6 +135,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | The visual identity | Feature | VoiceDebrief | Record tab; Settings: Identity; The repository: CI |   | [reality file](../built/index.md) |
 | Voice in text fields | Feature | VoiceDebrief | Settings: Experiments, the Lab; Settings: Experiments, Your words; The repository: CI |   | [reality file](../built/index.md) |
 | Every common audio and video file in, read from its bytes | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
+| Receiving a voice note from the share sheet (WhatsApp) | Feature | VoiceDebrief | Library tab |   | [reality file](../built/index.md) |
 | Recording with the screen locked or the app in the background: the audio background mode is declared | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
 | The access key on the Create screen | Feature | SGit Vaults | SGit Vaults: the Create sheet |   | [reality file](../sgit-app/built/index.md) |
 | Drag and drop | Feature | SGit Vaults | SGit Vaults: a vault |   | [reality file](../sgit-app/built/index.md) |
@@ -197,6 +198,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | The lab, sixth experiment (L06): task discovery | Issue | VoiceDebrief | Settings: Experiments, the Lab |   | [050](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/050-lab-task-discovery.md) |
 | An exploration: YouTube in the app, Spotify, and which other accounts to connect | Issue | VoiceDebrief | A note: the player; Library tab; Settings: Recipients | [v0.1.119](../versions/v0.1.119/index.md) | [051](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/051-video-music-and-other-accounts.md) |
 | The lab, seventh experiment (L07): edit with Apple Intelligence | Issue | VoiceDebrief | Settings: Experiments, the Lab |   | [052](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/052-lab-edit.md) |
+| Receive a voice note from the share sheet (WhatsApp) | Issue | VoiceDebrief | Library tab; Settings: Save to a vault; The repository: CI |   | [053](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/053-share-extension.md) |
 | The sgit app, milestone one | Issue | SGit Vaults | SGit Vaults: Share |   | [100](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/100-sgit-app-milestone-one.md) |
 | The sgit app after milestone one | Issue | SGit Vaults | SGit Vaults: Share |   | [103](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/103-sgit-app-after-milestone-one.md) |
 | A gallery of vaults, opened in a browser inside the app | Issue | SGit Vaults | SGit Vaults: Gallery |   | [107](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/107-sgit-app-gallery.md) |
@@ -263,7 +265,6 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | A machine that hands in new keys | Design | SGit Vaults |   |   | [design](../sgit-app/secrets/index.md) |
 | Works on a plane | Design | SGit Vaults |   |   | [design](../sgit-app/secrets/index.md) |
 | A share with an end date | Design | SGit Vaults |   |   | [design](../sgit-app/secrets/index.md) |
-| Receiving a voice note from the share sheet (WhatsApp) | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
 | Saved and sent states on a note; saving to a vault automatically; an inbox in the app; the app's own QR code, so a conductor can write back | Feature | VoiceDebrief | Library, then a note |   | [reality file](../built/index.md) |
 | Apple's larger model on Private Cloud Compute, as an option | Feature | VoiceDebrief | The repository: CI |   | [reality file](../built/index.md) |
 | Translation, classification, citations of time in the debrief | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
@@ -273,7 +274,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | The answer from pki.sgit.ai handed to the app by iOS | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
 | Checking that an issuer chains to the register's root through its links; withdrawing a vouching statement; the user's key in a master vault behind a passkey; exporting the identity to sgit's key store from the app | Feature | VoiceDebrief | Settings: Identity |   | [reality file](../built/index.md) |
 | A merge when a device and its server have both changed; pushing or pulling a branch other than current; several servers for one vault; pushing automatically | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
-| The share extension, App Intents | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
+| App Intents | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
 | Paying for credit through the App Store; the ledger in the user's vault; anything that stops someone editing their own balance | Feature | VoiceDebrief | The balance in the top bar |   | [reality file](../built/index.md) |
 | The App Store | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
 | Local-first vaults and named remotes; keys in iCloud Keychain | Feature | SGit Vaults | SGit Vaults | [v0.1.33](../versions/v0.1.33/index.md) | [reality file](../sgit-app/built/index.md) |

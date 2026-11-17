@@ -29,9 +29,9 @@
  ],
  "counts": {
   "seen-working": 28,
-  "built-untried": 118,
-  "in-progress": 46,
-  "proposed": 60,
+  "built-untried": 119,
+  "in-progress": 47,
+  "proposed": 59,
   "parked": 6
  },
  "ideas": [
@@ -1225,6 +1225,38 @@
    "features": [],
    "url": "https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/052-lab-edit.md",
    "source": "The owner"
+  },
+  {
+   "id": "issue-053",
+   "kind": "issue",
+   "number": "053",
+   "app": "VoiceDebrief",
+   "title": "Receive a voice note from the share sheet (WhatsApp)",
+   "status": "in-progress",
+   "why": "Open, and the reality file lists for it: Receiving a voice note from the share sheet (WhatsApp).",
+   "summary": "How it works",
+   "detail": [
+    "How it works",
+    "1. The extension only takes the file in. ShareExtension (bundle ai.voicedebrief.app.share) appears in the share sheet for audio and films (public.audio, public.movie, public.audiovisual-content, and org.xiph.opus and org.xiph.ogg-audio, which the app and the extension declare as imported types for .opus, .ogg and .oga). It reads the file's first bytes and says at once if it is a format that cannot be read yet (Ogg Vorbis, WebM); WebM is not offered as a type, since it would only be refused. It shows the file's name, length and size, \"Debrief in VoiceDebrief\" and Cancel. On \"Debrief\" it copies the file, file to file, into the App Group container (group.ai.voicedebrief) with a small JSON record beside it (Shared/ShareInbox.swift), posts a Darwin notification, and says \"Kept. Open VoiceDebrief\". 2. The app does the rest. On opening, on becoming active, and on that notification while it...",
+    "What it does not do: open the app by itself. Apple gives a share extension no supported way to open its app, so the sheet says to open VoiceDebrief. A notification (\"tap to debrief\") would need the app to ask for permission first; not done.",
+    "Signing, and what the owner must do",
+    "17 November: the owner has registered all three below. The first signed build will show whether Xcode makes the profiles by itself. The extension and the App Group are in both targets' entitlements. Until they are registered in the developer portal, Apple will not sign them, so scripts/release/testflight.sh now tries with them and, if signing fails, uploads the same build without the extension and without the App Group (the app as it was before), saying so in the job summary under \"TestFlight: signed WITHOUT the share extension\". TestFlight keeps working either way. A push to work/share also runs a signing dry run (nothing uploaded) to show whether the portal is ready.",
+    "In the Apple Developer account (developer.apple.com, Certificates, Identifiers & Profiles, Identifiers):",
+    "1. The plus, App Groups, Continue: description VoiceDebrief, identifier group.ai.voicedebrief. Register. 2. ai.voicedebrief.app (VoiceDebrief): tick App Groups, Configure, choose group.ai.voicedebrief, Continue, Save (confirm the change to the profiles). 3. The plus, App IDs, App: description VoiceDebrief Share, Bundle ID explicit ai.voicedebrief.app.share, tick App Groups, Configure, choose group.ai.voicedebrief, Continue, Register.",
+    "Nothing in App Store Connect and no new secret: the extension ships inside the app, and cloud-managed signing makes the profiles with the API key CI already has. The next build after that carries the extension; the summary then says \"Signed for App Store Connect with every extension and entitlement\" (dry run) or \"Uploaded\" without the WITHOUT line."
+   ],
+   "statusLine": "Status: open: built on work/share, waiting for the owner's identifiers and a device. Asked for by the owner on 17 November 2026: forward a voice note from WhatsApp into VoiceDebrief through the iOS share sheet. The relaunch article promises it (\"notes received from the share sheet, WhatsApp voice notes too\").",
+   "places": [
+    "Library tab",
+    "Settings: Save to a vault",
+    "The repository: CI"
+   ],
+   "versions": [],
+   "features": [
+    "Receiving a voice note from the share sheet (WhatsApp)"
+   ],
+   "url": "https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/053-share-extension.md",
+   "source": "The owner's voice note"
   },
   {
    "id": "issue-100",
@@ -4540,13 +4572,35 @@
    "title": "Every common audio and video file in, read from its bytes",
    "status": "built-untried",
    "why": "The reality file, Built: unverified: written, not yet proven by a run.",
-   "summary": "Model/AudioSniffer.swift: what a file is, from its first bytes, never its name or label (Ogg Opus, Ogg Vorbis, ISO media with its brand, WAV, MP3 with or without ID3, FLAC, AIFF, CAF, WebM or Matroska, AMR). Engine/AudioIntake.swift: Ogg Opus through Model/OggOpus.swift (Ogg pages with their checksums, packets joined across pages, OpusHead, OpusTags, granule positions, pre-skip) and...",
+   "summary": "Shared/AudioSniffer.swift: what a file is, from its first bytes, never its name or label (Ogg Opus, Ogg Vorbis, ISO media with its brand, WAV, MP3 with or without ID3, FLAC, AIFF, CAF, WebM or Matroska, AMR). Engine/AudioIntake.swift: Ogg Opus through Shared/OggOpus.swift (Ogg pages with their checksums, packets joined across pages, OpusHead, OpusTags, granule positions, pre-skip) and...",
    "detail": [
-    "Model/AudioSniffer.swift: what a file is, from its first bytes, never its name or label (Ogg Opus, Ogg Vorbis, ISO media with its brand, WAV, MP3 with or without ID3, FLAC, AIFF, CAF, WebM or Matroska, AMR). Engine/AudioIntake.swift: Ogg Opus through Model/OggOpus.swift (Ogg pages with their checksums, packets joined across pages, OpusHead, OpusTags, granule positions, pre-skip) and Engine/OggOpusDecoder.swift (Apple's own Opus decoder through AVAudioConverter and kAudioFormatOpus, to a 48 kHz WAV); audio AVAudioFile opens kept as it is; anything else AVFoundation reads, the soundtrack of MP4, MOV and 3GP video among it, streamed by AVAssetReader to a 16 kHz mono WAV with progress; Ogg Vorbis, WebM and Matroska refused with a plain message. In DebriefSession, a step named File runs first: the WAV takes the original's place only once written in full, and a failure leaves the original in...",
+    "Shared/AudioSniffer.swift: what a file is, from its first bytes, never its name or label (Ogg Opus, Ogg Vorbis, ISO media with its brand, WAV, MP3 with or without ID3, FLAC, AIFF, CAF, WebM or Matroska, AMR). Engine/AudioIntake.swift: Ogg Opus through Shared/OggOpus.swift (Ogg pages with their checksums, packets joined across pages, OpusHead, OpusTags, granule positions, pre-skip) and Engine/OggOpusDecoder.swift (Apple's own Opus decoder through AVAudioConverter and kAudioFormatOpus, to a 48 kHz WAV); audio AVAudioFile opens kept as it is; anything else AVFoundation reads, the soundtrack of MP4, MOV and 3GP video among it, streamed by AVAssetReader to a 16 kHz mono WAV with progress; Ogg Vorbis, WebM and Matroska refused with a plain message. In DebriefSession, a step named File runs first: the WAV takes the original's place only once written in full, and a failure leaves the original in...",
     "OggOpusTests on Opus tones (one page, 18 pages, stereo 60 ms packets laced over two segments, a packet split across pages, a damaged page and a cut-off file, exact decoded lengths and the tone's frequency). AudioIntakeTests: a fixture per format made with ffmpeg, and two genuine WhatsApp voice notes (the owner's own, already public): each known by its bytes, each read to audio AVAudioFile opens at the right length, a video's soundtrack at 16 kHz with progress, Opus named .mp3 still decoded, Vorbis and WebM refused plainly, a damaged video and a text file failing with a plain message and leaving nothing behind. Not yet tried on a device"
    ],
    "places": [],
    "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
+   "id": "feature.receiving.a.voice.note.from.the.share.sheet.whatsapp",
+   "kind": "feature",
+   "app": "VoiceDebrief",
+   "title": "Receiving a voice note from the share sheet (WhatsApp)",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "ShareExtension/ (a new target, bundle ai.voicedebrief.app.share): in the share sheet for audio, films (for their soundtrack) and .opus, .ogg and .oga (imported types org.xiph.opus and org.xiph.ogg-audio, declared in VoiceDebrief-Info.plist and ShareExtension.plist); a small sheet with the file's name, length and size, \"Debrief in VoiceDebrief\" and Cancel. Shared/ShareInbox.swift (in both targets)...",
+   "detail": [
+    "ShareExtension/ (a new target, bundle ai.voicedebrief.app.share): in the share sheet for audio, films (for their soundtrack) and .opus, .ogg and .oga (imported types org.xiph.opus and org.xiph.ogg-audio, declared in VoiceDebrief-Info.plist and ShareExtension.plist); a small sheet with the file's name, length and size, \"Debrief in VoiceDebrief\" and Cancel. Shared/ShareInbox.swift (in both targets): the file is copied into the App Group container (group.ai.voicedebrief) with a JSON record beside it, written into a .partial folder and renamed when complete. Engine/ShareIntake.swift, DebriefSession.takeShared: the app takes waiting files on opening, on becoming active, and on a Darwin notification from the extension, makes each a note and only then removes it from the container; the normal pipeline follows (the format read from the bytes, transcript, debrief, saving as the settings say), and...",
+    "ShareInboxTests: a kept file waiting with its record, half-written and unreadable parcels left alone, oldest first, safe names, a parcel taken into the library as a note and removed only then, a parcel whose note cannot be written staying. The extension itself has no test (a UI test cannot launch one): never run on a device"
+   ],
+   "places": [
+    "Library tab"
+   ],
+   "issues": [
+    "053"
+   ],
    "url": "https://ios.app.voicedebrief.ai/built/index.html",
    "source": "The reality file",
    "versions": []
@@ -4563,21 +4617,6 @@
     "website/: markdown pages, a builder and a gate with no dependencies",
     "node website/admin/validate.mjs: pages current, links, no key-shaped strings, house style"
    ],
-   "places": [],
-   "issues": [],
-   "url": "https://ios.app.voicedebrief.ai/built/index.html",
-   "source": "The reality file",
-   "versions": []
-  },
-  {
-   "id": "feature.receiving.a.voice.note.from.the.share.sheet.whatsapp",
-   "kind": "feature",
-   "app": "VoiceDebrief",
-   "title": "Receiving a voice note from the share sheet (WhatsApp)",
-   "status": "proposed",
-   "why": "The reality file, Not built: proposed: does not exist.",
-   "summary": "",
-   "detail": [],
    "places": [],
    "issues": [],
    "url": "https://ios.app.voicedebrief.ai/built/index.html",
@@ -4753,10 +4792,10 @@
    "versions": []
   },
   {
-   "id": "feature.the.share.extension.app.intents",
+   "id": "feature.app.intents",
    "kind": "feature",
    "app": "VoiceDebrief",
-   "title": "The share extension, App Intents",
+   "title": "App Intents",
    "status": "proposed",
    "why": "The reality file, Not built: proposed: does not exist.",
    "summary": "",
