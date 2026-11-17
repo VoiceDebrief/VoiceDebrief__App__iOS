@@ -15,7 +15,7 @@ enum TranscribeError: LocalizedError {
         case .unsupportedLocale(let id):
             return "Apple's speech model does not support \(id) on this device."
         case .unreadable(let name):
-            return "This audio could not be read (\(name)). WhatsApp's Ogg Opus files need a decoder this build does not have yet; .m4a, .mp3 and .wav work."
+            return "This audio could not be read (\(name)). .m4a, .mp3, .wav and WhatsApp's Ogg Opus (.opus, .ogg) work."
         }
     }
 }

@@ -4,6 +4,7 @@ Every release of this repository. Every push to `dev` is a release: CI works out
 
 | Version | Date | What changed |
 |---|---|---|
+| next | 17 November 2026 | WhatsApp voice notes: an `.opus` or `.ogg` file chosen in the app is now read on the device with Apple's own Opus decoder, then transcribed and debriefed like any other note. A damaged file says so plainly and is kept. Not yet tried with a real WhatsApp file; receiving one from WhatsApp's share sheet comes next. |
 | v0.1.144 | 16 November 2026 | SGit CRM demo vaults: one shared set of invented data on the vault server (a mailbox twin, team sources, and a vault that lists them), added in the app by scanning one QR code. [How to add it](../crm/demo/index.md). Keys travel only as QR codes, copied text or screenshots, never in a repository. |
 | v0.1.144 | 16 November 2026 | SGit CRM reads your mailbox's twin: open the vault the email cell fills, and everyone you correspond with is proposed, each email thread kept as an interaction, and a follow-up where someone wrote last and is waiting for your reply. Only verified senders count. Try it now with an invented mailbox (Import, Try with a sample mailbox); your real one is connected on your own device. |
 | v0.1.144 | 16 November 2026 | SGit CRM is in TestFlight: builds 0.1.142 (19) and 0.1.143 (20) were uploaded on the evening of 16 November, and the owner confirmed the app opens on a device. |

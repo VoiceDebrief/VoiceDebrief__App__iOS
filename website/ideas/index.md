@@ -7,7 +7,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | Seen working | Built, and a run proved it: CI, a device or a server. | 28 |
 | Built, untried | In the app or the repository, but not yet proven by a run on a device. | 117 |
 | In progress | Begun: part of it is built or a release has touched it. | 46 |
-| Proposed | Asked for or described; nothing of it is built. | 61 |
+| Proposed | Asked for or described; nothing of it is built. | 60 |
 | Parked | Waiting: on the owner, on Apple, or scheduled for later. | 6 |
 
 ## Seen working
@@ -263,7 +263,6 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | Works on a plane | Design | SGit Vaults |   |   | [design](../sgit-app/secrets/index.md) |
 | A share with an end date | Design | SGit Vaults |   |   | [design](../sgit-app/secrets/index.md) |
 | Receiving a voice note from the share sheet (WhatsApp) | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
-| Decoding WhatsApp's Ogg Opus | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
 | Saved and sent states on a note; saving to a vault automatically; an inbox in the app; the app's own QR code, so a conductor can write back | Feature | VoiceDebrief | Library, then a note |   | [reality file](../built/index.md) |
 | Apple's larger model on Private Cloud Compute, as an option | Feature | VoiceDebrief | The repository: CI |   | [reality file](../built/index.md) |
 | Translation, classification, citations of time in the debrief | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |

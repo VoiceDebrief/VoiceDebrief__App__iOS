@@ -416,13 +416,39 @@ final class DebriefSession {
     // MARK: The pipeline
 
     private func process(noteId: String) async {
-        guard let note = store.note(noteId), let url = store.audioURL(for: noteId) else {
+        guard let note = store.note(noteId), var url = store.audioURL(for: noteId) else {
             doneProcessing()
             return
         }
         let localeId = note.run.localeId
         var current = DebriefRun(source: note.run.source, localeId: localeId)
         current.microphoneCheck = note.run.microphoneCheck   // measured while recording; the pipeline keeps it
+
+        // 0. WhatsApp's Ogg Opus: decoded on the device into a WAV in the note's folder, which then takes the
+        // Ogg file's place (and is compressed to .m4a once the note is finished, like a recording). The Ogg
+        // file is removed only after the WAV is written in full; if decoding fails it stays, and says why.
+        if OggOpus.looksLikeOgg(fileAt: url) {
+            working = "Reading the Opus voice note"
+            let started = Date()
+            let wav = store.folderURL(for: noteId).appending(path: "audio.wav")
+            let ogg = url
+            let result = await Task.detached(priority: .userInitiated) { () -> Result<Double, Error> in
+                Result { try OggOpusDecoder.transcode(ogg: ogg, toWAV: wav) }
+            }.value
+            switch result {
+            case .success(let seconds):
+                store.replaceAudio(noteId, with: "audio.wav")
+                url = wav
+                current.steps.append(StepRecord(name: "Opus", outcome: .done, seconds: Date().timeIntervalSince(started),
+                                                note: String(format: "Decoded %.1f s of Ogg Opus", seconds)))
+            case .failure(let error):
+                current.steps.append(StepRecord(name: "Opus", outcome: .failed, seconds: Date().timeIntervalSince(started),
+                                                note: error.localizedDescription))
+                store.update(noteId, run: current, processing: false)
+                doneProcessing()
+                return
+            }
+        }
         current.audioSeconds = SpeechFileTranscriber.audioSeconds(url: url)
         /// Writes the run to the library; `finished` ends the note's processing and frees the recorder.
         func publish(finished: Bool = false) {
