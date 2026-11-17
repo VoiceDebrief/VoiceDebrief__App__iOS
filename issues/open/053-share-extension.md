@@ -27,8 +27,10 @@ not done.
 
 ## Signing, and what the owner must do
 
-**17 November: the owner has registered all three below.** The first signed build will show whether Xcode makes
-the profiles by itself. The extension and the App Group are in both targets' entitlements. Until they are registered in the developer
+**17 November: the owner has registered all three below, and it works.** The signing dry run in ios run 427 on
+`work/share` archived the app with `ai.voicedebrief.app.share` inside and exported it for App Store Connect, both
+signed with the App Group, by cloud-managed signing and the existing API key: `EXPORT SUCCEEDED`, "Signed for App
+Store Connect with every extension and entitlement". No second profile to make by hand and no other step needed. The extension and the App Group are in both targets' entitlements. Until they are registered in the developer
 portal, Apple will not sign them, so `scripts/release/testflight.sh` now tries with them and, if signing fails,
 uploads the same build **without the extension and without the App Group** (the app as it was before), saying so in
 the job summary under "TestFlight: signed WITHOUT the share extension". TestFlight keeps working either way. A push
