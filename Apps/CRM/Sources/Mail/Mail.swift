@@ -152,8 +152,11 @@ struct GmailClient: Sendable {
         return out.sorted { $0.date > $1.date }
     }
 
-    /// Sends, as the person, only when they pressed Send.
-    func send(_ mail: OutgoingMail) async throws {
+    /// Sends, as the person, only when they pressed Send and confirmed this very message: the consent can only be
+    /// made by the confirmation in ComposeView (InboxView.swift), and it names the message it was given for.
+    /// No lane, agent or vault app path can make one; `MailTests` holds the sources to that.
+    func send(_ mail: OutgoingMail, consent: PersonConfirmedSend) async throws {
+        guard consent.raw == mail.raw else { throw GoogleAuth.Problem.refused("this is not the message you confirmed") }
         var request = URLRequest(url: URL(string: Self.base + "/messages/send")!)
         request.httpMethod = "POST"
         request.setValue("Bearer \(try await token())", forHTTPHeaderField: "Authorization")

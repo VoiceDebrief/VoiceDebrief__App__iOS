@@ -33,8 +33,8 @@ struct InboxView: View {
         }
         .sheet(item: Binding(get: { composing.map(ComposeItem.init) }, set: { composing = $0?.mail })) { item in
             NavigationStack {
-                ComposeView(mail: item.mail, crm: crm) { mail in
-                    try await gmail.send(mail)
+                ComposeView(mail: item.mail, crm: crm) { mail, consent in
+                    try await gmail.send(mail, consent: consent)
                     await logSent(mail)
                 }
             }
@@ -195,11 +195,18 @@ struct MessageView: View {
     }
 }
 
+/// Proof that a person pressed Send and confirmed this message. Its initialiser is fileprivate, so only the
+/// confirmation below can make one; Gmail's send call takes nothing else.
+struct PersonConfirmedSend: Sendable {
+    let raw: String
+    fileprivate init(confirmed mail: OutgoingMail) { raw = mail.raw }
+}
+
 /// Writing or replying. Send asks once more, then sends as you through Gmail.
 struct ComposeView: View {
     @State var mail: OutgoingMail
     let crm: CRMVault
-    let send: (OutgoingMail) async throws -> Void
+    let send: (OutgoingMail, PersonConfirmedSend) async throws -> Void
     @State private var toText = ""
     @State private var confirming = false
     @State private var sending = false
@@ -231,7 +238,7 @@ struct ComposeView: View {
                     defer { sending = false }
                     var m = mail
                     m.to = recipients
-                    do { try await send(m); dismiss() } catch { problem = error.localizedDescription }
+                    do { try await send(m, PersonConfirmedSend(confirmed: m)); dismiss() } catch { problem = error.localizedDescription }
                 }
             }
             Button("Not yet", role: .cancel) {}

@@ -88,3 +88,52 @@ struct MailTests {
         #expect(MailMessage.stripTags("<style>p{}</style><p>Hello&nbsp;Ana</p><p>A &amp; B<br>next</p>") == "Hello Ana\n\nA & B\nnext")
     }
 }
+
+/// Only the person's confirmed Send reaches Gmail's send call: no lane, agent, vault app or other path.
+/// Read from the sources themselves, so a new path that sends fails here before it ships.
+struct OnlyAPersonSendsTests {
+    static let sources = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent().appending(path: "Sources")
+
+    static func swiftFiles() throws -> [URL] {
+        let all = FileManager.default.enumerator(at: sources, includingPropertiesForKeys: nil)?.allObjects as? [URL] ?? []
+        return all.filter { $0.pathExtension == "swift" }
+    }
+
+    func uses(_ needle: String) throws -> [String] {
+        try Self.swiftFiles().filter { try String(contentsOf: $0, encoding: .utf8).contains(needle) }.map(\.lastPathComponent).sorted()
+    }
+
+    @Test func theSourcesAreThere() throws {
+        #expect(try Self.swiftFiles().count > 20)
+    }
+
+    @Test func onlyTheInboxCallsSend() throws {
+        #expect(try uses("messages/send") == ["Mail.swift"])
+        #expect(try uses("consent: consent") == ["InboxView.swift"])
+        #expect(try uses("gmail.send(") == ["InboxView.swift"])
+    }
+
+    @Test func onlyTheConfirmationMakesConsent() throws {
+        #expect(try uses("PersonConfirmedSend(confirmed:") == ["InboxView.swift"])
+        #expect(try uses("fileprivate init(confirmed mail: OutgoingMail)") == ["InboxView.swift"])
+        let inbox = try String(contentsOf: Self.sources.appending(path: "Mail/InboxView.swift"), encoding: .utf8)
+        let made = try #require(inbox.range(of: "PersonConfirmedSend(confirmed: m)"))
+        let dialog = try #require(inbox.range(of: ".confirmationDialog("))
+        #expect(dialog.lowerBound < made.lowerBound, "consent is made inside the confirmation dialog")
+    }
+
+    @Test func noAgentLaneOrVaultAppCodeTouchesGmail() throws {
+        let guarded = ["Lanes", "Agents", "Vault", "Import", "Engine", "Keys", "Records"].map { "/Sources/\($0)/" }
+        for file in try Self.swiftFiles() where guarded.contains(where: { file.path.contains($0) }) {
+            let text = try String(contentsOf: file, encoding: .utf8)
+            for needle in ["GmailClient", "GoogleAuth", "PersonConfirmedSend", "gmail.googleapis.com", "OutgoingMail"] {
+                #expect(!text.contains(needle), "\(needle) in \(file.lastPathComponent)")
+            }
+        }
+    }
+
+    @Test func theScopesAreReadAndSendOnly() {
+        #expect(GoogleAuth.scopes.count == 2)
+        #expect(!GoogleAuth.scopes.contains { $0.hasSuffix("mail.google.com/") || $0.hasSuffix("gmail.modify") })
+    }
+}
