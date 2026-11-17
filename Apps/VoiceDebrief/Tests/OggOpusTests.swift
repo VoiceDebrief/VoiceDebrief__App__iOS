@@ -201,7 +201,7 @@ struct OggOpusDecoderTests {
         let pcm = try Self.decodeAll("oggfixture-tone-440-short.opus")
         #expect(pcm.frameLength == 28_800)
         #expect(abs(Self.frequency(of: pcm) - 440) < 25)
-        #expect(Self.rms(of: pcm) > 0.1)
+        #expect(Self.rms(of: pcm) > 0.05)              // ffmpeg's sine is at 1/8 amplitude: RMS about 0.088
     }
 
     @Test func theManyPageNoteDecodesToFourSeconds() throws {
