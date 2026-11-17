@@ -367,9 +367,49 @@ final class DebriefSession {
             failure = "That file could not be opened."
             return nil
         }
-        let id = begin(audioAt: copy, source: picked.lastPathComponent, localeId: localeId)
+        let source = AudioSniffer.sourceLine(name: picked.lastPathComponent, container: AudioSniffer.sniff(fileAt: copy))
+        let id = begin(audioAt: copy, source: source, localeId: localeId)
         if id != nil { CreditLedger.shared.charge(.importFile, noteId: id) }
         return id
+    }
+
+    // MARK: From the share sheet
+
+    /// Takes every voice note waiting in the share inbox (put there by the share extension) into the library,
+    /// one note each, and puts them in line for the pipeline: transcript, debrief, then saving or sending as
+    /// the settings say (`onNoteReady`). A parcel leaves the inbox only once its note is written, so a file is
+    /// never lost; if the app stops in between, the next opening may make the note twice, never zero times.
+    @discardableResult
+    func takeShared(from inbox: ShareInbox, localeId: String) -> [String] {
+        var made: [String] = []
+        for (parcel, file) in inbox.waiting() {
+            var ext = file.pathExtension.lowercased()
+            if ext.isEmpty { ext = OggOpus.looksLikeOgg(fileAt: file) ? "opus" : "m4a" }
+            let copy = FileManager.default.temporaryDirectory.appending(path: "shared-\(parcel.id).\(ext)")
+            try? FileManager.default.removeItem(at: copy)
+            do {
+                try FileManager.default.copyItem(at: file, to: copy)
+            } catch {
+                failure = "A shared voice note (\(parcel.originalName)) could not be read. It is kept and will be tried again."
+                continue
+            }
+            let source = AudioSniffer.sourceLine(name: parcel.originalName, container: AudioSniffer.sniff(fileAt: copy), prefix: "Shared: ")
+            guard let note = store.create(audioAt: copy, source: source, localeId: localeId) else {
+                try? FileManager.default.removeItem(at: copy)
+                failure = store.problem ?? "A shared voice note could not be kept. It will be tried again."
+                continue
+            }
+            inbox.remove(parcel.id)
+            CreditLedger.shared.charge(.importFile, noteId: note.id)
+            enqueue(note.id)
+            made.append(note.id)
+        }
+        if !made.isEmpty {
+            notice = made.count == 1
+                ? "A voice note shared from another app is in the library and is being debriefed."
+                : "\(made.count) voice notes shared from other apps are in the library and are being debriefed."
+        }
+        return made
     }
 
     /// Keeps the audio as a new note, then processes it without making the caller wait.
@@ -416,13 +456,52 @@ final class DebriefSession {
     // MARK: The pipeline
 
     private func process(noteId: String) async {
-        guard let note = store.note(noteId), let url = store.audioURL(for: noteId) else {
+        guard let note = store.note(noteId), var url = store.audioURL(for: noteId) else {
             doneProcessing()
             return
         }
         let localeId = note.run.localeId
         var current = DebriefRun(source: note.run.source, localeId: localeId)
         current.microphoneCheck = note.run.microphoneCheck   // measured while recording; the pipeline keeps it
+
+        // 0. Reading the file (AudioIntake): what it is, from its bytes. WhatsApp's Ogg Opus is decoded on the
+        // device, and a video's soundtrack (or anything else AVFoundation reads but the pipeline cannot) is
+        // taken out, into `audio.wav` in the note's folder, which then takes the original's place (and is
+        // compressed to .m4a once the note is finished, like a recording). The original is removed only after
+        // the WAV is written in full; if reading fails it stays, and the note says why. A recording made here
+        // is a WAV already and passes straight through.
+        if url.pathExtension.lowercased() != "wav" || AudioSniffer.sniff(fileAt: url) != .wave {
+            working = "Reading the file"
+            let started = Date()
+            // Never write over the original (a file named .wav that is not WAV inside).
+            let wavName = url.lastPathComponent == "audio.wav" ? "audio-read.wav" : "audio.wav"
+            let wav = store.folderURL(for: noteId).appending(path: wavName)
+            let source = url
+            let result = await Task.detached(priority: .userInitiated) { () -> Result<AudioIntake.Prepared, Error> in
+                do {
+                    return .success(try await AudioIntake.prepare(source, wav: wav) { done in
+                        Task { @MainActor [weak self] in self?.setWorking("Taking the sound out: \(Int(done * 100))%") }
+                    })
+                } catch {
+                    return .failure(error)
+                }
+            }.value
+            switch result {
+            case .success(let prepared):
+                if let made = prepared.wav {
+                    store.replaceAudio(noteId, with: made.lastPathComponent)
+                    url = made
+                }
+                current.steps.append(StepRecord(name: "File", outcome: .done, seconds: Date().timeIntervalSince(started),
+                                                note: prepared.summary))
+            case .failure(let error):
+                current.steps.append(StepRecord(name: "File", outcome: .failed, seconds: Date().timeIntervalSince(started),
+                                                note: error.localizedDescription))
+                store.update(noteId, run: current, processing: false)
+                doneProcessing()
+                return
+            }
+        }
         current.audioSeconds = SpeechFileTranscriber.audioSeconds(url: url)
         /// Writes the run to the library; `finished` ends the note's processing and frees the recorder.
         func publish(finished: Bool = false) {

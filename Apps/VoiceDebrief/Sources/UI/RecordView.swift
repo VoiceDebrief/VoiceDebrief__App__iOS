@@ -195,7 +195,7 @@ struct RecordView: View {
             .navigationDestination(for: String.self) { id in
                 NoteDetailView(noteId: id, session: session, book: book)
             }
-            .fileImporter(isPresented: $importing, allowedContentTypes: [.audio], allowsMultipleSelection: false) { result in
+            .fileImporter(isPresented: $importing, allowedContentTypes: AudioIntake.importableTypes, allowsMultipleSelection: false) { result in
                 if case .success(let urls) = result, let url = urls.first {
                     let chosen = localeId
                     Task { @MainActor in
