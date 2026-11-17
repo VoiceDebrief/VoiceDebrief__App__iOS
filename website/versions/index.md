@@ -4,6 +4,7 @@ Every release of this repository. Every push to `dev` is a release: CI works out
 
 | Version | Date | What changed |
 |---|---|---|
+| next | 17 November 2026 | SGit CRM: your Gmail inside the CRM. Sign in with Google (Inbox), read your mail, see who is already in the CRM, add a sender with one tap, and reply or write; an email goes only when you press Send and confirm, and one sent to someone in the CRM is kept as an interaction with them. Needs an iOS OAuth client made in Google Cloud for the app, whose id you paste or scan in once. Works beside the mailbox twin, not instead of it. |
 | next | 16 November 2026 | SGit CRM demo vaults: one shared set of invented data on the vault server (a mailbox twin, team sources, and a vault that lists them), added in the app by scanning one QR code. [How to add it](../crm/demo/index.md). Keys travel only as QR codes, copied text or screenshots, never in a repository. |
 | next | 16 November 2026 | SGit CRM reads your mailbox's twin: open the vault the email cell fills, and everyone you correspond with is proposed, each email thread kept as an interaction, and a follow-up where someone wrote last and is waiting for your reply. Only verified senders count. Try it now with an invented mailbox (Import, Try with a sample mailbox); your real one is connected on your own device. |
 | next | 16 November 2026 | SGit CRM is in TestFlight: builds 0.1.142 (19) and 0.1.143 (20) were uploaded on the evening of 16 November, and the owner confirmed the app opens on a device. |

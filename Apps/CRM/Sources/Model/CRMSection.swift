@@ -10,6 +10,7 @@ enum CRMSection: String, CaseIterable, Identifiable, Hashable, Sendable {
     case organisations
     case introductions
     case drafts
+    case inbox
     case importing
     case workflows
     case labs
@@ -26,6 +27,7 @@ enum CRMSection: String, CaseIterable, Identifiable, Hashable, Sendable {
         case .organisations: return "Organisations"
         case .introductions: return "Introductions"
         case .drafts: return "Drafts"
+        case .inbox: return "Inbox"
         case .importing: return "Import"
         case .workflows: return "Workflows"
         case .labs: return "Vault apps"
@@ -42,6 +44,7 @@ enum CRMSection: String, CaseIterable, Identifiable, Hashable, Sendable {
         case .organisations: return "building.2"
         case .introductions: return "arrow.left.arrow.right"
         case .drafts: return "square.and.pencil"
+        case .inbox: return "envelope"
         case .importing: return "tray.and.arrow.down"
         case .workflows: return "point.3.connected.trianglepath.dotted"
         case .labs: return "flask"
@@ -59,6 +62,7 @@ enum CRMSection: String, CaseIterable, Identifiable, Hashable, Sendable {
         case .organisations: return "The companies and teams those people belong to."
         case .introductions: return "People who should talk to each other: who suggested it, between whom, why, and whether it happened."
         case .drafts: return "Messages drafted for you. You edit them and send them yourself; the app never sends."
+        case .inbox: return "Your Gmail, read here after you sign in with Google: read, reply and write. Only you send, by pressing Send and confirming."
         case .importing: return "Bring contacts in from a vault, as proposals you review before anything is kept."
         case .workflows: return "What the CRM is made of: workflows, each made of cells, and which are built."
         case .labs: return "Vaults whose own apps run here: features to try before they are built in, switched on per section."
@@ -71,12 +75,12 @@ enum CRMSection: String, CaseIterable, Identifiable, Hashable, Sendable {
     /// The step of the brief that builds this section, or nil when it is built.
     var step: Int? {
         switch self {
-        case .followUps, .introductions, .drafts, .people, .organisations, .importing, .workflows, .labs, .keys, .agents, .about: return nil
+        case .followUps, .introductions, .drafts, .inbox, .people, .organisations, .importing, .workflows, .labs, .keys, .agents, .about: return nil
         }
     }
 
     var isBuilt: Bool { step == nil }
 
     /// The sections the sidebar lists, in order.
-    static let sidebar: [CRMSection] = [.followUps, .people, .organisations, .introductions, .drafts, .importing, .keys, .agents, .workflows, .labs]
+    static let sidebar: [CRMSection] = [.followUps, .inbox, .people, .organisations, .introductions, .drafts, .importing, .keys, .agents, .workflows, .labs]
 }

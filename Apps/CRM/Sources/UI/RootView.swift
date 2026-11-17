@@ -6,6 +6,7 @@ struct RootView: View {
     let crm: CRMVault
     let apps: VaultApps
     let keys: KeysModel
+    let google: GoogleAuth
     var problem: String?
     @Binding var sample: Bool
     @State private var selection: CRMSection? = .followUps
@@ -43,7 +44,7 @@ struct RootView: View {
             }
         } detail: {
             NavigationStack {
-                SectionScreen(section: selection ?? .followUps, crm: crm, apps: apps, keys: keys, sample: $sample)
+                SectionScreen(section: selection ?? .followUps, crm: crm, apps: apps, keys: keys, google: google, sample: $sample)
             }
         }
     }
@@ -55,6 +56,7 @@ struct SectionScreen: View {
     let crm: CRMVault
     let apps: VaultApps
     let keys: KeysModel
+    let google: GoogleAuth
     @Binding var sample: Bool
 
     var body: some View {
@@ -79,6 +81,8 @@ struct SectionScreen: View {
                 IntroductionsView(crm: crm)
             case .drafts:
                 DraftsView(crm: crm)
+            case .inbox:
+                InboxView(crm: crm, auth: google)
             case .people:
                 PeopleList(crm: crm)
             case .organisations:
@@ -148,5 +152,6 @@ struct AboutView: View {
     @Previewable @State var sample = false
     RootView(crm: CRMVault(store: MemoryStore(), root: FileManager.default.temporaryDirectory.appending(path: "crm-preview")),
              apps: VaultApps(store: MemoryStore(), defaults: UserDefaults(suiteName: "crm-preview") ?? .standard),
-             keys: KeysModel(peopleKeychain: MemoryKeychain(), secretsKeychain: MemoryKeychain(), folder: nil), sample: $sample)
+             keys: KeysModel(peopleKeychain: MemoryKeychain(), secretsKeychain: MemoryKeychain(), folder: nil),
+             google: GoogleAuth(store: MemoryStore(), defaults: UserDefaults(suiteName: "crm-preview") ?? .standard), sample: $sample)
 }

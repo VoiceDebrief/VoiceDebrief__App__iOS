@@ -29,7 +29,7 @@
  ],
  "counts": {
   "seen-working": 28,
-  "built-untried": 117,
+  "built-untried": 118,
   "in-progress": 46,
   "proposed": 61,
   "parked": 6
@@ -1921,7 +1921,7 @@
     "Opened 16 November 2026, at the owner's request. Status: open, being built by the cell in cells/crm-ios/.",
     "A CRM of our own, on vaults, first used to follow up every contact and action from Web Summit 2026 (design: A CRM for us and for our agents). App Store name SGit CRM, bundle id ai.sgit.crm.app, code in Apps/CRM. The brief is cells/crm-ios/brief.md.",
     "Needs from the owner",
-    "- Register the bundle id ai.sgit.crm.app and create the SGit CRM app in App Store Connect, so CI can upload to TestFlight.",
+    "- ~~Register the bundle id ai.sgit.crm.app and create the SGit CRM app in App Store Connect~~ (done, 16 November). - For the Gmail inbox (W13): an iOS OAuth client in the Google Cloud project that has the Gmail OAuth app, for bundle ai.sgit.crm.app, with gmail.readonly and gmail.send on its consent screen; its client id is pasted or scanned into the app (not a secret, never committed).",
     "Done when",
     "The app imports contacts from a vault as proposals, keeps them in the user's CRM vault, lists who needs a follow-up, and lets a person send a draft themselves, on a device, from TestFlight.",
     "Progress (16 November 2026, evening)",
@@ -4278,6 +4278,24 @@
    "detail": [
     "Apps/CRM/Sources/Keys/ (workflow W12): Cards and keys makes the person's keys when they ask (SGitPeople, as SGit Vaults has them: an RSA 4096 encryption key and a P-256 signing key, in iCloud Keychain under the CRM's own service), shows their contact card as a QR code and a link, scans or takes a pasted card from someone else (checked: a changed card is refused), marks it checked face to face, and puts that person's key on their record in the CRM as a sourced link (sgit:key:<fingerprint>), on the person of the same name when there is one. Sealing a vault key or a message to a card is not built",
     "Unit tests (KeysTests): two devices in one process make keys, one scans the other's card, the key lands on a new or an existing person once; a changed card is refused. Not tried on a device"
+   ],
+   "places": [],
+   "issues": [],
+   "url": "https://ios.app.voicedebrief.ai/built/index.html",
+   "source": "The reality file",
+   "versions": []
+  },
+  {
+   "id": "feature.sgit.crm.a.gmail.inbox",
+   "kind": "feature",
+   "app": "VoiceDebrief",
+   "title": "SGit CRM, a Gmail inbox",
+   "status": "built-untried",
+   "why": "The reality file, Built: unverified: written, not yet proven by a run.",
+   "summary": "Apps/CRM/Sources/Mail/ (workflow W13, at the owner's request, 17 November 2026): Inbox signs in to Google on Google's own page (OAuth for installed apps with PKCE, ASWebAuthenticationSession, scopes gmail.readonly and gmail.send; the refresh token in this device's Keychain, revoked on sign out), lists the inbox from the Gmail API (search, pull to refresh, unread, \"In your CRM\"), opens a message...",
+   "detail": [
+    "Apps/CRM/Sources/Mail/ (workflow W13, at the owner's request, 17 November 2026): Inbox signs in to Google on Google's own page (OAuth for installed apps with PKCE, ASWebAuthenticationSession, scopes gmail.readonly and gmail.send; the refresh token in this device's Keychain, revoked on sign out), lists the inbox from the Gmail API (search, pull to refresh, unread, \"In your CRM\"), opens a message with its text, adds its sender to the CRM, and replies or writes a new email that is sent through Gmail only after Send and a confirmation; mail sent to CRM people is kept as an interaction. The iOS OAuth client id is entered in the app (pasted or scanned); none is built in and no client secret exists",
+    "Unit tests (MailTests): PKCE against RFC 7636's example, the redirect, the scopes asked for, the client id either way round, the RFC 5322 message, header injection refused, replies threaded, headers and HTML read. Gmail itself not tried: it needs the owner's iOS OAuth client and a device"
    ],
    "places": [],
    "issues": [],

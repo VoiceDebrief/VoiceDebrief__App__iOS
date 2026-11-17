@@ -8,7 +8,8 @@ App Store name SGit CRM, bundle id `ai.sgit.crm.app`, code in `Apps/CRM`. The br
 
 ## Needs from the owner
 
-- Register the bundle id `ai.sgit.crm.app` and create the SGit CRM app in App Store Connect, so CI can upload to TestFlight.
+- ~~Register the bundle id `ai.sgit.crm.app` and create the SGit CRM app in App Store Connect~~ (done, 16 November).
+- For the Gmail inbox (W13): an iOS OAuth client in the Google Cloud project that has the Gmail OAuth app, for bundle `ai.sgit.crm.app`, with `gmail.readonly` and `gmail.send` on its consent screen; its client id is pasted or scanned into the app (not a secret, never committed).
 
 ## Done when
 
@@ -26,3 +27,10 @@ tried on a device: TestFlight waits on the owner's decision d7. Sealed team reco
 
 Next: a first CRM vault app (needs the CRM vault on the server), W11 (what the agents are doing), W12 (exchange keys by
 QR), step 6 (agents propose on a lane).
+
+## Progress (17 November 2026)
+
+Sample data, W11 (agents), W12 (cards and keys by QR), the twin reader and the demo vaults are landed, and the app is in
+TestFlight (the owner opened it on a device). At the owner's request, W13: a Gmail inbox in the app (sign in with Google,
+read, add a sender to the CRM, reply or write, send only after a confirmation), beside the mailbox twin. It waits on the
+owner's iOS OAuth client to be tried.

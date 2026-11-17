@@ -1,7 +1,7 @@
 import Foundation
 
 /// What the CRM is made of (website/crm/workflows/): cells, joined into workflows, joined into plays.
-/// A test holds this list to the reality file: only W1 is built.
+/// A test holds this list to the reality file.
 struct CellKind: Hashable, Sendable {
     let altitude: String
     let name: String
@@ -93,5 +93,12 @@ struct CRMWorkflow: Identifiable, Hashable, Sendable {
                             Cell(kind: .person, job: "Confirm it is them"),
                             Cell(kind: .code, job: "Put their key on their record in the CRM (sealing to it comes next)")],
                     writes: "A person with their key", waitsFor: "Confirming who they are", status: .built, section: .keys),
+        CRMWorkflow(id: "W13", title: "Read and answer your mail", trigger: "Signing in with Google on the device",
+                    cells: [Cell(kind: .code, job: "Sign in on Google's own page (OAuth with PKCE); the token stays in the Keychain"),
+                            Cell(kind: .code, job: "Read the inbox from Gmail, and mark who is already in the CRM"),
+                            Cell(kind: .person, job: "Read, reply or write; press Send and confirm"),
+                            Cell(kind: .code, job: "Send through Gmail as the person; log it on the CRM people it went to")],
+                    writes: "An interaction for mail sent to CRM people; a person added from a message", waitsFor: "Every send and every person added",
+                    status: .built, section: .inbox),
     ]
 }

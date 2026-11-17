@@ -4,12 +4,12 @@ import Testing
 /// The workflows the app lists must match website/crm/workflows/ and the reality file.
 struct WorkflowTests {
     @Test func workflowsInOrder() {
-        #expect(CRMWorkflow.all.map(\.id) == (1...12).map { "W\($0)" })
+        #expect(CRMWorkflow.all.map(\.id) == (1...13).map { "W\($0)" })
     }
 
     @Test func onlyImportAndTheListAreBuiltAndHaveAPlace() {
         let built = CRMWorkflow.all.filter(\.isBuilt)
-        #expect(built.map(\.id) == ["W1", "W3", "W5", "W11", "W12"])
+        #expect(built.map(\.id) == ["W1", "W3", "W5", "W11", "W12", "W13"])
         for w in built { #expect(w.section?.isBuilt == true) }
     }
 

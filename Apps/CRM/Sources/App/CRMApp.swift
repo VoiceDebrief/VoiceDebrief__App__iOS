@@ -7,6 +7,7 @@ struct CRMApp: App {
     @State private var crm = CRMVault()
     @State private var apps = VaultApps()
     @State private var keys = KeysModel()
+    @State private var google = GoogleAuth()
     @State private var problem: String?
     /// "Try with sample data": a separate vault of invented records, so the real one is never mixed with them.
     @AppStorage("crm.sample") private var sample = false
@@ -17,7 +18,7 @@ struct CRMApp: App {
 
     var body: some Scene {
         WindowGroup {
-            RootView(crm: active, apps: apps, keys: keys, problem: problem, sample: $sample)
+            RootView(crm: active, apps: apps, keys: keys, google: google, problem: problem, sample: $sample)
                 .id(sample && sampleCRM != nil)
                 .task {
                     do { try await crm.open() } catch { problem = error.localizedDescription }

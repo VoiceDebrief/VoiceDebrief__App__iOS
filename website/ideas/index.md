@@ -5,7 +5,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | Status | Meaning | How many |
 |---|---|---|
 | Seen working | Built, and a run proved it: CI, a device or a server. | 28 |
-| Built, untried | In the app or the repository, but not yet proven by a run on a device. | 117 |
+| Built, untried | In the app or the repository, but not yet proven by a run on a device. | 118 |
 | In progress | Begun: part of it is built or a release has touched it. | 46 |
 | Proposed | Asked for or described; nothing of it is built. | 61 |
 | Parked | Waiting: on the owner, on Apple, or scheduled for later. | 6 |
@@ -130,6 +130,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | SGit CRM, drafts, never sends | Feature | VoiceDebrief | Settings: Recipients |   | [reality file](../built/index.md) |
 | SGit CRM, sample data | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
 | SGit CRM, cards and keys by QR | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
+| SGit CRM, a Gmail inbox | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
 | SGit CRM, what the agents are doing | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
 | SGit CRM, reading the mailbox twin | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
 | The visual identity | Feature | VoiceDebrief | Record tab; Settings: Identity; The repository: CI |   | [reality file](../built/index.md) |
