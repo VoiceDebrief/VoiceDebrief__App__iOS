@@ -6,7 +6,7 @@
 
 ## Slices
 
-1. **Owner section, demo first.** Built, not yet compiled by CI or tried on a device: `Model/OwnerFeed.swift`,
+1. **Owner section, demo first.** Built and green in CI, not yet tried on a device: `Model/OwnerFeed.swift`,
    `Engine/OwnerDesk.swift`, `UI/OwnerView.swift`, `Resources/owner-feed-twin.json`, `Tests/OwnerFeedTests.swift`.
    The contract `owner.feed/v1`, a demo from an invented twin, live from `owner/feed.json` in the agents vault,
    answers and messages sealed to a lane, decisions and actions kept apart.
@@ -21,6 +21,10 @@
   repository to this session was refused), the reality file, issues 018 and 019, and `website/develop`. Made
   a.ios's sgit-ai 0.27.0 key; commits on `work/owner-mode` are signed with its ECDSA P-256 half (SSH signing),
   and the public half is in `website/identity/agent-keys.json` and `allowed_signers`. Wrote slice 1 and the R7 page.
+- 23 November 2026, later. The first CI run failed in `SGitPeople`'s first-contact tests: their invitations,
+  made at the test clock of 14 November, were opened at the real clock and had expired (on every branch, `dev`
+  too). Fixed in the tests. `ios` and `People interop` are green on `f7d0e8d`, which already holds `origin/dev`.
+  Slice 1 is ready for `dev` the moment the owner says yes.
 - Not done on purpose: nothing pushed to `dev`. A green push to `dev` uploads to TestFlight, and TestFlight
   submission is the owner's decision.
 - The private signing key lives in this session's container only. If the container is replaced, a new key is
