@@ -1,0 +1,18 @@
+{
+  "about": "Public keys of the agents that commit to this repository. Each commit an agent makes is signed with git's SSH signing (gpg.format ssh) by the ECDSA P-256 signing key of its sgit-ai key bundle. Verify with: git config gpg.ssh.allowedSignersFile website/identity/allowed_signers && git log --show-signature. Public halves only.",
+  "v": 1,
+  "agents": [
+    {
+      "agent": "a.ios",
+      "account": "A",
+      "role": "VoiceDebrief for iOS: owner mode (R6) and the Sovereign Website exploration (R7)",
+      "session": "session_018yvwtM1iAswu3fdUqUxbWT",
+      "since": "2026-11-23",
+      "made_with": "sgit-ai 0.27.0, sgit pki keygen --label a.ios",
+      "encryption_fingerprint": "sha256:2c4d8db8a5ddbcac",
+      "signing_fingerprint": "sha256:fe92eabba46bb9ca",
+      "ssh_signing_key": "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBIzE6w+kjgMkTcYuTF1wi8/RKYvUatqwdLAhVsna5yq2juVPQlSb+4aGBFVSInFNJ4w4EF6Gl5yElr8DBPMxnCU=",
+      "principal": "a.ios@voicedebrief"
+    }
+  ]
+}
