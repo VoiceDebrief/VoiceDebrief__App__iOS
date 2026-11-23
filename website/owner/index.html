@@ -38,7 +38,7 @@
 <div class="crumb"><a href="../index.html">VoiceDebrief iOS</a> / owner</div>
 <h1 id="owner-mode-and-its-feed-owner-feed-v1">Owner mode and its feed, <code>owner.feed/v1</code></h1>
 <p>Owner mode is a section of VoiceDebrief for iPhone and iPad meant for one person, the owner. It shows every agent and what it is doing, the latest websites, videos, briefs and decision slides the agents made, and the decisions they need from him. He decides there, and he can talk to any page and have the message relayed to the agent that made it. It is R6 of the brief of 23 November 2026, built by a.ios.</p>
-<blockquote><p>In test. The section, the contract below and an invented twin are written, and not yet tried on a device. The handshake that makes the mode exist only for the owner's key is <span class="chip chip-proposed">proposed</span> (slice 2). <a href="../built/index.html">What is built</a> is the record.</p></blockquote>
+<blockquote><p>In test. The section, the contract below, an invented twin and the handshake are written and pass CI, and have not been tried on a device. No owner key is pinned yet, so no grant is accepted until the owner gives his signing fingerprint. <a href="../built/index.html">What is built</a> is the record.</p></blockquote>
 <h2 id="where-the-app-reads-it">Where the app reads it</h2>
 <div class="tablewrap"><table>
 <thead><tr><th>Source</th><th>What</th><th>Sent anywhere?</th></tr></thead>
@@ -70,11 +70,26 @@
 <p>Each answer or message is one small JSON body, sealed on the device to the receiver's public key and appended to its lane, as every lane message is (see <a href="../conductors/index.html">receiving notes</a>). The lane header's <code>kind</code> is the body's kind.</p>
 <pre><code>{&quot;kind&quot;:&quot;owner.answer/v1&quot;,&quot;id&quot;:&quot;…&quot;,&quot;at&quot;:&quot;…&quot;,&quot;to&quot;:&quot;&lt;agent id&gt;&quot;,&quot;decision&quot;:&quot;&lt;decision id&gt;&quot;,&quot;choice&quot;:&quot;Green&quot;,&quot;app&quot;:&quot;0.1.149 (…)&quot;}
 {&quot;kind&quot;:&quot;owner.message/v1&quot;,&quot;id&quot;:&quot;…&quot;,&quot;at&quot;:&quot;…&quot;,&quot;to&quot;:&quot;&lt;agent id&gt;&quot;,&quot;page&quot;:&quot;https://…&quot;,&quot;pageTitle&quot;:&quot;…&quot;,&quot;text&quot;:&quot;Make it green&quot;,&quot;app&quot;:&quot;…&quot;}</code></pre>
+<h2 id="the-handshake-only-the-owner-s-devices">The handshake: only the owner's devices</h2>
+<p>Demo works on any device. Live data and sending open only on a device whose key the owner has registered with his own sgit key:</p>
+<ol>
+<li><strong>The request.</strong> On the device: Owner, This device, Make a registration request. It is <code>or1.&lt;json&gt;.&lt;signature&gt;</code>: the JSON (<code>owner.request/v1</code>) names this install's device key (issue 018: a P-256 key in the Secure Enclave, wiped on reinstall) and the device's name, and that key signs it. Shown as a QR code, with Share and Copy.</li>
+<li><strong>The grant.</strong> On the owner's own machine, with his key in sgit's key store:</li>
+</ol>
+<p>   ```
+   pip install sgit-ai==0.27.0
+   python3 tools/owner/grant.py --fingerprint &lt;your key, from sgit pki list&gt; 'or1....'
+   ```</p>
+<p>   The script checks that the device key signed the request, shows what it will grant and asks, writes <code>owner.grant/v1</code> (the app, the device key's fingerprint, the request's hash, the owner's signing fingerprint, the time), signs that file with stock <code>sgit pki sign</code>, and prints <code>og1.&lt;envelope&gt;</code>: the grant's bytes, its <code>.sig</code> and the owner's public bundle from <code>sgit pki export</code>. The private key never leaves sgit.</p>
+<ol>
+<li><strong>The check.</strong> On the device: paste the <code>og1.</code> text and Accept. The app accepts it only when the <code>.sig</code> is the bundle's signing key's over those exact bytes, the bundle is sound, its signing fingerprint is one the build pins as the owner's (<code>OwnerHandshake.pinnedOwners</code>), and the grant names this app and this device's key. A grant for another device, or for this device before a reinstall, is refused.</li>
+</ol>
+<p>Nothing in a request, a grant or a bundle is secret. What makes a grant the owner's is the pinned fingerprint and the private key only he holds. The tests check a grant made by the script with stock sgit, and refuse a changed one, an unpinned key and another device.</p>
 <h2 id="decisions-apart-from-actions">Decisions apart from actions</h2>
 <p>The brief asks that the owner's decisions be kept apart from his actions. In the app, &quot;Your decisions&quot; lists answers to questions an agent asked. &quot;Your actions&quot; lists what he did on his own initiative: a message to an agent, or talking to a page. Each record says whether it was sent and to which key.</p>
 <h2 id="what-comes-next">What comes next</h2>
 <ol>
-<li><strong>The handshake</strong> <span class="chip chip-proposed">proposed</span>: the app's own key is registered with the owner's key (issue 018 and the pki.sgit.ai delegation), and owner mode opens only on a device that holds such a grant.</li>
+<li><strong>The owner's fingerprint pinned</strong> <span class="chip chip-proposed">proposed</span>: the owner gives his public signing fingerprint, it goes into <code>OwnerHandshake.pinnedOwners</code>, and a build carrying it accepts his grants. Later, a grant may also come through the pki.sgit.ai delegation.</li>
 <li><strong>Any agent's decisions</strong> <span class="chip chip-proposed">proposed</span>: decisions from any agent, not only the conductor, answered to that agent's own lane.</li>
 <li><strong>Published state</strong> <span class="chip chip-proposed">proposed</span>: the feed built from each agent's own committed JSON (<code>status.json</code>), once an index of agents exists.</li>
 <li><strong>Talking</strong> <span class="chip chip-proposed">proposed</span>: a chat over the feed with Apple's model on the device, one question at a time through function calls; talking to a page by voice.</li>

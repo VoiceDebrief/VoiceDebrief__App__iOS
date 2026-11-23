@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 /// Owner mode (R6 of the 23 November 2026 brief): every agent and what it is doing, the latest sites,
 /// videos, briefs and decision slides, the decisions waiting for the owner, and a way to talk to any page.
@@ -16,9 +17,11 @@ struct OwnerView: View {
         var id: String { (item?.id ?? "") + "/" + agent }
     }
     @State private var talking: Talk?
+    @State private var pastedGrant = ""
 
     var body: some View {
         List {
+            deviceSection
             Section {
                 Picker("Feed", selection: Bindable(desk).source) {
                     ForEach(OwnerDesk.Source.allCases) { Text($0.title).tag($0) }
@@ -73,7 +76,10 @@ struct OwnerView: View {
         }
         .navigationTitle("Owner")
         .refreshable { await desk.refresh(book: book) }
-        .task(id: desk.source) { await desk.refresh(book: book) }
+        .task(id: desk.source) {
+            desk.checkGrant(deviceFingerprint: IdentityBook.shared.device?.fingerprint)
+            await desk.refresh(book: book)
+        }
         .toolbar {
             ToolbarItem { Button { Task { await desk.refresh(book: book) } } label: { Label("Refresh", systemImage: "arrow.clockwise") } }
         }
@@ -81,6 +87,64 @@ struct OwnerView: View {
             OwnerTalkSheet(talk: talk, feed: desk.feed, demo: desk.isDemo || desk.feed?.twin == true) { text in
                 await desk.talk(about: talk.item, to: talk.agent, text: text)
             }
+        }
+    }
+
+    /// The handshake: this install's key, registered with the owner's key.
+    @ViewBuilder private var deviceSection: some View {
+        Section {
+            if let grant = desk.grant {
+                Label("Registered by the owner's key \(grant.owner.signingFingerprint)", systemImage: "checkmark.seal.fill")
+                    .foregroundStyle(.green)
+                Text("Granted \(grant.grant.granted) to this device's key \(grant.grant.device).")
+                    .font(.caption).foregroundStyle(.secondary)
+                Button("Forget this registration", role: .destructive) { desk.forgetGrant() }
+            } else {
+                Text("Live data and sending open only on a device the owner has registered with his own key. Demo works anywhere.")
+                    .font(.callout)
+                if OwnerHandshake.pinnedOwners.isEmpty {
+                    Label("This build does not know the owner's key yet, so no registration can be accepted.", systemImage: "key.slash")
+                        .font(.footnote).foregroundStyle(.orange)
+                }
+                Button("Make a registration request") {
+                    do {
+                        let signer = try IdentityBook.shared.deviceSigner()
+                        desk.makeRequest(signer: signer, label: IdentityDeviceKey.deviceName)
+                    } catch {
+                        desk.makeRequest(failed: error)
+                    }
+                }
+                if let request = desk.request {
+                    if let image = QRCode.image(for: request) {
+                        Image(uiImage: image).interpolation(.none).resizable().scaledToFit().frame(maxWidth: 240)
+                            .accessibilityLabel("The registration request as a QR code")
+                    }
+                    HStack(spacing: 16) {
+                        ShareLink(item: request) { Label("Share", systemImage: "square.and.arrow.up") }
+                        Button { UIPasteboard.general.string = request } label: { Label("Copy", systemImage: "doc.on.doc") }
+                    }
+                    .buttonStyle(.borderless)
+                    Text("The owner runs tools/owner/grant.py with his sgit key on this text and gives back an og1. grant.")
+                        .font(.caption).foregroundStyle(.secondary)
+                }
+                TextField("Paste the grant (og1.)", text: $pastedGrant, axis: .vertical)
+                    .lineLimit(1...4).font(.footnote.monospaced())
+                    .textInputAutocapitalization(.never).autocorrectionDisabled()
+                Button("Accept the grant") {
+                    do {
+                        let signer = try IdentityBook.shared.deviceSigner()
+                        if desk.accept(grant: pastedGrant, deviceFingerprint: signer.fingerprint) { pastedGrant = "" }
+                    } catch {
+                        desk.makeRequest(failed: error)
+                    }
+                }
+                .disabled(!pastedGrant.contains("og1."))
+            }
+            if let problem = desk.grantProblem {
+                Text(problem).font(.footnote).foregroundStyle(.orange)
+            }
+        } header: {
+            Text("This device")
         }
     }
 

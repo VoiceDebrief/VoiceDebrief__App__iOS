@@ -33,11 +33,74 @@ final class OwnerDesk {
 
     private let folder: URL
 
+    // MARK: The handshake (slice 2)
+
+    /// The owner's grant for this install's device key, checked against the pinned owner keys. Without one, owner
+    /// mode shows only its demo: no live feed, nothing sent.
+    private(set) var grant: OwnerHandshake.Accepted?
+    /// Why the stored grant, or one just pasted, was not accepted.
+    private(set) var grantProblem: String?
+    /// The last registration request made on this device, to show again.
+    private(set) var request: String?
+
+    var registered: Bool { grant != nil }
+    private var grantFile: URL { folder.appending(path: "grant.txt") }
+
     init(folder: URL = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0].appending(path: "owner")) {
         self.folder = folder
         try? FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
         decisions = Self.read([OwnerDecisionRecord].self, from: folder.appending(path: "decisions.json")) ?? []
         actions = Self.read([OwnerAction].self, from: folder.appending(path: "actions.json")) ?? []
+    }
+
+    /// Checks the stored grant against this install's device key (it is invalid after a reinstall, which wipes
+    /// the key) and the owner keys this build pins.
+    func checkGrant(deviceFingerprint: String?) {
+        guard let text = try? String(contentsOf: grantFile, encoding: .utf8) else { grant = nil; return }
+        guard let deviceFingerprint else { grant = nil; grantProblem = "This device has no key yet."; return }
+        do {
+            grant = try OwnerHandshake.verify(text, deviceFingerprint: deviceFingerprint)
+            grantProblem = nil
+        } catch {
+            grant = nil
+            grantProblem = error.localizedDescription
+        }
+    }
+
+    /// Makes this device's registration request: its key, signed by itself, for the owner to grant.
+    func makeRequest(signer: IdentityDeviceSigner, label: String) {
+        do {
+            request = try OwnerHandshake.request(deviceKeyPEM: signer.publicKeyPEM, fingerprint: signer.fingerprint, kept: signer.kept,
+                                                 label: label, at: Date(), nonce: Self.newId(), sign: signer.sign)
+            grantProblem = nil
+            UsageLog.shared.action("owner.request")
+        } catch {
+            grantProblem = "The request was not made: \(error.localizedDescription)"
+        }
+    }
+
+    func makeRequest(failed error: Error) {
+        grantProblem = "This device's key is not available: \(error.localizedDescription)"
+    }
+
+    /// Takes a pasted or scanned grant; kept only if it checks out for this device.
+    @discardableResult
+    func accept(grant text: String, deviceFingerprint: String) -> Bool {
+        do {
+            grant = try OwnerHandshake.verify(text, deviceFingerprint: deviceFingerprint)
+            try Data(text.utf8).write(to: grantFile, options: .atomic)
+            grantProblem = nil
+            UsageLog.shared.action("owner.granted")
+            return true
+        } catch {
+            grantProblem = error.localizedDescription
+            return false
+        }
+    }
+
+    func forgetGrant() {
+        try? FileManager.default.removeItem(at: grantFile)
+        grant = nil
     }
 
     var isDemo: Bool { source == .demo }
@@ -49,6 +112,11 @@ final class OwnerDesk {
             feed = OwnerFeed.bundledTwin()
             problem = feed == nil ? "The demo feed is missing from this build." : nil
         case .live:
+            guard registered else {
+                feed = nil
+                problem = "Live opens on a device the owner has registered (This device, above). Demo works anywhere."
+                break
+            }
             let vaultId = AgentsDesk.shared.vaultId
             guard let vault = book.vaults.first(where: { $0.id == vaultId }) else {
                 feed = nil
@@ -97,6 +165,7 @@ final class OwnerDesk {
     /// Seals and sends one body; returns how it went, or nil (with `problem` set) when it was not sent.
     private func deliver(_ outgoing: OwnerOutgoing, lane laneLink: String?, name: String) async -> String? {
         if isDemo || feed?.twin == true { return "Not sent: demo" }
+        guard registered else { problem = "Not sent: this device is not registered by the owner."; return nil }
         guard let lane = DeveloperLane.parse(laneLink ?? "") ?? DeveloperLane.builtIn else {
             problem = "No lane to send on."; return nil
         }

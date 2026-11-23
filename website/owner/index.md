@@ -2,7 +2,7 @@
 
 Owner mode is a section of VoiceDebrief for iPhone and iPad meant for one person, the owner. It shows every agent and what it is doing, the latest websites, videos, briefs and decision slides the agents made, and the decisions they need from him. He decides there, and he can talk to any page and have the message relayed to the agent that made it. It is R6 of the brief of 23 November 2026, built by a.ios.
 
-> In test. The section, the contract below and an invented twin are written, and not yet tried on a device. The handshake that makes the mode exist only for the owner's key is [[proposed]] (slice 2). [What is built](../built/index.md) is the record.
+> In test. The section, the contract below, an invented twin and the handshake are written and pass CI, and have not been tried on a device. No owner key is pinned yet, so no grant is accepted until the owner gives his signing fingerprint. [What is built](../built/index.md) is the record.
 
 ## Where the app reads it
 
@@ -50,13 +50,30 @@ Each answer or message is one small JSON body, sealed on the device to the recei
 {"kind":"owner.message/v1","id":"…","at":"…","to":"<agent id>","page":"https://…","pageTitle":"…","text":"Make it green","app":"…"}
 ```
 
+## The handshake: only the owner's devices
+
+Demo works on any device. Live data and sending open only on a device whose key the owner has registered with his own sgit key:
+
+1. **The request.** On the device: Owner, This device, Make a registration request. It is `or1.<json>.<signature>`: the JSON (`owner.request/v1`) names this install's device key (issue 018: a P-256 key in the Secure Enclave, wiped on reinstall) and the device's name, and that key signs it. Shown as a QR code, with Share and Copy.
+2. **The grant.** On the owner's own machine, with his key in sgit's key store:
+
+   ```
+   pip install sgit-ai==0.27.0
+   python3 tools/owner/grant.py --fingerprint <your key, from sgit pki list> 'or1....'
+   ```
+
+   The script checks that the device key signed the request, shows what it will grant and asks, writes `owner.grant/v1` (the app, the device key's fingerprint, the request's hash, the owner's signing fingerprint, the time), signs that file with stock `sgit pki sign`, and prints `og1.<envelope>`: the grant's bytes, its `.sig` and the owner's public bundle from `sgit pki export`. The private key never leaves sgit.
+3. **The check.** On the device: paste the `og1.` text and Accept. The app accepts it only when the `.sig` is the bundle's signing key's over those exact bytes, the bundle is sound, its signing fingerprint is one the build pins as the owner's (`OwnerHandshake.pinnedOwners`), and the grant names this app and this device's key. A grant for another device, or for this device before a reinstall, is refused.
+
+Nothing in a request, a grant or a bundle is secret. What makes a grant the owner's is the pinned fingerprint and the private key only he holds. The tests check a grant made by the script with stock sgit, and refuse a changed one, an unpinned key and another device.
+
 ## Decisions apart from actions
 
 The brief asks that the owner's decisions be kept apart from his actions. In the app, "Your decisions" lists answers to questions an agent asked. "Your actions" lists what he did on his own initiative: a message to an agent, or talking to a page. Each record says whether it was sent and to which key.
 
 ## What comes next
 
-1. **The handshake** [[proposed]]: the app's own key is registered with the owner's key (issue 018 and the pki.sgit.ai delegation), and owner mode opens only on a device that holds such a grant.
+1. **The owner's fingerprint pinned** [[proposed]]: the owner gives his public signing fingerprint, it goes into `OwnerHandshake.pinnedOwners`, and a build carrying it accepts his grants. Later, a grant may also come through the pki.sgit.ai delegation.
 2. **Any agent's decisions** [[proposed]]: decisions from any agent, not only the conductor, answered to that agent's own lane.
 3. **Published state** [[proposed]]: the feed built from each agent's own committed JSON (`status.json`), once an index of agents exists.
 4. **Talking** [[proposed]]: a chat over the feed with Apple's model on the device, one question at a time through function calls; talking to a page by voice.
