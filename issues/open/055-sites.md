@@ -25,12 +25,11 @@ Built, not yet compiled by CI or tried on a device: `Model/SiteSend.swift`, `Eng
 ## Left
 
 - The keeper's recorded demo request and reply (asked of account C): the tests use keys made in the test until then.
-- Which request kinds the keeper expects (the app sends `change`).
 - Photos with a request (the format is known: `{name, type, data}`, JPEG at most 1600 px).
 - A notice when the app is in the background (today: a banner on the site's screen, and a count on the list).
 - Tiers 2 and 3 and the separate app: see `website/ideas/sovereign-website`.
 
 ## Status and debrief
 
-- 23 November 2026, evening. Formats, desk, screen and tests written from the relayed files. Asked a.maestro for the
-  request kinds. Nothing goes to `dev` until the owner says yes (A4).
+- 23 November 2026, evening. Formats, desk, screen and tests written from the relayed files. The request kinds are
+  the site's own (`words`, `look`, `link`, `picture`, `other`; default `other`), from its `/send/` page. Nothing goes to `dev` until the owner says yes (A4).

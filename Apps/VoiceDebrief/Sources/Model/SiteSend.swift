@@ -20,6 +20,14 @@ enum SiteSend {
     static let alg = "ECDSA-P256-SHA256-P1363"
     static let eciesInfo = "ws-ecies-1"
 
+    /// The kinds the site's /send/ page offers (its #kind select, at 65002f9), with its own words for each. The
+    /// keeper's policy knows these and no others.
+    static let kinds: [(id: String, title: String)] = [
+        ("words", "Words on a page"), ("look", "How a design looks"), ("link", "A broken or wrong link"),
+        ("picture", "A picture"), ("other", "Something else"),
+    ]
+    static let defaultKind = "other"
+
     /// The form JavaScript's `toISOString()` writes: 2026-11-23T19:00:00.000Z.
     static func isoMillis(_ date: Date) -> String {
         let f = ISO8601DateFormatter()

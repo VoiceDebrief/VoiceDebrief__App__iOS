@@ -112,7 +112,7 @@ final class SitesDesk {
 
     /// Sends what was said to the site's keeper. Returns true when the keeper's lane took it.
     @discardableResult
-    func send(_ text: String, kind: String = "change", to site: Site) async -> Bool {
+    func send(_ text: String, kind: String = SiteSend.defaultKind, to site: Site) async -> Bool {
         let text = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !text.isEmpty else { return false }
         sending = true

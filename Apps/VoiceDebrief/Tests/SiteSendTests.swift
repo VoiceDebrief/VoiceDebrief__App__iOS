@@ -50,6 +50,11 @@ struct SiteSendTests {
                          append_token: "not-a-real-token", recipient: .init(fingerprint: LaneCrypto.fingerprint(spki: spki), signing_fingerprint: nil, encrypt: pem))
     }
 
+    @Test func theKindsAreTheSitesOwn() {
+        #expect(SiteSend.kinds.map(\.id) == ["words", "look", "link", "picture", "other"])
+        #expect(SiteSend.kinds.map(\.id).contains(SiteSend.defaultKind))
+    }
+
     @Test func aKeyLinkIsTakenAndAChangedOneIsNot() throws {
         let enc = P256.KeyAgreement.PrivateKey(), sig = P256.Signing.PrivateKey()
         let link = Self.keyLink(enc: enc, sig: sig)
@@ -74,7 +79,7 @@ struct SiteSendTests {
         let enc = P256.KeyAgreement.PrivateKey(), sig = P256.Signing.PrivateKey()
         let key = try SitePersonKey.from(link: Self.keyLink(enc: enc, sig: sig))
         let (_, pem) = try Self.rsa()
-        let data = try key.request(kind: "change", text: "Make the header green", inbox: try Self.inbox(pem: pem),
+        let data = try key.request(kind: "words", text: "Make the header green", inbox: try Self.inbox(pem: pem),
                                    site: "https://example.com", at: Date(timeIntervalSince1970: 1_795_000_000))
         let object = try #require(try JSONSerialization.jsonObject(with: data) as? [String: Any])
         #expect(object["type"] as? String == "ccm.request/v1")
@@ -88,7 +93,7 @@ struct SiteSendTests {
         let signature = try P256.Signing.ECDSASignature(rawRepresentation: try #require(Data(base64Encoded: try #require(signed["sig"]))))
         #expect(sig.publicKey.isValidSignature(signature, for: Data(items.utf8)))
         let parsed = try #require(try JSONSerialization.jsonObject(with: Data(items.utf8)) as? [String: Any])
-        #expect(parsed["kind"] as? String == "change")
+        #expect(parsed["kind"] as? String == "words")
         #expect(parsed["text"] as? String == "Make the header green")
         #expect((parsed["images"] as? [Any])?.isEmpty == true)
     }
@@ -97,7 +102,7 @@ struct SiteSendTests {
         let key = try SitePersonKey.from(link: Self.keyLink(enc: P256.KeyAgreement.PrivateKey(), sig: P256.Signing.PrivateKey()))
         let (privateKey, pem) = try Self.rsa()
         let inbox = try Self.inbox(pem: pem)
-        let request = try key.request(kind: "change", text: "hello", inbox: inbox, site: "https://example.com", at: Date())
+        let request = try key.request(kind: "words", text: "hello", inbox: inbox, site: "https://example.com", at: Date())
         let lane = try inbox.lane()
         #expect(lane.vault == "testvault")
         // What the lane carries: base64 of the v2 envelope, the same as send.js's btoa(seal(...)).

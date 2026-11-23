@@ -75,7 +75,7 @@ struct SiteDetailView: View {
     private var desk: SitesDesk { SitesDesk.shared }
     @State private var text = ""
     @State private var reload = 0
-    @State private var showSent = false
+    @State private var kind = SiteSend.defaultKind
 
     var body: some View {
         VStack(spacing: 0) {
@@ -131,13 +131,18 @@ struct SiteDetailView: View {
                 }
             }
             .frame(maxHeight: 180)
+            Picker("About", selection: $kind) {
+                ForEach(SiteSend.kinds, id: \.id) { Text($0.title).tag($0.id) }
+            }
+            .pickerStyle(.menu)
+            .font(.caption)
             HStack(alignment: .bottom) {
                 TextField("Speak or type what should change", text: $text, axis: .vertical)
                     .lineLimit(1...4)
                     .voiceInput($text)
                     .textFieldStyle(.roundedBorder)
                 Button {
-                    Task { if await desk.send(text, to: site) { text = "" } }
+                    Task { if await desk.send(text, kind: kind, to: site) { text = "" } }
                 } label: {
                     Image(systemName: "paperplane.fill").padding(6)
                 }
