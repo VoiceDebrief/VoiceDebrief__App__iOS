@@ -115,11 +115,14 @@ struct SitePersonKey: Equatable {
     // MARK: A request
 
     /// The request the site's `send()` makes, as bytes to be sealed. `items_json` is signed as the exact text sent.
-    func request(kind: String, text: String, inbox: SiteInbox, site: String, at: Date) throws -> Data {
-        struct Items: Encodable { var kind: String; var text: String; var images: [String] }
+    /// A picture sent with a request, as the site's page sends one: a JPEG as a data URL.
+    struct Image: Codable, Equatable, Sendable { var name: String; var type: String; var data: String }
+
+    func request(kind: String, text: String, images: [Image] = [], inbox: SiteInbox, site: String, at: Date) throws -> Data {
+        struct Items: Encodable { var kind: String; var text: String; var images: [Image] }
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.withoutEscapingSlashes]
-        let itemsJSON = String(decoding: try encoder.encode(Items(kind: kind, text: text, images: [])), as: UTF8.self)
+        let itemsJSON = String(decoding: try encoder.encode(Items(kind: kind, text: text, images: images)), as: UTF8.self)
         let sig = try signing.signature(for: Data(itemsJSON.utf8)).rawRepresentation.base64EncodedString()
         let object: [String: Any] = [
             "type": SiteSend.requestType, "to": inbox.agent, "site": site, "sent_at": SiteSend.isoMillis(at),

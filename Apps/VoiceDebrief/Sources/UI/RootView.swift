@@ -67,6 +67,11 @@ struct RootView: View {
                 }
                 .badge(AgentsDesk.shared.report?.decisions?.count ?? 0)
                 .defaultVisibility(.hidden, for: .tabBar)
+                // Sites (R7, tier 1): talk to a Sovereign Website's keeper about the site.
+                Tab(RootTab.sites.title, systemImage: RootTab.sites.symbol, value: RootTab.sites) {
+                    NavigationStack { SitesView() }.tracked("sites")
+                }
+                .defaultVisibility(.hidden, for: .tabBar)
                 // Owner mode (R6, 23 November 2026): every agent, what it made, its decisions for the owner.
                 Tab(RootTab.owner.title, systemImage: RootTab.owner.symbol, value: RootTab.owner) {
                     NavigationStack { OwnerView(book: book) }.tracked("owner")

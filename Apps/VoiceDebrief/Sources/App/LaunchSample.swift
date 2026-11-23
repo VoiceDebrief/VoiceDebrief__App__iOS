@@ -211,6 +211,7 @@ struct LaunchedScreen: View {
         case .more: return "More"
         case .inbox: return "Inbox"
         case .owner: return "Owner"
+        case .sites: return "Sites"
         }
     }
 

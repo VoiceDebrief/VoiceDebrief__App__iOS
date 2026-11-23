@@ -4,6 +4,16 @@ An exploration, not a plan: nothing on this page is built. It is R7 of the brief
 
 > [[proposed]] throughout. A new repository for it goes only through the chain of evidence in R4 of the brief (a maestro's signed brief, a sites review, the factory, security and abp sign-offs, the decisions agent), and a.maestro files that request. This repository does not create one.
 
+## Now a project: three tiers (23 November 2026)
+
+The owner widened this on 23 November: "quite a powerful capability ... solves a ton of problems from usability point of view ... running models locally, so you have proper sovereignty". iOS first, Android later. a.ios owns it.
+
+1. **Feedback on a site that exists.** Scan the site's QR code, see the site, speak or type what should change; the site's keeper (an agent) makes the change and answers; the app says when the site has changed. Being built inside VoiceDebrief as Sites ([issue 055](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/055-sites.md)), on the site's own `/send/` formats, for a first demo on 26 November.
+2. **Edits made on the device with Apple Intelligence**, then either sent back for the keeper to publish, or pushed to the person's own GitHub with the app walking them through it. [[proposed]]
+3. **A site from scratch**: photos and one of our themes, helped by a frontier model where it is worth it. [[proposed]]
+
+Across all three: the site kept in iCloud as one file, shared and published from there; publishing to Netlify and other hosts; voice throughout; public testing through TestFlight. A separate app's repository still goes through R4.
+
 ## What already exists to build on
 
 - **Lab L07, edit with Apple Intelligence** (in this app, [[unverified]]): a text goes to the on-device model with an instruction and comes back changed, with the change shown. A website is a few small text files, so this is the same move on more than one file.

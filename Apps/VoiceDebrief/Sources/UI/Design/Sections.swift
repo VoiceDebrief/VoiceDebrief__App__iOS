@@ -4,7 +4,7 @@ import SwiftUI
 /// alike by the tab bar, the sidebar, the record screen's tiles and the section's own header.
 extension RootTab: CaseIterable, Identifiable {
     static var allCases: [RootTab] {
-        [.record, .library, .contacts, .vaults, .inbox, .owner, .agents, .play, .guide, .identity, .credit, .activity, .lab, .words, .about, .settings]
+        [.record, .library, .contacts, .vaults, .inbox, .sites, .owner, .agents, .play, .guide, .identity, .credit, .activity, .lab, .words, .about, .settings]
     }
 
     var id: String { rawValue }
@@ -28,6 +28,7 @@ extension RootTab: CaseIterable, Identifiable {
         case .more: "More"
         case .inbox: "Inbox"
         case .owner: "Owner"
+        case .sites: "Sites"
         }
     }
 
@@ -50,6 +51,7 @@ extension RootTab: CaseIterable, Identifiable {
         case .more: "ellipsis.circle"
         case .inbox: "tray.full"
         case .owner: "person.crop.circle.badge.checkmark"
+        case .sites: "globe"
         }
     }
 
@@ -73,6 +75,7 @@ extension RootTab: CaseIterable, Identifiable {
         case .more: "Every other part of the app"
         case .inbox: "Your memos, what came of them, and what waits for you"
         case .owner: "Every agent, what it made, and what it needs you to decide"
+        case .sites: "See a website and say what should change"
         }
     }
 
@@ -95,6 +98,7 @@ extension RootTab: CaseIterable, Identifiable {
         case .more: Color(dsHex: 0x8A9BB0)
         case .inbox: Color(dsHex: 0x2E9E8F)
         case .owner: Color(dsHex: 0xB8562E)
+        case .sites: Color(dsHex: 0x3C8D5A)
         }
     }
 
@@ -104,6 +108,7 @@ extension RootTab: CaseIterable, Identifiable {
         case .more: "VDArt-settings"
         case .inbox: "VDArt-agents"   // no drawing of its own yet
         case .owner: "VDArt-identity" // no drawing of its own yet
+        case .sites: "VDArt-guide"    // no drawing of its own yet
         default: "VDArt-\(rawValue)"
         }
     }

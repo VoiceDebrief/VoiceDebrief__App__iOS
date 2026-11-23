@@ -5,8 +5,8 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | Status | Meaning | How many |
 |---|---|---|
 | Seen working | Built, and a run proved it: CI, a device or a server. | 28 |
-| Built, untried | In the app or the repository, but not yet proven by a run on a device. | 121 |
-| In progress | Begun: part of it is built or a release has touched it. | 48 |
+| Built, untried | In the app or the repository, but not yet proven by a run on a device. | 122 |
+| In progress | Begun: part of it is built or a release has touched it. | 49 |
 | Proposed | Asked for or described; nothing of it is built. | 59 |
 | Parked | Waiting: on the owner, on Apple, or scheduled for later. | 6 |
 
@@ -133,6 +133,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | SGit CRM, a Gmail inbox | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
 | SGit CRM, what the agents are doing | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
 | SGit CRM, reading the mailbox twin | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
+| Sites: talk to a Sovereign Website's keeper | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
 | Owner mode, first slice | Feature | VoiceDebrief |   |   | [reality file](../built/index.md) |
 | The visual identity | Feature | VoiceDebrief | Record tab; Settings: Identity; The repository: CI |   | [reality file](../built/index.md) |
 | Voice in text fields | Feature | VoiceDebrief | Settings: Experiments, the Lab; Settings: Experiments, Your words; The repository: CI |   | [reality file](../built/index.md) |
@@ -202,6 +203,7 @@ Every idea and request for the two apps, from the [issues](https://github.com/Vo
 | The lab, seventh experiment (L07): edit with Apple Intelligence | Issue | VoiceDebrief | Settings: Experiments, the Lab |   | [052](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/052-lab-edit.md) |
 | Receive a voice note from the share sheet (WhatsApp) | Issue | VoiceDebrief | Library tab; Settings: Save to a vault; The repository: CI |   | [053](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/053-share-extension.md) |
 | Owner mode (R6) and the Sovereign Website exploration (R7) | Issue | VoiceDebrief | Settings: Identity; The repository: CI |   | [054](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/054-owner-mode.md) |
+| Sites, talking to a Sovereign Website's keeper (R7, tier 1) | Issue | VoiceDebrief | The repository: CI |   | [055](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/055-sites.md) |
 | The sgit app, milestone one | Issue | SGit Vaults | SGit Vaults: Share |   | [100](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/100-sgit-app-milestone-one.md) |
 | The sgit app after milestone one | Issue | SGit Vaults | SGit Vaults: Share |   | [103](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/103-sgit-app-after-milestone-one.md) |
 | A gallery of vaults, opened in a browser inside the app | Issue | SGit Vaults | SGit Vaults: Gallery |   | [107](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/107-sgit-app-gallery.md) |
