@@ -3,6 +3,7 @@ import Foundation
 import Security
 import SGitPeople
 import Testing
+import UIKit
 @testable import VoiceDebrief
 
 /// Sites (R7, tier 1), checked against the formats of the site's own `/send/` page (send.js and keyring.js of
@@ -164,4 +165,31 @@ struct SiteSendTests {
     }
 
     final class Page: @unchecked Sendable { var html = Data("<h1>Cheese</h1>".utf8) }
+}
+
+@Suite("Sites: photos with a request")
+struct SitePhotosTests {
+    static func picture(_ width: CGFloat, _ height: CGFloat) -> Data {
+        let format = UIGraphicsImageRendererFormat.default()
+        format.scale = 1
+        return UIGraphicsImageRenderer(size: CGSize(width: width, height: height), format: format).image { context in
+            UIColor.systemGreen.setFill()
+            context.fill(CGRect(x: 0, y: 0, width: width, height: height))
+        }.pngData()!
+    }
+
+    @Test func aLargePictureIsScaledTo1600OnItsLongSide() throws {
+        let jpeg = try #require(SitePhotos.jpeg(Self.picture(3200, 2000)))
+        let image = try #require(UIImage(data: jpeg))
+        #expect(max(image.size.width * image.scale, image.size.height * image.scale) == 1600)
+    }
+
+    @Test func atMostFourGoAsDataURLsInTheSitesShape() {
+        let images = SitePhotos.images(from: Array(repeating: Self.picture(400, 300), count: 6))
+        #expect(images.count == 4)
+        #expect(images.first?.name == "photo-1.jpg")
+        #expect(images.first?.type == "image/jpeg")
+        #expect(images.first?.data.hasPrefix("data:image/jpeg;base64,") == true)
+        #expect(SitePhotos.images(from: [Data("not a picture".utf8)]).isEmpty)
+    }
 }

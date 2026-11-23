@@ -1,3 +1,4 @@
+import PhotosUI
 import SwiftUI
 import UIKit
 import WebKit
@@ -76,6 +77,8 @@ struct SiteDetailView: View {
     @State private var text = ""
     @State private var reload = 0
     @State private var kind = SiteSend.defaultKind
+    @State private var picked: [PhotosPickerItem] = []
+    @State private var pictures: [Data] = []
 
     var body: some View {
         VStack(spacing: 0) {
@@ -136,13 +139,33 @@ struct SiteDetailView: View {
             }
             .pickerStyle(.menu)
             .font(.caption)
+            if !pictures.isEmpty {
+                HStack {
+                    Label("\(pictures.count) photo\(pictures.count == 1 ? "" : "s") go with it", systemImage: "photo.on.rectangle")
+                        .font(.caption)
+                    Spacer()
+                    Button("Remove") { pictures = []; picked = [] }.font(.caption)
+                }
+            }
             HStack(alignment: .bottom) {
+                PhotosPicker(selection: $picked, maxSelectionCount: SitePhotos.most, matching: .images) {
+                    Image(systemName: "photo").padding(6)
+                }
+                .buttonStyle(.bordered)
+                .accessibilityLabel("Add photos")
+                .onChange(of: picked) { _, items in
+                    Task {
+                        var loaded: [Data] = []
+                        for item in items { if let data = try? await item.loadTransferable(type: Data.self) { loaded.append(data) } }
+                        pictures = loaded
+                    }
+                }
                 TextField("Speak or type what should change", text: $text, axis: .vertical)
                     .lineLimit(1...4)
                     .voiceInput($text)
                     .textFieldStyle(.roundedBorder)
                 Button {
-                    Task { if await desk.send(text, kind: kind, to: site) { text = "" } }
+                    Task { if await desk.send(text, kind: kind, pictures: pictures, to: site) { text = ""; pictures = []; picked = [] } }
                 } label: {
                     Image(systemName: "paperplane.fill").padding(6)
                 }

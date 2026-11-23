@@ -112,7 +112,7 @@ final class SitesDesk {
 
     /// Sends what was said to the site's keeper. Returns true when the keeper's lane took it.
     @discardableResult
-    func send(_ text: String, kind: String = SiteSend.defaultKind, to site: Site) async -> Bool {
+    func send(_ text: String, kind: String = SiteSend.defaultKind, pictures: [Data] = [], to site: Site) async -> Bool {
         let text = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !text.isEmpty else { return false }
         sending = true
@@ -121,7 +121,7 @@ final class SitesDesk {
             let inbox = try await inbox(site.origin)
             let key = try key(for: site)
             let at = Date()
-            let request = try key.request(kind: kind, text: text, inbox: inbox, site: site.origin, at: at)
+            let request = try key.request(kind: kind, text: text, images: SitePhotos.images(from: pictures), inbox: inbox, site: site.origin, at: at)
             try await inbox.lane().send([request]) { _, _ in }
             sent.append(Sent(id: String(UUID().uuidString.prefix(8)).lowercased(), site: site.origin, kind: kind, text: text, at: at))
             save()
