@@ -30,6 +30,10 @@
   owner's fingerprint is his to give (a configuration step, public), and pinning a guessed one would be wrong.
 - 23 November 2026, 19:45. Slices 1 and 2 and Sites green together on `656aa0f` (three earlier runs were cancelled
   waiting for a Mac; one found nested `#require`s, fixed). `work/sites` is the branch to bring to `dev`.
+- 23 November 2026, 22:30. d.holacracy published account D's team index in the owner.feed/v1 shape. The app read
+  it badly: a whole feed was refused for a duplicate id, an asker not in the agent list, or a time without seconds. Now
+  a bad row costs only that row and is listed; the index's extra fields are read (home, repo, recommended,
+  reported_not_seen and others); a Published source reads it next to the twin. A recorded part of it is a test.
 - Not done on purpose: nothing pushed to `dev`. A green push to `dev` uploads to TestFlight, and TestFlight
   submission is the owner's decision.
 - The private signing key lives in this session's container only. If the container is replaced, a new key is

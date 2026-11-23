@@ -6,6 +6,8 @@ Owner mode is a section of VoiceDebrief for iPhone and iPad meant for one person
 
 ## Where the app reads it
 
+Three sources, chosen at the top of the Owner screen: **Demo** (the invented twin), **Published** (public feeds in this shape, read as they are: today account D's team index by d.holacracy), and **Your vault** (`owner/feed.json` in the agents vault, after the handshake).
+
 | Source | What | Sent anywhere? |
 |---|---|---|
 | Demo | The twin bundled with the app, [`owner-feed-twin.json`](https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/Apps/VoiceDebrief/Resources/owner-feed-twin.json): invented agents, pages and decisions on `example.com` | Never. Answers and messages are kept on the device and marked "Not sent: demo" |
@@ -39,7 +41,15 @@ One JSON file. Dates are ISO 8601 in UTC. Fields marked optional may be left out
 
 **Decision**: `id`, `title`, `options` (at least two), `from` (an agent id), `at`. Optional: `detail`, `lane` (where the answer goes; otherwise the conductor), `slides` (an item id), `evidence` (addresses of what it rests on: the brief, the signatures).
 
-The app refuses a feed whose `kind` is different, in which an id is used twice, in which an item or a decision names an agent the feed does not list, or in which a decision has fewer than two choices. The checks are in `OwnerFeed.check()` and its tests.
+Optional fields a feed may also carry, as d.holacracy's team index does: on an agent `circle`, `lead`, `model`, `home` (a repository) and `homeUrl`, `repo`, `session`, `relayed` (reported, not seen), `proposed`; on a decision `recommended` (an option's letter, or several, "AB"); at the top `extra_fields` and `reported_not_seen` (`id`, `name`, `account`, `kind`, `session`, `source`, `as_of`). Dates may leave out seconds.
+
+The app refuses only a feed whose `kind` is different. Anything else that is wrong costs a row, never the feed, and is listed under the feed as what was wrong: a row it cannot read, an id used twice (the first is kept), a decision with fewer than two choices (left out), an item or decision from an agent the feed does not list (kept). The rules are in `OwnerFeed.decode` and `tidy()` and their tests, which include a recorded part of the team index.
+
+### Asked of feed writers
+
+- Name a decision's asker (`from`) and an item's agent by an id from `agents`, so the app can show who it is and reach them.
+- Keep ids unique; give a decision's `lane` as an `sgi1.` link when the asker has one, so the answer goes to it and not through the conductor.
+- Write full times with seconds (`2026-11-23T17:10:00Z`); the app reads shorter ones, other readers may not.
 
 ## What comes back
 

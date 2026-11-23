@@ -15,9 +15,15 @@ final class OwnerDesk {
     static let livePath = "owner/feed.json"
 
     enum Source: String, CaseIterable, Identifiable, Sendable {
-        case demo, live
+        case demo, published, live
         var id: String { rawValue }
-        var title: String { self == .demo ? "Demo (invented)" : "Live (your vault)" }
+        var title: String {
+            switch self {
+            case .demo: "Demo"
+            case .published: "Published"
+            case .live: "Your vault"
+            }
+        }
     }
 
     var source: Source = Source(rawValue: UserDefaults.standard.string(forKey: "vd.owner.source") ?? "") ?? .demo {
@@ -105,12 +111,48 @@ final class OwnerDesk {
 
     var isDemo: Bool { source == .demo }
 
+    /// Public feeds in the owner.feed/v1 shape, read as they are: account D's team index, by d.holacracy (23 November
+    /// 2026). Public, and committed by the agents that write them; the app only reads them.
+    static let publishedFeeds = [
+        "https://raw.githubusercontent.com/PrompTugal/PrompTugal__News__Website/dev/board/team/holacracy.d/team-index.json",
+    ]
+
+    /// Reads each published feed and puts them together; one that cannot be read is said, not fatal.
+    static func readPublished(_ addresses: [String] = publishedFeeds,
+                              get: @Sendable (URL) async throws -> Data = { try await URLSession.shared.data(from: $0).0 }) async -> OwnerFeed? {
+        var feeds: [OwnerFeed] = []
+        var notes: [String] = []
+        for address in addresses {
+            guard let url = URL(string: address) else { continue }
+            do { feeds.append(try OwnerFeed.decode(try await get(url))) } catch {
+                notes.append("\(url.lastPathComponent) could not be read: \(error.localizedDescription)")
+            }
+        }
+        guard var merged = feeds.first else { return nil }
+        for other in feeds.dropFirst() {
+            merged.agents += other.agents
+            merged.reported_not_seen = (merged.reported_not_seen ?? []) + (other.reported_not_seen ?? [])
+            merged.decisions = (merged.decisions ?? []) + (other.decisions ?? [])
+            merged.sites = (merged.sites ?? []) + (other.sites ?? [])
+            merged.videos = (merged.videos ?? []) + (other.videos ?? [])
+            merged.briefs = (merged.briefs ?? []) + (other.briefs ?? [])
+            merged.slides = (merged.slides ?? []) + (other.slides ?? [])
+            merged.problems += other.problems
+            merged.by += ", " + other.by
+        }
+        merged.problems += notes
+        return merged
+    }
+
     /// Reads the feed again from its source.
     func refresh(book: VaultBook) async {
         switch source {
         case .demo:
             feed = OwnerFeed.bundledTwin()
             problem = feed == nil ? "The demo feed is missing from this build." : nil
+        case .published:
+            feed = await Self.readPublished()
+            problem = feed == nil ? "No published feed could be read just now." : nil
         case .live:
             guard registered else {
                 feed = nil

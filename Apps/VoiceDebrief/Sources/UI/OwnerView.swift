@@ -70,6 +70,22 @@ struct OwnerView: View {
                     }
                 }
             }
+            if let feed = desk.feed, let reported = feed.reported_not_seen, !reported.isEmpty {
+                Section("Reported by other accounts, not seen") {
+                    ForEach(reported) { row in
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(row.name).font(.callout.weight(.semibold))
+                            Text([row.kind, row.account.map { "account \($0)" }, row.as_of.map { "as of \($0)" }].compactMap { $0 }.joined(separator: ", "))
+                                .font(.caption).foregroundStyle(.secondary)
+                        }
+                    }
+                }
+            }
+            if let feed = desk.feed, !feed.problems.isEmpty {
+                Section("What was wrong with the feed") {
+                    ForEach(feed.problems, id: \.self) { Text($0).font(.caption) }
+                }
+            }
             if let problem = desk.problem {
                 Section { Text(problem).font(.footnote).foregroundStyle(.orange) }
             }
@@ -177,7 +193,13 @@ struct OwnerView: View {
 
     @ViewBuilder private func options(_ decision: OwnerFeed.Decision) -> some View {
         ForEach(decision.options, id: \.self) { choice in
-            Button(choice) { Task { await desk.answer(decision, with: choice) } }
+            Button { Task { await desk.answer(decision, with: choice) } } label: {
+                if decision.recommendedOptions.contains(choice) {
+                    Label(choice, systemImage: "star.fill")
+                } else {
+                    Text(choice)
+                }
+            }
                 .buttonStyle(.bordered)
                 .disabled(desk.sending)
         }
@@ -196,9 +218,17 @@ struct OwnerView: View {
                     }
                     Text(agent.doing).font(.callout)
                     if let waiting = agent.waitingFor { Text("Waiting for \(waiting)").font(.caption).foregroundStyle(.orange) }
+                    if let repo = agent.repo ?? agent.home { Text(repo).font(.caption2.monospaced()).foregroundStyle(.secondary) }
+                    if agent.proposed == true || agent.relayed == true {
+                        Text([agent.proposed == true ? "proposed" : nil, agent.relayed == true ? "relayed, not seen directly" : nil].compactMap { $0 }.joined(separator: ", "))
+                            .font(.caption2).foregroundStyle(.secondary)
+                    }
                     HStack(spacing: 16) {
                         if let site = agent.site, let url = URL(string: site) {
                             Button { openURL(url) } label: { Label("Site", systemImage: "globe") }
+                        }
+                        if let home = agent.homeUrl ?? agent.home.map({ "https://github.com/" + $0 }), let url = URL(string: home) {
+                            Button { openURL(url) } label: { Label("Home", systemImage: "house") }
                         }
                         Button { talking = Talk(item: nil, agent: agent.id) } label: { Label("Message", systemImage: "bubble.left") }
                     }
