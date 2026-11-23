@@ -17,7 +17,7 @@ struct FirstContactTests {
         let text = try FirstContact.invitation(accessKey: accessKey, to: benCard, from: People.ana, myCard: anaCard, at: People.now)
         #expect(text.hasPrefix("m1."))
         #expect(!text.contains("access-key-for-the-test"))
-        let invitation = try FirstContact.open("Ana sent you: " + text, me: People.ben)
+        let invitation = try FirstContact.open("Ana sent you: " + text, me: People.ben, now: People.now)
         #expect(invitation.accessKey == accessKey)
         #expect(invitation.inviter == anaCard)
         #expect(invitation.opened.trust == .cardInside)
@@ -36,7 +36,7 @@ struct FirstContactTests {
         // Ben scanned Ana's card first: the invitation checks against it, and accept finds her there.
         let benContacts = ContactBook(file: nil)
         try benContacts.add(anaCard, met: .inPerson, at: People.now)
-        let invitation = try FirstContact.open(small, me: People.ben, contacts: benContacts.bundles)
+        let invitation = try FirstContact.open(small, me: People.ben, contacts: benContacts.bundles, now: People.now)
         #expect(invitation.opened.trust == .contact)
         #expect(invitation.inviter == nil)
         let http = ReplayLaneHTTP([("configure", 200, RecordedLane.configured), ("write", 200, RecordedLane.writeOK)])
@@ -65,7 +65,7 @@ struct FirstContactTests {
 
         // 3. Ben opens it and accepts: the access key kept, Ana added, an inbox made, the full card sent.
         let later = People.now.addingTimeInterval(60)
-        let invitation = try FirstContact.open(text, me: People.ben)
+        let invitation = try FirstContact.open(text, me: People.ben, now: later)
         let server = People.temporaryFolder()
         let http = ReplayLaneHTTP([("configure", 200, RecordedLane.configured), ("write", 200, RecordedLane.writeOK)])
         let client = LaneClient(http: http)
