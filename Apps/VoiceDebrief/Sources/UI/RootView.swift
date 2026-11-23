@@ -67,6 +67,11 @@ struct RootView: View {
                 }
                 .badge(AgentsDesk.shared.report?.decisions?.count ?? 0)
                 .defaultVisibility(.hidden, for: .tabBar)
+                // Owner mode (R6, 23 November 2026): every agent, what it made, its decisions for the owner.
+                Tab(RootTab.owner.title, systemImage: RootTab.owner.symbol, value: RootTab.owner) {
+                    NavigationStack { OwnerView(book: book) }.tracked("owner")
+                }
+                .defaultVisibility(.hidden, for: .tabBar)
                 Tab(RootTab.identity.title, systemImage: RootTab.identity.symbol, value: RootTab.identity) {
                     NavigationStack { IdentityView(vaults: book) }.tracked("identity")
                 }

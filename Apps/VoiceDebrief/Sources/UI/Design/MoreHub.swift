@@ -16,7 +16,7 @@ struct MoreHubView: View {
     /// The sidebar's order and sections, past the four in the tab bar.
     static let groups: [Group] = [
         Group(title: nil, tabs: [.inbox, .agents, .play, .guide]),
-        Group(title: "You", tabs: [.identity, .credit, .activity]),
+        Group(title: "You", tabs: [.owner, .identity, .credit, .activity]),
         Group(title: "Experiments", tabs: [.lab, .words]),
         Group(title: "More", tabs: [.about, .settings]),
     ]

@@ -1,0 +1,132 @@
+import Foundation
+import Observation
+
+/// Owner mode's state (R6): which feed is shown, the owner's decisions and, kept apart, his actions.
+///
+/// Two sources. **Demo** is the synthetic twin bundled with the app (`owner-feed-twin.json`): it opens with
+/// nothing set up, and nothing answered in it leaves the device. **Live** is `owner/feed.json` in the vault
+/// the conductor already writes the agents report into: encrypted, readable only on the owner's devices.
+/// An answer or a message is one small JSON body (`OwnerOutgoing`) sealed to the asking agent's lane, or to
+/// the conductor's when the agent has none.
+@MainActor
+@Observable
+final class OwnerDesk {
+    static let shared = OwnerDesk()
+    static let livePath = "owner/feed.json"
+
+    enum Source: String, CaseIterable, Identifiable, Sendable {
+        case demo, live
+        var id: String { rawValue }
+        var title: String { self == .demo ? "Demo (invented)" : "Live (your vault)" }
+    }
+
+    var source: Source = Source(rawValue: UserDefaults.standard.string(forKey: "vd.owner.source") ?? "") ?? .demo {
+        didSet { UserDefaults.standard.set(source.rawValue, forKey: "vd.owner.source"); feed = nil; problem = nil }
+    }
+
+    private(set) var feed: OwnerFeed?
+    private(set) var problem: String?
+    private(set) var loadedAt: Date?
+    private(set) var sending = false
+    private(set) var decisions: [OwnerDecisionRecord] = []
+    private(set) var actions: [OwnerAction] = []
+
+    private let folder: URL
+
+    init(folder: URL = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0].appending(path: "owner")) {
+        self.folder = folder
+        try? FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        decisions = Self.read([OwnerDecisionRecord].self, from: folder.appending(path: "decisions.json")) ?? []
+        actions = Self.read([OwnerAction].self, from: folder.appending(path: "actions.json")) ?? []
+    }
+
+    var isDemo: Bool { source == .demo }
+
+    /// Reads the feed again from its source.
+    func refresh(book: VaultBook) async {
+        switch source {
+        case .demo:
+            feed = OwnerFeed.bundledTwin()
+            problem = feed == nil ? "The demo feed is missing from this build." : nil
+        case .live:
+            let vaultId = AgentsDesk.shared.vaultId
+            guard let vault = book.vaults.first(where: { $0.id == vaultId }) else {
+                feed = nil
+                problem = "Choose the agents vault on the Agents screen first: the live feed is read from \(Self.livePath) in it."
+                break
+            }
+            if book.current(vault).remoteId != nil { await book.pull(vault) }
+            do {
+                feed = try OwnerFeed.decode(try await book.data(of: Self.livePath, in: book.current(vault)))
+                problem = nil
+            } catch let error as OwnerFeed.FeedError {
+                problem = error.localizedDescription
+            } catch {
+                problem = feed == nil ? "No owner feed in this vault yet (\(Self.livePath))." : "Could not refresh: \(VaultBook.describe(error))"
+            }
+        }
+        loadedAt = Date()
+    }
+
+    func decided(_ decision: OwnerFeed.Decision) -> OwnerDecisionRecord? {
+        decisions.last { $0.id == decision.id }
+    }
+
+    /// Answers a decision. In demo mode it is recorded and not sent.
+    func answer(_ decision: OwnerFeed.Decision, with choice: String) async {
+        let outgoing = OwnerOutgoing.answer(decision, choice: choice, app: AppInfo.versionLine(), at: Date(), id: Self.newId())
+        guard let delivery = await deliver(outgoing, lane: decision.lane, name: "answer.json") else { return }
+        decisions.append(OwnerDecisionRecord(id: decision.id, title: decision.title, choice: choice, from: decision.from, at: outgoing.at, delivery: delivery))
+        Self.write(decisions, to: folder.appending(path: "decisions.json"))
+        UsageLog.shared.action("owner.decision")
+    }
+
+    /// Talks to a page: a message about one item, to the agent that made it. An action, not a decision.
+    func talk(about item: OwnerFeed.Item?, to agentId: String, text: String) async {
+        let text = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !text.isEmpty else { return }
+        let outgoing = OwnerOutgoing.message(about: item, to: agentId, text: text, app: AppInfo.versionLine(), at: Date(), id: Self.newId())
+        let lane = feed?.agent(agentId)?.lane
+        guard let delivery = await deliver(outgoing, lane: lane, name: "message.json") else { return }
+        actions.append(OwnerAction(id: outgoing.id, kind: item == nil ? "message" : "talk-to-page",
+                                   subject: item?.title ?? (feed?.agent(agentId)?.name ?? agentId), text: text, at: outgoing.at, delivery: delivery))
+        Self.write(actions, to: folder.appending(path: "actions.json"))
+        UsageLog.shared.action("owner.talk")
+    }
+
+    /// Seals and sends one body; returns how it went, or nil (with `problem` set) when it was not sent.
+    private func deliver(_ outgoing: OwnerOutgoing, lane laneLink: String?, name: String) async -> String? {
+        if isDemo || feed?.twin == true { return "Not sent: demo" }
+        guard let lane = DeveloperLane.parse(laneLink ?? "") ?? DeveloperLane.builtIn else {
+            problem = "No lane to send on."; return nil
+        }
+        sending = true
+        defer { sending = false }
+        do {
+            let body = try outgoing.encoded()
+            let header = DeveloperLane.Header(kind: outgoing.kind, note: "owner-\(outgoing.id)", part: 1, of: 1,
+                                              name: name, size: body.count, sha256: DeveloperLane.sha256Hex(body),
+                                              app: outgoing.app, sentAt: ISO8601DateFormatter().string(from: outgoing.at))
+            try await lane.send([try DeveloperLane.message(header: header, body: body)]) { _, _ in }
+            problem = nil
+            let via = laneLink == nil ? "the conductor" : outgoing.to
+            return "Sealed to \(via) (\(lane.fingerprint))"
+        } catch {
+            problem = "Not sent: \(error.localizedDescription)"
+            return nil
+        }
+    }
+
+    private static func newId() -> String { String(UUID().uuidString.lowercased().prefix(8)) }
+
+    private static func read<T: Decodable>(_ type: T.Type, from url: URL) -> T? {
+        guard let data = try? Data(contentsOf: url) else { return nil }
+        let decoder = JSONDecoder(); decoder.dateDecodingStrategy = .iso8601
+        return try? decoder.decode(type, from: data)
+    }
+
+    private static func write<T: Encodable>(_ value: T, to url: URL) {
+        let encoder = JSONEncoder(); encoder.dateEncodingStrategy = .iso8601
+        try? encoder.encode(value).write(to: url, options: .atomic)
+    }
+}

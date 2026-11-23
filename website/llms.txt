@@ -61,6 +61,12 @@ Every page has a markdown twin: replace index.html with index.md.
 - https://ios.app.voicedebrief.ai/reviews/round-3/index.html : round 3 (14 November 2026): the four
   users and a fifth who sends memos to a colleague, on finish and send, the briefing and where the work
   happens. Round 2's findings marked; fifteen new findings; issues 043 to 045.
+- https://ios.app.voicedebrief.ai/owner/index.html : owner mode and its feed, owner.feed/v1. FOR AN AGENT THAT
+  WANTS TO PUBLISH TO THE OWNER'S DEVICE: the JSON contract (agents, sites, videos, briefs, slides, decisions),
+  where the app reads it, and the sealed answers that come back. IN TEST: not yet tried on a device.
+- https://ios.app.voicedebrief.ai/ideas/sovereign-website/index.html : an exploration, all PROPOSED: a Sovereign
+  Website app that edits a small site with Apple's on-device model through tools, kept on the device, in iCloud
+  as one file, or published.
 - https://ios.app.voicedebrief.ai/identity/return/index.html : not documentation. The page pki.sgit.ai
   sends a person back to after they vouch for the app on a device; it says how to hand the answer in
   the address to the app. No script: the answer stays in the address.

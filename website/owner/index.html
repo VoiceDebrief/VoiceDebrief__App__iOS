@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Owner mode in VoiceDebrief for iOS, and its feed, owner.feed/v1</title>
+<meta name="description" content="The section meant for the owner alone: every agent, the websites, videos, briefs and decision slides they made, and the decisions they need, read from one JSON feed whose contract is on this page, with the sealed answers that come back.">
+<link rel="canonical" href="https://ios.app.voicedebrief.ai/owner/index.html">
+<meta property="og:url" content="https://ios.app.voicedebrief.ai/owner/index.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="VoiceDebrief for iOS">
+<meta property="og:title" content="Owner mode in VoiceDebrief for iOS, and its feed, owner.feed/v1">
+<meta property="og:description" content="The section meant for the owner alone: every agent, the websites, videos, briefs and decision slides they made, and the decisions they need, read from one JSON feed whose contract is on this page, with the sealed answers that come back.">
+<link rel="alternate" type="text/markdown" href="index.md" title="This page as markdown">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/vd-tokens.css">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+
+<nav class="site"><div class="row">
+  <a class="brand" href="../index.html">Voice<em>Debrief</em> <span>iOS</span></a>
+  <span class="beta" title="In development: there is nothing to install yet">IN DEVELOPMENT</span>
+  <a class="parent" href="https://voicedebrief.ai" title="A VoiceDebrief product">&#8599; part of <b>voicedebrief.ai</b></a>
+  <a class="ver" href="../versions/index.html" title="Release history">dev</a>
+  <a class="nl" href="../built/index.html">Built</a>
+  <a class="nl" href="../architecture/index.html">How it works</a>
+  <a class="nl" href="../design/index.html">Design</a>
+  <a class="nl" href="../plan/index.html">Plan</a>
+  <a class="nl" href="../articles/index.html">Articles</a>
+  <a class="nl" href="../develop/index.html">Build</a>
+  <a class="nl" href="../ideas/index.html">Ideas</a>
+  <a class="nl" href="../guides/index.html">Guides</a>
+  <a class="gh" href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">&#9733; GitHub</a>
+</div></nav>
+
+<main class="doc">
+<div class="crumb"><a href="../index.html">VoiceDebrief iOS</a> / owner</div>
+<h1 id="owner-mode-and-its-feed-owner-feed-v1">Owner mode and its feed, <code>owner.feed/v1</code></h1>
+<p>Owner mode is a section of VoiceDebrief for iPhone and iPad meant for one person, the owner. It shows every agent and what it is doing, the latest websites, videos, briefs and decision slides the agents made, and the decisions they need from him. He decides there, and he can talk to any page and have the message relayed to the agent that made it. It is R6 of the brief of 23 November 2026, built by a.ios.</p>
+<blockquote><p>In test. The section, the contract below and an invented twin are written, and not yet tried on a device. The handshake that makes the mode exist only for the owner's key is <span class="chip chip-proposed">proposed</span> (slice 2). <a href="../built/index.html">What is built</a> is the record.</p></blockquote>
+<h2 id="where-the-app-reads-it">Where the app reads it</h2>
+<div class="tablewrap"><table>
+<thead><tr><th>Source</th><th>What</th><th>Sent anywhere?</th></tr></thead>
+<tbody>
+<tr><td>Demo</td><td>The twin bundled with the app, <a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/Apps/VoiceDebrief/Resources/owner-feed-twin.json"><code>owner-feed-twin.json</code></a>: invented agents, pages and decisions on <code>example.com</code></td><td>Never. Answers and messages are kept on the device and marked &quot;Not sent: demo&quot;</td></tr>
+<tr><td>Live</td><td><code>owner/feed.json</code> in the agents vault (the vault the conductor writes <code>agents/agents.json</code> into, chosen on the Agents screen)</td><td>An answer or a message is sealed to the asking agent's lane, or the conductor's when the agent has none</td></tr>
+</tbody></table></div>
+<p>The app reads JSON only. It never reads an agent's state from an HTML page.</p>
+<h2 id="the-contract">The contract</h2>
+<p>One JSON file. Dates are ISO 8601 in UTC. Fields marked optional may be left out.</p>
+<pre><code>{
+  &quot;kind&quot;: &quot;owner.feed/v1&quot;,          required, exactly this
+  &quot;made&quot;: &quot;2026-11-23T18:00:00Z&quot;,   when the feed was written
+  &quot;by&quot;: &quot;holacracy.d&quot;,              who wrote it
+  &quot;twin&quot;: true,                     optional: true for invented data; the app then never sends
+  &quot;about&quot;: &quot;...&quot;,                   optional
+  &quot;agents&quot;:    [ Agent ],
+  &quot;sites&quot;:     [ Item ],            optional, each list
+  &quot;videos&quot;:    [ Item ],
+  &quot;briefs&quot;:    [ Item ],
+  &quot;slides&quot;:    [ Item ],
+  &quot;decisions&quot;: [ Decision ]
+}</code></pre>
+<p><strong>Agent</strong>: <code>id</code>, <code>name</code>, <code>kind</code> (<code>maestro</code>, <code>agent</code>, <code>signer</code> or <code>subagent</code>; the app lists them from the biggest to the smallest), <code>status</code> (<code>working</code>, <code>waiting</code>, <code>idle</code>, <code>blocked</code>, <code>done</code>), <code>doing</code> (one line). Optional: <code>account</code>, <code>parent</code> (an agent id), <code>waitingFor</code>, <code>site</code> (an address), <code>statusURL</code> (where the agent publishes its own state as JSON), <code>lane</code> (an <code>sgi1.</code> link that can only write to it), <code>updated</code>.</p>
+<p><strong>Item</strong> (a site, a video, a brief, a set of slides): <code>id</code>, <code>title</code>, <code>url</code>, <code>agent</code> (an agent id), <code>made</code>. Optional: <code>summary</code>, <code>seconds</code> (for a video), <code>signedBy</code> (agent ids), <code>decision</code> (for slides: the decision they are for).</p>
+<p><strong>Decision</strong>: <code>id</code>, <code>title</code>, <code>options</code> (at least two), <code>from</code> (an agent id), <code>at</code>. Optional: <code>detail</code>, <code>lane</code> (where the answer goes; otherwise the conductor), <code>slides</code> (an item id), <code>evidence</code> (addresses of what it rests on: the brief, the signatures).</p>
+<p>The app refuses a feed whose <code>kind</code> is different, in which an id is used twice, in which an item or a decision names an agent the feed does not list, or in which a decision has fewer than two choices. The checks are in <code>OwnerFeed.check()</code> and its tests.</p>
+<h2 id="what-comes-back">What comes back</h2>
+<p>Each answer or message is one small JSON body, sealed on the device to the receiver's public key and appended to its lane, as every lane message is (see <a href="../conductors/index.html">receiving notes</a>). The lane header's <code>kind</code> is the body's kind.</p>
+<pre><code>{&quot;kind&quot;:&quot;owner.answer/v1&quot;,&quot;id&quot;:&quot;…&quot;,&quot;at&quot;:&quot;…&quot;,&quot;to&quot;:&quot;&lt;agent id&gt;&quot;,&quot;decision&quot;:&quot;&lt;decision id&gt;&quot;,&quot;choice&quot;:&quot;Green&quot;,&quot;app&quot;:&quot;0.1.149 (…)&quot;}
+{&quot;kind&quot;:&quot;owner.message/v1&quot;,&quot;id&quot;:&quot;…&quot;,&quot;at&quot;:&quot;…&quot;,&quot;to&quot;:&quot;&lt;agent id&gt;&quot;,&quot;page&quot;:&quot;https://…&quot;,&quot;pageTitle&quot;:&quot;…&quot;,&quot;text&quot;:&quot;Make it green&quot;,&quot;app&quot;:&quot;…&quot;}</code></pre>
+<h2 id="decisions-apart-from-actions">Decisions apart from actions</h2>
+<p>The brief asks that the owner's decisions be kept apart from his actions. In the app, &quot;Your decisions&quot; lists answers to questions an agent asked. &quot;Your actions&quot; lists what he did on his own initiative: a message to an agent, or talking to a page. Each record says whether it was sent and to which key.</p>
+<h2 id="what-comes-next">What comes next</h2>
+<ol>
+<li><strong>The handshake</strong> <span class="chip chip-proposed">proposed</span>: the app's own key is registered with the owner's key (issue 018 and the pki.sgit.ai delegation), and owner mode opens only on a device that holds such a grant.</li>
+<li><strong>Any agent's decisions</strong> <span class="chip chip-proposed">proposed</span>: decisions from any agent, not only the conductor, answered to that agent's own lane.</li>
+<li><strong>Published state</strong> <span class="chip chip-proposed">proposed</span>: the feed built from each agent's own committed JSON (<code>status.json</code>), once an index of agents exists.</li>
+<li><strong>Talking</strong> <span class="chip chip-proposed">proposed</span>: a chat over the feed with Apple's model on the device, one question at a time through function calls; talking to a page by voice.</li>
+<li><strong>The CI pipeline</strong> <span class="chip chip-proposed">proposed</span>: each repository's latest run in the feed.</li>
+</ol>
+<p>The work is tracked in <a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/issues/open/054-owner-mode.md">issue 054</a>.</p>
+</main>
+
+<footer class="site"><div class="cols">
+  <div>
+    <div class="brandline">Voice<em>Debrief</em> <span>iOS</span></div>
+    <p>The VoiceDebrief transcript and debrief as a native iPhone and iPad app, on Apple's own models, with the results in a vault you own. In development: there is nothing to install yet. Content CC BY 4.0; code Apache 2.0.</p>
+    <p class="partnote">This site is static and has no analytics.</p>
+    <p class="verline">site dev · <a href="index.md">this page as markdown</a> · <a href="../llms.txt">llms.txt</a></p>
+  </div>
+  <div>
+    <h4>The app</h4>
+    <a href="../built/index.html">What is built</a>
+    <a href="../plan/index.html">The plan</a>
+    <a href="../develop/index.html">Build and test</a>
+    <a href="../versions/index.html">Release history</a>
+    <a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">GitHub</a>
+  </div>
+  <div>
+    <h4>VoiceDebrief</h4>
+    <a href="https://voicedebrief.ai">voicedebrief.ai</a>
+    <a href="https://meetscribe.chrome-extension.voicedebrief.ai">MeetScribe for Google Meet</a>
+  </div>
+  <div>
+    <h4>Built on</h4>
+    <a href="https://sgit.ai">sgit.ai</a>
+    <a href="https://pki.sgit.ai">pki.sgit.ai</a>
+    <a href="https://sgit.ai/security/index.html">The vault security model</a>
+  </div>
+</div></footer>
+</body>
+</html>

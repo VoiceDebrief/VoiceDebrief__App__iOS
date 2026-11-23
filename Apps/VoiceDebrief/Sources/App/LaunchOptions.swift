@@ -58,7 +58,7 @@ enum SampleSet: String, Sendable {
 /// The four tabs of the shell, so a launch can select one.
 enum RootTab: String, Hashable, Sendable {
     case record, library, vaults, settings
-    case contacts, identity, credit, lab, words, activity, about, guide, agents, play, inbox
+    case contacts, identity, credit, lab, words, activity, about, guide, agents, play, inbox, owner
     /// The iPhone's More tab: a list of the parts past the first four (Design/MoreHub.swift).
     case more
 }
