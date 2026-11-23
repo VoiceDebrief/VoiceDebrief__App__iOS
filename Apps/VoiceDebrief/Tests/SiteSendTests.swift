@@ -40,7 +40,8 @@ struct SiteSendTests {
         var error: Unmanaged<CFError>?
         let attributes: [String: Any] = [kSecAttrKeyType as String: kSecAttrKeyTypeRSA, kSecAttrKeySizeInBits as String: 2048]
         let key = try #require(SecKeyCreateRandomKey(attributes as CFDictionary, &error))
-        let pkcs1 = try #require(SecKeyCopyExternalRepresentation(try #require(SecKeyCopyPublicKey(key)), &error) as Data?)
+        let publicKey = try #require(SecKeyCopyPublicKey(key))
+        let pkcs1 = try #require(SecKeyCopyExternalRepresentation(publicKey, &error) as Data?)
         return (key, LaneCrypto.pem(spki: LaneCrypto.spki(fromPKCS1: pkcs1)))
     }
 
@@ -65,7 +66,8 @@ struct SiteSendTests {
         // A link whose public point does not belong to its private key is refused (a key changed on the way).
         let other = Self.keyLink(enc: enc, sig: P256.Signing.PrivateKey())
         let swapped = try #require(other.split(separator: "=").last)
-        let mixed = try #require(String(data: try #require(PKI.data(base64url: String(swapped))), encoding: .utf8))
+        let mixedData = try #require(PKI.data(base64url: String(swapped)))
+        let mixed = try #require(String(data: mixedData, encoding: .utf8))
         var object = try #require(try JSONSerialization.jsonObject(with: Data(mixed.utf8)) as? [String: Any])
         var s = try #require(object["s"] as? [String])
         s[0] = Self.b64u(P256.Signing.PrivateKey().rawRepresentation)
@@ -90,7 +92,9 @@ struct SiteSendTests {
         #expect(signed["alg"] == "ECDSA-P256-SHA256-P1363")
         #expect(signed["key"] == "sha256:00112233aabbccdd")
         let items = try #require(object["items_json"] as? String)
-        let signature = try P256.Signing.ECDSASignature(rawRepresentation: try #require(Data(base64Encoded: try #require(signed["sig"]))))
+        let sigText = try #require(signed["sig"])
+        let sigData = try #require(Data(base64Encoded: sigText))
+        let signature = try P256.Signing.ECDSASignature(rawRepresentation: sigData)
         #expect(sig.publicKey.isValidSignature(signature, for: Data(items.utf8)))
         let parsed = try #require(try JSONSerialization.jsonObject(with: Data(items.utf8)) as? [String: Any])
         #expect(parsed["kind"] as? String == "words")

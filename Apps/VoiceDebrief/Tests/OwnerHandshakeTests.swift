@@ -64,7 +64,8 @@ struct OwnerHandshakeTests {
         #expect(request.kept == "secure-enclave")
         // The same signature over a request whose device name was changed on the way.
         let parts = Self.pythonRequest.dropFirst(4).split(separator: ".").map(String.init)
-        let json = try #require(String(data: try #require(PKI.data(base64url: parts[0])), encoding: .utf8))
+        let jsonData = try #require(PKI.data(base64url: parts[0]))
+        let json = try #require(String(data: jsonData, encoding: .utf8))
         let changed = json.replacingOccurrences(of: "Test iPad (invented)", with: "Someone else's iPad")
         #expect(changed != json)
         #expect(throws: OwnerHandshake.Failure.badSignature) {
