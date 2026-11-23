@@ -10,7 +10,7 @@
    `Engine/OwnerDesk.swift`, `UI/OwnerView.swift`, `Resources/owner-feed-twin.json`, `Tests/OwnerFeedTests.swift`.
    The contract `owner.feed/v1`, a demo from an invented twin, live from `owner/feed.json` in the agents vault,
    answers and messages sealed to a lane, decisions and actions kept apart.
-2. **The handshake.** Built, not yet compiled by CI: `Model/OwnerHandshake.swift`, the This device section, `tools/owner/grant.py`, `Tests/OwnerHandshakeTests.swift`. Waits for the owner's signing fingerprint to be pinned.
+2. **The handshake.** Built and green in CI (`656aa0f` on `work/sites`, which holds it): `Model/OwnerHandshake.swift`, the This device section, `tools/owner/grant.py`, `Tests/OwnerHandshakeTests.swift`. Waits for the owner's signing fingerprint to be pinned.
 3. **Any agent's decisions**, answered to that agent's own lane. Proposed.
 4. **Published state** from each agent's committed JSON, once holacracy.d's index exists. Proposed.
 5. **Talking**: a chat over the feed with Apple's model; talking to a page by voice. Proposed.
@@ -28,6 +28,8 @@
 - 23 November 2026, 18:52 wake. Slice 2, the handshake. `grant.py` run end to end here with a throwaway device key and
   a.ios's key standing in for the owner's; its output is the test fixture. `pinnedOwners` is empty on purpose: the
   owner's fingerprint is his to give (a configuration step, public), and pinning a guessed one would be wrong.
+- 23 November 2026, 19:45. Slices 1 and 2 and Sites green together on `656aa0f` (three earlier runs were cancelled
+  waiting for a Mac; one found nested `#require`s, fixed). `work/sites` is the branch to bring to `dev`.
 - Not done on purpose: nothing pushed to `dev`. A green push to `dev` uploads to TestFlight, and TestFlight
   submission is the owner's decision.
 - The private signing key lives in this session's container only. If the container is replaced, a new key is

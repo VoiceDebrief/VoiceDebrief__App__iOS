@@ -12,7 +12,7 @@ see the site in a web view, say what should change (transcribed on the device, o
 keeper sealed and signed exactly as the site's own page sends it. The keeper's answers come back from
 `send/replies/<person>.json`, opened on the device, and the screen says when the site has changed.
 
-Built, not yet compiled by CI or tried on a device: `Model/SiteSend.swift`, `Engine/SitesDesk.swift`,
+Built and green in CI (`656aa0f`, unit tests on iPhone and iPad simulators), not yet tried on a device: `Model/SiteSend.swift`, `Engine/SitesDesk.swift`,
 `UI/SitesView.swift`, `Tests/SiteSendTests.swift`.
 
 ## What it rests on
