@@ -103,5 +103,5 @@ node tools/lanes/check_vectors.mjs website/lanes/entry-v2/vectors.json
 ## Who reads and writes it
 
 - **VoiceDebrief for iOS**: owner-mode answers and messages, and requests to a Sovereign Website's keeper, move to lane.entry/2 once their receivers read it.
-- **The Email Cell**: co-owner; its actions lane and outbox.
+- **The Email Cell**: co-owner; adopted it as written on 25 November 2026 (its canonical JSON matches pki.sgit.ai's `keys.js` `canon()`). Its outbox becomes entry types `mail.outbox-draft/1`, `mail.outbox-approval/1` (author `person:dinis`, `refs` naming the draft entry) and `mail.outbox-sent/1`, with attachments in `blobs` by reference. For encrypted blobs it puts the plaintext's hash in `sha256`, `ref` as `append-blob:<ciphertext sha256>`, and the key and IV in the body: a reader checks the bytes after decrypting them, as the blob rule says.
 - **The Drive and Chat tools** (a.drive): their lane reader is written against this page and its vectors.
