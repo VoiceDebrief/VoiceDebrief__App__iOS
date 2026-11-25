@@ -429,7 +429,8 @@
      "sig": "WOLDJVz6MJ_DFVGVmNAfvBJjlgaLZ8rz9f1roFWFnJGC6g1OttficPQgVYhvOmSmxXN6Fv2IWEmT92bQxX_Uaw"
     }
    },
-   "code": "E_CHAIN"
+   "code": "E_CHAIN",
+   "note": "Not re-signed: refused by the standalone chain rule, which comes before the signature check."
   },
   {
    "name": "an inline blob whose hash does not match",
@@ -582,7 +583,8 @@
      }
     }
    ],
-   "code": "E_CHAIN"
+   "code": "E_CHAIN",
+   "note": "Signed by the \"other\" key. A reader with a trust list must trust both keys to reach E_CHAIN; otherwise it refuses with E_KEY."
   },
   {
    "name": "two base64 layers (the lane.entry/1 wire)",

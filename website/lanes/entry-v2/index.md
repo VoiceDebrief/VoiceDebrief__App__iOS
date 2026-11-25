@@ -54,12 +54,12 @@ The bytes inside `c` are the entry in canonical JSON, exactly; a reader refuses 
 | `schema` | Exactly `lane.entry/2`. |
 | `lane` | A non-empty string. A chain is one author on one lane. |
 | `author` | `id` names who wrote it, for people; `key` is what a reader trusts: `p256:` and the hex SHA-256 of `spki`'s DER bytes; `spki` carries the public key so a reader can verify without a lookup. Trust comes from the reader's own list of keys, never from the entry. |
-| `seq`, `prev` | Per author and lane: `seq` 1, 2, 3 … with no gaps; `prev` is `null` for 1 and otherwise the hash of the author's entry before. A reader that sees a gap or a fork stops reading that chain (`E_CHAIN`). |
+| `seq`, `prev` | Per author and lane: `seq` 1, 2, 3 … with no gaps; `prev` is `null` for 1 and otherwise the hash of the author's entry before. Two rules, checked at different times: the entry on its own (seq 1 has `prev` null, a later seq has a hash), and the entry against the author's earlier ones (no gap, no fork, the same key). A reader that sees a gap or a fork stops reading that chain (`E_CHAIN`). |
 | `at` | UTC, `YYYY-MM-DDTHH:MM:SSZ`, no fractions. The author's clock: informative, not ordering. |
 | `type` | A non-empty string, defined by the applications that share the lane. |
 | `body` | Any JSON value. Integers only, anywhere in the entry: a float is refused (`E_NUMBER`). |
-| `refs` | Hashes of other entries this one answers or builds on, each `sha256:<64 hex>`. |
-| `blobs` | Files: `name`, `media` (a media type), `size` in bytes, `sha256` of the bytes, and either `data` (the bytes in standard base64, at most 64 KiB) or `ref` (where the bytes are kept, for example a path in the lane owner's vault). A reader checks `data` against `size` and `sha256` (`E_BLOB`); bytes fetched by `ref` are checked the same way. |
+| `refs` | Hashes of other entries this one answers or builds on, each `sha256:<64 hex>`. Every hash in an entry has this form, prefix included. |
+| `blobs` | Files: `name`, `media` (a media type), `size` in bytes, `sha256` of the bytes as `sha256:<64 hex>` (the prefixed form, like `refs`), and either `data` (the bytes in standard base64, at most 64 KiB) or `ref` (where the bytes are kept, for example a path in the lane owner's vault). A reader checks `data` against `size` and `sha256` (`E_BLOB`); bytes fetched by `ref` are checked the same way. |
 | `proof` | `alg` is `ES256`: ECDSA P-256 with SHA-256. `sig` is the raw 64 bytes r‖s (the IEEE P1363 form WebCrypto and CryptoKit produce), base64url without padding. DER is refused (`E_SIG`). |
 
 **Canonical JSON**, as lane.entry/1 has it and JavaScript's `JSON.stringify` writes it once keys are sorted: object keys sorted by UTF-16 code unit, no whitespace, strings escaped only for quote, backslash and control characters (`\b \f \n \r \t`, others `\u00XX` in lower case), slash and non-ASCII left raw, integers only.
@@ -72,10 +72,11 @@ The bytes inside `c` are the entry in canonical JSON, exactly; a reader refuses 
 2. `E_ENVELOPE`: `v` is 2 with exactly `v`, `w`, `i`, `c`, and it opens with the lane owner's key (the GCM tag checks).
 3. `E_CANONICAL`: the opened bytes are canonical JSON.
 4. `E_NUMBER`, `E_SCHEMA`, `E_FIELD`: no floats; the schema; exactly the eleven fields, each in its shape.
-5. `E_KEY`: `spki` is a P-256 key and `key` is its hash; the key is one the reader trusts for this author.
-6. `E_SIG`: `alg` is ES256, `sig` is 64 bytes and verifies over the signed bytes.
-7. `E_BLOB`: each blob has its shape and each inline blob matches its size and hash.
-8. `E_CHAIN`: with the author's earlier entries on the lane, `seq` and `prev` follow.
+5. `E_CHAIN`, the entry on its own: seq 1 has `prev` null and a later seq has a `sha256:` hash. Checked here, before the signature, so it needs nothing but the entry.
+6. `E_KEY`: `spki` is a P-256 key and `key` is its hash; the key is one the reader trusts for this author.
+7. `E_SIG`: `alg` is ES256, `sig` is 64 bytes and verifies over the signed bytes.
+8. `E_BLOB`: each blob has its shape and each inline blob matches its size and hash.
+9. `E_CHAIN`, against the author's earlier entries on the lane: no gap, no fork, the same key and lane.
 
 An entry refused at any step is not acted on. A reader may keep it, marked with the code, for whoever looks into it.
 
@@ -93,7 +94,7 @@ Canonical JSON, the hash chain and `refs` are unchanged.
 
 ## Test vectors
 
-[vectors.json](vectors.json), with throwaway keys (they protect nothing): a P-256 author key as its private scalar, a second P-256 key, and an RSA 2048 recipient key as base64 PKCS#8 DER. It has a canonical-JSON case; five positive vectors (three entries, one with a ref and an inline blob, one with a blob by reference; their chain; the first entry on the wire); and thirteen negative ones, each with the code a reader must refuse it with (a changed body, a DER signature, a forged key id, a lane.entry/1 schema, an unknown field, a float, milliseconds in `at`, a first entry with a `prev`, a blob hash that does not match, a gap, a change of author key, two base64 layers, a changed ciphertext). ECDSA signatures are randomised, so the vectors are for checking, not for reproducing byte for byte.
+[vectors.json](vectors.json), with throwaway keys (they protect nothing): a P-256 author key as its private scalar, a second P-256 key, and an RSA 2048 recipient key as base64 PKCS#8 DER. It has a canonical-JSON case; five positive vectors (three entries, one with a ref and an inline blob, one with a blob by reference; their chain; the first entry on the wire); and thirteen negative ones, each with the code a reader must refuse it with (a changed body, a DER signature, a forged key id, a lane.entry/1 schema, an unknown field, a float, milliseconds in `at`, a first entry with a `prev`, a blob hash that does not match, a gap, a change of author key, two base64 layers, a changed ciphertext). ECDSA signatures are randomised, so the vectors are for checking, not for reproducing byte for byte. The negative vector "a chain that changes author key" is signed by the second P-256 key: a reader that keeps a list of trusted keys needs both keys in it to reach `E_CHAIN` (otherwise it refuses earlier, with `E_KEY`). The order of checks in "A reader, in order" decides which code a vector with more than one fault gets; "first entry with a prev" is not re-signed, so it is refused at step 5, before the signature.
 
 ```
 python3 tools/lanes/lane_entry_v2.py check website/lanes/entry-v2/vectors.json
