@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>lane.entry/2: the shared envelope for append lanes</title>
+<meta name="description" content="One format for everything written to an append lane: sg-append/v1 transport, one base64 layer of hybrid envelope v2, and a canonical JSON entry signed with P-256 in raw r||s, with its hash chain, refs, blobs and proof, and positive and negative test vectors.">
+<link rel="canonical" href="https://ios.app.voicedebrief.ai/lanes/entry-v2/index.html">
+<meta property="og:url" content="https://ios.app.voicedebrief.ai/lanes/entry-v2/index.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="VoiceDebrief for iOS">
+<meta property="og:title" content="lane.entry/2: the shared envelope for append lanes">
+<meta property="og:description" content="One format for everything written to an append lane: sg-append/v1 transport, one base64 layer of hybrid envelope v2, and a canonical JSON entry signed with P-256 in raw r||s, with its hash chain, refs, blobs and proof, and positive and negative test vectors.">
+<link rel="alternate" type="text/markdown" href="index.md" title="This page as markdown">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/vd-tokens.css">
+<link rel="stylesheet" href="../../assets/site.css">
+</head>
+<body>
+
+<nav class="site"><div class="row">
+  <a class="brand" href="../../index.html">Voice<em>Debrief</em> <span>iOS</span></a>
+  <span class="beta" title="In development: there is nothing to install yet">IN DEVELOPMENT</span>
+  <a class="parent" href="https://voicedebrief.ai" title="A VoiceDebrief product">&#8599; part of <b>voicedebrief.ai</b></a>
+  <a class="ver" href="../../versions/index.html" title="Release history">dev</a>
+  <a class="nl" href="../../built/index.html">Built</a>
+  <a class="nl" href="../../architecture/index.html">How it works</a>
+  <a class="nl" href="../../design/index.html">Design</a>
+  <a class="nl" href="../../plan/index.html">Plan</a>
+  <a class="nl" href="../../articles/index.html">Articles</a>
+  <a class="nl" href="../../develop/index.html">Build</a>
+  <a class="nl" href="../../ideas/index.html">Ideas</a>
+  <a class="nl" href="../../guides/index.html">Guides</a>
+  <a class="gh" href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">&#9733; GitHub</a>
+</div></nav>
+
+<main class="doc">
+<div class="crumb"><a href="../../index.html">VoiceDebrief iOS</a> / lanes / entry-v2</div>
+<h1 id="lane-entry-2-the-shared-envelope-for-append-lanes">lane.entry/2: the shared envelope for append lanes</h1>
+<p>One format for everything written to an append lane: a person's request to a site's keeper, a proposal from the CRM to the email cell, a decision answered from a phone, a file from the Drive and Chat tools. It replaces lane.entry/1 (Ed25519, 16 November 2026) and the per-application JSON that lanes carry today. Agreed by the owner on 25 November 2026 (item 20 of the Append Lanes v2 review). Co-owned by VoiceDebrief for iOS (a.ios) and the Email Cell. Final as of 25 November 2026; a change after this is lane.entry/3.</p>
+<blockquote><p>Tested: <a href="vectors.json">vectors.json</a> holds positive and negative vectors, made by the reference implementation <a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/tools/lanes/lane_entry_v2.py"><code>tools/lanes/lane_entry_v2.py</code></a>, which passes all of them. An independent JavaScript reader using WebCrypto only, <a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS/blob/dev/tools/lanes/check_vectors.mjs"><code>tools/lanes/check_vectors.mjs</code></a>, agrees on canonical JSON, hashes, signatures and the wire. No application writes lane.entry/2 yet.</p></blockquote>
+<h2 id="the-three-layers">The three layers</h2>
+<pre><code>sg-append/v1     POST {endpoint}/api/vault/append/write/{vault_id}
+                 {&quot;append_token&quot;: &quot;...&quot;, &quot;payload&quot;: &quot;&lt;base64&gt;&quot;}
+                        |
+                 payload = base64( hybrid envelope v2 JSON )            one base64 layer, not two
+                        |
+hybrid env. v2   {&quot;v&quot;: 2, &quot;w&quot;: RSA-OAEP-SHA256(k), &quot;i&quot;: iv, &quot;c&quot;: AES-256-GCM_k(entry)}   each field base64
+                        |
+lane.entry/2     the entry: canonical JSON, signed by its author with P-256</code></pre>
+<h3 id="a-transport-sg-append-v1">(A) Transport: sg-append/v1</h3>
+<p>The append lanes of the vault server (<code>dev.send.sgraph.ai</code> today): a POST of <code>{&quot;append_token&quot;, &quot;payload&quot;}</code> to <code>/api/vault/append/write/{vault_id}</code>. The token can only append; only the lane's owner reads. A request must be under 6 MiB. The transport sees bytes it cannot read: who wrote an entry, and what it says, are inside the envelope. This section describes the append route as it runs today; the plan's own text for sg-append/v1 was not readable from this session, so if it differs, the plan wins for the transport and this page is corrected, with the envelope and the entry unchanged.</p>
+<h3 id="b-the-envelope-hybrid-envelope-v2-one-base64-layer">(B) The envelope: hybrid envelope v2, one base64 layer</h3>
+<p>As sgit's <code>PKI__Crypto.hybrid_encrypt</code> writes it, and as <code>LaneCrypto</code> (this repository) and the Sovereign Websites' <code>send.js</code> already do: a fresh 256-bit AES key <code>k</code>; <code>c</code> is AES-256-GCM of the entry's bytes with a 12-byte <code>i</code>, the 16-byte tag appended; <code>w</code> is <code>k</code> wrapped with RSA-OAEP, SHA-256 for both the hash and MGF1, to the lane owner's RSA key (4096 bits for sgit keys). Fields <code>v</code>, <code>w</code>, <code>i</code>, <code>c</code>, each value standard base64 with padding.</p>
+<p><strong>One base64 layer.</strong> The <code>payload</code> is the base64 of the envelope's JSON text. lane.entry/1 and the lanes of today put a second base64 layer around that; lane.entry/2 does not, and a reader refuses a payload that decodes to base64 instead of to JSON (<code>E_PAYLOAD</code>), so the two can never be mistaken for each other.</p>
+<p>The bytes inside <code>c</code> are the entry in canonical JSON, exactly; a reader refuses an entry that is not (<code>E_CANONICAL</code>).</p>
+<h3 id="c-the-entry">(C) The entry</h3>
+<pre><code>{
+  &quot;schema&quot;: &quot;lane.entry/2&quot;,
+  &quot;lane&quot;:   &quot;&lt;the lane: a vault id, or a name agreed by its readers&gt;&quot;,
+  &quot;author&quot;: { &quot;id&quot;: &quot;&lt;who, e.g. person:dinis or agent:a.ios&gt;&quot;,
+              &quot;key&quot;: &quot;p256:&lt;hex SHA-256 of the SPKI DER&gt;&quot;,
+              &quot;spki&quot;: &quot;&lt;base64url of the P-256 SubjectPublicKeyInfo DER&gt;&quot; },
+  &quot;seq&quot;:    1,
+  &quot;prev&quot;:   null,
+  &quot;at&quot;:     &quot;2026-11-25T16:00:00Z&quot;,
+  &quot;type&quot;:   &quot;&lt;what it is: note, propose.reply, answer, message …&gt;&quot;,
+  &quot;body&quot;:   { … any JSON the type defines … },
+  &quot;refs&quot;:   [ &quot;sha256:&lt;hex&gt;&quot;, … ],
+  &quot;blobs&quot;:  [ { &quot;name&quot;, &quot;media&quot;, &quot;size&quot;, &quot;sha256&quot;, &quot;data&quot; | &quot;ref&quot; }, … ],
+  &quot;proof&quot;:  { &quot;alg&quot;: &quot;ES256&quot;, &quot;sig&quot;: &quot;&lt;base64url of r||s, 64 bytes&gt;&quot; }
+}</code></pre>
+<div class="tablewrap"><table>
+<thead><tr><th>Field</th><th>Rule</th></tr></thead>
+<tbody>
+<tr><td><code>schema</code></td><td>Exactly <code>lane.entry/2</code>.</td></tr>
+<tr><td><code>lane</code></td><td>A non-empty string. A chain is one author on one lane.</td></tr>
+<tr><td><code>author</code></td><td><code>id</code> names who wrote it, for people; <code>key</code> is what a reader trusts: <code>p256:</code> and the hex SHA-256 of <code>spki</code>'s DER bytes; <code>spki</code> carries the public key so a reader can verify without a lookup. Trust comes from the reader's own list of keys, never from the entry.</td></tr>
+<tr><td><code>seq</code>, <code>prev</code></td><td>Per author and lane: <code>seq</code> 1, 2, 3 … with no gaps; <code>prev</code> is <code>null</code> for 1 and otherwise the hash of the author's entry before. A reader that sees a gap or a fork stops reading that chain (<code>E_CHAIN</code>).</td></tr>
+<tr><td><code>at</code></td><td>UTC, <code>YYYY-MM-DDTHH:MM:SSZ</code>, no fractions. The author's clock: informative, not ordering.</td></tr>
+<tr><td><code>type</code></td><td>A non-empty string, defined by the applications that share the lane.</td></tr>
+<tr><td><code>body</code></td><td>Any JSON value. Integers only, anywhere in the entry: a float is refused (<code>E_NUMBER</code>).</td></tr>
+<tr><td><code>refs</code></td><td>Hashes of other entries this one answers or builds on, each <code>sha256:&lt;64 hex&gt;</code>.</td></tr>
+<tr><td><code>blobs</code></td><td>Files: <code>name</code>, <code>media</code> (a media type), <code>size</code> in bytes, <code>sha256</code> of the bytes, and either <code>data</code> (the bytes in standard base64, at most 64 KiB) or <code>ref</code> (where the bytes are kept, for example a path in the lane owner's vault). A reader checks <code>data</code> against <code>size</code> and <code>sha256</code> (<code>E_BLOB</code>); bytes fetched by <code>ref</code> are checked the same way.</td></tr>
+<tr><td><code>proof</code></td><td><code>alg</code> is <code>ES256</code>: ECDSA P-256 with SHA-256. <code>sig</code> is the raw 64 bytes r‖s (the IEEE P1363 form WebCrypto and CryptoKit produce), base64url without padding. DER is refused (<code>E_SIG</code>).</td></tr>
+</tbody></table></div>
+<p><strong>Canonical JSON</strong>, as lane.entry/1 has it and JavaScript's <code>JSON.stringify</code> writes it once keys are sorted: object keys sorted by UTF-16 code unit, no whitespace, strings escaped only for quote, backslash and control characters (<code>\b \f \n \r \t</code>, others <code>\u00XX</code> in lower case), slash and non-ASCII left raw, integers only.</p>
+<p><strong>What is signed:</strong> the canonical JSON of the entry without <code>proof</code>. <strong>The entry's hash</strong> (for <code>prev</code> and <code>refs</code>): <code>sha256:</code> and the hex SHA-256 of the canonical JSON of the whole entry, <code>proof</code> included.</p>
+<h2 id="a-reader-in-order">A reader, in order</h2>
+<ol>
+<li><code>E_PAYLOAD</code>: the payload is base64 of the envelope JSON, one layer.</li>
+<li><code>E_ENVELOPE</code>: <code>v</code> is 2 with exactly <code>v</code>, <code>w</code>, <code>i</code>, <code>c</code>, and it opens with the lane owner's key (the GCM tag checks).</li>
+<li><code>E_CANONICAL</code>: the opened bytes are canonical JSON.</li>
+<li><code>E_NUMBER</code>, <code>E_SCHEMA</code>, <code>E_FIELD</code>: no floats; the schema; exactly the eleven fields, each in its shape.</li>
+<li><code>E_KEY</code>: <code>spki</code> is a P-256 key and <code>key</code> is its hash; the key is one the reader trusts for this author.</li>
+<li><code>E_SIG</code>: <code>alg</code> is ES256, <code>sig</code> is 64 bytes and verifies over the signed bytes.</li>
+<li><code>E_BLOB</code>: each blob has its shape and each inline blob matches its size and hash.</li>
+<li><code>E_CHAIN</code>: with the author's earlier entries on the lane, <code>seq</code> and <code>prev</code> follow.</li>
+</ol>
+<p>An entry refused at any step is not acted on. A reader may keep it, marked with the code, for whoever looks into it.</p>
+<h2 id="from-lane-entry-1">From lane.entry/1</h2>
+<div class="tablewrap"><table>
+<thead><tr><th></th><th>lane.entry/1</th><th>lane.entry/2</th></tr></thead>
+<tbody>
+<tr><td>Signature</td><td>Ed25519</td><td>P-256 ES256, raw r‖s: the key every sgit bundle, the Secure Enclave and WebCrypto in every browser already have</td></tr>
+<tr><td>Author</td><td><code>author</code> string and <code>key</code> id</td><td><code>author.id</code>, <code>author.key</code>, and <code>author.spki</code> so a reader can verify without a lookup</td></tr>
+<tr><td>Files</td><td>in <code>body</code>, per application</td><td><code>blobs</code>, inline or by reference, each with its hash</td></tr>
+<tr><td>Proof field</td><td><code>sig</code> at the top</td><td><code>proof: {alg, sig}</code>, so a later algorithm is a new <code>alg</code>, not a new schema</td></tr>
+<tr><td>Wire</td><td>two base64 layers</td><td>one</td></tr>
+</tbody></table></div>
+<p>Canonical JSON, the hash chain and <code>refs</code> are unchanged.</p>
+<h2 id="test-vectors">Test vectors</h2>
+<p><a href="vectors.json">vectors.json</a>, with throwaway keys (they protect nothing): a P-256 author key as its private scalar, a second P-256 key, and an RSA 2048 recipient key as base64 PKCS#8 DER. It has a canonical-JSON case; five positive vectors (three entries, one with a ref and an inline blob, one with a blob by reference; their chain; the first entry on the wire); and thirteen negative ones, each with the code a reader must refuse it with (a changed body, a DER signature, a forged key id, a lane.entry/1 schema, an unknown field, a float, milliseconds in <code>at</code>, a first entry with a <code>prev</code>, a blob hash that does not match, a gap, a change of author key, two base64 layers, a changed ciphertext). ECDSA signatures are randomised, so the vectors are for checking, not for reproducing byte for byte.</p>
+<pre><code>python3 tools/lanes/lane_entry_v2.py check website/lanes/entry-v2/vectors.json
+node tools/lanes/check_vectors.mjs website/lanes/entry-v2/vectors.json</code></pre>
+<h2 id="who-reads-and-writes-it">Who reads and writes it</h2>
+<ul>
+<li><strong>VoiceDebrief for iOS</strong>: owner-mode answers and messages, and requests to a Sovereign Website's keeper, move to lane.entry/2 once their receivers read it.</li>
+<li><strong>The Email Cell</strong>: co-owner; its actions lane and outbox.</li>
+<li><strong>The Drive and Chat tools</strong> (a.drive): their lane reader is written against this page and its vectors.</li>
+</ul>
+</main>
+
+<footer class="site"><div class="cols">
+  <div>
+    <div class="brandline">Voice<em>Debrief</em> <span>iOS</span></div>
+    <p>The VoiceDebrief transcript and debrief as a native iPhone and iPad app, on Apple's own models, with the results in a vault you own. In development: there is nothing to install yet. Content CC BY 4.0; code Apache 2.0.</p>
+    <p class="partnote">This site is static and has no analytics.</p>
+    <p class="verline">site dev · <a href="index.md">this page as markdown</a> · <a href="../../llms.txt">llms.txt</a></p>
+  </div>
+  <div>
+    <h4>The app</h4>
+    <a href="../../built/index.html">What is built</a>
+    <a href="../../plan/index.html">The plan</a>
+    <a href="../../develop/index.html">Build and test</a>
+    <a href="../../versions/index.html">Release history</a>
+    <a href="https://github.com/VoiceDebrief/VoiceDebrief__App__iOS">GitHub</a>
+  </div>
+  <div>
+    <h4>VoiceDebrief</h4>
+    <a href="https://voicedebrief.ai">voicedebrief.ai</a>
+    <a href="https://meetscribe.chrome-extension.voicedebrief.ai">MeetScribe for Google Meet</a>
+  </div>
+  <div>
+    <h4>Built on</h4>
+    <a href="https://sgit.ai">sgit.ai</a>
+    <a href="https://pki.sgit.ai">pki.sgit.ai</a>
+    <a href="https://sgit.ai/security/index.html">The vault security model</a>
+  </div>
+</div></footer>
+</body>
+</html>

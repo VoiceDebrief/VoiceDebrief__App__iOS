@@ -100,6 +100,8 @@ const PAGES = [
     description: 'Five synthetic users on pictures of finishing a recording and sending it in one press, the briefing on opening and where the work happens: what round 2 fixed, who changed their mind, and fifteen new findings.' },
   { path: 'develop',  nav: 'Build',    title: 'Build, test and release VoiceDebrief for iOS',
     description: 'How the repository is laid out, how CI compiles and tests the app on a Mac, how the site is built, and how a release is made.' },
+  { path: 'lanes/entry-v2', nav: null, title: 'lane.entry/2: the shared envelope for append lanes',
+    description: 'One format for everything written to an append lane: sg-append/v1 transport, one base64 layer of hybrid envelope v2, and a canonical JSON entry signed with P-256 in raw r||s, with its hash chain, refs, blobs and proof, and positive and negative test vectors.' },
   { path: 'ideas', nav: 'Ideas', title: 'Ideas for VoiceDebrief and SGit Vaults, and where each one stands',
     description: 'Every idea and request for the two apps, from the issues, the articles and the reality files, with its status (seen working, built untried, in progress, proposed, parked), where it lives in the app and the versions that brought it. Generated, not written by hand.' },
   { path: 'guides', nav: 'Guides', title: 'Guides to every feature of VoiceDebrief for iOS',

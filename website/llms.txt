@@ -61,6 +61,9 @@ Every page has a markdown twin: replace index.html with index.md.
 - https://ios.app.voicedebrief.ai/reviews/round-3/index.html : round 3 (14 November 2026): the four
   users and a fifth who sends memos to a colleague, on finish and send, the briefing and where the work
   happens. Round 2's findings marked; fifteen new findings; issues 043 to 045.
+- https://ios.app.voicedebrief.ai/lanes/entry-v2/index.html : lane.entry/2, THE SHARED ENVELOPE FOR APPEND LANES
+  (final, 25 November 2026): sg-append/v1 transport, one base64 layer of hybrid envelope v2, a canonical JSON entry
+  signed with P-256 raw r||s (author key, seq/prev chain, type, body, refs, blobs, proof). Test vectors: /lanes/entry-v2/vectors.json.
 - https://ios.app.voicedebrief.ai/identity/return/index.html : not documentation. The page pki.sgit.ai
   sends a person back to after they vouch for the app on a device; it says how to hand the answer in
   the address to the app. No script: the answer stays in the address.
