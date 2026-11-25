@@ -19,7 +19,7 @@ lane.entry/2     the entry: canonical JSON, signed by its author with P-256
 
 ### (A) Transport: sg-append/v1
 
-The append lanes of the vault server (`dev.send.sgraph.ai` today): a POST of `{"append_token", "payload"}` to `/api/vault/append/write/{vault_id}`. The token can only append; only the lane's owner reads. A request must be under 6 MiB. The transport sees bytes it cannot read: who wrote an entry, and what it says, are inside the envelope. This section describes the append route as it runs today; the plan's own text for sg-append/v1 was not readable from this session, so if it differs, the plan wins for the transport and this page is corrected, with the envelope and the entry unchanged.
+The append lanes of the vault server (`dev.send.sgraph.ai` today): a POST of `{"append_token", "payload"}` to `/api/vault/append/write/{vault_id}`. The token can only append; only the lane's owner reads. A request must be under 6 MiB. The transport sees bytes it cannot read: who wrote an entry, and what it says, are inside the envelope. This is the append route as it runs today. In the Append Lanes v2 plan, sg-append/v1 is the Phase 4 signed lane, in which the server checks a grant and a signature at write time; that is not live yet. When Phase 4 ships, the request also carries the sg-append/v1 grant and signature, with the envelope and the entry unchanged, and the SGraph Send team's published text for that wire format wins over this page.
 
 ### (B) The envelope: hybrid envelope v2, one base64 layer
 
